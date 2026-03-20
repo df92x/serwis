@@ -3817,11 +3817,9 @@ function markSmsSent(id, el) {
   if (idx === -1) return;
   hist[idx].smsSent = true;
   localStorage.setItem(HISTORY_KEY, JSON.stringify(hist));
-  // Pogrub ramkę karty na żywo (tylko poza zakładką Przyjęte)
   const card = el.closest('.history-item');
   if (card && !card.closest('#history-list')) {
-    card.style.borderColor = 'rgba(34,197,94,1)';
-    card.style.borderWidth = '2px';
+    card.style.borderColor = 'rgba(34,197,94,0.6)';
   }
   // Szary przycisk SMS po wysłaniu
   el.classList.add('btn-history-sms-sent');
@@ -3859,8 +3857,7 @@ function renderWydanie(filterTel) {
     const item = document.createElement('div');
     item.className = 'history-item';
     if (entry.smsSent) {
-      item.style.borderColor = 'rgba(34,197,94,1)';
-      item.style.borderWidth = '2px';
+      item.style.borderColor = 'rgba(34,197,94,0.6)';
       item.style.backgroundColor = 'rgba(34,197,94,0.06)';
     } else {
       item.style.borderColor = 'rgba(34,197,94,0.4)';
@@ -6517,26 +6514,24 @@ window.cselSetValue = cselSetValue;
   <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:24px 20px;max-width:340px;width:92%;margin:0 auto;display:flex;flex-direction:column;gap:14px;">
     <div style="display:flex;align-items:center;justify-content:space-between;">
       <span style="font-size:16px;font-weight:700;color:#fff;">Kopia zapasowa</span>
-      <button onclick="$('kopia-modal').style.display='none'" style="background:none;border:none;color:var(--text3);font-size:22px;cursor:pointer;line-height:1;padding:0 4px;">&times;</button>
+      <button onclick="$('kopia-modal').style.display='none'" style="background:#ef4444;border:1px solid #ef4444;border-radius:8px;padding:6px 14px;cursor:pointer;color:#fff;font-size:13px;font-weight:700;text-transform:uppercase;">Zamknij</button>
     </div>
 
     <!-- Lokalnie -->
     <div style="display:flex;flex-direction:column;gap:4px;">
-      <button onclick="openKopiaLokalnie()" style="width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:#1a2a1a;border:1px solid #14532d;border-radius:10px;padding:16px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <button onclick="openKopiaLokalnie()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:12px;background:#0d1a0f;border:1px solid #16a34a;border-radius:12px;padding:16px 18px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Wykonaj kopię lokalnie
       </button>
       <div id="kopia-last-local" style="font-size:11px;color:var(--text3);text-align:center;min-height:14px;"></div>
     </div>
 
     <!-- Przywróć -->
-    <div style="border-top:1px solid var(--border);padding-top:12px;">
-      <button onclick="openPrzywrocModal()" style="width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:none;border:1px solid var(--border);border-radius:10px;padding:16px;color:var(--text2);font-size:14px;font-weight:700;cursor:pointer;">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Przywróć dane
-      </button>
-      <input type="file" id="kopia-file-input" accept=".json" style="display:none" onchange="wczytajKopie(event)">
-    </div>
+    <button onclick="openPrzywrocModal()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:12px;background:#0d1220;border:1px solid #2563eb;border-radius:12px;padding:16px 18px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/></svg>
+      Przywróć dane
+    </button>
+    <input type="file" id="kopia-file-input" accept=".json" style="display:none" onchange="wczytajKopie(event)">
   </div>
 </div>
 
