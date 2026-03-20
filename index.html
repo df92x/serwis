@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Wycena">
-<link rel="manifest" id="pwa-manifest" href="blob:null/73c4d4cc-66ed-4097-8d5e-7cf957b526ef">
+<link rel="manifest" id="pwa-manifest" href="blob:null/20da3744-8534-4cb6-b6c5-da13c5077b48">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -675,7 +675,7 @@ select.native-sel { display: none !important; }
         <svg width="40" height="40" viewBox="0 0 24 24" fill="#c0392b" stroke="#c0392b" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
         <span style="font-size:36px;font-weight:900;color:#c0392b;letter-spacing:2px;">SERWIS</span>
       </div>
-      <div id="main-sync-panel" style="width:100%;background:#0d0d14;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-top:4px;"><button onclick="loginGoogle()" style="width:100%;background:none;border:none;color:var(--text3);font-size:13px;font-weight:600;padding:14px 16px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#556" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>Zaloguj się z Google Drive</button></div>
+      <div id="main-sync-panel" style="width:100%;background:#0d0d14;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-top:4px;"><div style="display:flex;flex-direction:column;align-items:center;gap:2px;"><button onclick="loginGoogle()" style="width:100%;background:none;border:none;color:var(--text3);font-size:13px;font-weight:600;padding:12px 16px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#556" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>Zaloguj się z Google Drive</button><span style="font-size:10px;color:#444;letter-spacing:.3px;padding-bottom:6px;">v1.0.0 &nbsp;·&nbsp; 20.03 23:00</span></div></div>
     </div>
 
     <button onclick="startNowe()" style="width:100%;padding:16px 20px;background:#16a34a;border:none;border-radius:16px;color:#fff;font-size:22px;font-weight:700;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:0;">
@@ -1199,6 +1199,9 @@ select.native-sel { display: none !important; }
 
 <script>
 'use strict';
+
+const APP_VERSION    = '1.0.0';
+const APP_BUILD_DATE = '20.03 23:00';
 
 function lockBody()   { document.body.classList.add('overlay-open'); }
 function unlockBody() { document.body.classList.remove('overlay-open'); }
@@ -5888,6 +5891,7 @@ function updateAdminSyncRow() {
         new Date(ls).toLocaleDateString('pl-PL',{day:'2-digit',month:'2-digit',year:'numeric'}) + ' ' +
         new Date(ls).toLocaleTimeString('pl-PL',{hour:'2-digit',minute:'2-digit'}) + '</span>'
            : '<span style="font-size:11px;color:#556;">Brak synchronizacji</span>') +
+      '<span style="font-size:10px;color:#444;letter-spacing:.3px;">v' + APP_VERSION + ' &nbsp;·&nbsp; ' + APP_BUILD_DATE + '</span>' +
     '</div>' +
     '<div style="display:flex;">' +
       '<button onclick="manualSync()" data-sync-btn="1" style="flex:1;background:none;border:none;border-right:1px solid var(--border);color:#7ba8f5;font-size:12px;font-weight:600;padding:10px 8px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;">' +
@@ -5898,10 +5902,13 @@ function updateAdminSyncRow() {
     '</div>';
 
   const guestHTML =
-    '<button onclick="loginGoogle()" style="width:100%;background:none;border:none;color:var(--text3);font-size:13px;font-weight:600;padding:14px 16px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;">' +
-      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#556" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>' +
-      'Zaloguj się z Google Drive' +
-    '</button>';
+    '<div style="display:flex;flex-direction:column;align-items:center;gap:2px;">' +
+      '<button onclick="loginGoogle()" style="width:100%;background:none;border:none;color:var(--text3);font-size:13px;font-weight:600;padding:12px 16px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;">' +
+        '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#556" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>' +
+        'Zaloguj się z Google Drive' +
+      '</button>' +
+      '<span style="font-size:10px;color:#444;letter-spacing:.3px;padding-bottom:6px;">v' + APP_VERSION + ' &nbsp;·&nbsp; ' + APP_BUILD_DATE + '</span>' +
+    '</div>';
 
   const html = email ? loggedHTML : guestHTML;
   const mainPanel = $('main-sync-panel');
