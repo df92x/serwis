@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Wycena">
-<link rel="manifest" id="pwa-manifest" href="blob:null/910c0892-9458-48d4-9351-0993a413b0d3">
+<link rel="manifest" id="pwa-manifest" href="blob:null/7e45d6d2-668d-43e0-b8ef-5d83d3955b97">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -6812,7 +6812,12 @@ async function githubUpdate() {
 
     var pageUrl = '';
     ghStatus('✅ Wykonano', 'ok');
-    setTimeout(function() { btn.disabled = false; btn.style.opacity = '1'; }, 8000);
+    setTimeout(function() {
+      btn.disabled = false;
+      btn.style.opacity = '1';
+      $('github-update-modal').style.display = 'none';
+      $('start-overlay').style.display = 'flex';
+    }, 1000);
 
   } catch(e) {
     ghStatus('❌ ' + (e.message || String(e)), 'err');
