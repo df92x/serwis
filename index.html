@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Wycena">
-<link rel="manifest" id="pwa-manifest" href="blob:null/e8714eb0-6d5f-4c5b-8335-0976f7c357f7">
+<link rel="manifest" id="pwa-manifest" href="blob:null/73c4d4cc-66ed-4097-8d5e-7cf957b526ef">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -6613,64 +6613,79 @@ window.cselSetValue = cselSetValue;
 </div>
 
 <!-- GitHub Update Modal -->
-<div id="github-update-modal" style="opacity: 1; pointer-events: auto; position: fixed; inset: 0px; z-index: 1100; background: rgba(0, 0, 0, 0.88); display: flex; align-items: center; justify-content: center;">
-  <div style="background:#0d1117;border:1px solid #238636;border-radius:16px;padding:24px 20px;max-width:360px;width:92%;margin:0 auto;display:flex;flex-direction:column;gap:14px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;">
-      <div style="display:flex;align-items:center;gap:8px;">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="#3fb950" stroke="none"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.605-3.369-1.342-3.369-1.342-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0 1 12 6.836a9.59 9.59 0 0 1 2.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.741 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"></path></svg>
-        <span style="font-size:16px;font-weight:700;color:#fff;">Update App</span>
-      </div>
-      <button onclick="ghModalClose()" style="background:none;border:none;color:#8b949e;font-size:22px;cursor:pointer;line-height:1;">×</button>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:6px;">
-      <label style="font-size:11px;font-weight:700;color:#8b949e;text-transform:uppercase;letter-spacing:.6px;">GitHub Token</label>
-      <div style="position:relative;">
-        <input type="password" id="gh-token-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" style="width:100%;font-size:12px;padding:10px 36px 10px 12px;border:1px solid #30363d;border-radius:8px;background:#161b22;color:#e6edf3;outline:none;font-family:monospace;" onfocus="this.style.borderColor='#238636'" onblur="this.style.borderColor='#30363d'">
-        <button onclick="(function(){var i=$('gh-token-input');i.type=i.type==='password'?'text':'password';})()" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:#8b949e;cursor:pointer;font-size:14px;">👁</button>
-      </div>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:6px;">
-      <label style="font-size:11px;font-weight:700;color:#8b949e;text-transform:uppercase;letter-spacing:.6px;">Repozytorium (user/repo)</label>
-      <input type="text" id="gh-repo-input" placeholder="df92x/serwis" style="width:100%;font-size:13px;padding:10px 12px;border:1px solid #30363d;border-radius:8px;background:#161b22;color:#e6edf3;outline:none;" onfocus="this.style.borderColor='#238636'" onblur="this.style.borderColor='#30363d'">
-    </div>
-    <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:#8b949e;">
-      <input type="checkbox" id="gh-save" checked="" style="accent-color:#238636;">
-      Zapamiętaj dane w przeglądarce
-    </label>
-    <div id="gh-status" style="display: block; font-size: 13px; padding: 10px 12px; border-radius: 8px; font-weight: 600; text-align: center; background: rgb(17, 24, 39); border: 1px solid rgb(35, 134, 54); color: rgb(139, 148, 158);">⬆️ Wysyłanie…</div>
-    <div style="display:flex;gap:10px;">
-      <button onclick="ghModalClose()" style="flex:1;padding:12px;background:none;border:1px solid #30363d;border-radius:8px;color:#8b949e;font-size:14px;font-weight:700;cursor:pointer;">Anuluj</button>
-      <button id="gh-upload-btn" onclick="githubUpdate()" style="flex: 2 1 0%; padding: 12px; background: rgb(35, 134, 54); border: none; border-radius: 8px; color: rgb(255, 255, 255); font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; opacity: 0.6;" disabled="">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 16 12 12 8 16"></polyline><line x1="12" y1="12" x2="12" y2="21"></line><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path></svg>
-        Wyślij update
-      </button>
-    </div>
-  </div>
-</div>
 
 <script>
-function ghModalOpen() {
-  var m = $('github-update-modal');
-  m.style.opacity = '1';
-  m.style.zIndex = '1100';
-  m.style.pointerEvents = 'auto';
-}
 function ghModalClose() {
-  var m = $('github-update-modal');
-  m.style.opacity = '0';
-  m.style.zIndex = '-1';
-  m.style.pointerEvents = 'none';
+  var m = document.getElementById('github-update-modal');
+  if (m) m.remove();
 }
 
 function otworzGithubUpdate() {
-  $('gh-token-input').value = localStorage.getItem('gh_token') || '';
-  $('gh-repo-input').value  = localStorage.getItem('gh_repo')  || '';
-  var s = $('gh-status'); s.style.display = 'none'; s.innerHTML = '';
-  ghModalOpen();
+  // Usuń poprzedni jeśli istnieje
+  var old = document.getElementById('github-update-modal');
+  if (old) old.remove();
+
+  var token = localStorage.getItem('gh_token') || '';
+  var repo  = localStorage.getItem('gh_repo')  || '';
+
+  var overlay = document.createElement('div');
+  overlay.id = 'github-update-modal';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:1100;background:rgba(0,0,0,0.88);display:flex;align-items:center;justify-content:center;';
+  overlay.innerHTML = `
+    <div style="background:#0d1117;border:1px solid #238636;border-radius:16px;padding:24px 20px;max-width:360px;width:92%;margin:0 auto;display:flex;flex-direction:column;gap:14px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="#3fb950" stroke="none"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.605-3.369-1.342-3.369-1.342-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0 1 12 6.836a9.59 9.59 0 0 1 2.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.741 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+          <span style="font-size:16px;font-weight:700;color:#fff;">Update App</span>
+        </div>
+        <button id="gh-close-btn" style="background:none;border:none;color:#8b949e;font-size:22px;cursor:pointer;line-height:1;">&times;</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <label style="font-size:11px;font-weight:700;color:#8b949e;text-transform:uppercase;letter-spacing:.6px;">GitHub Token</label>
+        <div style="position:relative;">
+          <input type="password" id="gh-token-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
+            style="width:100%;font-size:12px;padding:10px 36px 10px 12px;border:1px solid #30363d;border-radius:8px;background:#161b22;color:#e6edf3;outline:none;font-family:monospace;">
+          <button id="gh-eye-btn" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:#8b949e;cursor:pointer;font-size:14px;">👁</button>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <label style="font-size:11px;font-weight:700;color:#8b949e;text-transform:uppercase;letter-spacing:.6px;">Repozytorium (user/repo)</label>
+        <input type="text" id="gh-repo-input" placeholder="df92x/serwis"
+          style="width:100%;font-size:13px;padding:10px 12px;border:1px solid #30363d;border-radius:8px;background:#161b22;color:#e6edf3;outline:none;">
+      </div>
+      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:#8b949e;">
+        <input type="checkbox" id="gh-save" checked style="accent-color:#238636;">
+        Zapamiętaj dane w przeglądarce
+      </label>
+      <div id="gh-status" style="display:none;font-size:13px;padding:10px 12px;border-radius:8px;font-weight:600;text-align:center;"></div>
+      <div style="display:flex;gap:10px;">
+        <button id="gh-cancel-btn" style="flex:1;padding:12px;background:none;border:1px solid #30363d;border-radius:8px;color:#8b949e;font-size:14px;font-weight:700;cursor:pointer;">Anuluj</button>
+        <button id="gh-upload-btn" style="flex:2;padding:12px;background:#238636;border:none;border-radius:8px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+          Wyślij update
+        </button>
+      </div>
+    </div>`;
+
+  document.body.appendChild(overlay);
+
+  // Token i repo ustawiane przez JS — nigdy przez atrybut value w HTML
+  document.getElementById('gh-token-input').value = token;
+  document.getElementById('gh-repo-input').value  = repo;
+
+  document.getElementById('gh-close-btn').onclick  = ghModalClose;
+  document.getElementById('gh-cancel-btn').onclick = ghModalClose;
+  document.getElementById('gh-upload-btn').onclick = githubUpdate;
+  document.getElementById('gh-eye-btn').onclick = function() {
+    var i = document.getElementById('gh-token-input');
+    i.type = i.type === 'password' ? 'text' : 'password';
+  };
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) ghModalClose(); });
 }
 
 function ghStatus(msg, type) {
-  var s = $('gh-status');
+  var s = document.getElementById('gh-status');
+  if (!s) return;
   s.style.display = 'block';
   s.textContent = msg;
   if (type === 'ok')       { s.style.background='#0d2a0d'; s.style.border='1px solid #2ea043'; s.style.color='#3fb950'; }
@@ -6679,19 +6694,20 @@ function ghStatus(msg, type) {
 }
 
 async function githubUpdate() {
-  var token = $('gh-token-input').value.trim();
-  var repo  = $('gh-repo-input').value.trim().replace(/^https?:\/\/github\.com\//,'').replace(/\/$/,'');
+  var token = (document.getElementById('gh-token-input') || {value:''}).value.trim();
+  var repo  = (document.getElementById('gh-repo-input')  || {value:''}).value.trim().replace(/^https?:\/\/github\.com\//,'').replace(/\/$/,'');
   if (!token) { ghStatus('⚠️ Wpisz GitHub Token!', 'err'); return; }
   if (!repo || !repo.includes('/')) { ghStatus('⚠️ Wpisz repo: user/nazwa', 'err'); return; }
-  if ($('gh-save').checked) {
+  var saveEl = document.getElementById('gh-save');
+  if (saveEl && saveEl.checked) {
     localStorage.setItem('gh_token', token);
     localStorage.setItem('gh_repo',  repo);
   } else {
     localStorage.removeItem('gh_token');
     localStorage.removeItem('gh_repo');
   }
-  var btn = $('gh-upload-btn');
-  btn.disabled = true; btn.style.opacity = '0.6';
+  var btn = document.getElementById('gh-upload-btn');
+  if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; }
   var apiUrl = 'https://api.github.com/repos/' + repo + '/contents/index.html';
   var headers = { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' };
   try {
@@ -6703,25 +6719,23 @@ async function githubUpdate() {
     else if (getRes.status !== 404) { throw new Error('GitHub API: HTTP ' + getRes.status); }
 
     ghStatus('⬆️ Wysyłanie…', 'info');
+    // Usuń modal z DOM przed serializacją — token nie może trafić do pliku HTML
+    var modalEl = document.getElementById('github-update-modal');
+    if (modalEl) modalEl.remove();
     var html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
-    var body = {
-      message: 'Update App ' + new Date().toLocaleString('pl-PL'),
-      content: btoa(unescape(encodeURIComponent(html))),
-      branch:  'main'
-    };
+    var body = { message: 'Update App ' + new Date().toLocaleString('pl-PL'), content: btoa(unescape(encodeURIComponent(html))), branch: 'main' };
     if (sha) body.sha = sha;
     var putRes = await fetch(apiUrl, { method: 'PUT', headers: headers, body: JSON.stringify(body) });
     if (!putRes.ok) { var e = await putRes.json(); throw new Error(e.message || 'HTTP ' + putRes.status); }
 
     ghStatus('✅ Wykonano', 'ok');
     setTimeout(function() {
-      btn.disabled = false; btn.style.opacity = '1';
       ghModalClose();
       $('start-overlay').style.display = 'flex';
     }, 1000);
   } catch(e) {
     ghStatus('❌ ' + (e.message || String(e)), 'err');
-    btn.disabled = false; btn.style.opacity = '1';
+    if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
   }
 }
 
