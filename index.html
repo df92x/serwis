@@ -1238,30 +1238,15 @@ select.native-sel { display: none !important; }
 <script>
 'use strict';
 
-function _getVersion() {
-  return localStorage.getItem('gh_app_version') || '1.0.0';
-}
-
-function _bumpVersion() {
-  var v = _getVersion().split('.').map(Number);
-  v[2] = (v[2] || 0) + 1;
-  var newV = v.join('.');
-  localStorage.setItem('gh_app_version', newV);
-  return newV;
-}
-
 function _appVerLabel() {
   var iso = localStorage.getItem('gh_last_update');
-  var datePart = '';
-  if (iso) {
-    var d = new Date(iso);
-    var dd = String(d.getDate()).padStart(2,'0');
-    var mm = String(d.getMonth()+1).padStart(2,'0');
-    var hh = String(d.getHours()).padStart(2,'0');
-    var min = String(d.getMinutes()).padStart(2,'0');
-    datePart = dd + '.' + mm + ' ' + hh + ':' + min;
-  }
-  return 'v' + _getVersion() + (datePart ? ' &nbsp;·&nbsp; ' + datePart : '');
+  if (!iso) return '';
+  var d = new Date(iso);
+  var dd  = String(d.getDate()).padStart(2,'0');
+  var mm  = String(d.getMonth()+1).padStart(2,'0');
+  var hh  = String(d.getHours()).padStart(2,'0');
+  var min = String(d.getMinutes()).padStart(2,'0');
+  return 'Update: ' + dd + '.' + mm + ' ' + hh + ':' + min;
 }
 
 function lockBody()   { document.body.classList.add('overlay-open'); }
@@ -6842,8 +6827,7 @@ async function githubUpdate() {
     var putRes = await fetch(apiUrl, { method: 'PUT', headers: headers, body: JSON.stringify(body) });
     if (!putRes.ok) { var e = await putRes.json(); throw new Error(e.message || 'HTTP ' + putRes.status); }
 
-    // Podbij wersję i zapisz datę
-    _bumpVersion();
+    // Zapisz datę kliknięcia
     localStorage.setItem('gh_last_update', new Date().toISOString());
 
     ghStatus('✅ Wykonano', 'ok');
