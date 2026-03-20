@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Wycena">
-<link rel="manifest" id="pwa-manifest" href="blob:null/66606753-843b-4c8f-83a5-52fdf302e1d1">
+<link rel="manifest" id="pwa-manifest" href="blob:null/27e5ab61-0eba-411d-9ab9-b8cab271e124">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -5888,7 +5888,7 @@ function updateAdminSyncRow() {
         '<span style="font-size:12px;color:#22c55e;">' + maskEmail(email||'') + '</span>' +
       '</div>' +
       (ls ? '<span style="font-size:11px;color:var(--text3);">Ostatnia sync: ' +
-        new Date(ls).toLocaleDateString('pl-PL',{day:'2-digit',month:'2-digit',year:'numeric'}) + ' ' +
+        new Date(ls).toLocaleDateString('pl-PL',{day:'2-digit',month:'2-digit'}) + ' ' +
         new Date(ls).toLocaleTimeString('pl-PL',{hour:'2-digit',minute:'2-digit'}) + '</span>'
            : '<span style="font-size:11px;color:#556;">Brak synchronizacji</span>') +
       '<span style="font-size:10px;color:#444;letter-spacing:.3px;">v' + APP_VERSION + ' &nbsp;·&nbsp; ' + APP_BUILD_DATE + '</span>' +
