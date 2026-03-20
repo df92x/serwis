@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Wycena">
-<link rel="manifest" id="pwa-manifest" href="blob:null/fccf6e3a-2fdb-42d4-aff5-1d4f78492fc9">
+<link rel="manifest" id="pwa-manifest" href="blob:null/ae288db6-c2d8-44f2-8649-6f9bc52cfe12">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -668,9 +668,9 @@ select.native-sel { display: none !important; }
 </div>
 
 <div id="start-overlay" style="display:flex;position:fixed;inset:0;background:var(--bg);z-index:100;overflow-y:auto;flex-direction:column;scrollbar-width:none;-ms-overflow-style:none;">
-  <div style="max-width:560px;width:100%;margin:0 auto;padding:40px 24px 60px;display:flex;flex-direction:column;gap:16px;min-height:100dvh;justify-content:center;">
+  <div style="max-width:560px;width:100%;margin:0 auto;padding:16px 24px 20px;display:flex;flex-direction:column;gap:5px;min-height:100dvh;justify-content:center;">
 
-    <div style="display:flex;flex-direction:column;align-items:center;gap:8px;margin-bottom:20px;">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:10px;">
       <div style="display:flex;align-items:center;gap:10px;">
         <svg width="40" height="40" viewBox="0 0 24 24" fill="#c0392b" stroke="#c0392b" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
         <span style="font-size:36px;font-weight:900;color:#c0392b;letter-spacing:2px;">SERWIS</span>
@@ -678,34 +678,32 @@ select.native-sel { display: none !important; }
       <div id="main-sync-panel" style="width:100%;background:#0d0d14;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-top:4px;"><button onclick="loginGoogle()" style="width:100%;background:none;border:none;color:var(--text3);font-size:13px;font-weight:600;padding:14px 16px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#556" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>Zaloguj się z Google Drive</button></div>
     </div>
 
-    <div style="height:48px;"></div>
-
-    <button onclick="startNowe()" style="width:100%;padding:28px 20px;background:#16a34a;border:none;border-radius:16px;color:#fff;font-size:22px;font-weight:700;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:6px;">
-      <span style="flex:0 0 80px;display:flex;align-items:center;justify-content:center;"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></span>
+    <button onclick="startNowe()" style="width:100%;padding:14px 20px;background:#16a34a;border:none;border-radius:16px;color:#fff;font-size:22px;font-weight:700;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:0;">
+      <span style="flex:0 0 80px;display:flex;align-items:center;justify-content:center;"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></span>
       <span style="flex:1;text-align:center;">DODAJ<br><span style="font-size:14px;font-weight:500;opacity:0.85;text-transform:none;letter-spacing:0;">Nowe zlecenie</span></span>
       <span style="flex:0 0 80px;"></span>
     </button>
-    <button onclick="startAktualne()" style="width:100%;padding:28px 20px;background:#2563eb;border:none;border-radius:16px;color:#fff;font-size:22px;font-weight:700;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:6px;">
-      <span style="flex:0 0 80px;display:flex;align-items:center;justify-content:center;"><svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg></span>
+    <button onclick="startAktualne()" style="width:100%;padding:14px 20px;background:#2563eb;border:none;border-radius:16px;color:#fff;font-size:22px;font-weight:700;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:0;">
+      <span style="flex:0 0 80px;display:flex;align-items:center;justify-content:center;"><svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg></span>
       <span style="flex:1;text-align:center;">PRZEGLĄDAJ<br><span style="font-size:14px;font-weight:500;opacity:0.85;text-transform:none;letter-spacing:0;">Lista zleceń</span></span>
       <span style="flex:0 0 80px;"></span>
     </button>
-    <button onclick="startKalkulator()" style="width:100%;padding:28px 20px;background:#6d28d9;border:none;border-radius:16px;color:#fff;font-size:22px;font-weight:700;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:0;">
-      <span style="flex:0 0 80px;display:flex;align-items:center;justify-content:center;"><svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M4 2a1 1 0 0 0-1 1v18l3-2 3 2 3-2 3 2 3-2V3a1 1 0 0 0-1-1H4zm2 5h8a1 1 0 0 1 0 2H6a1 1 0 0 1 0-2zm0 4h8a1 1 0 0 1 0 2H6a1 1 0 0 1 0-2zm0 4h5a1 1 0 0 1 0 2H6a1 1 0 0 1 0-2z"></path></svg></span>
+    <button onclick="startKalkulator()" style="width:100%;padding:14px 20px;background:#6d28d9;border:none;border-radius:16px;color:#fff;font-size:22px;font-weight:700;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:0;">
+      <span style="flex:0 0 80px;display:flex;align-items:center;justify-content:center;"><svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M4 2a1 1 0 0 0-1 1v18l3-2 3 2 3-2 3 2 3-2V3a1 1 0 0 0-1-1H4zm2 5h8a1 1 0 0 1 0 2H6a1 1 0 0 1 0-2zm0 4h8a1 1 0 0 1 0 2H6a1 1 0 0 1 0-2zm0 4h5a1 1 0 0 1 0 2H6a1 1 0 0 1 0-2z"></path></svg></span>
       <span style="flex:1;text-align:center;">WYCENA<br><span style="font-size:14px;font-weight:500;opacity:0.85;text-transform:none;letter-spacing:0;">Kosztorys naprawy</span></span>
       <span style="flex:0 0 80px;"></span>
     </button>
-    <div style="width:100%;height:1px;background:var(--border);margin:12px 0;"></div>
-    <button onclick="startLancuch()" style="width:100%;padding:16px;background:none;border:1px solid #0891b2;border-radius:12px;color:#67e8f9;font-size:17px;font-weight:600;cursor:pointer;letter-spacing:.4px;display:flex;align-items:center;justify-content:center;gap:12px;">
+    <div style="width:100%;height:1px;background:var(--border);margin:2px 0;"></div>
+    <button onclick="startLancuch()" style="width:100%;padding:10px;background:none;border:1px solid #0891b2;border-radius:12px;color:#67e8f9;font-size:17px;font-weight:600;cursor:pointer;letter-spacing:.4px;display:flex;align-items:center;justify-content:center;gap:12px;">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
       Łańcuch
     </button>
-    <button onclick="startKalkulatorProsty()" style="width:100%;padding:16px;background:none;border:1px solid #0891b2;border-radius:12px;color:#67e8f9;font-size:17px;font-weight:600;cursor:pointer;letter-spacing:.4px;display:flex;align-items:center;justify-content:center;gap:12px;">
+    <button onclick="startKalkulatorProsty()" style="width:100%;padding:10px;background:none;border:1px solid #0891b2;border-radius:12px;color:#67e8f9;font-size:17px;font-weight:600;cursor:pointer;letter-spacing:.4px;display:flex;align-items:center;justify-content:center;gap:12px;">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" stroke="#0891b2" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"></rect><rect x="7" y="7" width="4" height="2" rx="0.5" fill="#0e7490"></rect><rect x="13" y="7" width="4" height="2" rx="0.5" fill="#0e7490"></rect><rect x="7" y="11" width="4" height="2" rx="0.5" fill="#0e7490"></rect><rect x="13" y="11" width="4" height="2" rx="0.5" fill="#0e7490"></rect><rect x="7" y="15" width="4" height="2" rx="0.5" fill="#0e7490"></rect><rect x="13" y="15" width="4" height="4" rx="0.5" fill="#0e7490"></rect></svg>
       Kalkulator
     </button>
 
-    <div style="width:100%;height:1px;background:var(--border);margin:12px 0;"></div>
+    <div style="width:100%;height:1px;background:var(--border);margin:2px 0;"></div>
 
     <style>
       @keyframes blink-red { 0%,100%{opacity:1} 50%{opacity:0.2} }
@@ -6615,14 +6613,14 @@ window.cselSetValue = cselSetValue;
 </div>
 
 <!-- GitHub Update Modal -->
-<div id="github-update-modal" style="display: flex; position: fixed; inset: 0px; z-index: 1100; background: rgba(0, 0, 0, 0.88); align-items: center; justify-content: center;">
+<div id="github-update-modal" style="visibility: visible; pointer-events: auto; position: fixed; inset: 0px; z-index: 1100; background: rgba(0, 0, 0, 0.88); display: flex; align-items: center; justify-content: center;">
   <div style="background:#0d1117;border:1px solid #238636;border-radius:16px;padding:24px 20px;max-width:360px;width:92%;margin:0 auto;display:flex;flex-direction:column;gap:14px;">
     <div style="display:flex;align-items:center;justify-content:space-between;">
       <div style="display:flex;align-items:center;gap:8px;">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="#3fb950" stroke="none"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.605-3.369-1.342-3.369-1.342-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0 1 12 6.836a9.59 9.59 0 0 1 2.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.741 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"></path></svg>
         <span style="font-size:16px;font-weight:700;color:#fff;">Update App</span>
       </div>
-      <button onclick="$('github-update-modal').style.display='none'" style="background:none;border:none;color:#8b949e;font-size:22px;cursor:pointer;line-height:1;">×</button>
+      <button onclick="ghModalClose()" style="background:none;border:none;color:#8b949e;font-size:22px;cursor:pointer;line-height:1;">×</button>
     </div>
     <div style="display:flex;flex-direction:column;gap:6px;">
       <label style="font-size:11px;font-weight:700;color:#8b949e;text-transform:uppercase;letter-spacing:.6px;">GitHub Token</label>
@@ -6641,7 +6639,7 @@ window.cselSetValue = cselSetValue;
     </label>
     <div id="gh-status" style="display: block; font-size: 13px; padding: 10px 12px; border-radius: 8px; font-weight: 600; text-align: center; background: rgb(17, 24, 39); border: 1px solid rgb(35, 134, 54); color: rgb(139, 148, 158);">⬆️ Wysyłanie…</div>
     <div style="display:flex;gap:10px;">
-      <button onclick="$('github-update-modal').style.display='none'" style="flex:1;padding:12px;background:none;border:1px solid #30363d;border-radius:8px;color:#8b949e;font-size:14px;font-weight:700;cursor:pointer;">Anuluj</button>
+      <button onclick="ghModalClose()" style="flex:1;padding:12px;background:none;border:1px solid #30363d;border-radius:8px;color:#8b949e;font-size:14px;font-weight:700;cursor:pointer;">Anuluj</button>
       <button id="gh-upload-btn" onclick="githubUpdate()" style="flex: 2 1 0%; padding: 12px; background: rgb(35, 134, 54); border: none; border-radius: 8px; color: rgb(255, 255, 255); font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; opacity: 0.6;" disabled="">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 16 12 12 8 16"></polyline><line x1="12" y1="12" x2="12" y2="21"></line><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path></svg>
         Wyślij update
@@ -6651,11 +6649,22 @@ window.cselSetValue = cselSetValue;
 </div>
 
 <script>
+function ghModalOpen() {
+  var m = $('github-update-modal');
+  m.style.visibility = 'visible';
+  m.style.pointerEvents = 'auto';
+}
+function ghModalClose() {
+  var m = $('github-update-modal');
+  m.style.visibility = 'hidden';
+  m.style.pointerEvents = 'none';
+}
+
 function otworzGithubUpdate() {
   $('gh-token-input').value = localStorage.getItem('gh_token') || '';
   $('gh-repo-input').value  = localStorage.getItem('gh_repo')  || '';
   var s = $('gh-status'); s.style.display = 'none'; s.innerHTML = '';
-  $('github-update-modal').style.display = 'flex';
+  ghModalOpen();
 }
 
 function ghStatus(msg, type) {
@@ -6705,7 +6714,7 @@ async function githubUpdate() {
     ghStatus('✅ Wykonano', 'ok');
     setTimeout(function() {
       btn.disabled = false; btn.style.opacity = '1';
-      $('github-update-modal').style.display = 'none';
+      ghModalClose();
       $('start-overlay').style.display = 'flex';
     }, 1000);
   } catch(e) {
