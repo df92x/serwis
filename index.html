@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Wycena">
-<link rel="manifest" id="pwa-manifest" href="blob:null/f0b8cd62-8bbe-428c-8baf-9a71a277ea20">
+<link rel="manifest" id="pwa-manifest" href="blob:null/1b13f627-7655-4ec7-b0ae-ed746cea48ab">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -5919,7 +5919,21 @@ function _setToken(token) {
 }
 
 function loginGoogle() {
-  if (!window.google) { alert('Brak połączenia z Google'); return; }
+  // Jeśli biblioteka GSI jeszcze się ładuje — poczekaj
+  if (!window.google || !window.google.accounts) {
+    var tries = 0;
+    var wait = setInterval(function() {
+      tries++;
+      if (window.google && window.google.accounts) {
+        clearInterval(wait);
+        loginGoogle();
+      } else if (tries > 30) {
+        clearInterval(wait);
+        alert('Nie można załadować Google Sign-In. Sprawdź połączenie z internetem i odśwież stronę.');
+      }
+    }, 200);
+    return;
+  }
   google.accounts.oauth2.initTokenClient({
     client_id: GDRIVE_CLIENT_ID,
     scope: GDRIVE_SCOPE,
@@ -5953,7 +5967,12 @@ function logoutGoogle() {
 // ── Cichy refresh tokenu przy starcie ─────
 function _silentAuth() {
   const email = localStorage.getItem('gdrive-email');
-  if (!email || !window.google) return;
+  if (!email) return;
+  // Poczekaj aż GSI się załaduje (async defer)
+  if (!window.google || !window.google.accounts) {
+    setTimeout(_silentAuth, 400);
+    return;
+  }
   try {
     google.accounts.oauth2.initTokenClient({
       client_id: GDRIVE_CLIENT_ID,
@@ -6519,6 +6538,7 @@ window.cselSetValue = cselSetValue;
       <svg width="24" height="24" viewBox="0 0 24 24" fill="#3fb950" stroke="none"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.605-3.369-1.342-3.369-1.342-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0 1 12 6.836a9.59 9.59 0 0 1 2.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.741 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"></path></svg>
       Update App
     </button>
+    
   </div>
 </div>
 <div id="confirm-modal" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;">
@@ -6594,82 +6614,9 @@ window.cselSetValue = cselSetValue;
   </div>
 </div>
 
-<script>
-const CF_ACCOUNT_ID = '24b1b4edf2a0f5ffe6af1f90bd1eb05c';
-const CF_PROJECT    = 'serwis';
-
-function otworzCFUpload() {
-  const saved = localStorage.getItem('cf_token_serwis');
-  if (saved) { $('cf-token-input').value = saved; $('cf-token-save').checked = true; }
-  cfStatusClear();
-  $('cf-upload-modal').style.display = 'flex';
-}
-
-function cfStatusClear() {
-  var s = $('cf-status'); s.style.display='none'; s.textContent='';
-}
-
-function cfStatus(msg, type) {
-  var s = $('cf-status');
-  s.style.display = 'block';
-  s.textContent = msg;
-  if (type==='ok')  { s.style.background='#0d2a0d'; s.style.border='1px solid #2ea043'; s.style.color='#3fb950'; }
-  else if (type==='err') { s.style.background='#2a0d0d'; s.style.border='1px solid #f85149'; s.style.color='#f85149'; }
-  else              { s.style.background='#1a1000'; s.style.border='1px solid #f6821f'; s.style.color='#f6821f'; }
-}
-
-async function cfUpload() {
-  var token = $('cf-token-input').value.trim();
-  if (!token) { cfStatus('⚠️ Wpisz API Token!', 'err'); return; }
-
-  if ($('cf-token-save').checked) localStorage.setItem('cf_token_serwis', token);
-  else localStorage.removeItem('cf_token_serwis');
-
-  var btn = $('cf-upload-btn');
-  btn.disabled = true; btn.style.opacity = '0.6';
-  cfStatus('⏳ Przygotowanie pliku...', 'info');
-
-  try {
-    var html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
-
-    // Buduj FormData z plikiem index.html
-    var formData = new FormData();
-    var blob = new Blob([html], { type: 'text/html' });
-    formData.append('manifest', JSON.stringify({ "index.html": { "hash": "index.html" } }));
-    formData.append('index.html', blob, 'index.html');
-
-    cfStatus('⏳ Tworzenie deploymentu...', 'info');
-
-    var res = await fetch(
-      'https://api.cloudflare.com/client/v4/accounts/' + CF_ACCOUNT_ID + '/pages/projects/' + CF_PROJECT + '/deployments',
-      {
-        method: 'POST',
-        headers: { 'Authorization': 'Bearer ' + token },
-        body: formData
-      }
-    );
-
-    var data = await res.json();
-
-    if (!res.ok || !data.success) {
-      var errMsg = (data.errors && data.errors[0]) ? data.errors[0].message : ('HTTP ' + res.status);
-      throw new Error(errMsg);
-    }
-
-    var deployUrl = data.result && data.result.url ? data.result.url : 'serwis.pages.dev';
-    cfStatus('✅ Wgrano! → ' + deployUrl, 'ok');
-    setTimeout(function(){ btn.disabled=false; btn.style.opacity='1'; }, 4000);
-
-  } catch(e) {
-    cfStatus('❌ Błąd: ' + e.message, 'err');
-    btn.disabled = false; btn.style.opacity = '1';
-  }
-}
-</script>
-<!-- GitHub Auto-Update Modal -->
+<!-- GitHub Update Modal -->
 <div id="github-update-modal" style="display: flex; position: fixed; inset: 0px; z-index: 1100; background: rgba(0, 0, 0, 0.88); align-items: center; justify-content: center;">
   <div style="background:#0d1117;border:1px solid #238636;border-radius:16px;padding:24px 20px;max-width:360px;width:92%;margin:0 auto;display:flex;flex-direction:column;gap:14px;">
-
     <div style="display:flex;align-items:center;justify-content:space-between;">
       <div style="display:flex;align-items:center;gap:8px;">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="#3fb950" stroke="none"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.605-3.369-1.342-3.369-1.342-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0 1 12 6.836a9.59 9.59 0 0 1 2.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.741 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"></path></svg>
@@ -6677,42 +6624,29 @@ async function cfUpload() {
       </div>
       <button onclick="$('github-update-modal').style.display='none'" style="background:none;border:none;color:#8b949e;font-size:22px;cursor:pointer;line-height:1;">×</button>
     </div>
-
-    <!-- Token -->
     <div style="display:flex;flex-direction:column;gap:6px;">
-      <label style="font-size:11px;font-weight:700;color:#8b949e;text-transform:uppercase;letter-spacing:.6px;">GitHub Personal Access Token</label>
+      <label style="font-size:11px;font-weight:700;color:#8b949e;text-transform:uppercase;letter-spacing:.6px;">GitHub Token</label>
       <div style="position:relative;">
-        <input type="password" id="gh-token-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" style="width: 100%; font-size: 12px; padding: 10px 36px 10px 12px; border: 1px solid rgb(48, 54, 61); border-radius: 8px; background: rgb(22, 27, 34); color: rgb(230, 237, 243); outline: none; font-family: monospace;" onfocus="this.style.borderColor='#238636'" onblur="this.style.borderColor='#30363d'">
+        <input type="password" id="gh-token-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" style="width:100%;font-size:12px;padding:10px 36px 10px 12px;border:1px solid #30363d;border-radius:8px;background:#161b22;color:#e6edf3;outline:none;font-family:monospace;" onfocus="this.style.borderColor='#238636'" onblur="this.style.borderColor='#30363d'">
         <button onclick="(function(){var i=$('gh-token-input');i.type=i.type==='password'?'text':'password';})()" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:#8b949e;cursor:pointer;font-size:14px;">👁</button>
       </div>
-      <div style="font-size:11px;color:#556;line-height:1.6;">
-
-      </div>
     </div>
-
-    <!-- Repo -->
     <div style="display:flex;flex-direction:column;gap:6px;">
       <label style="font-size:11px;font-weight:700;color:#8b949e;text-transform:uppercase;letter-spacing:.6px;">Repozytorium (user/repo)</label>
-      <input type="text" id="gh-repo-input" placeholder="df92x/serwis" style="width: 100%; font-size: 13px; padding: 10px 12px; border: 1px solid rgb(48, 54, 61); border-radius: 8px; background: rgb(22, 27, 34); color: rgb(230, 237, 243); outline: none;" onfocus="this.style.borderColor='#238636'" onblur="this.style.borderColor='#30363d'">
+      <input type="text" id="gh-repo-input" placeholder="df92x/serwis" style="width:100%;font-size:13px;padding:10px 12px;border:1px solid #30363d;border-radius:8px;background:#161b22;color:#e6edf3;outline:none;" onfocus="this.style.borderColor='#238636'" onblur="this.style.borderColor='#30363d'">
     </div>
-
     <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:#8b949e;">
       <input type="checkbox" id="gh-save" checked="" style="accent-color:#238636;">
       Zapamiętaj dane w przeglądarce
     </label>
-
-    <div id="gh-status" style="display: block; font-size: 12px; padding: 10px 12px; border-radius: 8px; font-weight: 600; line-height: 1.6; text-align: center; background: rgb(17, 24, 39); border: 1px solid rgb(35, 134, 54); color: rgb(139, 148, 158);">📄 Krok 2/3 — przygotowanie pliku…</div>
-
+    <div id="gh-status" style="display: block; font-size: 13px; padding: 10px 12px; border-radius: 8px; font-weight: 600; text-align: center; background: rgb(17, 24, 39); border: 1px solid rgb(35, 134, 54); color: rgb(139, 148, 158);">⬆️ Wysyłanie…</div>
     <div style="display:flex;gap:10px;">
-      <button onclick="$('github-update-modal').style.display='none'" style="flex:1;padding:12px;background:none;border:1px solid #30363d;border-radius:8px;color:#8b949e;font-size:14px;font-weight:700;cursor:pointer;">
-        Anuluj
-      </button>
+      <button onclick="$('github-update-modal').style.display='none'" style="flex:1;padding:12px;background:none;border:1px solid #30363d;border-radius:8px;color:#8b949e;font-size:14px;font-weight:700;cursor:pointer;">Anuluj</button>
       <button id="gh-upload-btn" onclick="githubUpdate()" style="flex: 2 1 0%; padding: 12px; background: rgb(35, 134, 54); border: none; border-radius: 8px; color: rgb(255, 255, 255); font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; opacity: 0.6;" disabled="">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 16 12 12 8 16"></polyline><line x1="12" y1="12" x2="12" y2="21"></line><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path></svg>
         Wyślij update
       </button>
     </div>
-
   </div>
 </div>
 
@@ -6720,34 +6654,24 @@ async function cfUpload() {
 function otworzGithubUpdate() {
   $('gh-token-input').value = localStorage.getItem('gh_token') || '';
   $('gh-repo-input').value  = localStorage.getItem('gh_repo')  || '';
-  ghStatusClear();
+  var s = $('gh-status'); s.style.display = 'none'; s.innerHTML = '';
   $('github-update-modal').style.display = 'flex';
 }
 
-function ghStatusClear() {
-  var s = $('gh-status');
-  s.style.display = 'none';
-  s.innerHTML = '';
-}
-
-function ghStatus(msg, type, link) {
+function ghStatus(msg, type) {
   var s = $('gh-status');
   s.style.display = 'block';
+  s.textContent = msg;
   if (type === 'ok')       { s.style.background='#0d2a0d'; s.style.border='1px solid #2ea043'; s.style.color='#3fb950'; }
   else if (type === 'err') { s.style.background='#2a0d0d'; s.style.border='1px solid #f85149'; s.style.color='#f85149'; }
   else                     { s.style.background='#111827'; s.style.border='1px solid #238636'; s.style.color='#8b949e'; }
-  s.innerHTML = escHTML(msg) + (link
-    ? '<br><a href="' + link + '" target="_blank" style="color:#58a6ff;text-decoration:underline;">' + link + '</a>'
-    : '');
 }
 
 async function githubUpdate() {
   var token = $('gh-token-input').value.trim();
   var repo  = $('gh-repo-input').value.trim().replace(/^https?:\/\/github\.com\//,'').replace(/\/$/,'');
-
   if (!token) { ghStatus('⚠️ Wpisz GitHub Token!', 'err'); return; }
-  if (!repo || !repo.includes('/')) { ghStatus('⚠️ Wpisz repo w formacie: user/nazwa', 'err'); return; }
-
+  if (!repo || !repo.includes('/')) { ghStatus('⚠️ Wpisz repo: user/nazwa', 'err'); return; }
   if ($('gh-save').checked) {
     localStorage.setItem('gh_token', token);
     localStorage.setItem('gh_repo',  repo);
@@ -6755,79 +6679,43 @@ async function githubUpdate() {
     localStorage.removeItem('gh_token');
     localStorage.removeItem('gh_repo');
   }
-
   var btn = $('gh-upload-btn');
-  btn.disabled = true;
-  btn.style.opacity = '0.6';
-
-  var apiBase = 'https://api.github.com/repos/' + repo + '/contents/index.html';
-  var headers = {
-    'Authorization': 'token ' + token,
-    'Accept':        'application/vnd.github.v3+json',
-    'Content-Type':  'application/json'
-  };
-
+  btn.disabled = true; btn.style.opacity = '0.6';
+  var apiUrl = 'https://api.github.com/repos/' + repo + '/contents/index.html';
+  var headers = { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' };
   try {
-    // Krok 1 — pobierz aktualny SHA pliku (wymagany do nadpisania)
-    ghStatus('🔍 Krok 1/3 — pobieranie SHA pliku…', 'info');
-    var getRes = await fetch(apiBase, { headers: headers });
-
+    ghStatus('🔍 Pobieranie SHA…', 'info');
+    var getRes = await fetch(apiUrl, { headers: headers });
     var sha = null;
-    if (getRes.status === 200) {
-      var getData = await getRes.json();
-      sha = getData.sha;
-    } else if (getRes.status === 404) {
-      // Plik nie istnieje — zostanie utworzony
-      sha = null;
-    } else if (getRes.status === 401) {
-      throw new Error('Nieprawidłowy token. Sprawdź uprawnienia (scope: repo).');
-    } else {
-      throw new Error('GitHub API: HTTP ' + getRes.status);
-    }
+    if (getRes.status === 200) { sha = (await getRes.json()).sha; }
+    else if (getRes.status === 401) { throw new Error('Nieprawidłowy token GitHub.'); }
+    else if (getRes.status !== 404) { throw new Error('GitHub API: HTTP ' + getRes.status); }
 
-    // Krok 2 — zakoduj HTML do base64
-    ghStatus('📄 Krok 2/3 — przygotowanie pliku…', 'info');
-    var html    = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
-    var b64     = btoa(unescape(encodeURIComponent(html)));
-    var now     = new Date().toLocaleString('pl-PL');
-    var message = 'Auto-update z aplikacji SERWIS — ' + now;
+    ghStatus('⬆️ Wysyłanie…', 'info');
+    var html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+    var body = {
+      message: 'Update App ' + new Date().toLocaleString('pl-PL'),
+      content: btoa(unescape(encodeURIComponent(html))),
+      branch:  'main'
+    };
+    if (sha) body.sha = sha;
+    var putRes = await fetch(apiUrl, { method: 'PUT', headers: headers, body: JSON.stringify(body) });
+    if (!putRes.ok) { var e = await putRes.json(); throw new Error(e.message || 'HTTP ' + putRes.status); }
 
-    // Krok 3 — wyślij plik na GitHub
-    ghStatus('⬆️ Krok 3/3 — wysyłanie na GitHub…', 'info');
-    var body = { message: message, content: b64, branch: 'main' };
-    if (sha) body.sha = sha; // wymagane przy nadpisaniu
-
-    var putRes = await fetch(apiBase, {
-      method:  'PUT',
-      headers: headers,
-      body:    JSON.stringify(body)
-    });
-
-    var putData = await putRes.json();
-
-    if (!putRes.ok) {
-      var ghErr = putData.message || ('HTTP ' + putRes.status);
-      throw new Error(ghErr);
-    }
-
-    var pageUrl = '';
     ghStatus('✅ Wykonano', 'ok');
     setTimeout(function() {
-      btn.disabled = false;
-      btn.style.opacity = '1';
+      btn.disabled = false; btn.style.opacity = '1';
       $('github-update-modal').style.display = 'none';
       $('start-overlay').style.display = 'flex';
     }, 1000);
-
   } catch(e) {
     ghStatus('❌ ' + (e.message || String(e)), 'err');
-    btn.disabled = false;
-    btn.style.opacity = '1';
+    btn.disabled = false; btn.style.opacity = '1';
   }
 }
 
 window.otworzGithubUpdate = otworzGithubUpdate;
-window.githubUpdate       = githubUpdate;
+window.githubUpdate = githubUpdate;
 </script>
 
 
