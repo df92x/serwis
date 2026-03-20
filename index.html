@@ -6587,7 +6587,7 @@ window.cselSetValue = cselSetValue;
       Kopia zapasowa
     </button>
     <button onclick="$('admin-modal').style.display='none';otworzGithubUpdate()" style="width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:#0d1117;border:1px solid #238636;border-radius:10px;padding:16px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="#3fb950" stroke="none"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.605-3.369-1.342-3.369-1.342-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0 1 12 6.836a9.59 9.59 0 0 1 2.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.741 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3fb950" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
       Update App
     </button>
     </button>
@@ -6693,7 +6693,7 @@ function otworzGithubUpdate() {
     <div style="background:#0d1117;border:1px solid #238636;border-radius:16px;padding:24px 20px;max-width:360px;width:92%;margin:0 auto;display:flex;flex-direction:column;gap:14px;">
       <div style="display:flex;align-items:center;justify-content:space-between;">
         <div style="display:flex;align-items:center;gap:8px;">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="#3fb950" stroke="none"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.605-3.369-1.342-3.369-1.342-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0 1 12 6.836a9.59 9.59 0 0 1 2.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.741 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3fb950" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
           <span style="font-size:16px;font-weight:700;color:#fff;">Update App</span>
         </div>
         <button id="gh-close-btn" style="background:none;border:none;color:#8b949e;font-size:22px;cursor:pointer;line-height:1;">&times;</button>
@@ -6710,7 +6710,7 @@ function otworzGithubUpdate() {
       </div>
 
       <div style="display:flex;flex-direction:column;gap:6px;">
-        <label style="font-size:11px;font-weight:700;color:#8b949e;text-transform:uppercase;letter-spacing:.6px;">GitHub Token</label>
+        <label style="font-size:11px;font-weight:700;color:#8b949e;text-transform:uppercase;letter-spacing:.6px;">Token</label>
         <div style="position:relative;">
           <input type="password" id="gh-token-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
             style="width:100%;font-size:12px;padding:10px 36px 10px 12px;border:1px solid #30363d;border-radius:8px;background:#161b22;color:#e6edf3;outline:none;font-family:monospace;">
@@ -6718,7 +6718,7 @@ function otworzGithubUpdate() {
         </div>
       </div>
       <div style="display:flex;flex-direction:column;gap:6px;">
-        <label style="font-size:11px;font-weight:700;color:#8b949e;text-transform:uppercase;letter-spacing:.6px;">Repozytorium (user/repo)</label>
+        <label style="font-size:11px;font-weight:700;color:#8b949e;text-transform:uppercase;letter-spacing:.6px;">Serwer</label>
         <input type="text" id="gh-repo-input" placeholder="df92x/serwis"
           style="width:100%;font-size:13px;padding:10px 12px;border:1px solid #30363d;border-radius:8px;background:#161b22;color:#e6edf3;outline:none;">
       </div>
@@ -6783,7 +6783,7 @@ async function githubUpdate() {
   var fileInput = document.getElementById('gh-file-input');
   var file = fileInput && fileInput.files[0];
 
-  if (!token) { ghStatus('⚠️ Wpisz GitHub Token!', 'err'); return; }
+  if (!token) { ghStatus('⚠️ Wpisz Token!', 'err'); return; }
   if (!repo || !repo.includes('/')) { ghStatus('⚠️ Wpisz repo: user/nazwa', 'err'); return; }
   if (!file) { ghStatus('⚠️ Wybierz plik HTML!', 'err'); return; }
 
