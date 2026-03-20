@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Wycena">
-<link rel="manifest" id="pwa-manifest" href="blob:null/fdd450ce-0b85-4a54-9dff-b4f11bcfee32">
+<link rel="manifest" id="pwa-manifest" href="blob:null/9aea370e-087b-46f8-8548-c95a752bc102">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -667,7 +667,7 @@ select.native-sel { display: none !important; }
   </div>
 </div>
 
-<div id="start-overlay" style="display:flex;position:fixed;inset:0;background:var(--bg);z-index:100;overflow-y:auto;flex-direction:column;scrollbar-width:none;-ms-overflow-style:none;">
+<div id="start-overlay" style="display: flex; position: fixed; inset: 0px; background: var(--bg); z-index: 100; overflow-y: auto; flex-direction: column; scrollbar-width: none;">
   <div style="max-width:560px;width:100%;margin:0 auto;padding:16px 24px 20px;display:flex;flex-direction:column;gap:8px;min-height:100dvh;justify-content:center;">
 
     <div style="display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:10px;">
@@ -675,20 +675,20 @@ select.native-sel { display: none !important; }
         <svg width="40" height="40" viewBox="0 0 24 24" fill="#c0392b" stroke="#c0392b" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
         <span style="font-size:36px;font-weight:900;color:#c0392b;letter-spacing:2px;">SERWIS</span>
       </div>
-      <div id="main-sync-panel" style="width:100%;background:#0d0d14;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-top:4px;"><div style="display:flex;flex-direction:column;align-items:center;gap:2px;"><button onclick="loginGoogle()" style="width:100%;background:none;border:none;color:var(--text3);font-size:13px;font-weight:600;padding:12px 16px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#556" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>Zaloguj się z Google Drive</button><span style="font-size:10px;color:#444;letter-spacing:.3px;padding-bottom:6px;">v1.0.2 &nbsp;·&nbsp; 20.03 21:56</span></div></div>
+      <div id="main-sync-panel" style="width:100%;background:#0d0d14;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-top:4px;"><div style="display:flex;flex-direction:column;align-items:center;gap:2px;"><button onclick="loginGoogle()" style="width:100%;background:none;border:none;color:var(--text3);font-size:13px;font-weight:600;padding:12px 16px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#556" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>Zaloguj się z Google Drive</button><span style="font-size:10px;color:#444;letter-spacing:.3px;padding-bottom:6px;">v1.0.3 &nbsp;·&nbsp; 20.03 21:59</span></div></div>
     </div>
 
-    <button onclick="startNowe()" style="width:100%;padding:16px 20px;background:#16a34a;border:none;border-radius:16px;color:#fff;font-size:22px;font-weight:700;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:0;">
+    <button onclick="startNowe()" style="width:100%;padding:16px 20px;background:linear-gradient(180deg,#1db954 0%,#16a34a 50%,#0f7a38 100%);border:none;border-radius:16px;color:#fff;font-size:22px;font-weight:700;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:0;">
       <span style="flex:0 0 80px;display:flex;align-items:center;justify-content:center;"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></span>
       <span style="flex:1;text-align:center;">DODAJ<br><span style="font-size:14px;font-weight:500;opacity:0.85;text-transform:none;letter-spacing:0;">Nowe zlecenie</span></span>
       <span style="flex:0 0 80px;"></span>
     </button>
-    <button onclick="startAktualne()" style="width:100%;padding:16px 20px;background:#2563eb;border:none;border-radius:16px;color:#fff;font-size:22px;font-weight:700;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:0;">
+    <button onclick="startAktualne()" style="width:100%;padding:16px 20px;background:linear-gradient(180deg,#3b82f6 0%,#2563eb 50%,#1a4fc4 100%);border:none;border-radius:16px;color:#fff;font-size:22px;font-weight:700;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:0;">
       <span style="flex:0 0 80px;display:flex;align-items:center;justify-content:center;"><svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg></span>
       <span style="flex:1;text-align:center;">PRZEGLĄDAJ<br><span style="font-size:14px;font-weight:500;opacity:0.85;text-transform:none;letter-spacing:0;">Lista zleceń</span></span>
       <span style="flex:0 0 80px;"></span>
     </button>
-    <button onclick="startKalkulator()" style="width:100%;padding:16px 20px;background:#6d28d9;border:none;border-radius:16px;color:#fff;font-size:22px;font-weight:700;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:0;">
+    <button onclick="startKalkulator()" style="width:100%;padding:16px 20px;background:linear-gradient(180deg,#8b5cf6 0%,#6d28d9 50%,#521fa3 100%);border:none;border-radius:16px;color:#fff;font-size:22px;font-weight:700;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:0;">
       <span style="flex:0 0 80px;display:flex;align-items:center;justify-content:center;"><svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M4 2a1 1 0 0 0-1 1v18l3-2 3 2 3-2 3 2 3-2V3a1 1 0 0 0-1-1H4zm2 5h8a1 1 0 0 1 0 2H6a1 1 0 0 1 0-2zm0 4h8a1 1 0 0 1 0 2H6a1 1 0 0 1 0-2zm0 4h5a1 1 0 0 1 0 2H6a1 1 0 0 1 0-2z"></path></svg></span>
       <span style="flex:1;text-align:center;">WYCENA<br><span style="font-size:14px;font-weight:500;opacity:0.85;text-transform:none;letter-spacing:0;">Kosztorys naprawy</span></span>
       <span style="flex:0 0 80px;"></span>
@@ -1018,7 +1018,7 @@ select.native-sel { display: none !important; }
   </div>
 </div>
 
-<div id="history-overlay" class="overlay-full">
+<div id="history-overlay" class="overlay-full" style="display: none;">
   <div class="app">
     <header>
       <svg width="16" height="16" viewBox="0 0 24 24" fill="#c0392b" stroke="#c0392b" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
@@ -1027,14 +1027,12 @@ select.native-sel { display: none !important; }
     </header>
     <div style="padding:0 16px 0;">
       <div style="display:flex;border-bottom:1px solid var(--border);margin-bottom:10px;">
-        <button id="tab-historia" onclick="switchTab('historia')" style="flex:1;background:none;border:none;border-bottom:2px solid #ef4444;color:#ef4444;font-size:13px;font-weight:700;padding:10px 0;cursor:pointer;text-transform:uppercase;letter-spacing:.5px;">Przyjęte</button>
+        <button id="tab-historia" onclick="switchTab('historia')" style="flex: 1 1 0%; background: none; border-top: none; border-right: none; border-left: none; border-image: initial; border-bottom: 2px solid rgb(239, 68, 68); color: rgb(239, 68, 68); font-size: 13px; font-weight: 700; padding: 10px 0px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px;">Przyjęte</button>
         <button id="tab-wydanie" onclick="switchTab('wydanie')" style="flex:1;background:none;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:13px;font-weight:700;padding:10px 0;cursor:pointer;text-transform:uppercase;letter-spacing:.5px;">Do wydania</button>
         <button id="tab-archiwum" onclick="switchTab('archiwum')" style="flex:1;background:none;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:13px;font-weight:700;padding:10px 0;cursor:pointer;text-transform:uppercase;letter-spacing:.5px;">Wydane</button>
-        <button id="tab-kosz" onclick="switchTab('kosz')" style="flex:0 0 auto;background:none;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:13px;font-weight:700;padding:10px 10px;cursor:pointer;" title="Kosz">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M10 11v6"></path><path d="M14 11v6"></path><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path></svg>
-        </button>
+        <button id="tab-kosz" onclick="switchTab('kosz')" style="flex:0 0 auto;background:none;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:13px;font-weight:700;padding:10px 10px;cursor:pointer;" title="Kosz"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M10 11v6"></path><path d="M14 11v6"></path><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path></svg></button>
       </div>
-      <div id="historia-search-wrap" style="display:none;padding:0 0 8px;">
+      <div id="historia-search-wrap" style="display: block; padding: 0px 0px 8px;">
         <input type="tel" id="historia-search-tel" placeholder="Szukaj: 000-000-000" maxlength="11" style="width:100%;font-size:15px;border:1px solid var(--border);border-radius:8px;padding:8px 12px;background:var(--bg2);color:var(--text);outline:none;" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
       </div>
       <div id="wydanie-search-wrap" style="display:none;padding:0 0 8px;">
@@ -1052,7 +1050,31 @@ select.native-sel { display: none !important; }
     </div>
     <div style="padding:0 8px 8px;">
       <div id="nowe-zlecenie-banner" style="display:none;margin-bottom:10px;"></div>
-      <div id="history-list"></div>
+      <div id="history-list" style=""><div class="history-item" style="border-color: rgba(239, 68, 68, 0.4); background-color: rgba(239, 68, 68, 0.05);">
+      <div class="history-item-top">
+        <div class="history-item-info">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <svg width="17" height="17" viewBox="0 0 17 17" style="flex-shrink:0;display:inline-block;vertical-align:middle;" xmlns="http://www.w3.org/2000/svg"><circle cx="8.5" cy="8.5" r="7.5" fill="none" stroke="#888" stroke-width="1.5"></circle><line x1="3" y1="14" x2="14" y2="3" stroke="#888" stroke-width="1.5"></line></svg>
+            <span style="font-size:17px;font-weight:700;color:#fff;">NS-BIKE</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:4px;font-size:16px;font-weight:600;color:#3b7cf4;margin-top:2px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>992-992-929</div>
+          <div style="font-size:13px;color:#f59e0b;font-weight:800;">Data naprawy: 22.03 Niedziela</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
+          <div style="font-size:13px;font-weight:500;color:#fff;text-align:right;">Przyjęte: 15.03 </div>
+          
+          <div class="history-item-total">862,00</div>
+        </div>
+      </div>
+      <div class="history-item-actions">
+        <a class="btn-history-sms" onclick="markSmsSent(1773596313414, this)" href="sms:992992929?body=NS-BIKE%20-%20przyj%C4%99to%20na%20serwis.%0AWst%C4%99pna%20data%20naprawy%3A%2022.03%0APo%20zako%C5%84czeniu%20naprawy%20otrzymasz%20SMS%20z%20kodem%20odbioru.%20Serwis"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg> SMS</a>
+        <button class="btn-history-load" style="background:#3b7cf4;border-color:#3b7cf4;" onclick="loadWycena(1773596313414)">Edytuj</button>
+        <div style="margin-left:auto;display:flex;gap:6px;">
+          <button class="btn-history-load" style="background:#22c55e;border-color:#22c55e;" onclick="openPodgladZlecenia(1773596313414)">INFO</button>
+          <button class="btn-history-load" style="background:#7c3aed;border-color:#7c3aed;" onclick="openRaport(1773596313414)">Naprawa</button>
+        </div>
+      </div>
+    </div></div>
       <div id="wydanie-list" style="display:none;"></div>
       <div id="archive-list" style="display:none;"></div>
       <div id="kosz-list" style="display:none;"></div>
