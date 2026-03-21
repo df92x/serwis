@@ -4072,7 +4072,6 @@ function deleteArchive(id) {
     localStorage.setItem(ARCHIVE_KEY, JSON.stringify(newArch));
     renderArchive();
     updateKoszBadge();
-    autoSync();
   });
 }
 
@@ -4137,7 +4136,6 @@ function restoreFromKosz(id) {
 
   kosz.splice(idx, 1);
   localStorage.setItem(KOSZ_KEY, JSON.stringify(kosz));
-  autoSync();
   renderKosz();
   updateKoszBadge();
 }
@@ -4167,7 +4165,6 @@ function wyczyscKosz() {
     localStorage.setItem(KOSZ_KEY, JSON.stringify([]));
     updateKoszBadge();
     renderKosz();
-    autoSync();
   });
 }
 window.wyczyscKosz = wyczyscKosz;
@@ -5261,7 +5258,6 @@ function saveRaportKoncowy() {
 
   const btn = $('btn-save-raport');
   if (saved) {
-    autoSync();
     btn.textContent = '✓ Zapisano naprawę';
     btn.style.background = '#16a34a';
     setTimeout(() => {
@@ -5947,7 +5943,7 @@ const GDRIVE_SCOPE     = 'https://www.googleapis.com/auth/drive.file https://www
 const GDRIVE_FOLDER    = 'Serwis Rowerowy';
 
 let gdriveToken   = null;
-let _syncTimer    = null;
+
 let _tokenTimer   = null;
 
 // ── Status UI ──────────────────────────────
@@ -6094,10 +6090,10 @@ function _silentAuth() {
         if (resp.error) return;
         _setToken(resp.access_token);
         setSyncDot('off');
-        // Sprawdź czas ostatniego synca — jeśli starszy niż 1 min, sync od razu
+        // Sync przy starcie tylko jeśli ostatni sync był ponad 30 min temu
         const lastSync = localStorage.getItem('gdrive-last-sync');
         const age = lastSync ? (Date.now() - new Date(lastSync).getTime()) : Infinity;
-        if (age > 60 * 1000) {
+        if (age > 30 * 60 * 1000) {
           _fullSync();
         }
       }
@@ -6292,24 +6288,16 @@ function manualSync() {
 }
 
 function autoSync() {
-  // Wywoływane przy zmianach danych — no-op, sync co 30 min
+  // no-op — sync tylko przy starcie (>30min) i manualnie
 }
 
-// ── Harmonogram co 30 min ──────────
-function scheduleSync() {
-  clearInterval(_syncTimer);
-  _syncTimer = setInterval(() => {
-    if (!gdriveToken) return;
-    _fullSync();
-  }, 30 * 60 * 1000);
-}
+// (brak harmonogramu automatycznego)
 
 window.loginGoogle  = loginGoogle;
 window.logoutGoogle = logoutGoogle;
 window.manualSync   = manualSync;
 
 // Inicjalizacja przy starcie
-scheduleSync();
 document.addEventListener('DOMContentLoaded', () => {
   // Wyrenderuj wiersz sync w adminie przy starcie
   updateAdminSyncRow();
