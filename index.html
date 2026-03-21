@@ -6306,7 +6306,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setSyncDot(localStorage.getItem('gdrive-email') ? 'off' : 'off');
   // Cichy login przy starcie — jeśli był wcześniej zalogowany,
   // pobierz token i sprawdź czy sync jest aktualny (> 1 min → sync od razu)
-  if (localStorage.getItem('gdrive-email')) {
+  if (localStorage.getItem('gdrive-email') && !sessionStorage.getItem('_from_edit_reload')) {
     setTimeout(() => _silentAuth(), 1500);
   }
 });
