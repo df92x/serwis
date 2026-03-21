@@ -685,17 +685,17 @@ select.native-sel { display: none !important; }
 
     <button onclick="startNowe()" style="width:100%;padding:16px 20px;background:linear-gradient(180deg,#1db954 0%,#16a34a 50%,#0f7a38 100%);border:none;border-radius:16px;color:#fff;font-size:22px;font-weight:700;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:0;">
       <span style="flex:0 0 80px;display:flex;align-items:center;justify-content:center;"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
-      <span style="flex:1;text-align:center;">DODAJ<br><span style="font-size:14px;font-weight:500;opacity:0.85;text-transform:none;letter-spacing:0;">Nowe zlecenie</span></span>
+      <span style="flex:1;text-align:center;">DODAJ</span>
       <span style="flex:0 0 80px;"></span>
     </button>
     <button onclick="startAktualne()" style="width:100%;padding:16px 20px;background:linear-gradient(180deg,#3b82f6 0%,#2563eb 50%,#1a4fc4 100%);border:none;border-radius:16px;color:#fff;font-size:22px;font-weight:700;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:0;">
       <span style="flex:0 0 80px;display:flex;align-items:center;justify-content:center;"><svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>
-      <span style="flex:1;text-align:center;">PRZEGLĄDAJ<br><span style="font-size:14px;font-weight:500;opacity:0.85;text-transform:none;letter-spacing:0;">Lista zleceń</span></span>
+      <span style="flex:1;text-align:center;">PRZEGLĄDAJ</span>
       <span style="flex:0 0 80px;"></span>
     </button>
     <button onclick="startKalkulator()" style="width:100%;padding:16px 20px;background:linear-gradient(180deg,#8b5cf6 0%,#6d28d9 50%,#521fa3 100%);border:none;border-radius:16px;color:#fff;font-size:22px;font-weight:700;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:0;">
       <span style="flex:0 0 80px;display:flex;align-items:center;justify-content:center;"><svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M4 2a1 1 0 0 0-1 1v18l3-2 3 2 3-2 3 2 3-2V3a1 1 0 0 0-1-1H4zm2 5h8a1 1 0 0 1 0 2H6a1 1 0 0 1 0-2zm0 4h8a1 1 0 0 1 0 2H6a1 1 0 0 1 0-2zm0 4h5a1 1 0 0 1 0 2H6a1 1 0 0 1 0-2z"/></svg></span>
-      <span style="flex:1;text-align:center;">WYCENA<br><span style="font-size:14px;font-weight:500;opacity:0.85;text-transform:none;letter-spacing:0;">Kosztorys naprawy</span></span>
+      <span style="flex:1;text-align:center;">WYCENA</span>
       <span style="flex:0 0 80px;"></span>
     </button>
     <div style="width:100%;height:1px;background:var(--border);margin:2px 0;"></div>
@@ -3619,19 +3619,35 @@ function openKopiaLokalnie() {
 
 window.openKopiaLokalnie = openKopiaLokalnie;
 
-function kopiaZapasowa() {
-  // Aktualizuj daty przed otwarciem
+// Kolor daty kopii: zielony <1h, biały <dziś, czerwony wczoraj+
+function _kopiaDateColor(iso) {
+  if (!iso) return '#ef4444';
+  const diff = Date.now() - new Date(iso).getTime();
+  if (diff < 60 * 60 * 1000)       return '#22c55e'; // < 1h — zielony
+  const todayStart = new Date(); todayStart.setHours(0,0,0,0);
+  if (new Date(iso) >= todayStart)  return '#e0e5f2'; // dziś — biały
+  return '#ef4444';                                   // wczoraj+ — czerwony
+}
+
+function _kopiaDateLabel(iso) {
+  if (!iso) return 'Brak kopii';
+  const d = new Date(iso);
+  return 'Ostatnia kopia: '
+    + d.toLocaleDateString('pl-PL', {day:'2-digit', month:'2-digit', year:'numeric'})
+    + ' ' + d.toLocaleTimeString('pl-PL', {hour:'2-digit', minute:'2-digit'});
+}
+
+function _updateKopiaLabels() {
+  const localEl  = $('kopia-last-local');
+  const gdriveEl = $('kopia-last-gdrive');
   const lastLocal  = localStorage.getItem('last-backup-local');
   const lastGdrive = localStorage.getItem('last-backup-gdrive');
-  const fmt = iso => {
-    if (!iso) return 'Brak kopii';
-    const d = new Date(iso);
-    return d.toLocaleDateString('pl-PL', {day:'2-digit',month:'2-digit',year:'numeric'})
-      + ' ' + d.toLocaleTimeString('pl-PL', {hour:'2-digit',minute:'2-digit'});
-  };
-  $('kopia-last-local').textContent  = 'Ostatnia kopia: ' + fmt(lastLocal);
-  const gdriveEl = $('kopia-last-gdrive');
-  if (gdriveEl) gdriveEl.textContent = 'Ostatnia kopia: ' + fmt(lastGdrive);
+  if (localEl)  { localEl.textContent  = _kopiaDateLabel(lastLocal);  localEl.style.color  = _kopiaDateColor(lastLocal); }
+  if (gdriveEl) { gdriveEl.textContent = _kopiaDateLabel(lastGdrive); gdriveEl.style.color = _kopiaDateColor(lastGdrive); }
+}
+
+function kopiaZapasowa() {
+  _updateKopiaLabels();
   $('kopia-modal').style.display = 'flex';
 }
 
@@ -3658,7 +3674,7 @@ function kopiaZapasowalokalnie() {
   setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 500);
 
   localStorage.setItem('last-backup-local', now.toISOString());
-  $('kopia-last-local').textContent = 'Ostatnia kopia: ' + now.toLocaleDateString('pl-PL', {day:'2-digit',month:'2-digit',year:'numeric'}) + ' ' + now.toLocaleTimeString('pl-PL', {hour:'2-digit',minute:'2-digit'});
+  _updateKopiaLabels();
 }
 
 
@@ -3735,24 +3751,7 @@ async function kopiaGoogleDrive() {
 
     // Zapisz datę kopii
     localStorage.setItem('last-backup-gdrive', now.toISOString());
-    const gdriveEl = $('kopia-last-gdrive');
-    if (gdriveEl) {
-      gdriveEl.textContent = 'Ostatnia kopia: '
-        + now.toLocaleDateString('pl-PL', {day:'2-digit',month:'2-digit',year:'numeric'})
-        + ' ' + now.toLocaleTimeString('pl-PL', {hour:'2-digit',minute:'2-digit'});
-      gdriveEl.style.color = '#22c55e';
-    }
-
-    // Flash przycisku na zielono
-    if (btn) {
-      const orig = btn.style.background;
-      btn.style.background = '#0d2a0d';
-      btn.style.borderColor = '#22c55e';
-      setTimeout(() => {
-        btn.style.background = orig || '#0d1020';
-        btn.style.borderColor = '#3b7cf4';
-      }, 2000);
-    }
+    _updateKopiaLabels();
 
   } catch(e) {
     console.error('[kopia gdrive]', e);
@@ -6584,7 +6583,7 @@ window.cselSetValue = cselSetValue;
     <div style="display:flex;flex-direction:column;gap:4px;">
       <button onclick="openKopiaLokalnie()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:12px;background:#0d1a0f;border:1px solid #16a34a;border-radius:12px;padding:16px 18px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Wykonaj kopię lokalnie
+        Kopia lokalna
       </button>
       <div id="kopia-last-local" style="font-size:11px;color:var(--text3);text-align:center;min-height:14px;"></div>
     </div>
@@ -6593,7 +6592,7 @@ window.cselSetValue = cselSetValue;
     <div style="display:flex;flex-direction:column;gap:4px;">
       <button onclick="kopiaGoogleDrive()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:12px;background:#0d1020;border:1px solid #3b7cf4;border-radius:12px;padding:16px 18px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" stroke="none"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" stroke="none"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05" stroke="none"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" stroke="none"/></svg>
-        Kopia → Google Drive
+        Kopia Google
       </button>
       <div id="kopia-last-gdrive" style="font-size:11px;color:var(--text3);text-align:center;min-height:14px;"></div>
     </div>
