@@ -1103,7 +1103,7 @@ select.native-sel { display: none !important; }
           <div style="flex:0 0 auto;min-width:0;width:72%;">
             <select id="modal-marka-sel" class="native-sel" data-title="Wybierz markę" >
               <option value="">Wybierz</option>
-              <option value="INNY">Inny...</option>
+              <option value="ROWER">Rower</option>
               <option value="KROSS">Kross</option>
               <option value="ROMET">Romet</option>
               <option value="MERIDA">Merida</option>
@@ -1117,9 +1117,14 @@ select.native-sel { display: none !important; }
               <option value="CANNONDALE">Cannondale</option>
               <option value="RADON">Radon</option>
               <option value="BIANCHI">Bianchi</option>
+              <option value="KANDS">Kands</option>
+              <option value="UNIBIKE">Unibike</option>
+              <option value="FOLTA">Folta</option>
               <option value="WOOM">Woom</option>
               <option value="BMX">BMX</option>
               <option value="DZIECIĘCY">Dziecięcy</option>
+              <option value="OVERFLY">Overfly</option>
+              <option value="ECOBIKE">Ecobike</option>
             </select>
           </div>
           <button type="button" id="modal-ebike-btn" onclick="toggleEbikeCheck()" style="flex:1;padding:0 6px;border:2px solid var(--border);border-radius:8px;background:none;color:var(--text3);font-size:11px;font-weight:800;cursor:pointer;transition:all 0.15s;white-space:nowrap;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;letter-spacing:.5px;text-transform:uppercase;align-self:stretch;min-height:44px;">
@@ -1359,12 +1364,11 @@ const $ = id => document.getElementById(id);
 const COLOR_MAP = {'CZARNY':'#111','BIAŁY':'#f0f0f0','CZERWONY':'#dc2626','NIEBIESKI':'#2563eb','FIOLETOWY':'#9333ea','ZIELONY':'#16a34a','ZŁOTY':'#d97706'};
 
 
-// Pomocnicza: nazwa roweru do SMS (bez "INNY")
+// Pomocnicza: nazwa roweru do SMS
 function _smsRower(marka, model) {
-  if (marka && marka !== 'INNY') return [marka, model].filter(Boolean).join(' ');
-  return model || 'Rower';
+  return [marka, model].filter(Boolean).join(' ');
 }
-// Zwraca HTML kółeczka koloru; dla INNY lub nieznanych — kółko przekreślone
+// Zwraca HTML kółeczka koloru; dla nieznanych kolorów — kółko przekreślone
 function makeKolorDot(kolor, size) {
   size = size || 12;
   if (!kolor) return '';
@@ -1373,7 +1377,7 @@ function makeKolorDot(kolor, size) {
   if (css) {
     return '<span style="display:inline-block;width:' + size + 'px;height:' + size + 'px;border-radius:50%;background:' + css + ';border:1px solid rgba(255,255,255,0.25);flex-shrink:0;"></span>';
   }
-  // Kółko przekreślone dla INNY / nieznanych
+  // Kółko przekreślone dla nieznanych kolorów
   const h = size / 2;
   const r = h - 1;
   const a = Math.round(size * 0.2);
@@ -3183,7 +3187,7 @@ function updateClientInfoBar() {
     const dotEl  = $('bike-kolor-dot');
     const nameEl = $('bike-name');
     if (bar && nameEl) {
-      const name = [(marka && marka !== 'INNY' ? marka : null), model].filter(Boolean).join(' ');
+      const name = [(marka || null), model].filter(Boolean).join(' ');
       if (name) {
         if (dotEl) dotEl.innerHTML = kolor ? makeKolorDot(kolor, 11) : '';
         nameEl.textContent = name;
@@ -3251,11 +3255,9 @@ function saveWycena() {
   const tel    = $('cf-tel').value.trim();
 
   // Walidacja — wymagane: marka lub model + telefon; gdy INNY — wymagaj modelu
-  const markaIsInny = marka === 'INNY';
-  if ((!marka && !model) || (markaIsInny && !model) || tel.length < 9) {
+  if ((!marka && !model) || tel.length < 9) {
     const msg = [];
     if (!marka && !model) msg.push('• Podaj markę lub model roweru.');
-    if (markaIsInny && !model) msg.push('• Przy marce "Inny" wpisz model roweru.');
     if (tel.length < 9)   msg.push('• Podaj numer telefonu (9 cyfr).');
     const modal = $('confirm-modal');
     $('confirm-msg').innerHTML = '<b>Uzupełnij dane klienta:</b><br><br>' + msg.join('<br>');
@@ -3285,7 +3287,7 @@ function saveWycena() {
     const origIdx = hist.findIndex(e => String(e.id) === String(origId));
     if (origIdx >= 0) {
       hist[origIdx] = Object.assign({}, hist[origIdx], {
-        marka: marka || 'Brak danych',
+        marka: marka || '',
         model,
         kolor,
         termin: $('cf-termin').value.trim(),
@@ -3306,7 +3308,7 @@ function saveWycena() {
 
   // Sprawdź duplikat — to samo marka+model+kolor+tel w innym wpisie (nie najnowszym)
   const dupIdx = hist.findIndex((e, i) => i > 0
-    && (e.marka || '') === (marka || 'Brak danych')
+    && (e.marka || '') === (marka || '')
     && (e.model || '') === model
     && (e.kolor || '') === kolor
     && (e.tel   || '') === tel
@@ -3342,7 +3344,7 @@ function saveWycena() {
 
   const latest = hist[0];
   const sameClient = latest
-    && (latest.marka || '') === (marka || 'Brak danych')
+    && (latest.marka || '') === (marka || '')
     && (latest.model || '') === model
     && (latest.kolor || '') === kolor
     && (latest.tel   || '') === tel;
@@ -3350,7 +3352,7 @@ function saveWycena() {
   const entry = {
     id: sameClient ? latest.id : Date.now(),
     label,
-    marka: marka || 'Brak danych',
+    marka: marka || '',
     ebike: $('cf-ebike').value === '1',
     model: $('cf-model').value.trim(),
     kolor: $('cf-kolor').value.trim(),
@@ -3397,7 +3399,7 @@ function pokazBannerZlecenia(entry) {
   if (!banner || !entry) return;
 
   const kolorDot = makeKolorDot(entry.kolor || '', 17);
-  const nameParts = [(entry.marka && entry.marka !== 'INNY' ? entry.marka : null), entry.model].filter(Boolean).join(' ');
+  const nameParts = [(entry.marka || null), entry.model].filter(Boolean).join(' ');
   const terminLine = entry.termin ? 'Data naprawy: ' + entry.termin + ' ' + dayOfWeek(entry.termin) : '';
   const przyjęcieLine = entry.label ? 'Przyjęto: ' + entry.label.split(' ')[0].split('.').slice(0,2).join('.') + ' ' + dayOfWeek(entry.label.split(' ')[0]) : '';
 
@@ -3409,7 +3411,7 @@ function pokazBannerZlecenia(entry) {
         <div class="history-item-info">
           <div style="display:flex;align-items:center;gap:6px;">
             ${kolorDot}
-            <span style="font-size:17px;font-weight:700;color:#fff;">${escHTML(nameParts || 'Brak danych')}</span>${(entry.ebike || entry.marka === 'E-BIKE') ? '<span style=\'margin-left:5px;font-size:16px;\' title=\'e-Bike\'>⚡</span>' : ''}
+            <span style="font-size:17px;font-weight:700;color:#fff;">${escHTML(nameParts || '')}</span>${(entry.ebike || entry.marka === 'E-BIKE') ? '<span style=\'margin-left:5px;font-size:16px;\' title=\'e-Bike\'>⚡</span>' : ''}
           </div>
           ${entry.tel ? `<div style="display:flex;align-items:center;gap:4px;font-size:16px;font-weight:600;color:#3b7cf4;margin-top:2px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>${escHTML(entry.tel)}</div>` : ''}
           ${przyjęcieLine ? `<div style="font-size:11px;color:#22c55e;font-weight:500;margin-top:2px;">${escHTML(przyjęcieLine)}</div>` : ''}
@@ -3500,8 +3502,8 @@ function renderHistory(filterTel) {
     // Nowe wpisy mają osobne pola model/kolor, stare mają wszystko w marka
     const hasNewFields = entry.model || entry.kolor;
     const titleLine = hasNewFields
-      ? [(entry.marka && entry.marka !== 'INNY' ? entry.marka : null), entry.model, entry.kolor].filter(Boolean).join(' - ')
-      : (entry.marka && entry.marka !== 'INNY' ? entry.marka : (entry.model || 'Brak danych'));
+      ? [(entry.marka || null), entry.model, entry.kolor].filter(Boolean).join(' - ')
+      : (entry.marka && entry.marka || entry.model || '');
     let terminSpecial = null;
     let terminLine = '';
     if (entry.termin) {
@@ -3528,7 +3530,7 @@ function renderHistory(filterTel) {
     const przyjęcieLine = entry.label ? 'Przyjęto: ' + entry.label.split(' ')[0].split('.').slice(0,2).join('.') + ' ' + dayOfWeek(entry.label.split(' ')[0]) : '';
 
     const kolorDot = makeKolorDot(entry.kolor || '', 17);
-    const nameParts = [(entry.marka && entry.marka !== 'INNY' ? entry.marka : null), entry.model].filter(Boolean).join(' ');
+    const nameParts = [(entry.marka || null), entry.model].filter(Boolean).join(' ');
     const terminColor = urgent ? '#ef4444' : '#f59e0b';
     const terminDisplay = terminLine
       ? (terminSpecial === 'today'
@@ -3556,7 +3558,7 @@ function renderHistory(filterTel) {
         <div class="history-item-info">
           <div style="display:flex;align-items:center;gap:6px;">
             ${kolorDot}
-            <span style="font-size:17px;font-weight:700;color:#fff;">${escHTML(nameParts || 'Brak danych')}</span>${(entry.ebike || entry.marka === 'E-BIKE') ? '<span style=\'margin-left:5px;font-size:16px;\' title=\'e-Bike\'>⚡</span>' : ''}
+            <span style="font-size:17px;font-weight:700;color:#fff;">${escHTML(nameParts || '')}</span>${(entry.ebike || entry.marka === 'E-BIKE') ? '<span style=\'margin-left:5px;font-size:16px;\' title=\'e-Bike\'>⚡</span>' : ''}
           </div>
           ${entry.tel ? `<div style="display:flex;align-items:center;gap:4px;font-size:16px;font-weight:600;color:#3b7cf4;margin-top:2px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>${escHTML(entry.tel)}</div>` : ''}
           ${terminHTML}
@@ -3928,7 +3930,7 @@ function renderWydanie(filterTel) {
     const terminLine   = entry.termin ? 'Data naprawy: ' + entry.termin + ' ' + dayOfWeek(entry.termin) : '';
     const przyjęcieLine = entry.label ? 'Przyjęto: ' + entry.label.split(' ')[0].split('.').slice(0,2).join('.') + ' ' + dayOfWeek(entry.label.split(' ')[0]) : '';
     const dataZakLine = entry.raportKoncowy?.dataZakonczenia ? 'Zakończono: ' + entry.raportKoncowy.dataZakonczenia.split('.').slice(0,2).join('.') + ' ' + dayOfWeek(entry.raportKoncowy.dataZakonczenia) : '';
-    const nameParts = [(entry.marka && entry.marka !== 'INNY' ? entry.marka : null), entry.model].filter(Boolean).join(' ');
+    const nameParts = [(entry.marka || null), entry.model].filter(Boolean).join(' ');
     const _prev = parseFloat(String(entry.totalZlecenia || entry.totalPrzedRaportem || '').replace(/\s/g,'').replace(',','.')) || 0;
     const _curr = parseFloat(String(entry.total || '').replace(/\s/g,'').replace(',','.')) || 0;
     const naprawaColor = _prev > 0 ? (_curr <= _prev ? '#22c55e' : '#ef4444') : '#f59e0b';
@@ -3938,7 +3940,7 @@ function renderWydanie(filterTel) {
         <div class="history-item-info">
           <div style="display:flex;align-items:center;gap:6px;">
             ${kolorDot}
-            <span style="font-size:17px;font-weight:700;color:#fff;">${escHTML(nameParts || 'Brak danych')}</span>${(entry.ebike || entry.marka === 'E-BIKE') ? '<span style=\'margin-left:5px;font-size:16px;\' title=\'e-Bike\'>⚡</span>' : ''}
+            <span style="font-size:17px;font-weight:700;color:#fff;">${escHTML(nameParts || '')}</span>${(entry.ebike || entry.marka === 'E-BIKE') ? '<span style=\'margin-left:5px;font-size:16px;\' title=\'e-Bike\'>⚡</span>' : ''}
           </div>
           <div style="display:flex;align-items:center;gap:8px;margin-top:2px;flex-wrap:wrap;">
             ${entry.tel ? `<div style="display:flex;align-items:center;gap:4px;font-size:16px;font-weight:600;color:#3b7cf4;"><svg width="12" height="12" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>${escHTML(entry.tel)}</div>` : ''}
@@ -3953,7 +3955,7 @@ function renderWydanie(filterTel) {
         </div>
       </div>
       <div class="history-item-actions">
-        ${entry.tel ? '<a class="btn-history-sms' + (entry.smsSent ? ' btn-history-sms-sent' : '') + '" href="sms:' + entry.tel.replace(/[^0-9+]/g,'') + '?body=' + encodeURIComponent((_smsRower(entry.marka, entry.model) || 'Rower') + ' - przygotowany do odbioru\n\nGodziny otwarcia\nPn-pt 10:00-18:00\nSobota 9:00-14:00\n\nKwota do zapłaty - ' + entry.total + ' zł\nPłatność gotówka/karta/BLIK\n\nKod odbioru: ' + (entry.kodOdbioru || '–')) + '" onclick="markSmsSent(' + entry.id + ', this)"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> SMS</a>' : ''}
+        ${entry.tel ? '<a class="btn-history-sms' + (entry.smsSent ? ' btn-history-sms-sent' : '') + '" href="sms:' + entry.tel.replace(/[^0-9+]/g,'') + '?body=' + encodeURIComponent((_smsRower(entry.marka, entry.model) || '') + ' - przygotowany do odbioru\n\nGodziny otwarcia\nPn-pt 10:00-18:00\nSobota 9:00-14:00\n\nKwota do zapłaty - ' + entry.total + ' zł\nPłatność gotówka/karta/BLIK\n\nKod odbioru: ' + (entry.kodOdbioru || '–')) + '" onclick="markSmsSent(' + entry.id + ', this)"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> SMS</a>' : ''}
         <button class="btn-history-load" style="background:#3b7cf4;border-color:#3b7cf4;" onclick="openRaportEdycja(${entry.id})">Edytuj</button>
         <button class="btn-history-load" style="background:#6b7280;border-color:#6b7280;display:inline-flex;align-items:center;justify-content:center;" onclick="cofnijDoAktualne(${entry.id})" title="Cofnij do przyjętych"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg></button>
         <div style="margin-left:auto;display:flex;gap:6px;">
@@ -4017,11 +4019,11 @@ function renderArchive(filterStr) {
     const dataZakLine = entry.raportKoncowy?.dataZakonczenia ? 'Zakończono naprawę: ' + stripYear(entry.raportKoncowy.dataZakonczenia) : '';
     const dataWydLine = entry.dataWydania ? 'Wydano z serwisu: ' + stripYear(entry.dataWydania) : '';
     const smsHTML = entry.tel
-      ? '<a class="btn-history-sms" href="sms:' + entry.tel.replace(/[^0-9+]/g,'') + '?body=' + encodeURIComponent((_smsRower(entry.marka, entry.model) || 'Rower') + ' - przygotowany do odbioru\n\nGodziny otwarcia\nPn-pt 10:00-18:00\nSobota 9:00-14:00\n\nKwota do zapłaty - ' + entry.total + ' zł\nPłatność gotówka/karta/BLIK\n\nKod odbioru: ' + (entry.kodOdbioru || '–')) + '"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d=\"M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z\"/></svg> SMS</a>'
+      ? '<a class="btn-history-sms" href="sms:' + entry.tel.replace(/[^0-9+]/g,'') + '?body=' + encodeURIComponent((_smsRower(entry.marka, entry.model) || '') + ' - przygotowany do odbioru\n\nGodziny otwarcia\nPn-pt 10:00-18:00\nSobota 9:00-14:00\n\nKwota do zapłaty - ' + entry.total + ' zł\nPłatność gotówka/karta/BLIK\n\nKod odbioru: ' + (entry.kodOdbioru || '–')) + '"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d=\"M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z\"/></svg> SMS</a>'
       : '';
 
     const kolorDot = makeKolorDot(entry.kolor || '', 17);
-    const nameParts = [(entry.marka && entry.marka !== 'INNY' ? entry.marka : null), entry.model].filter(Boolean).join(' ');
+    const nameParts = [(entry.marka || null), entry.model].filter(Boolean).join(' ');
     const _archPrev = parseFloat(String(entry.totalZlecenia || entry.totalPrzedRaportem || '').replace(/\s/g,'').replace(',','.')) || 0;
     const _archCurr = parseFloat(String(entry.total || '').replace(/\s/g,'').replace(',','.')) || 0;
     const naprawaColor = _archPrev > 0 ? (_archCurr <= _archPrev ? '#22c55e' : '#ef4444') : '#fff';
@@ -4031,7 +4033,7 @@ function renderArchive(filterStr) {
         '<div class="history-item-info">' +
           '<div style="display:flex;align-items:center;gap:6px;">' +
             kolorDot +
-            '<span style="font-size:17px;font-weight:700;color:#fff;">' + escHTML(nameParts || 'Brak danych') + '</span>' + ((entry.ebike || entry.marka === 'E-BIKE') ? '<span style="margin-left:5px;font-size:15px;" title="e-Bike">⚡</span>' : '') +
+            '<span style="font-size:17px;font-weight:700;color:#fff;">' + escHTML(nameParts || '') + '</span>' + ((entry.ebike || entry.marka === 'E-BIKE') ? '<span style="margin-left:5px;font-size:15px;" title="e-Bike">⚡</span>' : '') +
           '</div>' +
           '<div style="display:flex;align-items:center;gap:8px;margin-top:2px;flex-wrap:wrap;">' +
             (entry.tel ? '<div style="display:flex;align-items:center;gap:4px;font-size:16px;font-weight:600;color:#3b7cf4;"><svg width="12" height="12" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>' + escHTML(entry.tel) + '</div>' : '') +
@@ -4190,7 +4192,7 @@ function renderKosz(filterTel) {
     item.className = 'history-item';
     item.style.borderColor = 'rgba(192,57,43,0.3)';
 
-    const nameParts = [(entry.marka && entry.marka !== 'INNY' ? entry.marka : null), entry.model].filter(Boolean).join(' ');
+    const nameParts = [(entry.marka || null), entry.model].filter(Boolean).join(' ');
     const from = entry.deletedFrom === 'archiwum' ? 'Wydane' : 'Przyjęte';
     const msLeft = entry.deletedAt ? (KOSZ_TTL_MS - (now - entry.deletedAt)) : 0;
     const hLeft  = Math.max(0, Math.ceil(msLeft / 3600000));
@@ -4203,7 +4205,7 @@ function renderKosz(filterTel) {
         '<div class="history-item-info">' +
           '<div style="display:flex;align-items:center;gap:6px;">' +
             kolorDot +
-            '<span style="font-size:17px;font-weight:700;color:#fff;">' + escHTML(nameParts || 'Brak danych') + '</span>' + ((entry.ebike || entry.marka === 'E-BIKE') ? '<span style="margin-left:5px;font-size:15px;" title="e-Bike">⚡</span>' : '') +
+            '<span style="font-size:17px;font-weight:700;color:#fff;">' + escHTML(nameParts || '') + '</span>' + ((entry.ebike || entry.marka === 'E-BIKE') ? '<span style="margin-left:5px;font-size:15px;" title="e-Bike">⚡</span>' : '') +
           '</div>' +
           '<div style="font-size:11px;color:#ef4444;font-weight:600;margin-top:2px;">' + escHTML(timeInfo) + '</div>' +
           '<div style="font-size:11px;color:var(--text3);margin-top:1px;">Z zakładki: ' + from + '</div>' +
@@ -4250,9 +4252,9 @@ function openWydajModal(id) {
   if (!entry) return;
 
   // Banner — dane roweru
-  const markaClean = (entry.marka && entry.marka !== 'INNY') ? entry.marka : '';
+  const markaClean = (entry.marka) ? entry.marka : '';
   const rowerStr = [markaClean, entry.model].filter(Boolean).join(' ');
-  $('wydaj-banner-rower').innerHTML = (makeKolorDot(entry.kolor || '', 12) || '') + ' ' + escHTML(rowerStr || 'Brak danych');
+  $('wydaj-banner-rower').innerHTML = (makeKolorDot(entry.kolor || '', 12) || '') + ' ' + escHTML(rowerStr || '');
 
   // Telefon
   const telEl = $('wydaj-banner-tel');
@@ -4402,7 +4404,7 @@ function generujRaportZDaty() {
   let cards = '';
 
   dzisiaj.forEach((entry, idx) => {
-    const marka = [(entry.marka && entry.marka !== 'INNY' ? entry.marka : null), entry.model].filter(Boolean).join(' ') || 'Brak danych';
+    const marka = [(entry.marka || null), entry.model].filter(Boolean).join(' ') || '';
     const sourceItems = entry.raportKoncowy ? (entry.raportKoncowy.items || []).filter(it => it.checked && it.price > 0) : [];
     const sourceSubs  = entry.raportKoncowy ? (entry.raportKoncowy.subs  || []).filter(s  => s.checked && s.price > 0) : [];
     const total = parseFloat(String(entry.total || '0').replace(/\s/g,'').replace(',','.')) || 0;
@@ -4622,7 +4624,7 @@ function buildArchiveHTML(entry, useRaport) {
   </style></head><body>
   <div class="card">
     <div class="title-label">🔧 ${titleLabel}</div>
-    <div class="bike-name">${escHTML([marka, model].filter(Boolean).join(' ') || 'Brak danych')}</div>
+    <div class="bike-name">${escHTML([marka, model].filter(Boolean).join(' ') || '')}</div>
     ${tel ? `<div class="tel">📞 ${escHTML(tel)}</div>` : ''}
     <div class="dates">
       ${entry.label ? `<div class="date-row" style="color:#ef4444;">Przyjęto na serwis: ${escHTML(entry.label.split(' ')[0])}</div>` : ''}
@@ -4710,7 +4712,7 @@ function downloadRaportPDF(id) {
   runArchiveImage(entry, true);
   // Otwórz SMS z numerem klienta po chwili (żeby obrazek zdążył się pobrać)
   if (entry.tel) {
-    const rower = [(entry.marka && entry.marka !== 'INNY' ? entry.marka : null), entry.model].filter(Boolean).join(' ');
+    const rower = [(entry.marka || null), entry.model].filter(Boolean).join(' ');
     const body = 'Raport naprawy roweru ' + rower;
     setTimeout(() => {
       window.location.href = 'sms:' + entry.tel.replace(/[^0-9+]/g,'') + '?body=' + encodeURIComponent(body);
@@ -5029,8 +5031,8 @@ function openRaport(id) {
   try { st = JSON.parse(entry.state); } catch { alert('Błąd danych'); return; }
 
   // Nagłówek — styl zgodny z listą zleceń
-  const nameParts = [(entry.marka && entry.marka !== 'INNY' ? entry.marka : null), entry.model].filter(Boolean).join(' ');
-  $('raport-title').textContent = nameParts || 'Brak danych';
+  const nameParts = [(entry.marka || null), entry.model].filter(Boolean).join(' ');
+  $('raport-title').textContent = nameParts || '';
 
   const dotEl = $('raport-kolor-dot');
   const _dotHTML5 = makeKolorDot(entry.kolor || '', 12);
@@ -5541,7 +5543,7 @@ function generujPodsumowaniePDF(id) {
     pdf.rect(0, 0, W, HDR, 'F');
 
     // Lewa: marka/model + telefon
-    const rower = pl([(entry.marka && entry.marka !== 'INNY' ? entry.marka : null), entry.model].filter(Boolean).join(' ') || 'Brak danych');
+    const rower = pl([(entry.marka || null), entry.model].filter(Boolean).join(' ') || '');
     pdf.setFontSize(15); pdf.setFont('helvetica','bold'); pdf.setTextColor(255,255,255);
     pdf.text(rower, M, 14);
 
@@ -5812,8 +5814,8 @@ function openRaportEdycja(id) {
   }
 
   // Nagłówek — styl zgodny z listą zleceń
-  const nameParts = [(entry.marka && entry.marka !== 'INNY' ? entry.marka : null), entry.model].filter(Boolean).join(' ');
-  $('raport-title').textContent = nameParts || 'Brak danych';
+  const nameParts = [(entry.marka || null), entry.model].filter(Boolean).join(' ');
+  $('raport-title').textContent = nameParts || '';
 
   const dotEl = $('raport-kolor-dot');
   const _dotHTML5 = makeKolorDot(entry.kolor || '', 12);
