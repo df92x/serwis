@@ -541,7 +541,7 @@ select.native-sel { display: none !important; }
         </button>
       </div>
     </div>
-    <div id="sync-status" style="font-size:11px;color:#556;text-align:center;min-height:14px;"></div>
+    <div id="sync-status" style="font-size:11px;color:#556;text-align:center;min-height:14px;line-height:1.4;transition:color 0.3s;"></div>
     <div class="btn-grid" style="grid-template-columns:1fr 1fr 1fr;">
       <button id="btn-dane" class="btn-data" onclick="openModal()" style="background:#3b7cf4;border-color:#3b7cf4;">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -1429,20 +1429,8 @@ function escHTML(s) {
 // ─────────────────────────────────────────
 let flashTimer;
 function recalc() {
-  let total = 0, count = 0;
-
-  for (const it of items) {
-    if (!it.checked) continue;
-    const qty = it.qty !== undefined ? it.qty : 1;
-    total += it.price * qty;
-    count++;
-  }
-
-  let subsTotal = 0;
-  for (const s of subs) {
-    if (s.checked && s.price > 0) { subsTotal += s.price; count++; }
-  }
-  total += subsTotal;
+  const total     = State.getTotal();
+  const subsTotal = State.getSubsTotal();
 
   $('total-display').textContent = fmt(total);
 
@@ -1462,7 +1450,7 @@ function recalc() {
 
   // Update group sum display
   const sumEl = $('group-sum');
-  if (sumEl) sumEl.textContent = subsTotal > 0 ? subsTotal : '0';
+  if (sumEl) sumEl.textContent = subsTotal > 0 ? fmt(subsTotal) : '0';
 
   save();
 }
@@ -1473,26 +1461,100 @@ function recalc() {
 const KEY = 'wycena-v2';
 let _lastSavedStateHash = null;
 
+// ── Status zapisu ──
+let _saveStatusTimer = null;
+function _setSaveStatus(type) {
+  // type: 'saving' | 'ok' | 'warn' | 'error'
+  const el = $('sync-status');
+  if (!el) return;
+  clearTimeout(_saveStatusTimer);
+  if (type === 'saving') {
+    el.innerHTML = '<span style="color:#556;">Zapisywanie…</span>';
+  } else if (type === 'ok') {
+    el.innerHTML = '<span style="color:#22c55e;">✓ Zapisano</span>';
+    _saveStatusTimer = setTimeout(() => { el.innerHTML = ''; }, 2000);
+  } else if (type === 'warn') {
+    el.innerHTML = '<span style="color:#f59e0b;">⚠ Zapis bez zdjęć (brak miejsca)</span>';
+    _saveStatusTimer = setTimeout(() => { el.innerHTML = ''; }, 4000);
+  } else if (type === 'error') {
+    el.innerHTML = '<span style="color:#ef4444;">✕ Błąd zapisu — usuń stare zlecenia lub wykonaj kopię zapasową</span>';
+    // error stays until next successful save
+  }
+}
 
-// ── Zapis do localStorage ──
-function save() {
+// ── Budowanie obiektu stanu do zapisu ──
+function _buildStateObject() {
+  return {
+    items: items.map(it => ({
+      name: it.name, price: it.price, checked: it.checked,
+      qty: it.qty, selectedPreset: it.selectedPreset, customName: it.customName,
+      customLabel: it.customLabel || undefined,
+      selectedOptions: it.selectedOptions || undefined,
+      noteText: it.noteText || undefined,
+    })),
+    subs: subs.map(s => ({ name: s.name, price: s.price, checked: s.checked })),
+    groupOpen,
+    marka:   $('cf-marka')  ? $('cf-marka').value  : '',
+    ebike:   $('cf-ebike')  ? $('cf-ebike').value  : '0',
+    tel:     $('cf-tel')    ? $('cf-tel').value    : '',
+    model:   $('cf-model')  ? $('cf-model').value  : '',
+    kolor:   $('cf-kolor')  ? $('cf-kolor').value  : '',
+    termin:  $('cf-termin') ? $('cf-termin').value : '',
+    notatka: $('notatka-serwisowa') ? $('notatka-serwisowa').value : '',
+  };
+}
+
+// ── Właściwy zapis do localStorage (z fallbackami) ──
+function _doSave() {
+  _setSaveStatus('saving');
+  const state = _buildStateObject();
+  const json  = JSON.stringify(state);
+
+  // Próba 1: pełny zapis
   try {
-    localStorage.setItem(KEY, JSON.stringify({
-      items: items.map(it => ({
-        name: it.name, price: it.price, checked: it.checked,
-        qty: it.qty, selectedPreset: it.selectedPreset, customName: it.customName, customLabel: it.customLabel || undefined, selectedOptions: it.selectedOptions || undefined, noteText: it.noteText || undefined,
-      })),
-      subs: subs.map(s => ({ name: s.name, price: s.price, checked: s.checked })),
-      groupOpen,
-      marka: $('cf-marka').value,
-      ebike: $('cf-ebike').value,
-      tel:   $('cf-tel').value,
-      model: $('cf-model').value,
-      kolor: $('cf-kolor').value,
-      termin: $('cf-termin').value,
-      notatka: ($('notatka-serwisowa') ? $('notatka-serwisowa').value : ''),
-    }));
-  } catch {}
+    localStorage.setItem(KEY, json);
+    _setSaveStatus('ok');
+    return;
+  } catch (e1) {
+    if (e1.name !== 'QuotaExceededError' && e1.name !== 'NS_ERROR_DOM_QUOTA_REACHED') {
+      _setSaveStatus('error');
+      console.error('[save] nieoczekiwany błąd:', e1);
+      return;
+    }
+  }
+
+  // Próba 2: zapis bez zdjęć w aktywnym stanie (zdjęcia są w historii, nie w wycena-v2,
+  //          ale state może być duży przez inne dane — próbujemy bez noteText/customLabel)
+  try {
+    const stateSlim = { ...state, items: state.items.map(it => ({
+      name: it.name, price: it.price, checked: it.checked,
+      qty: it.qty, selectedPreset: it.selectedPreset, customName: it.customName,
+    })) };
+    localStorage.setItem(KEY, JSON.stringify(stateSlim));
+    _setSaveStatus('warn');
+    return;
+  } catch (e2) { /* kontynuuj do próby 3 */ }
+
+  // Próba 3: minimalny zapis — tylko pozycje zaznaczone
+  try {
+    const stateMin = { ...state, items: state.items.filter(it => it.checked).map(it => ({
+      name: it.name, price: it.price, checked: true, qty: it.qty,
+    })), subs: state.subs.filter(s => s.checked && s.price > 0) };
+    localStorage.setItem(KEY, JSON.stringify(stateMin));
+    _setSaveStatus('error'); // zapisano, ale niekompletnie
+    return;
+  } catch (e3) { /* nic się nie udało */ }
+
+  // Wszystkie próby zawiodły
+  _setSaveStatus('error');
+  console.error('[save] QuotaExceededError — brak miejsca w localStorage');
+}
+
+// ── Debounced save — odporna na wielokrotne wywołania w krótkim czasie ──
+let _saveDebounceTimer = null;
+function save() {
+  clearTimeout(_saveDebounceTimer);
+  _saveDebounceTimer = setTimeout(_doSave, 250);
 }
 
 // ── Odczyt z localStorage ──
@@ -1563,6 +1625,126 @@ function load() {
     return true;
   } catch { return false; }
 }
+
+// ─────────────────────────────────────────
+// ZARZĄDZANIE STANEM (State Management)
+// ─────────────────────────────────────────
+// Wszystkie mutacje modelu przechodzą przez te funkcje.
+// Widok (buildCard, renderItems) tylko CZYTA stan — nigdy go nie mutuje
+// bezpośrednio. Dzięki temu stan jest zawsze spójny z tym co jest na ekranie.
+
+const State = {
+
+  // ── Items ──
+
+  setItemChecked(id, checked) {
+    const it = items.find(x => x.id === id);
+    if (!it) return;
+    it.checked = checked;
+    if (!checked && it.qty !== undefined) it.qty = 0;
+    if (checked && it.qty !== undefined && it.qty === 0) {
+      it.qty = it.name === 'Końcówki' ? 5 : 1;
+    }
+  },
+
+  setItemPrice(id, price) {
+    const it = items.find(x => x.id === id);
+    if (!it) return;
+    const v = parseFloat(price);
+    it.price = (!isNaN(v) && v >= 0) ? v : 0;
+    if (it.price > 0 && it.qty !== undefined && it.qty === 0) it.qty = 1;
+    if (it.price > 0 && !it.checked) it.checked = true;
+  },
+
+  setItemQty(id, qty) {
+    const it = items.find(x => x.id === id);
+    if (!it || it.qty === undefined) return;
+    it.qty = Math.max(0, qty);
+    it.checked = it.qty > 0;
+  },
+
+  setItemPreset(id, presetIndex) {
+    const it = items.find(x => x.id === id);
+    if (!it) return;
+    it.selectedPreset = presetIndex;
+    if (presetIndex > 0 && it.presets?.[presetIndex - 1]) {
+      it.price = it.presets[presetIndex - 1].price;
+      it.checked = true;
+    } else if (presetIndex === 0) {
+      it.price = 0;
+      it.checked = false;
+    }
+  },
+
+  setItemCustomName(id, name) {
+    const it = items.find(x => x.id === id);
+    if (!it) return;
+    it.customName = name;
+  },
+
+  setItemNoteText(id, text) {
+    const it = items.find(x => x.id === id);
+    if (!it) return;
+    it.noteText = text;
+  },
+
+  // ── Subs (Inne części) ──
+
+  setSubChecked(subId, checked) {
+    const s = subs.find(x => x.id === subId);
+    if (!s) return;
+    s.checked = checked;
+  },
+
+  setSubName(subId, name) {
+    const s = subs.find(x => x.id === subId);
+    if (!s) return;
+    s.name = name;
+    if (name.trim() && !s.checked) s.checked = true;
+  },
+
+  setSubPrice(subId, price) {
+    const s = subs.find(x => x.id === subId);
+    if (!s) return;
+    const v = parseFloat(String(price).replace(',', '.'));
+    s.price = (!isNaN(v) && v >= 0) ? v : 0;
+    if (s.price > 0 && !s.checked) s.checked = true;
+  },
+
+  addSub() {
+    subs.push({ id: newSubId(), name: '', price: 0, checked: false });
+  },
+
+  removeSub(subId) {
+    const idx = subs.findIndex(x => x.id === subId);
+    if (idx === -1) return;
+    subs.splice(idx, 1);
+    if (!subs.length) subs.push({ id: newSubId(), name: '', price: 0, checked: false });
+  },
+
+  // ── Computed ──
+
+  getTotal() {
+    let total = 0;
+    for (const it of items) {
+      if (!it.checked) continue;
+      const qty = it.qty !== undefined ? it.qty : 1;
+      total += (parseFloat(it.price) || 0) * qty;
+    }
+    for (const s of subs) {
+      if (s.checked && s.price > 0) total += parseFloat(s.price) || 0;
+    }
+    return Math.round(total * 100) / 100;
+  },
+
+  getSubsTotal() {
+    return subs.reduce((acc, s) => {
+      if (s.checked && s.price > 0) acc += parseFloat(s.price) || 0;
+      return acc;
+    }, 0);
+  },
+
+};
 
 // ─────────────────────────────────────────
 // IKONY POZYCJI
@@ -1655,22 +1837,16 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx) {
   }
 
   bar.addEventListener('change', () => {
-    it.checked = bar.checked;
+    State.setItemChecked(it.id, bar.checked);
     syncBarCircle();
-    if (bar.checked && it.qty !== undefined && it.qty === 0) {
-      const defaultQty = it.name === 'Końcówki' ? 5 : 1;
-      it.qty = defaultQty;
+    // Sync qty display after State updated it.qty
+    if (it.qty !== undefined) {
       const qv = card.querySelector('.qty-val');
-      if (qv) qv.textContent = defaultQty;
-      card.classList.remove('qty-zero');
+      if (qv) qv.textContent = it.qty;
+      if (it.qty === 0) card.classList.add('qty-zero');
+      else card.classList.remove('qty-zero');
     }
-    if (!bar.checked && it.qty !== undefined) {
-      it.qty = 0;
-      const qv = card.querySelector('.qty-val');
-      if (qv) qv.textContent = 0;
-      card.classList.add('qty-zero');
-    }
-    card.className = it.qty === 0 ? 'item-card qty-zero' : 'item-card';
+    card.className = (it.qty === 0) ? 'item-card qty-zero' : 'item-card';
 
     // Auto-ustaw cenę gdy zaznaczamy i cena = 0
     if (bar.checked && !(parseFloat(it.price) > 0)) {
@@ -1747,18 +1923,14 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx) {
     const raw = priceEl.value.split('×')[0].split('=')[0].trim();
     const v = evalExpr(raw);
     if (!isNaN(v) && v >= 0) {
-      it.price = v;
-      // Auto-set qty to 1 if item has qty and it's still 0
-      if (v > 0 && it.qty !== undefined && it.qty === 0) {
-        it.qty = 1;
+      State.setItemPrice(it.id, v);
+      // Sync qty display
+      if (it.qty !== undefined) {
         const qv = card.querySelector('.qty-val');
-        if (qv) qv.textContent = 1;
+        if (qv) qv.textContent = it.qty;
       }
-      // Auto-check checkbox when price > 0
-      if (v > 0 && !bar.checked) {
-        bar.checked = true; syncBarCircle();
-        it.checked = true;
-      }
+      // Sync checkbox visual
+      if (it.checked && !bar.checked) { bar.checked = true; syncBarCircle(); }
     }
     updatePriceDisplay();
     recalc();
@@ -1797,9 +1969,10 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx) {
 
     minus.addEventListener('click', () => {
       if (it.qty <= 0) return;
-      it.qty--;
+      State.setItemQty(it.id, it.qty - 1);
       valEl.textContent = it.qty;
-      if (it.qty === 0) { it.checked = false; bar.checked = false; syncBarCircle(); card.className = 'item-card qty-zero'; }
+      if (it.qty === 0) { bar.checked = false; syncBarCircle(); card.className = 'item-card qty-zero'; }
+      else card.classList.remove('qty-zero');
       updatePriceDisplay();
       recalc();
     });
@@ -1807,9 +1980,10 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx) {
     let holdTimer, holdFired = false;
     plus.addEventListener('click', () => {
       if (holdFired) { holdFired = false; return; }
-      it.qty += step;
+      State.setItemQty(it.id, it.qty + step);
+      bar.checked = it.checked; syncBarCircle();
       valEl.textContent = it.qty;
-      card.classList.remove('qty-zero'); if (!it.checked) { it.checked = true; card.className = 'item-card'; bar.checked = true; syncBarCircle(); }
+      card.classList.remove('qty-zero');
       // Auto-set cheapest price if presets exist and none selected (Wybierz)
       if (it.presets && it.presets.length && it.selectedPreset <= 0) {
         const cheapest = it.presets.reduce((min, p) => p.price < min.price ? p : min, it.presets[0]);
@@ -2281,7 +2455,7 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx) {
     noteEl.value = it.noteText || '';
     noteEl.style.marginTop = '4px';
     noteEl.addEventListener('input', () => {
-      it.noteText = noteEl.value;
+      State.setItemNoteText(it.id, noteEl.value);
       save();
     });
     body.appendChild(noteEl);
@@ -2372,7 +2546,7 @@ function buildSubRow(sub, subsArr, onAddRow) {
   });
 
   cb.addEventListener('change', () => {
-    sub.checked = cb.checked;
+    State.setSubChecked(sub.id, cb.checked);
     syncCbCircle();
     row.className = 'sub-row' + (sub.checked ? ' is-checked' : '');
     recalc();
@@ -2385,12 +2559,10 @@ function buildSubRow(sub, subsArr, onAddRow) {
   nameEl.placeholder = 'Nazwa części';
   nameEl.maxLength = 60;
   nameEl.addEventListener('input', () => {
-    sub.name = nameEl.value;
-    if (nameEl.value.trim() && !sub.checked) {
-      sub.checked = true; cb.checked = true; if(typeof syncCbCircle==="function")syncCbCircle();
-      row.className = 'sub-row is-checked';
-      recalc();
-    }
+    State.setSubName(sub.id, nameEl.value);
+    if (sub.checked && !cb.checked) { cb.checked = true; syncCbCircle(); }
+    row.className = 'sub-row' + (sub.checked ? ' is-checked' : '');
+    if (sub.checked) recalc();
     save();
   });
   nameEl.addEventListener('keydown', e => {
@@ -2406,21 +2578,20 @@ function buildSubRow(sub, subsArr, onAddRow) {
   priceEl.addEventListener('focus', () => priceEl.select());
   priceEl.addEventListener('input', () => {
     const v = parseFloat(priceEl.value.replace(',', '.'));
-    if (!isNaN(v) && v > 0 && !sub.checked) {
-      sub.price = v;
-      sub.checked = true; cb.checked = true; if(typeof syncCbCircle==="function")syncCbCircle();
-      row.className = 'sub-row is-checked';
+    if (!isNaN(v) && v > 0) {
+      State.setSubPrice(sub.id, v);
+      if (sub.checked && !cb.checked) { cb.checked = true; syncCbCircle(); }
+      row.className = 'sub-row' + (sub.checked ? ' is-checked' : '');
       recalc();
     }
   });
   priceEl.addEventListener('blur', () => {
     const v = evalExpr(priceEl.value);
     if (!isNaN(v) && v >= 0) {
-      sub.price = v; priceEl.value = v || '';
-      if (v > 0 && !sub.checked) {
-        sub.checked = true; cb.checked = true; if(typeof syncCbCircle==="function")syncCbCircle();
-        row.className = 'sub-row is-checked';
-      }
+      State.setSubPrice(sub.id, v);
+      priceEl.value = v || '';
+      if (sub.checked && !cb.checked) { cb.checked = true; syncCbCircle(); }
+      row.className = 'sub-row' + (sub.checked ? ' is-checked' : '');
       recalc();
     }
   });
@@ -2429,14 +2600,13 @@ function buildSubRow(sub, subsArr, onAddRow) {
     e.preventDefault();
     const v = evalExpr(priceEl.value);
     if (!isNaN(v) && v > 0) {
-      sub.price = v; priceEl.value = v || '';
-      if (!sub.checked) {
-        sub.checked = true; cb.checked = true; if(typeof syncCbCircle==="function")syncCbCircle();
-        row.className = 'sub-row is-checked';
-      }
+      State.setSubPrice(sub.id, v);
+      priceEl.value = v || '';
+      if (sub.checked && !cb.checked) { cb.checked = true; syncCbCircle(); }
+      row.className = 'sub-row' + (sub.checked ? ' is-checked' : '');
       // Dodaj nowy wiersz tylko przy Enter i gdy kwota > 0
       if (subsArr[subsArr.length - 1].id === sub.id) {
-        subsArr.push({ id: newSubId(), name: '', price: 0, checked: false });
+        State.addSub();
         onAddRow();
       } else {
         // Przejdź do następnego wiersza
@@ -2454,8 +2624,7 @@ function buildSubRow(sub, subsArr, onAddRow) {
   delBtn.className = 'sub-del';
   delBtn.innerHTML = '&times;';
   delBtn.addEventListener('click', () => {
-    subsArr.splice(subsArr.indexOf(sub), 1);
-    if (!subsArr.length) subsArr.push({ id: newSubId(), name: '', price: 0, checked: false });
+    State.removeSub(sub.id);
     onAddRow();
     recalc();
   });
