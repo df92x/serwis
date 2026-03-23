@@ -2999,8 +2999,9 @@ window.toggleEbikeCheck = toggleEbikeCheck;
 
 function openAdminModal() {
   $('admin-modal').style.display = 'flex';
+  // updateAdminSyncRow renderuje panel; setSyncDot('off') wywołałoby ją ponownie —
+  // wystarczy jedno wywołanie.
   updateAdminSyncRow();
-  setSyncDot(localStorage.getItem('gdrive-email') ? 'off' : 'off');
 }
 window.openAdminModal = openAdminModal;
 
@@ -6118,26 +6119,38 @@ let gdriveToken   = null;
 let _tokenTimer   = null;
 
 // ── Status UI ──────────────────────────────
+// _syncUiLock zapobiega wzajemnemu wywoływaniu setSyncDot ↔ updateAdminSyncRow
+let _syncUiLock = false;
+
 function setSyncDot(state) {
-  // Zaktualizuj wszystkie przyciski Synchronizuj w panelach
-  const btns = document.querySelectorAll('button[data-sync-btn]');
-  btns.forEach(btn => {
-    if (state === 'busy') {
-      btn.style.color = '#f59e0b';
-      btn.style.opacity = '1';
-      btn.disabled = true;
-      btn.dataset.origText = btn.dataset.origText || btn.innerHTML;
-      btn.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="animation:spin 1s linear infinite"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Synchronizacja…';
-    } else {
-      btn.disabled = false;
-      btn.style.color = state === 'error' ? '#ef4444' : '#7ba8f5';
-      btn.style.opacity = '';
-      if (btn.dataset.origText) { btn.innerHTML = btn.dataset.origText; delete btn.dataset.origText; }
+  if (_syncUiLock) return;
+  _syncUiLock = true;
+  try {
+    // Odczytaj przyciski RAZ przed mutacją DOM — updateAdminSyncRow (niżej)
+    // wstawia nowe przyciski data-sync-btn; gdyby to nastąpiło w trakcie forEach,
+    // nowe elementy mogłyby wywołać ponowne setSyncDot i zapętlić UI.
+    const btns = Array.from(document.querySelectorAll('button[data-sync-btn]'));
+    btns.forEach(btn => {
+      if (state === 'busy') {
+        btn.style.color = '#f59e0b';
+        btn.style.opacity = '1';
+        btn.disabled = true;
+        btn.dataset.origText = btn.dataset.origText || btn.innerHTML;
+        btn.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="animation:spin 1s linear infinite"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Synchronizacja\u2026';
+      } else {
+        btn.disabled = false;
+        btn.style.color = state === 'error' ? '#ef4444' : '#7ba8f5';
+        btn.style.opacity = '';
+        if (btn.dataset.origText) { btn.innerHTML = btn.dataset.origText; delete btn.dataset.origText; }
+      }
+    });
+    // Odśwież panel admina — nie podczas busy, bo wstawienie nowego przycisku
+    // data-sync-btn w środku synchronizacji mogłoby wywołać dodatkowy re-render.
+    if (state !== 'busy') {
+      updateAdminSyncRow();
     }
-  });
-  // Odśwież panele gdy stan się zmienił (ok/error/off)
-  if (state !== 'busy') {
-    updateAdminSyncRow();
+  } finally {
+    _syncUiLock = false;
   }
 }
 
@@ -6224,8 +6237,9 @@ function loginGoogle() {
         localStorage.setItem('gdrive-email', d.email || '');
         if (d.picture) localStorage.setItem('gdrive-avatar', d.picture);
       } catch {}
+      // setSyncDot('off') już wywołuje updateAdminSyncRow wewnętrznie —
+      // nie wywołujemy jej ponownie, żeby uniknąć podwójnego re-renderu panelu.
       setSyncDot('off');
-      updateAdminSyncRow();
       _fullSync();
     }
   }).requestAccessToken();
@@ -6242,22 +6256,34 @@ function logoutGoogle() {
 }
 
 // ── Cichy refresh tokenu przy starcie ─────
+let _silentAuthInFlight = false;
 function _silentAuth() {
+  // Zabezpieczenie przed równoległymi wywołaniami
+  if (_silentAuthInFlight) return;
   const email = localStorage.getItem('gdrive-email');
   if (!email) return;
-  // Poczekaj aż GSI się załaduje (async defer)
+
+  // Poczekaj aż GSI się załaduje (async defer) — max 20 prób × 400ms = 8s
   if (!window.google || !window.google.accounts) {
+    if ((_silentAuth._tries = (_silentAuth._tries || 0) + 1) > 20) {
+      _silentAuth._tries = 0;
+      console.warn('[sync] GSI nie załadowało się w 8s — pomijam cichy login');
+      return;
+    }
     setTimeout(_silentAuth, 400);
     return;
   }
+  _silentAuth._tries = 0;
+  _silentAuthInFlight = true;
   try {
     google.accounts.oauth2.initTokenClient({
       client_id: GDRIVE_CLIENT_ID,
       scope: GDRIVE_SCOPE,
       hint: email,
       prompt: 'none',
-      error_callback: () => {},
+      error_callback: () => { _silentAuthInFlight = false; },
       callback: (resp) => {
+        _silentAuthInFlight = false;
         if (resp.error) return;
         _setToken(resp.access_token);
         setSyncDot('off');
@@ -6269,7 +6295,10 @@ function _silentAuth() {
         }
       }
     }).requestAccessToken({ prompt: 'none' });
-  } catch {}
+  } catch(e) {
+    _silentAuthInFlight = false;
+    console.warn('[sync] _silentAuth error:', e);
+  }
 }
 
 // ── Drive API ─────────────────────────────
@@ -6397,6 +6426,12 @@ function _mergeData(remote) {
 // ── Pełna synchronizacja (pobierz + scal + wyślij) ──
 async function _fullSync() {
   if (!gdriveToken) return;
+  // Jeśli strona właśnie wróciła z przeładowania wywołanego przez sync,
+  // nie synchronizujemy natychmiast ponownie — czekamy na akcję użytkownika.
+  if (sessionStorage.getItem('_sync_just_reloaded')) {
+    sessionStorage.removeItem('_sync_just_reloaded');
+    return;
+  }
   setSyncDot('busy');
   try {
     const remote = await _fetchFromDrive();
@@ -6413,7 +6448,11 @@ async function _fullSync() {
           else if (activeTab === 'archiwum') { try { renderArchive($('archive-search-tel')?.value || ''); } catch(e){} }
           else {
             reloading = true;
-            setTimeout(() => { sessionStorage.setItem('allow-reload','1'); location.reload(); }, 800);
+            // Ustaw flagę PRZED przeładowaniem — po powrocie _silentAuth ją odczyta
+            // i nie odpali kolejnego _fullSync, przerywając pętlę reload → sync → reload.
+            sessionStorage.setItem('_sync_just_reloaded', '1');
+            sessionStorage.setItem('allow-reload', '1');
+            setTimeout(() => { location.reload(); }, 800);
           }
         }
       }
@@ -6470,11 +6509,10 @@ window.manualSync   = manualSync;
 
 // Inicjalizacja przy starcie
 document.addEventListener('DOMContentLoaded', () => {
-  // Wyrenderuj wiersz sync w adminie przy starcie
+  // updateAdminSyncRow renderuje cały panel stanu sync — wystarczy jedno wywołanie.
   updateAdminSyncRow();
-  setSyncDot(localStorage.getItem('gdrive-email') ? 'off' : 'off');
   // Cichy login przy starcie — jeśli był wcześniej zalogowany,
-  // pobierz token i sprawdź czy sync jest aktualny (> 1 min → sync od razu)
+  // pobierz token i sprawdź czy sync jest aktualny (> 30 min → sync od razu)
   if (localStorage.getItem('gdrive-email') && !sessionStorage.getItem('from-history-id')) {
     setTimeout(() => _silentAuth(), 1500);
   }
