@@ -1837,9 +1837,26 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx) {
   }
 
   bar.addEventListener('change', () => {
-    State.setItemChecked(it.id, bar.checked);
+    // Gdy buildCard działa w kontekście raportu, itemsCtx to rItems (lokalne),
+    // nie globalny items[] — operujemy bezpośrednio na obiekcie it.
+    const isLocal = itemsCtx !== items;
+    if (isLocal) {
+      it.checked = bar.checked;
+      if (!bar.checked) {
+        // Odznaczenie → zeruj cenę
+        it.price = 0;
+        if (it.qty !== undefined) it.qty = 0;
+        priceEl.value = '';
+      } else {
+        if (it.qty !== undefined && it.qty === 0) {
+          it.qty = it.name === 'Końcówki' ? 5 : 1;
+        }
+      }
+    } else {
+      State.setItemChecked(it.id, bar.checked);
+    }
     syncBarCircle();
-    // Sync qty display after State updated it.qty
+    // Sync qty display
     if (it.qty !== undefined) {
       const qv = card.querySelector('.qty-val');
       if (qv) qv.textContent = it.qty;
@@ -1851,16 +1868,13 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx) {
     // Auto-ustaw cenę gdy zaznaczamy i cena = 0
     if (bar.checked && !(parseFloat(it.price) > 0)) {
       if (it.presets && it.presets.length) {
-        // Wybierz najtańszy preset
         const cheapest = it.presets.reduce((min, p) => p.price < min.price ? p : min, it.presets[0]);
         it.price = cheapest.price;
         it.selectedPreset = it.presets.indexOf(cheapest) + 1;
         const psel = card.querySelector('.native-sel.preset-sel');
         if (psel) {
           psel.value = String(cheapest.price);
-          // Sync przycisk dropu
           if (typeof psel._cselSync === 'function') psel._cselSync();
-          // Zaktualizuj też label przycisku bezpośrednio
           const btn = psel.closest('.csel-wrap')?.querySelector('.csel-btn span');
           if (btn) btn.textContent = cheapest.label;
         }
@@ -1874,10 +1888,8 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx) {
       }
     }
 
-    // Zawsze odśwież wyświetlanie ceny po zmianie stanu
-    if (bar.checked) updatePriceDisplay();
-
-    recalc();
+    updatePriceDisplay();
+    recalcCtx();
   });
 
   // Card body
@@ -1919,21 +1931,27 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx) {
     priceEl.select();
   });
   priceEl.addEventListener('blur', () => {
-    // Strip equation display (e.g. "90 × 2 = 180") — take only part before ×
     const raw = priceEl.value.split('×')[0].split('=')[0].trim();
     const v = evalExpr(raw);
     if (!isNaN(v) && v >= 0) {
-      State.setItemPrice(it.id, v);
-      // Sync qty display
-      if (it.qty !== undefined) {
-        const qv = card.querySelector('.qty-val');
-        if (qv) qv.textContent = it.qty;
+      // W kontekście raportu (rItems) operujemy bezpośrednio na it,
+      // bo State.setItemPrice szuka po id w globalnym items[].
+      const isLocal = itemsCtx !== items;
+      if (isLocal) {
+        it.price = v;
+        if (v > 0 && it.qty !== undefined && it.qty === 0) it.qty = 1;
+        if (v > 0 && !it.checked) { it.checked = true; bar.checked = true; syncBarCircle(); }
+      } else {
+        State.setItemPrice(it.id, v);
+        if (it.qty !== undefined) {
+          const qv = card.querySelector('.qty-val');
+          if (qv) qv.textContent = it.qty;
+        }
+        if (it.checked && !bar.checked) { bar.checked = true; syncBarCircle(); }
       }
-      // Sync checkbox visual
-      if (it.checked && !bar.checked) { bar.checked = true; syncBarCircle(); }
     }
     updatePriceDisplay();
-    recalc();
+    recalcCtx();
   });
   priceEl.addEventListener('keydown', e => {
     if (e.key === 'Enter') { e.preventDefault(); priceEl.blur(); }
@@ -1969,22 +1987,25 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx) {
 
     minus.addEventListener('click', () => {
       if (it.qty <= 0) return;
-      State.setItemQty(it.id, it.qty - 1);
+      const isLocal = itemsCtx !== items;
+      if (isLocal) { it.qty = Math.max(0, it.qty - 1); it.checked = it.qty > 0; }
+      else State.setItemQty(it.id, it.qty - 1);
       valEl.textContent = it.qty;
       if (it.qty === 0) { bar.checked = false; syncBarCircle(); card.className = 'item-card qty-zero'; }
       else card.classList.remove('qty-zero');
       updatePriceDisplay();
-      recalc();
+      recalcCtx();
     });
 
     let holdTimer, holdFired = false;
     plus.addEventListener('click', () => {
       if (holdFired) { holdFired = false; return; }
-      State.setItemQty(it.id, it.qty + step);
+      const isLocal = itemsCtx !== items;
+      if (isLocal) { it.qty = it.qty + step; it.checked = true; }
+      else State.setItemQty(it.id, it.qty + step);
       bar.checked = it.checked; syncBarCircle();
       valEl.textContent = it.qty;
       card.classList.remove('qty-zero');
-      // Auto-set cheapest price if presets exist and none selected (Wybierz)
       if (it.presets && it.presets.length && it.selectedPreset <= 0) {
         const cheapest = it.presets.reduce((min, p) => p.price < min.price ? p : min, it.presets[0]);
         it.price = cheapest.price;
@@ -1992,13 +2013,16 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx) {
       }
       if (onChange) onChange(valEl);
       updatePriceDisplay();
-      recalc();
+      recalcCtx();
     });
     const startHold = () => {
       holdFired = false;
       holdTimer = setTimeout(() => {
         holdFired = true;
-        it.qty += step * 10; valEl.textContent = it.qty;
+        const isLocal = itemsCtx !== items;
+        if (isLocal) { it.qty += step * 10; it.checked = true; }
+        else { it.qty += step * 10; }
+        valEl.textContent = it.qty;
         card.classList.remove('qty-zero'); if (!it.checked) { it.checked = true; card.className = 'item-card'; bar.checked = true; syncBarCircle(); }
         if (it.presets && it.presets.length && it.selectedPreset <= 0) {
           const cheapest = it.presets.reduce((min, p) => p.price < min.price ? p : min, it.presets[0]);
@@ -2006,7 +2030,7 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx) {
           priceEl.value = it.price;
         }
         updatePriceDisplay();
-        recalc();
+        recalcCtx();
       }, 800);
     };
     const stopHold = () => clearTimeout(holdTimer);
@@ -5277,12 +5301,6 @@ function openRaport(id) {
   list.innerHTML = '';
   for (const it of rItems) {
     const card = buildCard(it, rItems, null, recalcRaport);
-    // Patch recalc calls inside card to use recalcRaport
-    card.querySelectorAll('input,button,select').forEach(el => {
-      el.addEventListener('change', recalcRaport);
-      el.addEventListener('click', recalcRaport);
-      el.addEventListener('blur', recalcRaport);
-    });
     list.appendChild(card);
   }
 
@@ -6052,11 +6070,6 @@ function openRaportEdycja(id) {
   list.innerHTML = '';
   for (const it of rItems) {
     const card = buildCard(it, rItems, null, recalcRaport);
-    card.querySelectorAll('input,button,select').forEach(el => {
-      el.addEventListener('change', recalcRaport);
-      el.addEventListener('click', recalcRaport);
-      el.addEventListener('blur', recalcRaport);
-    });
     list.appendChild(card);
   }
 
