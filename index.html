@@ -630,7 +630,7 @@ select.native-sel { display: none !important; }
     <div id="raport-group-container"></div>
 
     <!-- Notatka -->
-    <div style="padding:0 16px 8px;">
+    <div style="padding:14px 16px 8px;">
       <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;">Notatka</div>
       <textarea id="raport-notatka" placeholder="Wpisz notatkę do naprawy..." maxlength="500"
         style="width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-size:14px;font-family:inherit;resize:none;outline:none;min-height:72px;line-height:1.5;"
@@ -2508,6 +2508,7 @@ function renderGroup() {
 
   const wrap = document.createElement('div');
   wrap.className = 'group-card';
+  wrap.style.margin = '12px 8px 3px';
 
   // Header
   const header = document.createElement('div');
@@ -3090,8 +3091,8 @@ function startNowe() {
   if ($('notatka-serwisowa')) $('notatka-serwisowa').value = '';
   idSeq = 0;
   items = cloneDefaults();
-  subs  = [{ id: newSubId(), name: '', price: 0, checked: false }];
-  groupOpen = false;
+  subs  = [1,2,3].map(() => ({ id: newSubId(), name: '', price: 0, checked: false }));
+  groupOpen = true;
   renderItems();
   renderGroup();
   recalc();
@@ -5346,7 +5347,7 @@ function openRaport(id) {
   gc.innerHTML = '';
   const wrap = document.createElement('div');
   wrap.className = 'group-card';
-  wrap.style.margin = '0 8px 3px';
+  wrap.style.margin = '4px 8px 3px';
 
   const hdr = document.createElement('div');
   hdr.className = 'group-header';
@@ -6118,7 +6119,7 @@ function openRaportEdycja(id) {
   gc.innerHTML = '';
   const wrap = document.createElement('div');
   wrap.className = 'group-card';
-  wrap.style.margin = '0 8px 3px';
+  wrap.style.margin = '4px 8px 3px';
   const hdr = document.createElement('div');
   hdr.className = 'group-header';
   const gtitle = document.createElement('span');
