@@ -134,7 +134,7 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
   display: none;
 }
 .sub-check-circle {
-  width: 20px; height: 20px;
+  width: 24px; height: 24px;
   border-radius: 50%;
   border: 2px solid var(--border);
   background: transparent;
@@ -262,13 +262,13 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
 
 /* ── Inne części group ── */
 .group-card {
-  margin: 20px 8px 3px;
+  margin: 36px 8px 3px;
   border-radius: var(--radius);
   border: 1px solid var(--border);
   background: var(--bg2);
   overflow: hidden;
 }
-.group-body { display: none; flex-direction: column; gap: 4px; border-top: 1px solid var(--border); padding: 8px; background: var(--bg); }
+.group-body { display: none; flex-direction: column; gap: 10px; border-top: 1px solid var(--border); padding: 10px; background: var(--bg); }
 .group-header {
   display: flex;
   align-items: center;
@@ -288,9 +288,9 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
 .sub-row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 7px 10px;
-  border-radius: 7px;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 9px;
   border: 1px solid var(--border);
   background: var(--bg3);
   transition: background 0.15s;
@@ -298,7 +298,7 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
 .sub-row.is-checked { background: #0d0d1e; border-color: rgba(59,124,244,0.25); }
 .sub-name-input {
   flex: 1;
-  font-size: 14px;
+  font-size: 17px;
   font-weight: 600;
   color: #fff;
   border: none;
@@ -310,8 +310,8 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
 .sub-name-input:focus { border-bottom-color: var(--blue); }
 .sub-name-input::placeholder { color: #333360; }
 .sub-price-input {
-  width: 110px;
-  font-size: 14px;
+  width: 134px;
+  font-size: 17px;
   font-weight: 700;
   color: var(--blue);
   border: 1px solid var(--border);
@@ -319,14 +319,14 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
   outline: none;
   text-align: right;
   border-radius: 6px;
-  padding: 4px 8px;
+  padding: 7px 10px;
 }
 .sub-price-input:focus { border-color: var(--blue); }
 .sub-del {
   background: none; border: none;
-  color: var(--red); font-size: 15px;
+  color: var(--red); font-size: 18px;
   cursor: pointer; opacity: 0.3;
-  padding: 2px 4px; border-radius: 4px;
+  padding: 4px 6px; border-radius: 4px;
   transition: opacity 0.15s; flex-shrink: 0;
 }
 .sub-del:hover { opacity: 0.85; }
@@ -560,6 +560,7 @@ select.native-sel { display: none !important; }
   </div>
 
   <div class="items-list" id="items-list"></div>
+  <div id="group-container"></div>
 
 <!-- Hidden data fields -->
 <input type="hidden" id="cf-marka">
@@ -1334,7 +1335,7 @@ function canonicalName(name) {
 }
 let items = [];
 let subs = [];         // inne części rows
-let groupOpen = false;
+let groupOpen = true;
 let idSeq = 0;
 
 function newId()    { return ++idSeq; }
@@ -1608,13 +1609,13 @@ function load() {
 
     // Reset inne części unless loading from history
     if (!sessionStorage.getItem('from-history')) {
-      subs = [{ id: newSubId(), name: '', price: 0, checked: false }];
+      subs = [1,2,3].map(() => ({ id: newSubId(), name: '', price: 0, checked: false }));
     } else {
       subs = (st.subs || []).map(s => ({ id: newSubId(), name: s.name, price: s.price, checked: s.checked }));
-      if (!subs.length) subs = [{ id: newSubId(), name: '', price: 0, checked: false }];
+      if (!subs.length) subs = [1,2,3].map(() => ({ id: newSubId(), name: '', price: 0, checked: false }));
     }
 
-    groupOpen = st.groupOpen || false;
+    groupOpen = st.groupOpen ?? true;
     if (st.marka)  $('cf-marka').value  = st.marka;
     if (st.ebike !== undefined) $('cf-ebike').value = st.ebike;
     if (st.tel)    $('cf-tel').value    = st.tel;
@@ -2488,6 +2489,12 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx) {
   card.appendChild(bar);
   card.appendChild(barCircle);
   card.appendChild(body);
+
+  // Ukryj "Części i akcesoria" gdy nic nie wprowadzono
+  if (it.name === 'Części i akcesoria' && !it.checked && !(parseFloat(it.price) > 0) && !it.noteText) {
+    card.style.display = 'none';
+  }
+
   return card;
 }
 
@@ -2543,10 +2550,24 @@ function renderGroup() {
   container.appendChild(wrap);
 }
 
-function buildSubRow(sub, subsArr, onAddRow) {
-  subsArr = subsArr || subs;
+function buildSubRow(sub, subsArr, onAddRow, recalcFn) {
+  subsArr  = subsArr  || subs;
   onAddRow = onAddRow || function() { groupOpen = true; renderGroup(); };
+  recalcFn = recalcFn || recalc;
+  const isGlobal = () => !!subs.find(x => x.id === sub.id);
+
   const row = document.createElement('div');
+
+  function autoAddNextRow() {
+    if (subsArr[subsArr.length - 1].id !== sub.id) return; // nie ostatni wiersz
+    const newSub = { id: isGlobal() ? newSubId() : ('rs_auto' + Date.now()), name: '', price: 0, checked: false };
+    subsArr.push(newSub);
+    const parent = row.closest('.group-body');
+    if (parent) {
+      const newRow = buildSubRow(newSub, subsArr, onAddRow, recalcFn);
+      parent.appendChild(newRow);
+    }
+  }
   row.className = 'sub-row' + (sub.checked ? ' is-checked' : '');
 
   const cb = document.createElement('input');
@@ -2564,16 +2585,24 @@ function buildSubRow(sub, subsArr, onAddRow) {
     cbCircle.innerHTML = cb.checked ? subCheckSvg() : '';
   }
 
+  function autoCheck() {
+    sub.checked = true;
+    cb.checked  = true;
+    syncCbCircle();
+    row.className = 'sub-row is-checked';
+  }
+
   cbCircle.addEventListener('click', () => {
     cb.checked = !cb.checked;
     cb.dispatchEvent(new Event('change'));
   });
 
   cb.addEventListener('change', () => {
-    State.setSubChecked(sub.id, cb.checked);
+    sub.checked = cb.checked;
+    if (isGlobal()) State.setSubChecked(sub.id, cb.checked);
     syncCbCircle();
     row.className = 'sub-row' + (sub.checked ? ' is-checked' : '');
-    recalc();
+    recalcFn();
   });
 
   const nameEl = document.createElement('input');
@@ -2583,10 +2612,13 @@ function buildSubRow(sub, subsArr, onAddRow) {
   nameEl.placeholder = 'Nazwa części';
   nameEl.maxLength = 60;
   nameEl.addEventListener('input', () => {
-    State.setSubName(sub.id, nameEl.value);
-    if (sub.checked && !cb.checked) { cb.checked = true; syncCbCircle(); }
+    sub.name = nameEl.value;
+    if (isGlobal()) State.setSubName(sub.id, nameEl.value);
+    else if (nameEl.value.trim() && !sub.checked) autoCheck();
+    if (sub.checked && !cb.checked) autoCheck();
     row.className = 'sub-row' + (sub.checked ? ' is-checked' : '');
-    if (sub.checked) recalc();
+    if (sub.checked) recalcFn();
+    if (nameEl.value.trim()) autoAddNextRow();
     save();
   });
   nameEl.addEventListener('keydown', e => {
@@ -2603,20 +2635,21 @@ function buildSubRow(sub, subsArr, onAddRow) {
   priceEl.addEventListener('input', () => {
     const v = parseFloat(priceEl.value.replace(',', '.'));
     if (!isNaN(v) && v > 0) {
-      State.setSubPrice(sub.id, v);
-      if (sub.checked && !cb.checked) { cb.checked = true; syncCbCircle(); }
-      row.className = 'sub-row' + (sub.checked ? ' is-checked' : '');
-      recalc();
+      sub.price = v;
+      if (isGlobal()) State.setSubPrice(sub.id, v);
+      autoCheck();
+      autoAddNextRow();
+      recalcFn();
     }
   });
   priceEl.addEventListener('blur', () => {
     const v = evalExpr(priceEl.value);
     if (!isNaN(v) && v >= 0) {
-      State.setSubPrice(sub.id, v);
+      sub.price = v;
+      if (isGlobal()) State.setSubPrice(sub.id, v);
       priceEl.value = v || '';
-      if (sub.checked && !cb.checked) { cb.checked = true; syncCbCircle(); }
-      row.className = 'sub-row' + (sub.checked ? ' is-checked' : '');
-      recalc();
+      if (v > 0) autoCheck();
+      recalcFn();
     }
   });
   priceEl.addEventListener('keydown', e => {
@@ -2624,23 +2657,22 @@ function buildSubRow(sub, subsArr, onAddRow) {
     e.preventDefault();
     const v = evalExpr(priceEl.value);
     if (!isNaN(v) && v > 0) {
-      State.setSubPrice(sub.id, v);
+      sub.price = v;
+      if (isGlobal()) State.setSubPrice(sub.id, v);
       priceEl.value = v || '';
-      if (sub.checked && !cb.checked) { cb.checked = true; syncCbCircle(); }
-      row.className = 'sub-row' + (sub.checked ? ' is-checked' : '');
+      autoCheck();
       // Dodaj nowy wiersz tylko przy Enter i gdy kwota > 0
       if (subsArr[subsArr.length - 1].id === sub.id) {
-        State.addSub();
+        if (isGlobal()) State.addSub(); else subsArr.push({ id: 'rs' + Date.now(), name: '', price: 0, checked: false });
         onAddRow();
       } else {
-        // Przejdź do następnego wiersza
         setTimeout(() => {
           const idx = subsArr.findIndex(s => s.id === sub.id);
           const allNames = row.closest('.group-body, #group-container')?.querySelectorAll('.sub-name-input');
           if (allNames && allNames[idx + 1]) allNames[idx + 1].focus();
         }, 0);
       }
-      recalc();
+      recalcFn();
     }
   });
 
@@ -2648,9 +2680,10 @@ function buildSubRow(sub, subsArr, onAddRow) {
   delBtn.className = 'sub-del';
   delBtn.innerHTML = '&times;';
   delBtn.addEventListener('click', () => {
-    State.removeSub(sub.id);
+    if (isGlobal()) State.removeSub(sub.id);
+    else { const idx = subsArr.findIndex(x => x.id === sub.id); if (idx !== -1) subsArr.splice(idx, 1); if (!subsArr.length) subsArr.push({ id: 'rs' + Date.now(), name: '', price: 0, checked: false }); }
     onAddRow();
-    recalc();
+    recalcFn();
   });
 
   row.appendChild(cb);
@@ -5270,23 +5303,27 @@ function openRaport(id) {
   let rSubs = (st.subs || []).map((s, i) => ({
     id: 'rs' + i, name: s.name, price: s.price, checked: s.checked
   }));
-  if (!rSubs.length) rSubs = [{ id: 'rs0', name: '', price: 0, checked: false }];
+  if (!rSubs.length) rSubs = [1,2,3].map((_,i) => ({ id: 'rs_def'+i, name: '', price: 0, checked: false }));
+  while (rSubs.filter(s => !s.checked && !s.price && !s.name).length < 3) rSubs.push({ id: 'rs_pad'+rSubs.length, name: '', price: 0, checked: false });
 
   // Zapisz referencje na poziomie modułu dla saveRaportKoncowy
   raportRItems = rItems;
   raportRSubs = rSubs;
 
+  let gsum;
   function recalcRaport() {
     let total = 0;
     for (const it of rItems) {
       if (!it.checked) continue;
       total += it.price * (it.qty !== undefined ? (it.qty || 1) : 1);
     }
+    let subsTotal = 0;
     for (const s of rSubs) {
-      if (s.checked && s.price > 0) total += s.price;
+      if (s.checked && s.price > 0) { subsTotal += parseFloat(s.price) || 0; total += parseFloat(s.price) || 0; }
     }
     const totalEl = $('raport-total-display');
     totalEl.textContent = fmt(total);
+    if (gsum) gsum.textContent = subsTotal > 0 ? fmt(subsTotal) : '0';
     if (wstepnaVal > 0) {
       if (total > wstepnaVal)      totalEl.style.color = '#ef4444';
       else if (total < wstepnaVal) totalEl.style.color = '#22c55e';
@@ -5316,10 +5353,14 @@ function openRaport(id) {
   const gtitle = document.createElement('span');
   gtitle.className = 'group-title';
   gtitle.textContent = 'Inne części';
+  gsum = document.createElement('span');
+  gsum.className = 'group-sum';
+  gsum.textContent = '0';
   const gtoggle = document.createElement('span');
   gtoggle.className = 'group-toggle open';
   gtoggle.innerHTML = '&#8964;';
   hdr.appendChild(gtitle);
+  hdr.appendChild(gsum);
   hdr.appendChild(gtoggle);
 
   const gbody = document.createElement('div');
@@ -5330,11 +5371,7 @@ function openRaport(id) {
       gbody.appendChild(newRow);
       setTimeout(() => newRow.querySelector('.sub-name-input')?.focus(), 0);
       recalcRaport();
-    });
-    row.querySelectorAll('input').forEach(el => {
-      el.addEventListener('input', recalcRaport);
-      el.addEventListener('blur', recalcRaport);
-    });
+    }, recalcRaport);
     return row;
   };
   rSubs.forEach(sub => gbody.appendChild(addRaportSubRow(sub)));
@@ -6044,19 +6081,23 @@ function openRaportEdycja(id) {
   let rSubs = (st.subs || []).map((s, i) => ({
     id: 'rs' + i, name: s.name, price: s.price, checked: s.checked
   }));
-  if (!rSubs.length) rSubs = [{ id: 'rs0', name: '', price: 0, checked: false }];
+  if (!rSubs.length) rSubs = [1,2,3].map((_,i) => ({ id: 'rs_def'+i, name: '', price: 0, checked: false }));
+  while (rSubs.filter(s => !s.checked && !s.price && !s.name).length < 3) rSubs.push({ id: 'rs_pad'+rSubs.length, name: '', price: 0, checked: false });
 
+  let gsum2;
   function recalcRaport() {
     let total = 0;
     for (const it of rItems) {
       if (!it.checked) continue;
       total += it.price * (it.qty !== undefined ? (it.qty || 1) : 1);
     }
+    let subsTotal = 0;
     for (const s of rSubs) {
-      if (s.checked && s.price > 0) total += s.price;
+      if (s.checked && s.price > 0) { subsTotal += parseFloat(s.price) || 0; total += parseFloat(s.price) || 0; }
     }
     const totalEl = $('raport-total-display');
     totalEl.textContent = fmt(total);
+    if (gsum2) gsum2.textContent = subsTotal > 0 ? fmt(subsTotal) : '0';
     if (wstepnaVal > 0) {
       if (total > wstepnaVal)      totalEl.style.color = '#ef4444';
       else if (total < wstepnaVal) totalEl.style.color = '#22c55e';
@@ -6083,10 +6124,14 @@ function openRaportEdycja(id) {
   const gtitle = document.createElement('span');
   gtitle.className = 'group-title';
   gtitle.textContent = 'Inne części';
+  gsum2 = document.createElement('span');
+  gsum2.className = 'group-sum';
+  gsum2.textContent = '0';
   const gtoggle = document.createElement('span');
   gtoggle.className = 'group-toggle open';
   gtoggle.innerHTML = '&#8964;';
   hdr.appendChild(gtitle);
+  hdr.appendChild(gsum2);
   hdr.appendChild(gtoggle);
   const gbody = document.createElement('div');
   gbody.className = 'group-body open';
@@ -6096,11 +6141,7 @@ function openRaportEdycja(id) {
       gbody.appendChild(newRow);
       setTimeout(() => newRow.querySelector('.sub-name-input')?.focus(), 0);
       recalcRaport();
-    });
-    row.querySelectorAll('input').forEach(el => {
-      el.addEventListener('input', recalcRaport);
-      el.addEventListener('blur', recalcRaport);
-    });
+    }, recalcRaport);
     return row;
   };
   rSubs.forEach(sub => gbody.appendChild(addRaportSubRow2(sub)));
