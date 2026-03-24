@@ -739,6 +739,7 @@ select.native-sel { display: none !important; }
     transparent 360deg
   );
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   animation: spin-border 7.5s linear infinite;
@@ -767,6 +768,7 @@ select.native-sel { display: none !important; }
     transparent 360deg
   );
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   animation: spin-border 7.5s linear infinite;
@@ -791,6 +793,7 @@ select.native-sel { display: none !important; }
     transparent 360deg
   );
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   animation: spin-border 7.5s linear infinite;
@@ -1297,11 +1300,12 @@ const DEFAULTS = [
   { name: 'Kaseta',     price: 0,   checked: false,
     presets: [{label:'6s Wolnobieg SHI',price:69},{label:'7s Wolnobieg SHI',price:79},{label:'8s Shimano',price:99},{label:'9s Shimano',price:109}] },
   { name: 'Przerzutka przednia', price: 0, checked: false },
-  { name: 'Przerzutka tylna',  price: 0, checked: false },
+  { name: 'Przerzutka tylna',  price: 0, checked: false,
+    presets: [{label:'Kółka maszynowe',price:45}] },
   { name: 'Pedała',     price: 0,   checked: false,
     presets: [{label:'Plastikowe',price:25},{label:'Aluminium',price:39},{label:'Nexelo',price:79}] },
   { name: 'Tarcza',     price: 0,   checked: false, qty: 0,
-    presets: [{label:'RT10',price:45},{label:'RT56',price:65},{label:'RT66',price:90},{label:'Magura',price:120}] },
+    presets: [{label:'RT10',price:45},{label:'RT56',price:65},{label:'RT66',price:90},{label:'Centerline',price:120},{label:'Magura',price:120}] },
   { name: 'Klocki',     price: 0,   checked: false, qty: 0,
     presets: [{label:'VBreak',price:30},{label:'Zamiennik',price:39},{label:'Oryginał',price:55},{label:'Oryginał+',price:79},{label:'E-bike',price:60}] },
   { name: 'Płyn',       price: 0,   checked: false, qty: 0,
@@ -1392,13 +1396,16 @@ function ebikeIcon(marka) {
 }
 
 function fmt(v) {
-  return v.toLocaleString('pl-PL', {minimumFractionDigits:2, maximumFractionDigits:2});
+  const num = Number(v);
+  return (isFinite(num) ? num : 0).toLocaleString('pl-PL', {minimumFractionDigits:2, maximumFractionDigits:2});
 }
 
 function evalExpr(s) {
   s = String(s).replace(/,/g, '.').replace(/\s/g, '');
   if (!/^[\d.+\-*/]+$/.test(s)) return parseFloat(s);
+  const isNumToken = t => /^(\d+(\.\d+)?|\.\d+)$/.test(t);
   try {
+    if (!s || /[*/]{2,}|[+\-*/]$/.test(s)) return NaN;
     // safe: only digits and operators
     // Tokenize preserving sign for each additive term
     const tokens = s.match(/[+\-]?[^+\-]+/g) || [];
@@ -1406,12 +1413,21 @@ function evalExpr(s) {
     for (const token of tokens) {
       const negative = token.charAt(0) === '-';
       const expr = (token.charAt(0) === '+' || token.charAt(0) === '-') ? token.slice(1) : token;
+      if (!expr) return NaN;
       let val = 1;
       const mparts = expr.split('*');
       for (let mi = 0; mi < mparts.length; mi++) {
+        if (!mparts[mi]) return NaN;
         const d = mparts[mi].split('/');
-        let n = parseFloat(d[0]) || 0;
-        for (let di = 1; di < d.length; di++) n /= parseFloat(d[di]) || 1;
+        if (!d[0] || !isNumToken(d[0])) return NaN;
+        let n = parseFloat(d[0]);
+        if (!isFinite(n)) return NaN;
+        for (let di = 1; di < d.length; di++) {
+          if (!isNumToken(d[di])) return NaN;
+          const denom = parseFloat(d[di]);
+          if (!isFinite(denom) || denom === 0) return NaN;
+          n /= denom;
+        }
         val = mi === 0 ? n : val * n;
       }
       sum += negative ? -val : val;
@@ -1423,6 +1439,42 @@ function evalExpr(s) {
 function escHTML(s) {
   if (s === null || s === undefined) return '';
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function escAttr(s) {
+  if (s === null || s === undefined) return '';
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/"/g,'&quot;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;');
+}
+
+function safeImageSrc(raw) {
+  const v = String(raw || '').trim();
+  if (!v) return '';
+  if (/^https?:\/\//i.test(v)) return v;
+  if (/^data:image\//i.test(v)) return v;
+  return '';
+}
+
+function safeParseJSON(raw, fallback) {
+  try { return JSON.parse(raw); } catch { return fallback; }
+}
+
+function itemLabelWithDetails(it, withPresetFallback) {
+  let label = it.name || '';
+  if (it.customName) label += ' – ' + it.customName;
+  else if (it.customLabel) label += ' – ' + it.customLabel;
+  else if (withPresetFallback && it.selectedPreset > 0) {
+    const p = (it.presets || findDefault(it.name)?.presets)?.[it.selectedPreset - 1];
+    if (p && p.label) label += ' – ' + p.label;
+  } else if (withPresetFallback && it.options) {
+    const opt = (it.options || findDefault(it.name)?.options || []).find(o => Number(o.price) === Number(it.price));
+    if (opt && opt.label) label += ' – ' + opt.label;
+  }
+  if (it.noteText) label += ' • ' + it.noteText;
+  return label;
 }
 
 // ─────────────────────────────────────────
@@ -1708,7 +1760,7 @@ const State = {
     const s = subs.find(x => x.id === subId);
     if (!s) return;
     const v = parseFloat(String(price).replace(',', '.'));
-    s.price = (!isNaN(v) && v >= 0) ? v : 0;
+    s.price = (!isNaN(v) && v >= 0) ? Math.round(v) : 0;
     if (s.price > 0 && !s.checked) s.checked = true;
   },
 
@@ -1812,6 +1864,8 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx) {
   const card = document.createElement('div');
   card.className = 'item-card';
   card.dataset.id = it.id;
+  const isLocal = () => itemsCtx !== items;
+  let presetSelRef = null;
 
   // Checkbox toggle (hidden) + blue circle visual
   const bar = document.createElement('input');
@@ -1840,8 +1894,7 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx) {
   bar.addEventListener('change', () => {
     // Gdy buildCard działa w kontekście raportu, itemsCtx to rItems (lokalne),
     // nie globalny items[] — operujemy bezpośrednio na obiekcie it.
-    const isLocal = itemsCtx !== items;
-    if (isLocal) {
+    if (isLocal()) {
       it.checked = bar.checked;
       if (!bar.checked) {
         // Odznaczenie → zeruj cenę
@@ -1889,6 +1942,7 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx) {
       }
     }
 
+    syncNoteVisibility();
     updatePriceDisplay();
     recalcCtx();
   });
@@ -1937,8 +1991,7 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx) {
     if (!isNaN(v) && v >= 0) {
       // W kontekście raportu (rItems) operujemy bezpośrednio na it,
       // bo State.setItemPrice szuka po id w globalnym items[].
-      const isLocal = itemsCtx !== items;
-      if (isLocal) {
+      if (isLocal()) {
         it.price = v;
         if (v > 0 && it.qty !== undefined && it.qty === 0) it.qty = 1;
         if (v > 0 && !it.checked) { it.checked = true; bar.checked = true; syncBarCircle(); }
@@ -1988,8 +2041,7 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx) {
 
     minus.addEventListener('click', () => {
       if (it.qty <= 0) return;
-      const isLocal = itemsCtx !== items;
-      if (isLocal) { it.qty = Math.max(0, it.qty - 1); it.checked = it.qty > 0; }
+      if (isLocal()) { it.qty = Math.max(0, it.qty - 1); it.checked = it.qty > 0; }
       else State.setItemQty(it.id, it.qty - 1);
       valEl.textContent = it.qty;
       if (it.qty === 0) { bar.checked = false; syncBarCircle(); card.className = 'item-card qty-zero'; }
@@ -2001,8 +2053,7 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx) {
     let holdTimer, holdFired = false;
     plus.addEventListener('click', () => {
       if (holdFired) { holdFired = false; return; }
-      const isLocal = itemsCtx !== items;
-      if (isLocal) { it.qty = it.qty + step; it.checked = true; }
+      if (isLocal()) { it.qty = it.qty + step; it.checked = true; }
       else State.setItemQty(it.id, it.qty + step);
       bar.checked = it.checked; syncBarCircle();
       valEl.textContent = it.qty;
@@ -2020,8 +2071,7 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx) {
       holdFired = false;
       holdTimer = setTimeout(() => {
         holdFired = true;
-        const isLocal = itemsCtx !== items;
-        if (isLocal) { it.qty += step * 10; it.checked = true; }
+        if (isLocal()) { it.qty += step * 10; it.checked = true; }
         else { it.qty += step * 10; }
         valEl.textContent = it.qty;
         card.classList.remove('qty-zero'); if (!it.checked) { it.checked = true; card.className = 'item-card'; bar.checked = true; syncBarCircle(); }
@@ -2046,6 +2096,51 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx) {
     return { ctrl, valEl };
   }
 
+  // Opis realizujemy inline (w ramce "Opis"/"Wybierz"), bez dodatkowego pola pod pozycją
+  const noteEl = null;
+
+  function syncNoteVisibility() {
+    if (!noteEl) return;
+    const presetInne = presetSelRef && presetSelRef.value === '__inna__';
+    const shouldShow = !!it.note || !!it.checked || !!(it.noteText && it.noteText.trim()) || !!presetInne;
+    noteEl.classList.toggle('visible', shouldShow);
+  }
+
+  if (noteEl) {
+    noteEl.addEventListener('input', () => {
+      it.noteText = noteEl.value;
+      if (!isLocal()) State.setItemNoteText(it.id, noteEl.value);
+      if (noteEl.value.trim() && !it.checked) { it.checked = true; bar.checked = true; syncBarCircle(); }
+      syncNoteVisibility();
+      save();
+      recalcCtx();
+    });
+  }
+
+  function buildOpisControl() {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'csel-btn';
+    const span = document.createElement('span');
+    btn.appendChild(span);
+    const sync = () => {
+      span.textContent = it.customName ? ('Opis: ' + it.customName) : 'Opis';
+      btn.classList.toggle('has-val', !!(it.customName && it.customName.trim()));
+    };
+    btn.addEventListener('click', async () => {
+      const typed = await openOpisBanner(it.customName || '');
+      if (typed === null) return;
+      it.customName = typed;
+      if (!isLocal()) State.setItemCustomName(it.id, typed);
+      if (typed && !it.checked) { it.checked = true; bar.checked = true; syncBarCircle(); }
+      sync();
+      recalcCtx();
+      save();
+    });
+    sync();
+    return btn;
+  }
+
   // ── Row 1: name | qty | price (all item types) ──
   // priceEl is appended per-branch after qty ctrl
 
@@ -2063,6 +2158,7 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx) {
       it.customLabel = it.selectedOptions.map(o => o.label).join(' + ') || '';
       if (it.selectedOptions.length > 0 && !it.checked) { it.checked = true; card.className = 'item-card'; bar.checked = true; syncBarCircle(); }
       updateBtnLabel();
+      syncNoteVisibility();
       recalcCtx();
     }
 
@@ -2173,7 +2269,7 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx) {
           inp.type = 'text'; inp.inputMode = 'decimal';
           inp.value = currentPrice || '';
           inp.placeholder = '0';
-          inp.style.cssText = 'width:60px;font-size:15px;font-weight:700;color:#fff;border:1px solid var(--blue);background:var(--bg);border-radius:6px;padding:3px 6px;text-align:right;outline:none;';
+          inp.style.cssText = 'width:90px;font-size:15px;font-weight:700;color:#fff;border:1px solid var(--blue);background:var(--bg);border-radius:6px;padding:3px 8px;text-align:right;outline:none;';
           priceEl.replaceWith(inp);
           inp.focus(); inp.select();
           const done = () => {
@@ -2327,17 +2423,44 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx) {
       const innaOpt2 = document.createElement('option');
       innaOpt2.value = '__inna__'; innaOpt2.textContent = 'Inne...';
       psel.appendChild(innaOpt2);
+      presetSelRef = psel;
       psel._cselSync = () => {};
       if (it.selectedPreset > 0 && it.selectedPreset < psel.options.length) psel.selectedIndex = it.selectedPreset;
-      psel.addEventListener('change', () => {
+      psel.addEventListener('change', async () => {
         it.selectedPreset = psel.selectedIndex;
-        if (psel.value === '__inna__') { it.customName = ''; card.classList.remove('qty-zero'); if (!it.checked) { it.checked = true; card.className = 'item-card'; bar.checked = true; syncBarCircle(); } setTimeout(() => { priceEl.focus(); priceEl.select(); }, 50); recalcCtx(); return; }
+        if (psel.value === '__inna__') {
+          const typed = await openOpisBanner(it.customName || '');
+          if (typed === null || !typed) {
+            it.customName = '';
+            if (!isLocal()) State.setItemCustomName(it.id, '');
+            innaOpt2.textContent = 'Inne...';
+            psel.selectedIndex = 0;
+            it.selectedPreset = 0;
+            if (typeof psel._cselSync === 'function') psel._cselSync();
+            syncNoteVisibility();
+            recalcCtx();
+            return;
+          }
+          it.customName = typed;
+          if (!isLocal()) State.setItemCustomName(it.id, typed);
+          innaOpt2.textContent = 'Inne: ' + typed;
+          card.classList.remove('qty-zero');
+          if (!it.checked) { it.checked = true; card.className = 'item-card'; bar.checked = true; syncBarCircle(); }
+          syncNoteVisibility();
+          if (typeof psel._cselSync === 'function') psel._cselSync();
+          setTimeout(() => { priceEl.focus(); priceEl.select(); }, 50);
+          recalcCtx();
+          return;
+        }
         it.customName = '';
-        if (!psel.value) return;
+        if (!isLocal()) State.setItemCustomName(it.id, '');
+        innaOpt2.textContent = 'Inne...';
+        if (!psel.value) { syncNoteVisibility(); return; }
         it.price = parseFloat(psel.value);
         card.classList.remove('qty-zero'); if (!it.checked) { it.checked = true; card.className = 'item-card'; bar.checked = true; syncBarCircle(); }
         if (it.qty !== undefined && it.qty === 0) { it.qty = 1; const qv = card.querySelector('.qty-val'); if (qv) qv.textContent = 1; }
         updatePriceDisplay();
+        syncNoteVisibility();
         recalcCtx();
       });
       nameEl.style.flex = '0 0 auto';
@@ -2370,19 +2493,38 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx) {
       const innaOpt = document.createElement('option');
       innaOpt.value = '__inna__'; innaOpt.textContent = 'Inne...';
       psel.appendChild(innaOpt);
+      presetSelRef = psel;
       psel._cselSync = () => {};
       if (it.selectedPreset > 0 && it.selectedPreset < psel.options.length) psel.selectedIndex = it.selectedPreset;
 
-      psel.addEventListener('change', () => {
+      psel.addEventListener('change', async () => {
         it.selectedPreset = psel.selectedIndex;
         if (psel.value === '__inna__') {
-          it.customName = '';
+          const typed = await openOpisBanner(it.customName || '');
+          if (typed === null || !typed) {
+            it.customName = '';
+            if (!isLocal()) State.setItemCustomName(it.id, '');
+            innaOpt.textContent = 'Inne...';
+            psel.selectedIndex = 0;
+            it.selectedPreset = 0;
+            if (typeof psel._cselSync === 'function') psel._cselSync();
+            syncNoteVisibility();
+            recalcCtx();
+            return;
+          }
+          it.customName = typed;
+          if (!isLocal()) State.setItemCustomName(it.id, typed);
+          innaOpt.textContent = 'Inne: ' + typed;
           card.classList.remove('qty-zero'); if (!it.checked) { it.checked = true; card.className = 'item-card'; bar.checked = true; syncBarCircle(); }
+          syncNoteVisibility();
+          if (typeof psel._cselSync === 'function') psel._cselSync();
           setTimeout(() => { priceEl.focus(); priceEl.select(); }, 50);
           recalcCtx();
           return;
         }
         it.customName = '';
+        if (!isLocal()) State.setItemCustomName(it.id, '');
+        innaOpt.textContent = 'Inne...';
         if (!psel.value) {
           if (it.name === 'Korba') {
             ['Support', 'Łańcuch', 'Kaseta'].forEach(name => {
@@ -2392,6 +2534,7 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx) {
             renderCtx();
             recalcCtx();
           }
+          syncNoteVisibility();
           return;
         }
         it.price = parseFloat(psel.value);
@@ -2414,6 +2557,7 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx) {
             renderCtx();
           }
         }
+        syncNoteVisibility();
         recalcCtx();
       });
 
@@ -2430,6 +2574,10 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx) {
   // ── Plain item (Linka, Pancerz etc.) ──
   else {
     if (it.qty !== undefined) {
+      nameEl.style.flex = '0 0 auto';
+      const opisWrap = document.createElement('div');
+      opisWrap.style.cssText = 'flex:1;min-width:0;';
+      opisWrap.appendChild(buildOpisControl());
       const { ctrl } = buildQty(null, it.name === 'Końcówki' ? 5 : 1);
       priceEl.style.display = 'none';
       totalEl.classList.add('editable-total');
@@ -2460,30 +2608,25 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx) {
         inp.addEventListener('blur', done);
         inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); inp.blur(); } if (e.key === 'Escape') { inp.replaceWith(totalEl); } });
       });
+      topRow.appendChild(opisWrap);
       topRow.appendChild(ctrl);
       topRow.appendChild(totalEl);
     } else {
+      nameEl.style.flex = '0 0 auto';
+      const opisWrap = document.createElement('div');
+      opisWrap.style.cssText = 'flex:1;min-width:0;';
+      opisWrap.appendChild(buildOpisControl());
       priceEl.style.width = '52px';
       // font set by CSS
+      topRow.appendChild(opisWrap);
       topRow.appendChild(priceEl);
     }
     body.appendChild(topRow);
   }
 
-  // ── Note field (Części i akcesoria) ──
-  if (it.note) {
-    const noteEl = document.createElement('input');
-    noteEl.type = 'text';
-    noteEl.className = 'custom-name visible';
-    noteEl.placeholder = 'Opis (opcjonalnie)...';
-    noteEl.maxLength = 80;
-    noteEl.value = it.noteText || '';
-    noteEl.style.marginTop = '4px';
-    noteEl.addEventListener('input', () => {
-      State.setItemNoteText(it.id, noteEl.value);
-      save();
-    });
+  if (noteEl) {
     body.appendChild(noteEl);
+    syncNoteVisibility();
   }
 
   card.appendChild(bar);
@@ -2521,8 +2664,8 @@ function renderGroup() {
   const sumEl = document.createElement('span');
   sumEl.className = 'group-sum';
   sumEl.id = 'group-sum';
-  const subsTotal = subs.filter(s => s.checked && s.price > 0).reduce((a, s) => a + s.price, 0);
-  sumEl.textContent = subsTotal > 0 ? subsTotal : '0';
+  const subsTotal = subs.filter(s => s.checked && s.price > 0).reduce((a, s) => a + (parseFloat(s.price) || 0), 0);
+  sumEl.textContent = subsTotal > 0 ? String(Math.round(subsTotal)) : '0';
 
   const toggle = document.createElement('span');
   toggle.className = 'group-toggle' + (groupOpen ? ' open' : '');
@@ -2631,13 +2774,14 @@ function buildSubRow(sub, subsArr, onAddRow, recalcFn) {
   priceEl.className = 'sub-price-input';
   priceEl.value = sub.price || '';
   priceEl.placeholder = '0';
-  priceEl.inputMode = 'decimal';
+  priceEl.inputMode = 'numeric';
   priceEl.addEventListener('focus', () => priceEl.select());
   priceEl.addEventListener('input', () => {
     const v = parseFloat(priceEl.value.replace(',', '.'));
     if (!isNaN(v) && v > 0) {
-      sub.price = v;
-      if (isGlobal()) State.setSubPrice(sub.id, v);
+      const iv = Math.round(v);
+      sub.price = iv;
+      if (isGlobal()) State.setSubPrice(sub.id, iv);
       autoCheck();
       autoAddNextRow();
       recalcFn();
@@ -2646,10 +2790,11 @@ function buildSubRow(sub, subsArr, onAddRow, recalcFn) {
   priceEl.addEventListener('blur', () => {
     const v = evalExpr(priceEl.value);
     if (!isNaN(v) && v >= 0) {
-      sub.price = v;
-      if (isGlobal()) State.setSubPrice(sub.id, v);
-      priceEl.value = v || '';
-      if (v > 0) autoCheck();
+      const iv = Math.round(v);
+      sub.price = iv;
+      if (isGlobal()) State.setSubPrice(sub.id, iv);
+      priceEl.value = iv || '';
+      if (iv > 0) autoCheck();
       recalcFn();
     }
   });
@@ -2658,9 +2803,10 @@ function buildSubRow(sub, subsArr, onAddRow, recalcFn) {
     e.preventDefault();
     const v = evalExpr(priceEl.value);
     if (!isNaN(v) && v > 0) {
-      sub.price = v;
-      if (isGlobal()) State.setSubPrice(sub.id, v);
-      priceEl.value = v || '';
+      const iv = Math.round(v);
+      sub.price = iv;
+      if (isGlobal()) State.setSubPrice(sub.id, iv);
+      priceEl.value = iv || '';
       autoCheck();
       // Dodaj nowy wiersz tylko przy Enter i gdy kwota > 0
       if (subsArr[subsArr.length - 1].id === sub.id) {
@@ -2712,20 +2858,7 @@ function buildDocHTML() {
   for (const it of items) {
     if (!it.checked) continue;
     const qty = it.qty !== undefined ? it.qty : 1;
-    let label = it.name;
-    if (it.customName) label += ' – ' + it.customName;
-    else if (it.customLabel) label += ' – ' + it.customLabel;
-    else if (it.selectedPreset > 0) {
-      const p = it.presets?.[it.selectedPreset - 1];
-      if (p) label += ' – ' + p.label;
-    } else if (it.options) {
-      if (it.customLabel) {
-        label += ' – ' + it.customLabel;
-      } else {
-        const opt = it.options.find(o => o.price === it.price);
-        if (opt) label += ' – ' + opt.label;
-      }
-    }
+    const label = itemLabelWithDetails(it, true);
     rows.push({ label, unitPrice: it.price, qty, total: it.price * qty, hasQty: it.qty !== undefined });
   }
 
@@ -3190,7 +3323,7 @@ function startLancuch() {
   $('start-overlay').style.display = 'none';
   $('lancuch-overlay').style.display = 'block';
   // Przywróć ostatnie wartości
-  const saved = JSON.parse(localStorage.getItem('lancuch-vals') || '{}');
+  const saved = safeParseJSON(localStorage.getItem('lancuch-vals') || '{}', {});
   if (saved.tarcza) $('lanc-tarcza').value = saved.tarcza;
   if (saved.kaseta) $('lanc-kaseta').value = saved.kaseta;
   if (saved.rozstaw) $('lanc-rozstaw').value = saved.rozstaw;
@@ -3285,7 +3418,7 @@ function kalkulatorDoZlecenia() {
   items = kalkItems.map(it => ({
     id: newId(),
     name: it.name, price: it.price, checked: it.checked,
-    qty: it.qty, selectedPreset: it.selectedPreset, customName: it.customName, customLabel: it.customLabel || undefined, selectedOptions: it.selectedOptions || undefined,
+    qty: it.qty, selectedPreset: it.selectedPreset, customName: it.customName, customLabel: it.customLabel || undefined, selectedOptions: it.selectedOptions || undefined, noteText: it.noteText || '',
     options: it.options ? it.options.map(x => ({...x})) : undefined,
     presets: it.presets ? it.presets.map(x => ({...x})) : undefined,
   }));
@@ -3543,8 +3676,8 @@ function saveWycena() {
   );
   if (dupIdx >= 0) {
     const existing = hist[dupIdx];
-    const existingState = JSON.parse(existing.state || '{}');
-    const currentState  = JSON.parse(localStorage.getItem('wycena-v2') || '{}');
+    const existingState = safeParseJSON(existing.state || '{}', {});
+    const currentState  = safeParseJSON(localStorage.getItem('wycena-v2') || '{}', {});
     const existingItems = JSON.stringify(existingState.items || []);
     const currentItems  = JSON.stringify(currentState.items  || []);
     const existingSubs  = JSON.stringify(existingState.subs  || []);
@@ -3816,13 +3949,13 @@ function loadWycena(id) {
   if (!entry || !entry.state) return;
 
   // Wstrzyknij nowe pola do state jeśli ich tam nie ma
-  try {
-    const st = JSON.parse(entry.state);
+  const st = safeParseJSON(entry.state, null);
+  if (st && typeof st === 'object') {
     if (entry.model  !== undefined) st.model  = entry.model;
     if (entry.kolor  !== undefined) st.kolor  = entry.kolor;
     if (entry.termin !== undefined) st.termin = entry.termin;
     localStorage.setItem('wycena-v2', JSON.stringify(st));
-  } catch {
+  } else {
     localStorage.setItem('wycena-v2', entry.state);
   }
 
@@ -4644,7 +4777,7 @@ function generujRaportZDaty() {
       const cenaRazem = (Math.round(it.price * qty * 100) / 100).toFixed(2).replace('.', ',');
       const cenaJedn = it.price.toFixed(2).replace('.', ',');
       const qtyTxt = qty > 1 ? `<td class="r">${qty}× ${cenaJedn}</td>` : '<td></td>';
-      czesciRows += `<tr><td>${escHTML(it.customName || it.name)}</td>${qtyTxt}<td class="r">${cenaRazem}</td></tr>`;
+      czesciRows += `<tr><td>${escHTML(itemLabelWithDetails(it, true))}</td>${qtyTxt}<td class="r">${cenaRazem}</td></tr>`;
     });
     sourceSubs.forEach(s => {
       const cena = parseFloat(String(s.price || 0)).toFixed(2).replace('.', ',');
@@ -4788,19 +4921,15 @@ function buildArchiveHTML(entry, useRaport) {
     sourceItems = (entry.raportKoncowy.items || []).filter(it => it.checked);
     sourceSubs  = (entry.raportKoncowy.subs  || []).filter(s  => s.checked && s.price > 0);
   } else {
-    try {
-      const st = JSON.parse(entry.state || '{}');
-      sourceItems = (st.items || []).filter(it => it.checked);
-      sourceSubs  = (st.subs  || []).filter(s  => s.checked && s.price > 0);
-    } catch {}
+    const st = safeParseJSON(entry.state || '{}', {});
+    sourceItems = (st.items || []).filter(it => it.checked);
+    sourceSubs  = (st.subs  || []).filter(s  => s.checked && s.price > 0);
   }
 
   let total = 0;
   const rows = sourceItems.map(it => {
     const qty = it.qty !== undefined ? (it.qty || 1) : 1;
-    let label = it.name || '';
-    if (it.customName) label += ' – ' + it.customName;
-    else if (it.customLabel) label += ' – ' + it.customLabel;
+    const label = itemLabelWithDetails(it, true);
     const rowTotal = (it.price || 0) * qty;
     total += rowTotal;
     const qtyStr = it.qty !== undefined && qty > 0 ? qty : '–';
@@ -5239,26 +5368,7 @@ let raportRItems = [];
 let raportRSubs = [];
 let raportReturnTab = null;
 
-function openRaport(id) {
-  raportEntryId = id;
-  const hist = getHistory();
-  const entry = hist.find(e => e.id === id);
-  if (!entry || !entry.state) { alert('Brak danych zlecenia'); return; }
-
-  // Zapamiętaj do której zakładki wrócić
-  raportReturnTab = entry.raportKoncowy ? 'wydanie' : 'historia';
-
-  // Jeśli raport już istnieje — pokaż podgląd read-only
-  if (entry.raportKoncowy) {
-    openPodglad(entry);
-    closeHistory();
-    return;
-  }
-
-  let st;
-  try { st = JSON.parse(entry.state); } catch { alert('Błąd danych'); return; }
-
-  // Nagłówek — styl zgodny z listą zleceń
+function prepareRaportHeader(entry, wstepnaTotalRaw) {
   const nameParts = [(entry.marka || null), entry.model].filter(Boolean).join(' ');
   $('raport-title').textContent = nameParts || '';
 
@@ -5278,34 +5388,49 @@ function openRaport(id) {
   if (entry.kodOdbioru) { $('raport-kod-val').textContent = entry.kodOdbioru; kodLine.style.display = 'inline'; }
   else { kodLine.style.display = 'none'; }
 
-
-  // Wstępna wycena ze zlecenia
-  const wstepnaVal = parseFloat(String(entry.total || '0').replace(/\s/g,'').replace(',','.')) || 0;
+  const wstepnaVal = parseFloat(String(wstepnaTotalRaw || '0').replace(/\s/g,'').replace(',','.')) || 0;
   if (wstepnaVal > 0) {
     $('raport-wstepna-val').textContent = fmt(wstepnaVal) + ' zł';
     $('raport-wstepna').style.display = 'block';
   } else {
     $('raport-wstepna').style.display = 'none';
   }
+  return wstepnaVal;
+}
 
-  // Zbuduj lokalne kopie items/subs z zapisanego stanu
+function buildRaportLocalItems(st, entry, filterEbikeItems) {
   let rItems = (st.items || []).map((it, i) => ({
     id: 'r' + i,
     name: canonicalName(it.name), price: it.price, checked: it.checked,
     qty: it.qty, selectedPreset: it.selectedPreset ?? -1,
     customName: it.customName ?? '', customLabel: it.customLabel || undefined,
+    noteText: it.noteText || '',
     options: findDefault(it.name)?.options?.map(x => ({...x})),
     presets: findDefault(it.name)?.presets?.map(x => ({...x})),
   }));
-  // Filtruj Diagnostykę eBike i Ochraniacz jeśli nie jest eBike
-  const isEbike = entry.ebike || entry.marka === 'E-BIKE';
-  if (!isEbike) rItems = rItems.filter(it => it.name !== 'Ochraniacz' && it.name !== 'Diagnostyka eBike' && it.name !== 'Diagnostyka e-Bike');
+  if (filterEbikeItems) {
+    const isEbike = entry.ebike || entry.marka === 'E-BIKE';
+    if (!isEbike) {
+      rItems = rItems.filter(it => it.name !== 'Ochraniacz' && it.name !== 'Diagnostyka eBike' && it.name !== 'Diagnostyka e-Bike');
+    }
+  }
   { const _o = DEFAULTS.map(d => d.name); rItems.sort((a,b) => { const ai=_o.indexOf(a.name),bi=_o.indexOf(b.name); return (ai===-1?999:ai)-(bi===-1?999:bi); }); }
+  return rItems;
+}
+
+function buildRaportLocalSubs(st) {
   let rSubs = (st.subs || []).map((s, i) => ({
     id: 'rs' + i, name: s.name, price: s.price, checked: s.checked
   }));
   if (!rSubs.length) rSubs = [1,2,3].map((_,i) => ({ id: 'rs_def'+i, name: '', price: 0, checked: false }));
   while (rSubs.filter(s => !s.checked && !s.price && !s.name).length < 3) rSubs.push({ id: 'rs_pad'+rSubs.length, name: '', price: 0, checked: false });
+  return rSubs;
+}
+
+function renderRaportEditor(entry, st, cfg) {
+  const wstepnaVal = prepareRaportHeader(entry, cfg.wstepnaTotalRaw ?? entry.total);
+  const rItems = buildRaportLocalItems(st, entry, !!cfg.filterEbikeItems);
+  const rSubs = buildRaportLocalSubs(st);
 
   // Zapisz referencje na poziomie modułu dla saveRaportKoncowy
   raportRItems = rItems;
@@ -5324,7 +5449,7 @@ function openRaport(id) {
     }
     const totalEl = $('raport-total-display');
     totalEl.textContent = fmt(total);
-    if (gsum) gsum.textContent = subsTotal > 0 ? fmt(subsTotal) : '0';
+    if (gsum) gsum.textContent = subsTotal > 0 ? String(Math.round(subsTotal)) : '0';
     if (wstepnaVal > 0) {
       if (total > wstepnaVal)      totalEl.style.color = '#ef4444';
       else if (total < wstepnaVal) totalEl.style.color = '#22c55e';
@@ -5388,8 +5513,29 @@ function openRaport(id) {
 
   recalcRaport();
   closeHistory();
-  $('raport-notatka').value = '';
+  $('raport-notatka').value = cfg.noteValue || '';
   $('raport-overlay').style.display = 'block';
+}
+
+function openRaport(id) {
+  raportEntryId = id;
+  const hist = getHistory();
+  const entry = hist.find(e => e.id === id);
+  if (!entry || !entry.state) { alert('Brak danych zlecenia'); return; }
+
+  // Zapamiętaj do której zakładki wrócić
+  raportReturnTab = entry.raportKoncowy ? 'wydanie' : 'historia';
+
+  // Jeśli raport już istnieje — pokaż podgląd read-only
+  if (entry.raportKoncowy) {
+    openPodglad(entry);
+    closeHistory();
+    return;
+  }
+
+  const st = safeParseJSON(entry.state, null);
+  if (!st) { alert('Błąd danych'); return; }
+  renderRaportEditor(entry, st, { noteValue: '', filterEbikeItems: true, wstepnaTotalRaw: entry.total });
 }
 
 function closeRaport() {
@@ -5418,6 +5564,7 @@ function saveRaportKoncowy() {
     qty: it.qty,
     selectedPreset: it.selectedPreset ?? -1,
     customLabel: it.customLabel || undefined,
+    noteText: it.noteText || '',
   }));
 
   const raportSubs = raportRSubs.map(s => ({
@@ -5434,7 +5581,7 @@ function saveRaportKoncowy() {
     const priceEl = row.querySelector('.sub-price-input');
     if (raportSubs[i]) {
       if (nameEl) raportSubs[i].name = nameEl.value;
-      if (priceEl) raportSubs[i].price = parseFloat(priceEl.value.replace(',','.')) || 0;
+      if (priceEl) raportSubs[i].price = Math.round(parseFloat(priceEl.value.replace(',','.')) || 0);
       if (cb) raportSubs[i].checked = cb.checked;
     }
   });
@@ -5541,9 +5688,7 @@ function openPodglad(entry) {
   let total = 0;
   (rk.items || []).filter(it => it.checked).forEach(it => {
     const qty = it.qty !== undefined ? (it.qty || 1) : 1;
-    let label = it.name || '';
-    if (it.customName) label += ' – ' + it.customName;
-    else if (it.customLabel) label += ' – ' + it.customLabel;
+    const label = itemLabelWithDetails(it, true);
     const rowTotal = (it.price || 0) * qty;
     total += rowTotal;
     const qtyStr = it.qty !== undefined && qty > 0 ? qty : '–';
@@ -5646,10 +5791,8 @@ function openPodsumowanieWydane(id) {
   let html = '';
   let stItems = [];
   let zlecTotal = 0;
-  try {
-    const st = entry.state ? JSON.parse(entry.state) : null;
-    if (st?.items) stItems = st.items.filter(it => it.checked);
-  } catch {}
+  const st = entry.state ? safeParseJSON(entry.state, null) : null;
+  if (st?.items) stItems = st.items.filter(it => it.checked);
 
   if (stItems.length) {
     html += `<div style="padding:10px 12px 6px;font-size:13px;font-weight:800;color:#22c55e;text-transform:uppercase;letter-spacing:.8px;background:var(--bg);text-align:center;">Zlecone naprawy</div>`;
@@ -5659,7 +5802,7 @@ function openPodsumowanieWydane(id) {
       const price = parseFloat(it.price) || 0;
       const total = Math.round(price * qty * 100) / 100;
       zlecTotal += total;
-      const name = it.customLabel || it.customName || it.name;
+      const name = itemLabelWithDetails(it, true);
       html += `<tr><td ${td}>${escHTML(name)}</td><td ${tdr}>${fmtPLN(price)}</td><td ${tdr}>${qty}</td><td ${tdr}>${fmtPLN(total)}</td></tr>`;
     });
     html += `<tr><td colspan="3" style="padding:8px 10px;font-size:12px;font-weight:700;color:var(--text3);">Razem zlecenie</td><td style="padding:8px 10px;font-size:14px;font-weight:800;color:#fff;text-align:right;">${fmtPLN(zlecTotal)} zł</td></tr>`;
@@ -5676,7 +5819,7 @@ function openPodsumowanieWydane(id) {
       const price = parseFloat(it.price) || 0;
       const total = Math.round(price * qty * 100) / 100;
       rapTotal += total;
-      const name = it.customLabel || it.customName || it.name;
+      const name = itemLabelWithDetails(it, true);
       html += `<tr><td ${td}>${escHTML(name)}</td><td ${tdr}>${fmtPLN(price)}</td><td ${tdr}>${qty}</td><td ${tdr}>${fmtPLN(total)}</td></tr>`;
     });
     (rk.subs || []).filter(s => s.checked && s.name).forEach(s => {
@@ -5854,7 +5997,8 @@ function generujPodsumowaniePDF(id) {
 
     // ── ZLECONE NAPRAWY ──
     let stItems = [], zlecTotal = 0;
-    try { const st = entry.state ? JSON.parse(entry.state) : null; if (st?.items) stItems = st.items.filter(it=>it.checked); } catch{}
+    const stZlec = entry.state ? safeParseJSON(entry.state, null) : null;
+    if (stZlec?.items) stItems = stZlec.items.filter(it => it.checked);
 
     if (stItems.length) {
       sectionTitle(pl('Zlecone naprawy'), y); y += 6;
@@ -5867,7 +6011,7 @@ function generujPodsumowaniePDF(id) {
         const price = parseFloat(it.price)||0;
         const total = Math.round(price*qty*100)/100;
         zlecTotal += total;
-        tableRow(it.customLabel||it.customName||it.name||'', price, qty, total, y, idx%2===1);
+        tableRow(itemLabelWithDetails(it, true), price, qty, total, y, idx%2===1);
         y += ROW_H;
       });
       y += 2;
@@ -5890,7 +6034,7 @@ function generujPodsumowaniePDF(id) {
         const price = parseFloat(it.price)||0;
         const total = Math.round(price*qty*100)/100;
         rapTotal += total;
-        tableRow(it.customLabel||it.customName||it.name||'', price, qty, total, y, rowIdx%2===1);
+        tableRow(itemLabelWithDetails(it, true), price, qty, total, y, rowIdx%2===1);
         y += ROW_H; rowIdx++;
       });
       (rk.subs||[]).filter(s=>s.checked&&s.name).forEach(s => {
@@ -5935,8 +6079,8 @@ function openPodgladZlecenia(id) {
   const entry = hist.find(e => e.id === id);
   if (!entry || !entry.state) { alert('Brak danych zlecenia'); return; }
 
-  let st;
-  try { st = JSON.parse(entry.state); } catch { alert('Błąd danych'); return; }
+  const st = safeParseJSON(entry.state, null);
+  if (!st) { alert('Błąd danych'); return; }
 
   raportReturnTab = 'historia';
 
@@ -5974,18 +6118,7 @@ function openPodgladZlecenia(id) {
   let total = 0;
   (st.items || []).filter(it => it.checked).forEach(it => {
     const qty = it.qty !== undefined ? (it.qty || 1) : 1;
-    let label = it.name || '';
-    if (it.customName) label += ' – ' + it.customName;
-    else if (it.customLabel) label += ' – ' + it.customLabel;
-    else if (it.selectedPreset > 0) {
-      const def = findDefault(it.name);
-      const p = def?.presets?.[it.selectedPreset - 1];
-      if (p) label += ' – ' + p.label;
-    } else if (it.options) {
-      const def = findDefault(it.name);
-      const opt = def?.options?.find(o => o.price === it.price);
-      if (opt) label += ' – ' + opt.label;
-    }
+    const label = itemLabelWithDetails(it, true);
     const rowTotal = (it.price || 0) * qty;
     total += rowTotal;
     const qtyStr = it.qty !== undefined && qty > 0 ? qty : '–';
@@ -6036,125 +6169,14 @@ function openRaportEdycja(id) {
   if (entry.raportKoncowy && entry.raportKoncowy.items) {
     st = { items: entry.raportKoncowy.items, subs: entry.raportKoncowy.subs || [] };
   } else {
-    try { st = JSON.parse(entry.state); } catch { alert('Błąd danych'); return; }
+    st = safeParseJSON(entry.state, null);
+    if (!st) { alert('Błąd danych'); return; }
   }
-
-  // Nagłówek — styl zgodny z listą zleceń
-  const nameParts = [(entry.marka || null), entry.model].filter(Boolean).join(' ');
-  $('raport-title').textContent = nameParts || '';
-
-  const dotEl = $('raport-kolor-dot');
-  const _dotHTML5 = makeKolorDot(entry.kolor || '', 12);
-  if (_dotHTML5) {
-    dotEl.innerHTML = _dotHTML5; dotEl.style.display = '';
-  } else {
-    dotEl.style.cssText = 'display:none;';
-  }
-
-  // Tel + Kod odbioru (inline)
-  const telKodLine = $('raport-tel-kod-line');
-  const kodLine = $('raport-kod-line');
-  if (entry.tel) { $('raport-tel-val').textContent = entry.tel; telKodLine.style.display = 'flex'; }
-  else { telKodLine.style.display = 'none'; }
-  if (entry.kodOdbioru) { $('raport-kod-val').textContent = entry.kodOdbioru; kodLine.style.display = 'inline'; }
-  else { kodLine.style.display = 'none'; }
-
-
-  // Wstępna wycena ze zlecenia
-  const wstepnaVal = parseFloat(String(entry.total || '0').replace(/\s/g,'').replace(',','.')) || 0;
-  if (wstepnaVal > 0) {
-    $('raport-wstepna-val').textContent = fmt(wstepnaVal) + ' zł';
-    $('raport-wstepna').style.display = 'block';
-  } else {
-    $('raport-wstepna').style.display = 'none';
-  }
-
-  // Buduj items
-  let rItems = (st.items || []).map((it, i) => ({
-    id: 'r' + i,
-    name: canonicalName(it.name), price: it.price, checked: it.checked,
-    qty: it.qty, selectedPreset: it.selectedPreset ?? -1,
-    customName: it.customName ?? '', customLabel: it.customLabel || undefined,
-    options: findDefault(it.name)?.options?.map(x => ({...x})),
-    presets: findDefault(it.name)?.presets?.map(x => ({...x})),
-  }));
-  { const _o = DEFAULTS.map(d => d.name); rItems.sort((a,b) => { const ai=_o.indexOf(a.name),bi=_o.indexOf(b.name); return (ai===-1?999:ai)-(bi===-1?999:bi); }); }
-  let rSubs = (st.subs || []).map((s, i) => ({
-    id: 'rs' + i, name: s.name, price: s.price, checked: s.checked
-  }));
-  if (!rSubs.length) rSubs = [1,2,3].map((_,i) => ({ id: 'rs_def'+i, name: '', price: 0, checked: false }));
-  while (rSubs.filter(s => !s.checked && !s.price && !s.name).length < 3) rSubs.push({ id: 'rs_pad'+rSubs.length, name: '', price: 0, checked: false });
-
-  let gsum2;
-  function recalcRaport() {
-    let total = 0;
-    for (const it of rItems) {
-      if (!it.checked) continue;
-      total += it.price * (it.qty !== undefined ? (it.qty || 1) : 1);
-    }
-    let subsTotal = 0;
-    for (const s of rSubs) {
-      if (s.checked && s.price > 0) { subsTotal += parseFloat(s.price) || 0; total += parseFloat(s.price) || 0; }
-    }
-    const totalEl = $('raport-total-display');
-    totalEl.textContent = fmt(total);
-    if (gsum2) gsum2.textContent = subsTotal > 0 ? fmt(subsTotal) : '0';
-    if (wstepnaVal > 0) {
-      if (total > wstepnaVal)      totalEl.style.color = '#ef4444';
-      else if (total < wstepnaVal) totalEl.style.color = '#22c55e';
-      else                         totalEl.style.color = '#fff';
-    } else {
-      totalEl.style.color = '#fff';
-    }
-  }
-
-  const list = $('raport-items-list');
-  list.innerHTML = '';
-  for (const it of rItems) {
-    const card = buildCard(it, rItems, null, recalcRaport);
-    list.appendChild(card);
-  }
-
-  const gc = $('raport-group-container');
-  gc.innerHTML = '';
-  const wrap = document.createElement('div');
-  wrap.className = 'group-card';
-  wrap.style.margin = '4px 8px 3px';
-  const hdr = document.createElement('div');
-  hdr.className = 'group-header';
-  const gtitle = document.createElement('span');
-  gtitle.className = 'group-title';
-  gtitle.textContent = 'Inne części';
-  gsum2 = document.createElement('span');
-  gsum2.className = 'group-sum';
-  gsum2.textContent = '0';
-  const gtoggle = document.createElement('span');
-  gtoggle.className = 'group-toggle open';
-  gtoggle.innerHTML = '&#8964;';
-  hdr.appendChild(gtitle);
-  hdr.appendChild(gsum2);
-  hdr.appendChild(gtoggle);
-  const gbody = document.createElement('div');
-  gbody.className = 'group-body open';
-  const addRaportSubRow2 = (sub) => {
-    const row = buildSubRow(sub, rSubs, () => {
-      const newRow = addRaportSubRow2(rSubs[rSubs.length - 1]);
-      gbody.appendChild(newRow);
-      setTimeout(() => newRow.querySelector('.sub-name-input')?.focus(), 0);
-      recalcRaport();
-    }, recalcRaport);
-    return row;
-  };
-  rSubs.forEach(sub => gbody.appendChild(addRaportSubRow2(sub)));
-  hdr.addEventListener('click', () => { gbody.classList.toggle('open'); gtoggle.classList.toggle('open'); });
-  wrap.appendChild(hdr);
-  wrap.appendChild(gbody);
-  gc.appendChild(wrap);
-
-  recalcRaport();
-  closeHistory();
-  $('raport-notatka').value = (entry.raportKoncowy && entry.raportKoncowy.notatka) ? entry.raportKoncowy.notatka : '';
-  $('raport-overlay').style.display = 'block';
+  renderRaportEditor(entry, st, {
+    noteValue: (entry.raportKoncowy && entry.raportKoncowy.notatka) ? entry.raportKoncowy.notatka : '',
+    filterEbikeItems: false,
+    wstepnaTotalRaw: entry.total
+  });
 }
 window.openRaportEdycja = openRaportEdycja;
 window.openRaport = openRaport;
@@ -6213,19 +6235,23 @@ function updateAdminSyncRow() {
   const email = localStorage.getItem('gdrive-email');
   const ls    = localStorage.getItem('gdrive-last-sync');
 
-  const avatar = localStorage.getItem('gdrive-avatar') || '';
+  const avatar = safeImageSrc(localStorage.getItem('gdrive-avatar') || '');
   const maskEmail = e => {
     if (!e) return '';
     const [user, domain] = e.split('@');
     if (!domain) return e.slice(0,3) + '***';
     return user.slice(0,3) + '***@' + domain;
   };
+  const emailMasked = escHTML(maskEmail(email || ''));
+  const avatarHTML = avatar
+    ? '<img src="' + escAttr(avatar) + '" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;" onerror="this.style.display=\'none\'">'
+    : '';
 
   const loggedHTML =
     '<div style="display:flex;flex-direction:column;align-items:center;padding:10px 14px;border-bottom:1px solid var(--border);gap:3px;text-align:center;">' +
       '<div style="display:flex;align-items:center;gap:8px;justify-content:center;">' +
-        (avatar ? '<img src="' + avatar + '" style="width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;" onerror="this.style.display=\'none\'">' : '') +
-        '<span style="font-size:12px;color:#22c55e;">' + maskEmail(email||'') + '</span>' +
+        avatarHTML +
+        '<span style="font-size:12px;color:#22c55e;">' + emailMasked + '</span>' +
       '</div>' +
       (ls ? '<span style="font-size:11px;color:var(--text3);">Ostatnia sync: ' +
         new Date(ls).toLocaleDateString('pl-PL',{day:'2-digit',month:'2-digit'}) + ' ' +
@@ -6664,6 +6690,69 @@ window.euroConvert    = euroConvert;
 // ─────────────────────────────────────────
 let _cselModal = null;
 let _cselCleanup = null;
+
+function openOpisBanner(initialValue) {
+  return new Promise(resolve => {
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,0.75);display:flex;align-items:center;justify-content:center;';
+
+    const sheet = document.createElement('div');
+    sheet.style.cssText = 'background:var(--bg2);border:1px solid var(--border);border-radius:14px;width:92%;max-width:340px;display:flex;flex-direction:column;overflow:hidden;';
+
+    const hdr = document.createElement('div');
+    hdr.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:16px 16px 12px;border-bottom:1px solid var(--border);';
+    const title = document.createElement('span');
+    title.style.cssText = 'flex:1;font-size:18px;font-weight:700;color:#fff;text-align:center;';
+    title.textContent = 'Opis pozycji';
+    const closeBtn = document.createElement('button');
+    closeBtn.style.cssText = 'background:none;border:none;color:#ef4444;font-size:22px;cursor:pointer;line-height:1;padding:0 4px;';
+    closeBtn.innerHTML = '&times;';
+    hdr.appendChild(title);
+    hdr.appendChild(closeBtn);
+
+    const body = document.createElement('div');
+    body.style.cssText = 'padding:14px 16px 16px;';
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.maxLength = 120;
+    input.value = initialValue || '';
+    input.placeholder = 'Wpisz opis...';
+    input.style.cssText = 'width:100%;font-size:15px;padding:10px 12px;border:1px solid var(--blue);border-radius:8px;background:var(--bg);color:#fff;outline:none;';
+    body.appendChild(input);
+
+    const footer = document.createElement('div');
+    footer.style.cssText = 'display:flex;gap:8px;padding:0 16px 16px;';
+    const cancelBtn = document.createElement('button');
+    cancelBtn.style.cssText = 'flex:1;padding:11px;background:none;border:1px solid #7f1d1d;border-radius:8px;color:#ef4444;font-size:13px;font-weight:700;cursor:pointer;';
+    cancelBtn.textContent = 'Anuluj';
+    const okBtn = document.createElement('button');
+    okBtn.style.cssText = 'flex:2;padding:11px;background:var(--blue);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;';
+    okBtn.textContent = 'Zatwierdź';
+    footer.appendChild(cancelBtn);
+    footer.appendChild(okBtn);
+
+    const close = val => {
+      overlay.remove();
+      resolve(val);
+    };
+
+    closeBtn.addEventListener('click', () => close(null));
+    cancelBtn.addEventListener('click', () => close(null));
+    okBtn.addEventListener('click', () => close((input.value || '').trim()));
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { e.preventDefault(); close((input.value || '').trim()); }
+      if (e.key === 'Escape') { e.preventDefault(); close(null); }
+    });
+    overlay.addEventListener('click', e => { if (e.target === overlay) close(null); });
+
+    sheet.appendChild(hdr);
+    sheet.appendChild(body);
+    sheet.appendChild(footer);
+    overlay.appendChild(sheet);
+    document.body.appendChild(overlay);
+    setTimeout(() => { input.focus(); input.select(); }, 0);
+  });
+}
 
 function buildCsel(sel, extraClass) {
   const wrap = document.createElement('div');
