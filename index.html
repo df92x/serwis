@@ -823,10 +823,102 @@ select.native-sel { display: none !important; }
       .sync-dot-blink { animation: blink-red 0.9s ease-in-out infinite; }
     </style>
 
+    <button onclick="openKodyRabatowe()" style="width:75%;align-self:center;padding:16px;background:#f59e0b;border:none;border-radius:12px;color:#111827;font-size:17px;font-weight:800;cursor:pointer;letter-spacing:.4px;display:flex;align-items:center;justify-content:center;gap:12px;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111827" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h7"/><path d="M18 2l4 4-10 10H8v-4z"/></svg>
+      Kody Rabatowe
+    </button>
+
     <button onclick="openAdminModal()" style="width:75%;align-self:center;padding:16px;background:#c0392b;border:none;border-radius:12px;color:#fff;font-size:17px;font-weight:600;cursor:pointer;letter-spacing:.4px;display:flex;align-items:center;justify-content:center;gap:12px;">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
       Administracja
     </button>
+  </div>
+</div>
+
+<!-- Kody rabatowe -->
+<div id="kody-rabatowe-overlay" class="overlay-full" style="z-index:60;display:none;">
+  <div class="app">
+    <header>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h7"/><path d="M18 2l4 4-10 10H8v-4z"/></svg>
+      <h1 style="font-size:16px;">Kody rabatowe</h1>
+      <button onclick="closeKodyRabatowe()" class="btn-close">Zamknij</button>
+    </header>
+
+    <div style="padding:16px 16px 40px;display:flex;flex-direction:column;gap:14px;">
+      <!-- Szukaj kodów -->
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:12px 12px;">
+        <div style="font-size:11px;font-weight:900;color:#f59e0b;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;">Szukaj</div>
+        <input id="rab-search" type="text" placeholder="Szukaj po numerze telefonu (xxx-xxx-xxx) lub kodzie (8 cyfr)"
+          style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:12px 12px;color:#fff;font-size:14px;font-weight:800;outline:none;">
+      </div>
+
+      <!-- Predefiniowane kategorie -->
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:12px 12px;">
+        <div style="font-size:11px;font-weight:900;color:#f59e0b;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;">Kategorie</div>
+        <div id="rab-templates" style="display:flex;flex-direction:column;gap:10px;"></div>
+      </div>
+
+      <!-- Aktywne kody -->
+      <button onclick="toggleRabatyAktywne()" style="width:100%;padding:12px;background:#052e1a;border:1px solid #22c55e;border-radius:12px;color:#22c55e;font-size:14px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h7"/><path d="M18 2l4 4-10 10H8v-4z"/></svg>
+        Aktywne kody
+      </button>
+      <div id="rab-active-wrap" style="display:none;">
+        <div id="rab-active-list" style="display:flex;flex-direction:column;gap:10px;"></div>
+      </div>
+
+      <!-- Wykorzystane kody -->
+      <button onclick="toggleRabatyWykorzystane()" style="width:100%;padding:12px;background:#2a0f0f;border:1px solid #ef4444;border-radius:12px;color:#ef4444;font-size:14px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h7"/><path d="M18 2l4 4-10 10H8v-4z"/></svg>
+        Wykorzystane kody
+      </button>
+      <div id="rab-used-wrap" style="display:none;">
+        <div id="rab-used-list" style="display:flex;flex-direction:column;gap:10px;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Wydane zlecenia: picker do generowania kodu -->
+<div id="rab-wydane-overlay" style="display:none;position:fixed;inset:0;z-index:70;background:rgba(0,0,0,0.75);align-items:center;justify-content:center;">
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;width:92%;max-width:520px;max-height:85vh;display:flex;flex-direction:column;overflow:hidden;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 16px 12px;border-bottom:1px solid var(--border);flex-shrink:0;">
+      <span id="rab-wydane-title" style="flex:1;font-size:16px;font-weight:900;color:#fff;text-align:center;">Wybierz wydane zlecenie</span>
+      <button onclick="closeRabWydane()" style="background:none;border:none;color:#ef4444;font-size:22px;cursor:pointer;line-height:1;padding:0 4px;">&times;</button>
+    </div>
+    <div id="rab-wydane-list" style="overflow-y:auto;padding:8px 0;"></div>
+    <div style="padding:12px 16px;border-top:1px solid var(--border);flex-shrink:0;">
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap;">
+          <span style="font-size:12px;color:var(--text3);align-self:center;">Ważność:</span>
+          <button id="rab-valid-3" onclick="setRabValidity(3)" style="padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:#fff;font-weight:900;cursor:pointer;">3 mies.</button>
+          <button id="rab-valid-6" onclick="setRabValidity(6)" style="padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:#fff;font-weight:900;cursor:pointer;">6 mies.</button>
+          <button id="rab-valid-12" onclick="setRabValidity(12)" style="padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:#fff;font-weight:900;cursor:pointer;">12 mies.</button>
+        </div>
+        <div style="font-size:12px;color:var(--text3);text-align:center;">
+          Po wyborze zlecenia zostanie wygenerowany kod rabatowy (8 cyfr).
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Przypisz kod rabatowy do zlecenia (WYDANE) -->
+<div id="rab-assign-overlay" style="display:none;position:fixed;inset:0;z-index:70;background:rgba(0,0,0,0.75);align-items:center;justify-content:center;">
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;width:92%;max-width:520px;max-height:85vh;display:flex;flex-direction:column;overflow:hidden;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 16px 12px;border-bottom:1px solid var(--border);flex-shrink:0;">
+      <span id="rab-assign-title" style="flex:1;font-size:16px;font-weight:900;color:#fff;text-align:center;">Wybierz rabat</span>
+      <button onclick="closeRabAssign()" style="background:none;border:none;color:#ef4444;font-size:22px;cursor:pointer;line-height:1;padding:0 4px;">&times;</button>
+    </div>
+    <div id="rab-assign-body" style="overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:12px;">
+      <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap;">
+        <span style="font-size:12px;color:var(--text3);align-self:center;">Ważność:</span>
+        <button id="rab-assign-valid-3" onclick="setRabValidity(3);syncRabAssignValidityUI()" style="padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:#fff;font-weight:900;cursor:pointer;">3 mies.</button>
+        <button id="rab-assign-valid-6" onclick="setRabValidity(6);syncRabAssignValidityUI()" style="padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:#fff;font-weight:900;cursor:pointer;">6 mies.</button>
+        <button id="rab-assign-valid-12" onclick="setRabValidity(12);syncRabAssignValidityUI()" style="padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:#fff;font-weight:900;cursor:pointer;">12 mies.</button>
+      </div>
+      <div id="rab-assign-cats" style="display:flex;flex-direction:column;gap:10px;"></div>
+    </div>
   </div>
 </div>
 
@@ -1039,6 +1131,7 @@ select.native-sel { display: none !important; }
 
     <!-- Items -->
     <div class="items-list" id="kalk-items-list" style="padding:4px 0;"></div>
+    <div id="kalk-group-container"></div>
 
     <!-- Notatka serwisowa kalkulator -->
     <div style="margin:12px 8px 0;">
@@ -1283,7 +1376,7 @@ function unlockBody() { document.body.classList.remove('overlay-open'); }
 function updateBodyLock() {
   const overlayIds = ['raport-overlay','podglad-overlay','history-overlay',
     'modal-overlay','wydaj-overlay','kalkulator-overlay','lancuch-overlay',
-    'kalkulator-prosty-overlay','start-overlay'];
+    'kalkulator-prosty-overlay','kody-rabatowe-overlay','rab-wydane-overlay','rab-assign-overlay','start-overlay'];
   const anyOpen = overlayIds.some(id => { const el = $(id); return el && getComputedStyle(el).display !== 'none'; });
   if (anyOpen) lockBody(); else unlockBody();
 }
@@ -1291,7 +1384,7 @@ function updateBodyLock() {
 document.addEventListener('DOMContentLoaded', () => {
   const overlayIds = ['raport-overlay','podglad-overlay','history-overlay',
     'modal-overlay','wydaj-overlay','kalkulator-overlay','lancuch-overlay',
-    'kalkulator-prosty-overlay','start-overlay'];
+    'kalkulator-prosty-overlay','kody-rabatowe-overlay','rab-wydane-overlay','rab-assign-overlay','start-overlay'];
   overlayIds.forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
@@ -1305,7 +1398,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // ─────────────────────────────────────────
 const DEFAULTS = [
   { name: 'Naprawa',    price: 0, checked: false,
-    options: [{label:'Przygotowanie',price:100},{label:'Przegląd podstawowy',price:150},{label:'Pełny przegląd',price:250},{label:'Wymiana dętki/opony przód',price:30},{label:'Wymiana dętki/opony tył',price:35},{label:'Serwis koło przód',price:40},{label:'Serwis koło tył',price:50},{label:'Centrowanie',price:40},{label:'Diagnostyka e-Bike',price:100},{label:'Złożenie roweru',price:150}] },
+    options: [{label:'Przygotowanie',price:100},{label:'Przegląd PODSTAWOWY',price:150},{label:'Przegląd PEŁNY',price:250},{label:'Złożenie roweru',price:150},{label:'Wymiana dętki/opony przód',price:30},{label:'Wymiana dętki/opony tył',price:35},{label:'Serwis koło przód',price:40},{label:'Serwis koło tył',price:50},{label:'Centrowanie',price:40},{label:'Diagnostyka e-Bike',price:100}] },
   { name: 'Korba',      price: 0,   checked: false,
     presets: [{label:'3x8 Kwadrat',price:119},{label:'3x9 Hollowtech',price:229}] },
   { name: 'Support',    price: 0,   checked: false,
@@ -3236,6 +3329,630 @@ function openAdminModal() {
 }
 window.openAdminModal = openAdminModal;
 
+// ─────────────────────────────────────────
+// KODY RABATOWE
+// ─────────────────────────────────────────
+const RABATY_ACTIVE_KEY = 'rabat-aktywne-v1';
+const RABATY_USED_KEY = 'rabat-wykorzystane-v1';
+const RABATY_TEMPLATES = [
+  { id: 'DARMOWY_PO_ZLOZENIU', label: 'Darmowy Przegląd (po złożeniu)', percent: 0 },
+  { id: 'USL35', label: 'Usługa Serwisowa -35%', percent: 35 },
+  { id: 'USL50', label: 'Usługa Serwisowa -50%', percent: 50 },
+  { id: 'PRZEGLAD_PODSTAWOWY_99', label: 'Przegląd Podstawowy 99zł', percent: 0, amount: 99 },
+  { id: 'PRZEGLAD_GENERALNY_149', label: 'Przegląd Generalny 149zł', percent: 0, amount: 149 },
+  { id: 'DARMOWY_PODSTAWOWY', label: 'Darmowy Przegląd Podstawowy', percent: 0 },
+];
+let _rabSearchQ = '';
+let _rabValidityMonths = 6;
+let _rabHighlightCode = '';
+let _rabHighlightUntil = 0;
+
+let _zlecHighlightId = '';
+let _zlecHighlightUntil = 0;
+
+function highlightZlecenie(id) {
+  _zlecHighlightId = String(id ?? '');
+  _zlecHighlightUntil = Date.now() + 12000;
+}
+function scrollToHighlightedZlecenie(containerId) {
+  if (!_zlecHighlightId || Date.now() > (_zlecHighlightUntil || 0)) return;
+  try {
+    const root = containerId ? document.getElementById(containerId) : document;
+    if (!root) return;
+    const el = root.querySelector('[data-order-id="' + CSS.escape(_zlecHighlightId) + '"]');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  } catch {}
+}
+
+function getRabatyActive() {
+  const list = safeParseJSON(localStorage.getItem(RABATY_ACTIVE_KEY) || '[]', []);
+  return Array.isArray(list) ? list : [];
+}
+function saveRabatyActive(list) {
+  localStorage.setItem(RABATY_ACTIVE_KEY, JSON.stringify(list));
+}
+function getRabatyUsed() {
+  const list = safeParseJSON(localStorage.getItem(RABATY_USED_KEY) || '[]', []);
+  return Array.isArray(list) ? list : [];
+}
+function saveRabatyUsed(list) {
+  localStorage.setItem(RABATY_USED_KEY, JSON.stringify(list));
+}
+function rabEntryKey(entry) {
+  if (!entry) return '';
+  return (entry.id != null && entry.id !== '') ? String(entry.id) : [
+    entry.tel || '',
+    entry.kodOdbioru || '',
+    entry.dataWydania || '',
+    entry.model || '',
+    entry.marka || '',
+  ].join('|');
+}
+
+function _addMonths(ts, months) {
+  const d = new Date(ts);
+  const m = Math.max(0, parseInt(months || 0, 10) || 0);
+  const day = d.getDate();
+  d.setMonth(d.getMonth() + m);
+  if (d.getDate() !== day) d.setDate(0);
+  return d.getTime();
+}
+function _fmtDatePL(ts) {
+  try { return new Date(ts).toLocaleDateString('pl-PL', { day:'2-digit', month:'2-digit', year:'numeric' }); }
+  catch { return ''; }
+}
+function setRabValidity(m) {
+  _rabValidityMonths = (m === 3 || m === 6 || m === 12) ? m : 6;
+  [3,6,12].forEach(x => {
+    const b = $('rab-valid-' + x);
+    if (!b) return;
+    const active = x === _rabValidityMonths;
+    b.style.borderColor = active ? '#f59e0b' : 'var(--border)';
+    b.style.background = active ? '#111827' : 'var(--bg)';
+    b.style.color = active ? '#f59e0b' : '#fff';
+  });
+}
+window.setRabValidity = setRabValidity;
+
+function syncRabAssignValidityUI() {
+  [3,6,12].forEach(x => {
+    const b = $('rab-assign-valid-' + x);
+    if (!b) return;
+    const active = x === _rabValidityMonths;
+    b.style.borderColor = active ? '#f59e0b' : 'var(--border)';
+    b.style.background = active ? '#111827' : 'var(--bg)';
+    b.style.color = active ? '#f59e0b' : '#fff';
+  });
+}
+window.syncRabAssignValidityUI = syncRabAssignValidityUI;
+
+let _rabAssignEntryId = null;
+function closeRabAssign() {
+  const ov = $('rab-assign-overlay');
+  if (ov) ov.style.display = 'none';
+  _rabAssignEntryId = null;
+}
+window.closeRabAssign = closeRabAssign;
+
+function openRabAssignForArchive(entryId) {
+  const id = (entryId != null) ? entryId : null;
+  const arch = getArchive();
+  const entry = arch.find(e => e.id === id);
+  if (!entry) { alert('Brak danych zlecenia'); return; }
+
+  const entryKey = rabEntryKey(entry);
+  const already = [].concat(getRabatyActive(), getRabatyUsed());
+  if (already.some(x => String(x.entryKey || x.entryId || '') === entryKey)) {
+    alert('Dla tego zlecenia kod rabatowy został już wygenerowany.');
+    return;
+  }
+
+  _rabAssignEntryId = id;
+  const title = $('rab-assign-title');
+  if (title) title.textContent = 'Wybierz rabat';
+  setRabValidity(_rabValidityMonths || 6);
+  syncRabAssignValidityUI();
+  renderRabAssignCats();
+  $('rab-assign-overlay').style.display = 'flex';
+}
+window.openRabAssignForArchive = openRabAssignForArchive;
+
+function renderRabAssignCats() {
+  const box = $('rab-assign-cats');
+  if (!box) return;
+  box.innerHTML = '';
+  const arch = getArchive();
+  const entry = arch.find(e => e.id === _rabAssignEntryId);
+  if (!entry) {
+    box.innerHTML = '<div style="padding:12px 12px;border:1px dashed var(--border);border-radius:10px;color:var(--text3);text-align:center;font-size:13px;">Brak danych zlecenia</div>';
+    return;
+  }
+  RABATY_TEMPLATES.forEach(t => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:12px 12px;background:var(--bg);border:1px solid var(--border);border-radius:12px;';
+    const left = document.createElement('div');
+    left.style.cssText = 'flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;';
+    const title = document.createElement('div');
+    title.style.cssText = 'font-size:15px;font-weight:900;color:#fff;';
+    title.textContent = t.label;
+    left.appendChild(title);
+    const btn = document.createElement('button');
+    btn.style.cssText = 'background:#f59e0b;border:none;border-radius:10px;color:#111827;font-size:13px;font-weight:900;padding:10px 12px;cursor:pointer;';
+    btn.textContent = 'Przydziel';
+    btn.onclick = () => {
+      _rabTemplate = t;
+      const code = generateRabCodeForEntry(entry);
+      closeRabAssign();
+      if (!code) return;
+      _rabHighlightCode = String(code || '');
+      _rabHighlightUntil = Date.now() + 12000;
+      openKodyRabatowe();
+      const wrap = $('rab-active-wrap');
+      if (wrap) wrap.style.display = 'block';
+      renderRabatyActive();
+      setTimeout(() => {
+        try {
+          const el = document.querySelector('#rab-active-list [data-code="' + CSS.escape(_rabHighlightCode) + '"]');
+          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } catch {}
+      }, 60);
+    };
+    row.appendChild(left);
+    row.appendChild(btn);
+    box.appendChild(row);
+  });
+}
+
+function _smsRabatyBody(r) {
+  const code = (r?.code || '').trim();
+  const name = (r?.templateLabel || '').trim();
+  const valid = r?.validUntil ? _fmtDatePL(r.validUntil) : (r?.validUntilStr || '');
+  return [
+    'Dziekujemy za skorzystanie z naszych usług.',
+    '',
+    'Otrzymuejsz kod rabatowy - ' + (code || '-'),
+    (name || ''),
+    'Data ważności - ' + (valid || '-'),
+    'Kod obejmuje tylko usługi mechaniczne, bez kosztów części.',
+    '',
+    'Zapraszamy ponownie',
+  ].filter(Boolean).join('\n');
+}
+
+function markRabSmsSent(code) {
+  const c = String(code || '');
+  if (!c) return;
+  const act = getRabatyActive();
+  const idx = act.findIndex(x => String(x.code||'') === c);
+  if (idx >= 0) {
+    act[idx].smsSent = true;
+    act[idx].smsSentAt = Date.now();
+    saveRabatyActive(act);
+    renderRabatyActive();
+    return;
+  }
+  const used = getRabatyUsed();
+  const idx2 = used.findIndex(x => String(x.code||'') === c);
+  if (idx2 >= 0) {
+    used[idx2].smsSent = true;
+    used[idx2].smsSentAt = Date.now();
+    saveRabatyUsed(used);
+    renderRabatyUsed();
+  }
+}
+function gen8() {
+  return String(Math.floor(10000000 + Math.random() * 90000000));
+}
+function genUnique8() {
+  const cur = getRabatyActive();
+  const set = new Set(cur.map(x => String(x.code || '')));
+  for (let i = 0; i < 30; i++) {
+    const c = gen8();
+    if (!set.has(c)) return c;
+  }
+  // fallback: time-based
+  return String(Date.now()).slice(-8);
+}
+
+function renderRabatyTemplates() {
+  const box = $('rab-templates');
+  if (!box) return;
+  box.innerHTML = '';
+  RABATY_TEMPLATES.forEach(t => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:12px 12px;background:var(--bg);border:1px solid var(--border);border-radius:12px;';
+    const left = document.createElement('div');
+    left.style.cssText = 'flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;';
+    const title = document.createElement('div');
+    title.style.cssText = 'font-size:15px;font-weight:900;color:#fff;';
+    title.textContent = t.label;
+    left.appendChild(title);
+
+    const btn = document.createElement('button');
+    btn.style.cssText = 'background:#f59e0b;border:none;border-radius:10px;color:#111827;font-size:13px;font-weight:900;padding:10px 12px;cursor:pointer;';
+    btn.textContent = 'Generuj';
+    btn.onclick = () => openRabWydane(t);
+
+    row.appendChild(left);
+    row.appendChild(btn);
+    box.appendChild(row);
+  });
+}
+
+function renderRabatyActive() {
+  const box = $('rab-active-list');
+  if (!box) return;
+  const qRaw = String(_rabSearchQ || '').trim();
+  const qDigits = qRaw.replace(/\D/g, '');
+  const qUpper = qRaw.toUpperCase();
+  const base = getRabatyActive().slice().sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
+  const list = (!qRaw) ? base : base.filter(r => {
+    const code = String(r.code || '').toUpperCase();
+    const telDigits = String(r.tel || '').replace(/\D/g, '');
+    const telRaw = String(r.tel || '');
+    return (
+      (qUpper && code.includes(qUpper)) ||
+      (qDigits && (telDigits.includes(qDigits) || code.replace(/\D/g,'').includes(qDigits))) ||
+      (qRaw && telRaw.toUpperCase().includes(qUpper))
+    );
+  });
+  if (!list.length) {
+    box.innerHTML = '<div style="padding:12px 12px;border:1px dashed var(--border);border-radius:10px;color:var(--text3);text-align:center;font-size:13px;">' + (qRaw ? 'Brak wyników' : 'Brak aktywnych kodów') + '</div>';
+    return;
+  }
+  box.innerHTML = '';
+  list.forEach((r, idx) => {
+    const row = document.createElement('div');
+    const highlight = _rabHighlightCode && (String(r.code||'') === String(_rabHighlightCode)) && Date.now() < (_rabHighlightUntil || 0);
+    row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:12px 12px;background:' + (highlight ? 'rgba(245,158,11,0.14)' : 'var(--bg2)') + ';border:1px solid ' + (highlight ? 'rgba(245,158,11,0.65)' : 'var(--border)') + ';border-radius:12px;';
+    row.dataset.code = String(r.code || '');
+
+    const left = document.createElement('div');
+    left.style.cssText = 'flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;';
+
+    // 1) KOD RABATOWY - NUMER TELEFONU
+    const top = document.createElement('div');
+    top.style.cssText = 'font-size:15px;font-weight:900;color:#fff;letter-spacing:1.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+    const tel = (r.tel || '').trim();
+    top.textContent = (r.code || '') + (tel ? (' - ' + tel) : '');
+
+    // 2) Nazwa kodu
+    const name = document.createElement('div');
+    name.style.cssText = 'font-size:12px;font-weight:900;color:#f59e0b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+    name.textContent = r.templateLabel || '';
+
+    // 3) Marka / Model - data naprawy
+    const bottom = document.createElement('div');
+    bottom.style.cssText = 'font-size:12px;color:var(--text3);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+    const marka = (r.marka || '').trim();
+    const modelName = (r.modelName || '').trim();
+    const mm = (marka || modelName) ? ((marka ? marka : '') + (marka && modelName ? ' / ' : '') + (modelName ? modelName : '')) : ((r.model || '').trim());
+    const d = (r.dataNaprawy || r.dataWydania || '').trim();
+    bottom.textContent = (mm || '') + (d ? (' - ' + d) : '');
+
+    left.appendChild(top);
+    if (name.textContent) left.appendChild(name);
+    if (bottom.textContent) left.appendChild(bottom);
+
+    const right = document.createElement('div');
+    right.style.cssText = 'display:flex;flex-direction:row;gap:8px;align-items:center;flex-shrink:0;';
+
+    const usedBtn = document.createElement('button');
+    usedBtn.style.cssText = 'background:#16a34a;border:none;border-radius:10px;color:#052e1a;font-size:13px;font-weight:900;padding:10px 12px;cursor:pointer;';
+    usedBtn.textContent = 'Zrealizuj';
+    usedBtn.onclick = () => moveRabToUsed(r);
+
+    const smsBtn = document.createElement('button');
+    const smsSent = !!r.smsSent;
+    smsBtn.style.cssText = 'background:' + (smsSent ? '#374151' : '#111827') + ';border:1px solid ' + (smsSent ? '#4b5563' : '#60a5fa') + ';border-radius:10px;color:' + (smsSent ? '#9ca3af' : '#60a5fa') + ';font-size:13px;font-weight:900;padding:10px 12px;cursor:pointer;';
+    smsBtn.textContent = 'SMS';
+    smsBtn.title = smsSent ? 'SMS wysłany' : 'Wyślij SMS z kodem';
+    smsBtn.disabled = smsSent;
+    smsBtn.onclick = () => {
+      const tel = String(r.tel || '').trim();
+      if (!tel) { alert('Brak numeru telefonu.'); return; }
+      markRabSmsSent(r.code);
+      const body = _smsRabatyBody(r);
+      window.location.href = 'sms:' + tel.replace(/[^0-9+]/g,'') + '?body=' + encodeURIComponent(body);
+    };
+
+    const del = document.createElement('button');
+    del.style.cssText = 'background:none;border:1px solid #7f1d1d;border-radius:10px;color:#ef4444;font-size:16px;font-weight:900;padding:10px 12px;cursor:pointer;line-height:1;';
+    del.textContent = 'X';
+    del.title = 'Usuń';
+    del.onclick = () => {
+      showConfirm('Czy chcesz usunąć kod?', () => {
+        const cur = getRabatyActive();
+        cur.splice(idx, 1);
+        saveRabatyActive(cur);
+        renderRabatyActive();
+      });
+    };
+    right.appendChild(smsBtn);
+    right.appendChild(usedBtn);
+    right.appendChild(del);
+    row.appendChild(left);
+    row.appendChild(right);
+    box.appendChild(row);
+  });
+}
+
+function renderRabatyUsed() {
+  const box = $('rab-used-list');
+  if (!box) return;
+  const qRaw = String(_rabSearchQ || '').trim();
+  const qDigits = qRaw.replace(/\D/g, '');
+  const qUpper = qRaw.toUpperCase();
+  const base = getRabatyUsed().slice().sort((a,b) => (b.usedAt||b.createdAt||0) - (a.usedAt||a.createdAt||0));
+  const list = (!qRaw) ? base : base.filter(r => {
+    const code = String(r.code || '').toUpperCase();
+    const telDigits = String(r.tel || '').replace(/\D/g, '');
+    const telRaw = String(r.tel || '');
+    return (
+      (qUpper && code.includes(qUpper)) ||
+      (qDigits && (telDigits.includes(qDigits) || code.replace(/\D/g,'').includes(qDigits))) ||
+      (qRaw && telRaw.toUpperCase().includes(qUpper))
+    );
+  });
+  if (!list.length) {
+    box.innerHTML = '<div style="padding:12px 12px;border:1px dashed var(--border);border-radius:10px;color:var(--text3);text-align:center;font-size:13px;">' + (qRaw ? 'Brak wyników' : 'Brak wykorzystanych kodów') + '</div>';
+    return;
+  }
+  box.innerHTML = '';
+  list.forEach((r, idx) => {
+    const row = document.createElement('div');
+    const highlight = _rabHighlightCode && (String(r.code||'') === String(_rabHighlightCode)) && Date.now() < (_rabHighlightUntil || 0);
+    row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:12px 12px;background:' + (highlight ? 'rgba(245,158,11,0.14)' : 'var(--bg2)') + ';border:1px solid ' + (highlight ? 'rgba(245,158,11,0.65)' : 'var(--border)') + ';border-radius:12px;opacity:0.92;';
+    row.dataset.code = String(r.code || '');
+
+    const left = document.createElement('div');
+    left.style.cssText = 'flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;';
+
+    const top = document.createElement('div');
+    top.style.cssText = 'font-size:15px;font-weight:900;color:#fff;letter-spacing:1.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+    const tel = (r.tel || '').trim();
+    top.textContent = (r.code || '') + (tel ? (' - ' + tel) : '');
+
+    const name = document.createElement('div');
+    name.style.cssText = 'font-size:12px;font-weight:900;color:#f59e0b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+    name.textContent = r.templateLabel || '';
+
+    const bottom = document.createElement('div');
+    bottom.style.cssText = 'font-size:12px;color:var(--text3);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+    const marka = (r.marka || '').trim();
+    const modelName = (r.modelName || '').trim();
+    const mm = (marka || modelName) ? ((marka ? marka : '') + (marka && modelName ? ' / ' : '') + (modelName ? modelName : '')) : ((r.model || '').trim());
+    const d = (r.dataNaprawy || r.dataWydania || '').trim();
+    bottom.textContent = (mm || '') + (d ? (' - ' + d) : '');
+
+    left.appendChild(top);
+    if (name.textContent) left.appendChild(name);
+    if (bottom.textContent) left.appendChild(bottom);
+
+    const del = document.createElement('button');
+    del.style.cssText = 'background:none;border:1px solid #7f1d1d;border-radius:10px;color:#ef4444;font-size:16px;font-weight:900;padding:10px 12px;cursor:pointer;line-height:1;';
+    del.textContent = 'X';
+    del.title = 'Usuń';
+    del.onclick = () => {
+      showConfirm('Czy chcesz usunąć kod?', () => {
+        const cur = getRabatyUsed();
+        cur.splice(idx, 1);
+        saveRabatyUsed(cur);
+        renderRabatyUsed();
+      });
+    };
+
+    const right = document.createElement('div');
+    right.style.cssText = 'display:flex;flex-direction:row;gap:8px;align-items:center;flex-shrink:0;';
+    right.appendChild(del);
+    row.appendChild(left);
+    row.appendChild(right);
+    box.appendChild(row);
+  });
+}
+
+function toggleRabatyAktywne() {
+  const wrap = $('rab-active-wrap');
+  if (!wrap) return;
+  const open = wrap.style.display !== 'none' && wrap.style.display !== '';
+  wrap.style.display = open ? 'none' : 'block';
+  if (!open) renderRabatyActive();
+}
+
+function toggleRabatyWykorzystane() {
+  const wrap = $('rab-used-wrap');
+  if (!wrap) return;
+  const open = wrap.style.display !== 'none' && wrap.style.display !== '';
+  wrap.style.display = open ? 'none' : 'block';
+  if (!open) renderRabatyUsed();
+}
+
+function moveRabToUsed(r) {
+  if (!r) return;
+  const act = getRabatyActive();
+  const idx = act.findIndex(x => String(x.code||'') === String(r.code||''));
+  const item = idx >= 0 ? act[idx] : r;
+  if (idx >= 0) act.splice(idx, 1);
+  saveRabatyActive(act);
+  const used = getRabatyUsed();
+  used.unshift({ ...item, usedAt: Date.now() });
+  saveRabatyUsed(used);
+  renderRabatyActive();
+  const w = $('rab-used-wrap');
+  if (w) w.style.display = 'block';
+  renderRabatyUsed();
+}
+
+let _rabTemplate = null;
+function openRabWydane(template) {
+  _rabTemplate = template;
+  const title = $('rab-wydane-title');
+  if (title) title.textContent = 'Wybierz zlecenie - ' + (template?.label || '');
+  setRabValidity(_rabValidityMonths || 6);
+  renderRabWydaneList();
+  $('rab-wydane-overlay').style.display = 'flex';
+}
+function closeRabWydane() {
+  $('rab-wydane-overlay').style.display = 'none';
+  _rabTemplate = null;
+}
+window.closeRabWydane = closeRabWydane;
+
+function _parseDateDMY(s) {
+  if (!s) return 0;
+  const p = String(s).split('.');
+  if (p.length < 2) return 0;
+  const d = parseInt(p[0],10), m = parseInt(p[1],10) - 1;
+  const y = p.length >= 3 ? parseInt(p[2],10) : new Date().getFullYear();
+  return new Date(y, m, d).getTime();
+}
+
+function renderRabWydaneList() {
+  const box = $('rab-wydane-list');
+  if (!box) return;
+  const already = new Set(
+    []
+      .concat(getRabatyActive(), getRabatyUsed())
+      .map(x => String(x.entryKey || x.entryId || ''))
+      .filter(Boolean)
+  );
+  const arch = getArchive()
+    .filter(e => {
+      const k = rabEntryKey(e);
+      const id = (e && e.id != null) ? String(e.id) : '';
+      return !(already.has(k) || (id && already.has(id)));
+    })
+    .slice()
+    .sort((a,b) => _parseDateDMY(b.dataWydania) - _parseDateDMY(a.dataWydania));
+  if (!arch.length) {
+    box.innerHTML = '<div style="padding:16px;color:var(--text3);text-align:center;">Brak dostępnych zleceń do wygenerowania</div>';
+    return;
+  }
+  box.innerHTML = '';
+  arch.forEach(entry => {
+    const row = document.createElement('div');
+    row.style.cssText = 'padding:14px 16px;display:flex;align-items:flex-start;gap:12px;border-bottom:1px solid var(--border);cursor:pointer;';
+
+    const left = document.createElement('div');
+    left.style.cssText = 'flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;';
+    const model = document.createElement('div');
+    model.style.cssText = 'font-size:15px;font-weight:900;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+    const kwotaRaw = (entry.raportKoncowy ? entry.raportKoncowy.total : entry.total) || entry.total || '0';
+    const kwotaNum = parseFloat(String(kwotaRaw).replace(/\s/g,'').replace(',','.')) || 0;
+    const kwotaTxt = kwotaNum ? (fmt(kwotaNum) + ' zł') : '';
+    const mmTxt = [(entry.marka||null), entry.model].filter(Boolean).join(' ') || (entry.marka||'');
+    model.textContent = mmTxt + (kwotaTxt ? (' • ' + kwotaTxt) : '');
+    const meta = document.createElement('div');
+    meta.style.cssText = 'font-size:12px;color:var(--text3);display:flex;flex-wrap:wrap;gap:10px;';
+    meta.innerHTML =
+      (entry.tel ? ('<span>☎ ' + escHTML(entry.tel) + '</span>') : '') +
+      (entry.dataWydania ? ('<span>📅 ' + escHTML(entry.dataWydania) + '</span>') : '');
+    left.appendChild(model);
+    left.appendChild(meta);
+
+    const right = document.createElement('div');
+    right.style.cssText = 'flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:6px;';
+    const btn = document.createElement('button');
+    btn.style.cssText = 'padding:10px 12px;background:#f59e0b;border:none;border-radius:10px;color:#111827;font-size:13px;font-weight:900;cursor:pointer;';
+    btn.textContent = 'Wybierz';
+    btn.onclick = (e) => { e.stopPropagation(); generateRabCodeForEntry(entry); };
+    right.appendChild(btn);
+
+    row.onclick = () => generateRabCodeForEntry(entry);
+    row.appendChild(left);
+    row.appendChild(right);
+    box.appendChild(row);
+  });
+}
+
+function generateRabCodeForEntry(entry) {
+  if (!_rabTemplate || !entry) return;
+  const list = getRabatyActive();
+  const entryKey = rabEntryKey(entry);
+  const used = getRabatyUsed();
+  if ([].concat(list, used).some(x => String(x.entryKey || x.entryId || '') === entryKey)) {
+    alert('Dla tego zlecenia kod rabatowy został już wygenerowany.');
+    return;
+  }
+  const createdAt = Date.now();
+  const validMonths = (_rabValidityMonths === 3 || _rabValidityMonths === 6 || _rabValidityMonths === 12) ? _rabValidityMonths : 6;
+  const validUntil = _addMonths(createdAt, validMonths);
+  const code = genUnique8();
+  list.unshift({
+    code,
+    percent: _rabTemplate.percent,
+    amount: _rabTemplate.amount || 0,
+    templateId: _rabTemplate.id,
+    templateLabel: _rabTemplate.label,
+    entryId: entry.id,
+    entryKey,
+    tel: entry.tel || '',
+    kodOdbioru: entry.kodOdbioru || '',
+    marka: entry.marka || '',
+    modelName: entry.model || '',
+    model: [(entry.marka||null), entry.model].filter(Boolean).join(' ') || '',
+    dataWydania: entry.dataWydania || '',
+    validMonths,
+    validUntil,
+    createdAt,
+  });
+  saveRabatyActive(list);
+  closeRabWydane();
+  const wrap = $('rab-active-wrap');
+  if (wrap) wrap.style.display = 'block';
+  renderRabatyActive();
+  return code;
+}
+
+function openKodyRabatowe() {
+  $('start-overlay').style.display = 'none';
+  $('kody-rabatowe-overlay').style.display = 'block';
+  _rabSearchQ = '';
+  const wrapA0 = $('rab-active-wrap');
+  const wrapU0 = $('rab-used-wrap');
+  if (wrapA0) wrapA0.style.display = 'none';
+  if (wrapU0) wrapU0.style.display = 'none';
+  const s0 = $('rab-search');
+  if (s0) s0.value = '';
+  renderRabatyTemplates();
+  renderRabatyActive();
+  renderRabatyUsed();
+  const s = $('rab-search');
+  if (s && !s.dataset.bound) {
+    s.dataset.bound = '1';
+    s.addEventListener('input', () => {
+      _rabSearchQ = s.value || '';
+      const wrap = $('rab-active-wrap');
+      const wrapU = $('rab-used-wrap');
+      if (wrap) wrap.style.display = (_rabSearchQ && String(_rabSearchQ).trim()) ? 'block' : 'none';
+      if (wrapU) wrapU.style.display = (_rabSearchQ && String(_rabSearchQ).trim()) ? 'block' : 'none';
+      renderRabatyActive();
+      renderRabatyUsed();
+    });
+    s.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        s.value = '';
+        _rabSearchQ = '';
+        const wrap = $('rab-active-wrap');
+        const wrapU = $('rab-used-wrap');
+        if (wrap) wrap.style.display = 'none';
+        if (wrapU) wrapU.style.display = 'none';
+        renderRabatyActive();
+        renderRabatyUsed();
+      }
+    });
+  }
+}
+function closeKodyRabatowe() {
+  $('kody-rabatowe-overlay').style.display = 'none';
+  $('start-overlay').style.display = 'flex';
+}
+
+window.openKodyRabatowe = openKodyRabatowe;
+window.closeKodyRabatowe = closeKodyRabatowe;
+window.toggleRabatyAktywne = toggleRabatyAktywne;
+window.toggleRabatyWykorzystane = toggleRabatyWykorzystane;
+
 function otworzRaportZGlownego() {
   $('admin-modal').style.display = 'none';
   $('start-overlay').style.display = 'none';
@@ -3287,6 +4004,7 @@ window.startAktualne = startAktualne;
 
 let kalkItems = [];
 let kalkSubs  = [];
+let kalkGroupOpen = true;
 
 function startKalkulator() {
   $('start-overlay').style.display = 'none';
@@ -3298,9 +4016,12 @@ function startKalkulator() {
     qty: d.qty !== undefined ? d.qty : undefined,
     options:  d.options  ? d.options.map(x => ({...x}))  : undefined,
     presets:  d.presets  ? d.presets.map(x => ({...x}))  : undefined,
+    note:     d.note     ? true                           : undefined,
     selectedPreset: -1, customName: '',
+    noteText: '',
   }));
   kalkSubs = [{ id: 'ks0', name: '', price: 0, checked: false }];
+  kalkGroupOpen = true;
 
   function recalcKalk() {
     let total = 0;
@@ -3341,13 +4062,60 @@ function startKalkulator() {
     list.appendChild(card);
   }
 
-  // Render group — kalk-group-container removed
-  const gc = $('kalk-group-container');
-  if (!gc) {
-    recalcKalk();
-    $('kalkulator-overlay').style.display = 'block';
-    return;
+  function renderKalkGroup() {
+    const container = $('kalk-group-container');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const wrap = document.createElement('div');
+    wrap.className = 'group-card';
+    wrap.style.margin = '12px 8px 3px';
+
+    const header = document.createElement('div');
+    header.className = 'group-header';
+
+    const title = document.createElement('span');
+    title.className = 'group-title';
+    title.textContent = 'Inne części';
+
+    const sumEl = document.createElement('span');
+    sumEl.className = 'group-sum';
+    const subsTotal = kalkSubs.filter(s => s.checked && s.price > 0).reduce((a, s) => a + (parseFloat(s.price) || 0), 0);
+    sumEl.textContent = subsTotal > 0 ? String(Math.round(subsTotal)) : '0';
+
+    const toggle = document.createElement('span');
+    toggle.className = 'group-toggle' + (kalkGroupOpen ? ' open' : '');
+    toggle.innerHTML = '&#8964;';
+
+    const body = document.createElement('div');
+    body.className = 'group-body' + (kalkGroupOpen ? ' open' : '');
+
+    header.appendChild(title);
+    header.appendChild(sumEl);
+    header.appendChild(toggle);
+    header.addEventListener('click', () => {
+      kalkGroupOpen = !kalkGroupOpen;
+      body.classList.toggle('open', kalkGroupOpen);
+      toggle.classList.toggle('open', kalkGroupOpen);
+    });
+
+    function onAddRow() {
+      kalkGroupOpen = true;
+      renderKalkGroup();
+    }
+    for (const sub of kalkSubs) {
+      body.appendChild(buildSubRow(sub, kalkSubs, onAddRow, recalcKalk));
+    }
+
+    wrap.appendChild(header);
+    wrap.appendChild(body);
+    container.appendChild(wrap);
   }
+
+  renderKalkGroup();
+  recalcKalk();
+  $('kalkulator-overlay').style.display = 'block';
+  return;
 }
 
 function closeKalkulator() {
@@ -3701,8 +4469,10 @@ function saveWycena() {
       try {
         localStorage.setItem(HISTORY_KEY, JSON.stringify(hist));
       } catch {}
+      highlightZlecenie(hist[origIdx].id);
       openHistory();
-      pokazBannerZlecenia(hist[origIdx]);
+      // banner po zapisie wyłączony — zostaje podświetlenie na liście
+      setTimeout(() => scrollToHighlightedZlecenie('history-list'), 80);
       return;
     }
   }
@@ -3739,7 +4509,9 @@ function saveWycena() {
       // Identyczne — blokuj
     }
     openHistory();
-    pokazBannerZlecenia(hist[dupIdx]);
+    // banner po zapisie wyłączony — zostaje podświetlenie na liście
+    highlightZlecenie(hist[dupIdx].id);
+    setTimeout(() => scrollToHighlightedZlecenie('history-list'), 80);
     return;
   }
 
@@ -3791,8 +4563,9 @@ function saveWycena() {
       }
     }
   }
+  highlightZlecenie(entry.id);
   openHistory();
-  pokazBannerZlecenia(entry);
+  setTimeout(() => scrollToHighlightedZlecenie('history-list'), 80);
 }
 
 function pokazBannerZlecenia(entry) {
@@ -3882,6 +4655,7 @@ function renderHistory(filterTel) {
   sorted.forEach(entry => {
     const item = document.createElement('div');
     item.className = 'history-item';
+    item.dataset.orderId = String(entry.id ?? '');
 
     // Sprawdź czy termin jest bliższy niż 2 dni
     let urgent = false;
@@ -3897,8 +4671,11 @@ function renderHistory(filterTel) {
     }
 
     // Pomarańczowa ramka dla wszystkich zleceń w Przyjęte
-    item.style.borderColor = 'rgba(239,68,68,0.4)';
-    item.style.backgroundColor = 'rgba(239,68,68,0.05)';
+    const isHL = _zlecHighlightId && String(entry.id ?? '') === String(_zlecHighlightId) && Date.now() < (_zlecHighlightUntil || 0);
+    // Bazowe kolory (czerwone) przygaszone ~70%; podświetlenie w tym samym kolorze, mocniejsze.
+    item.style.borderColor = isHL ? 'rgba(239,68,68,0.72)' : 'rgba(239,68,68,0.22)';
+    item.style.backgroundColor = isHL ? 'rgba(239,68,68,0.10)' : 'rgba(239,68,68,0.03)';
+    item.style.boxShadow = isHL ? '0 0 0 2px rgba(239,68,68,0.14), 0 0 18px rgba(239,68,68,0.14)' : 'none';
 
     // Nowe wpisy mają osobne pola model/kolor, stare mają wszystko w marka
     const hasNewFields = entry.model || entry.kolor;
@@ -4248,6 +5025,7 @@ function switchTab(tab) {
     tabHist.style.borderBottomColor = '#ef4444';
     tabHist.style.color = '#ef4444';
     renderHistory();
+    setTimeout(() => scrollToHighlightedZlecenie('history-list'), 80);
   } else if (tab === 'wydanie') {
     wydList.style.display = '';
     $('wydanie-search-wrap').style.display = 'block';
@@ -4255,7 +5033,9 @@ function switchTab(tab) {
     tabWyd.style.borderBottomColor = '#22c55e';
     tabWyd.style.color = '#22c55e';
     renderWydanie();
+    setTimeout(() => scrollToHighlightedZlecenie('wydanie-list'), 80);
     setTimeout(() => { const s = $('wydanie-search-tel'); if (s) s.focus(); }, 80);
+    // podświetlenie dotyczy też przejścia na inne zakładki
   } else if (tab === 'kosz') {
     koszList.style.display = '';
     $('kosz-search-wrap').style.display = 'block';
@@ -4270,6 +5050,7 @@ function switchTab(tab) {
     tabArch.style.borderBottomColor = '#a78bfa';
     tabArch.style.color = '#a78bfa';
     renderArchive();
+    setTimeout(() => scrollToHighlightedZlecenie('archive-list'), 80);
   }
 }
 
@@ -4319,12 +5100,22 @@ function renderWydanie(filterTel) {
   doWydania.forEach(entry => {
     const item = document.createElement('div');
     item.className = 'history-item';
-    if (entry.smsSent) {
-      item.style.borderColor = 'rgba(34,197,94,0.6)';
-      item.style.backgroundColor = 'rgba(34,197,94,0.06)';
+    item.dataset.orderId = String(entry.id ?? '');
+    const isHL = _zlecHighlightId && String(entry.id ?? '') === String(_zlecHighlightId) && Date.now() < (_zlecHighlightUntil || 0);
+    if (isHL) {
+      // Podświetlenie w kolorze kategorii (zielony)
+      item.style.borderColor = 'rgba(34,197,94,0.90)';
+      item.style.backgroundColor = 'rgba(34,197,94,0.14)';
+      item.style.boxShadow = '0 0 0 2px rgba(34,197,94,0.14), 0 0 18px rgba(34,197,94,0.14)';
+    } else if (entry.smsSent) {
+      // Bazowe (przygaszone ~70%)
+      item.style.borderColor = 'rgba(34,197,94,0.27)';
+      item.style.backgroundColor = 'rgba(34,197,94,0.04)';
+      item.style.boxShadow = 'none';
     } else {
-      item.style.borderColor = 'rgba(34,197,94,0.4)';
-      item.style.backgroundColor = 'rgba(34,197,94,0.05)';
+      item.style.borderColor = 'rgba(34,197,94,0.22)';
+      item.style.backgroundColor = 'rgba(34,197,94,0.03)';
+      item.style.boxShadow = 'none';
     }
 
     const kolorBar = makeKolorBarHTML(entry.kolor || '');
@@ -4412,8 +5203,12 @@ function renderArchive(filterStr) {
   arch.forEach(entry => {
     const item = document.createElement('div');
     item.className = 'history-item';
-    item.style.borderColor = 'rgba(167,139,250,0.4)';
-    item.style.backgroundColor = 'rgba(167,139,250,0.06)';
+    item.dataset.orderId = String(entry.id ?? '');
+    const isHL = _zlecHighlightId && String(entry.id ?? '') === String(_zlecHighlightId) && Date.now() < (_zlecHighlightUntil || 0);
+    // Bazowe kolory (fioletowe) przygaszone ~70%; podświetlenie w tym samym kolorze, mocniejsze.
+    item.style.borderColor = isHL ? 'rgba(167,139,250,0.82)' : 'rgba(167,139,250,0.25)';
+    item.style.backgroundColor = isHL ? 'rgba(167,139,250,0.12)' : 'rgba(167,139,250,0.04)';
+    item.style.boxShadow = isHL ? '0 0 0 2px rgba(167,139,250,0.14), 0 0 18px rgba(167,139,250,0.14)' : 'none';
     const terminLine   = entry.termin ? 'Planowana data naprawy: ' + entry.termin : '';
     const przyjęcieLine = entry.label ? 'Przyjęto na serwis: ' + entry.label.split(' ')[0].split('.').slice(0,2).join('.') : '';
     const stripYear = s => s ? s.split('.').slice(0,2).join('.') : '';
@@ -4452,10 +5247,10 @@ function renderArchive(filterStr) {
       '</div>' +
       '<div class="history-item-actions">' +
         '<button class="btn-history-load" style="background:#6b7280;border-color:#6b7280;display:inline-flex;align-items:center;justify-content:center;" onclick="unarchiveWycena(' + entry.id + ')" title="Cofnij"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg></button>' +
-        '<button class="btn-history-load" style="background:#6366f1;border-color:#6366f1;" onclick="downloadZleceniePDF(' + entry.id + ')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Zlecenie</button>' +
         (entry.raportKoncowy ? '<button class="btn-history-load" style="background:#16a34a;border-color:#16a34a;" onclick="downloadRaportPDF(' + entry.id + ')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Naprawa</button>' : '') +
 
         '<button class="btn-history-load" style="background:#7c3aed;border-color:#7c3aed;" onclick="openPodsumowanieWydane(' + entry.id + ')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> PDF</button>' +
+        '<button class="btn-history-load" style="background:#f59e0b;border-color:#f59e0b;color:#111827;display:inline-flex;align-items:center;justify-content:center;padding:8px 14px;min-height:33px;font-size:13px;" onclick="openRabAssignForArchive(' + entry.id + ')" title="Dodaj kod rabatowy"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#111827" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v7a2 2 0 0 1-2 2H7l-4-4V5a2 2 0 0 1 2-2h7"/><path d="M16 2l6 6"/><path d="M14 8l8-8"/></svg></button>' +
         '<button class="btn-history-del" style="margin-left:auto;" onclick="deleteArchive(' + entry.id + ')" title="Przenieś do kosza"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>' +
       '</div>';
 
@@ -4720,6 +5515,7 @@ function confirmWydaj() {
   hist.splice(idx, 1);
   localStorage.setItem(HISTORY_KEY, JSON.stringify(hist));
 
+  highlightZlecenie(entry.id);
   closeWydajModal();
   closeHistory();
   openHistory();
@@ -5703,13 +6499,9 @@ function saveRaportKoncowy() {
 
   const btn = $('btn-save-raport');
   if (saved) {
-    btn.textContent = '✓ Zapisano naprawę';
-    btn.style.background = '#16a34a';
-    setTimeout(() => {
-      closeRaport();
-      openHistory();
-      switchTab('wydanie');
-    }, 1000);
+    closeRaport();
+    openHistory();
+    switchTab('wydanie');
   } else {
     btn.textContent = '⚠ Błąd zapisu';
     btn.style.background = '#ef4444';
@@ -7239,3 +8031,4 @@ window.githubUpdate = githubUpdate;
 </script>
 </body>
 </html>
+usun ZLECENI
