@@ -1387,13 +1387,13 @@ function makeKolorDot(kolor, size) {
       const c1 = COLOR_MAP[parts[0]];
       const c2 = COLOR_MAP[parts[1]];
       if (c1 && c2) {
-        return '<span style="display:inline-block;width:' + size + 'px;height:' + size + 'px;border-radius:4px;overflow:hidden;box-sizing:border-box;background:linear-gradient(90deg,' + c1 + ' 0,' + c1 + ' 50%,' + c2 + ' 50%,' + c2 + ' 100%);flex-shrink:0;"></span>';
+        return '<span style="display:inline-block;width:' + size + 'px;height:' + size + 'px;border-radius:4px;overflow:hidden;box-sizing:border-box;border:1px solid #fff;background:linear-gradient(90deg,' + c1 + ' 0,' + c1 + ' 50%,' + c2 + ' 50%,' + c2 + ' 100%);flex-shrink:0;"></span>';
       }
     }
   }
   const css = COLOR_MAP[k];
   if (css) {
-    return '<span style="display:inline-block;width:' + size + 'px;height:' + size + 'px;border-radius:4px;overflow:hidden;box-sizing:border-box;background:' + css + ';flex-shrink:0;"></span>';
+    return '<span style="display:inline-block;width:' + size + 'px;height:' + size + 'px;border-radius:4px;overflow:hidden;box-sizing:border-box;border:1px solid #fff;background:' + css + ';flex-shrink:0;"></span>';
   }
   // Kółko przekreślone dla nieznanych kolorów
   const h = size / 2;
@@ -7106,11 +7106,14 @@ function otworzGithubUpdate() {
     var nameEl = document.getElementById('gh-file-name');
     var labelEl = document.getElementById('gh-file-label');
     if (f) {
-      nameEl.textContent = f.name;
+      // Niezależnie od nazwy pliku, aktualizacja zawsze idzie do index.html
+      nameEl.textContent = 'index.html';
+      nameEl.title = 'Wczytano: ' + f.name + ' → wysyłka jako index.html';
       nameEl.style.color = '#3fb950';
       labelEl.style.borderColor = '#238636';
     } else {
       nameEl.textContent = 'Wybierz plik...';
+      nameEl.title = '';
       nameEl.style.color = '#8b949e';
       labelEl.style.borderColor = '#30363d';
     }
@@ -7145,6 +7148,7 @@ async function githubUpdate() {
   if (!token) { ghStatus('⚠️ Wpisz Token!', 'err'); return; }
   if (!repo || !repo.includes('/')) { ghStatus('⚠️ Wpisz repo: user/nazwa', 'err'); return; }
   if (!file) { ghStatus('⚠️ Wybierz plik HTML!', 'err'); return; }
+  if (!/\.html$/i.test(file.name || '')) { ghStatus('⚠️ Plik musi mieć rozszerzenie .html', 'err'); return; }
 
   var saveEl = document.getElementById('gh-save');
   if (saveEl && saveEl.checked) {
@@ -7158,6 +7162,7 @@ async function githubUpdate() {
   var btn = document.getElementById('gh-upload-btn');
   if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; }
 
+  // Zawsze publikujemy jako index.html (nazwa lokalnego pliku nie ma znaczenia)
   var apiUrl = 'https://api.github.com/repos/' + repo + '/contents/index.html';
   var headers = { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' };
 
