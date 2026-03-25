@@ -35,19 +35,33 @@
   --btn-px: 14px;
   --btn-font: 13px;
   --btn-weight: 700;
+  --typo-weight: 600;
+  --typo-tracking: 0.01em;
 }
 
 body {
-  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-family: 'Inter';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-size: 14px;
-  letter-spacing: 0.01em;
+  font-weight: var(--typo-weight);
+  letter-spacing: var(--typo-tracking);
   background: var(--bg);
   min-height: 100dvh;
   color: var(--text);
   -webkit-tap-highlight-color: transparent;
   padding-bottom: 48px;
+}
+/* Global: ujednolicona typografia (waga/spacing); rozmiary px zostają */
+body, body *{
+  font-family: 'Inter' !important;
+  font-weight: var(--typo-weight) !important;
+  letter-spacing: var(--typo-tracking) !important;
+}
+/* ZLECENIA: spójny font wszędzie (bez zmiany rozmiarów/wag) */
+.app,
+.app *{
+  font-family: inherit !important;
 }
 body.overlay-open {
   overflow: hidden;
@@ -380,13 +394,18 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
   display: flex;
   flex-direction: column;
   gap: 8px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 12px;
 }
 .modal-field label {
-  font-size: 14px;
-  font-weight: 700;
-  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text3);
   text-transform: uppercase;
   letter-spacing: 0.8px;
+  font-family: inherit !important;
 }
 .modal-field input {
   font-size: 20px;
@@ -398,6 +417,524 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
   color: #fff;
   width: 100%;
   transition: border-color 0.15s;
+  font-family: inherit !important;
+}
+.modal-field textarea,
+.modal-field select,
+.modal-field button {
+  font-family: inherit !important;
+}
+
+/* Dane klienta: bez nazw kategorii pól */
+#modal-overlay .modal-field label{ display:none !important; }
+#modal-overlay .modal-field{ gap:0 !important; }
+#modal-overlay .modal-field{
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+}
+#modal-overlay .modal-banner{
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+#kalkulator-overlay .modal-banner{
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 12px 8px 0;
+}
+
+/* Główne DODAJ CZĘŚCI: banner pod listą */
+#add-parts-banner{
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ── PRZYJĘTE → NAPRAWA (raport): lista części jak KALKULATOR/WYCENA ── */
+#raport-overlay .items-list{ gap: 0; padding: 0; }
+#raport-overlay .item-card{
+  margin: 0;
+  border: none;
+  background: transparent;
+  border-radius: 0;
+  overflow: visible;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+#raport-overlay .item-card:has(.item-check:checked){ background: transparent; }
+#raport-overlay .item-card.unchecked{ background: transparent; }
+#raport-overlay .item-card.qty-zero{
+  background: transparent !important;
+  border-color: transparent !important;
+  /* Separatory muszą być widoczne od razu (także zanim dodasz ilość) */
+  border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+}
+#raport-overlay .card-row{ gap: 6px; }
+
+/* Niebieskie kółko zaznaczenia */
+#raport-overlay .item-check-circle{
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: transparent;
+  margin: 0 12px 0 2px;
+}
+#raport-overlay .item-check-circle svg{ width:10px; height:10px; }
+#raport-overlay .item-check-circle.checked{
+  border-color: var(--blue);
+  background: var(--blue);
+}
+
+/* WYBIERZ/OPIS: pill jak w kalkulatorze */
+#raport-overlay .csel-wrap{ flex:1; min-width:0; width:100%; }
+#raport-overlay .csel-btn{
+  width:100%;
+  justify-content:flex-end;
+  background:#000;
+  border:1px solid rgba(255,255,255,0.10);
+  border-radius:10px;
+  padding:6px 10px;
+  min-height:28px;
+  color:var(--text2);
+  font-weight:600;
+}
+#raport-overlay .csel-btn span{ text-align:right; }
+#raport-overlay .csel-btn svg{ display:none; }
+
+/* Banner pod całością (jak w kalkulatorze) */
+#raport-parts-banner{
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Raport: edycja ceny nie może "skakać" */
+#raport-overlay .item-price-input{
+  box-sizing: border-box;
+  width: 70px !important;
+  min-width: 70px !important;
+  height: 32px !important;
+  flex: 0 0 70px !important;
+  flex-shrink: 0 !important;
+  border: 1px solid rgba(255,255,255,0.14) !important;
+  background: #000 !important;
+  border-radius: 10px !important;
+  padding: 6px 10px !important;
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  color: #fff !important;
+  text-align: right !important;
+  outline: none;
+}
+
+/* DODAJ CZĘŚCI (główne): stałe okienko ceny jak w raporcie */
+#add-parts-banner .item-price-input{
+  box-sizing: border-box;
+  width: 70px !important;
+  min-width: 70px !important;
+  height: 32px !important;
+  flex: 0 0 70px !important;
+  flex-shrink: 0 !important;
+  border: 1px solid rgba(255,255,255,0.14) !important;
+  background: #000 !important;
+  border-radius: 10px !important;
+  padding: 6px 10px !important;
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  color: #fff !important;
+  text-align: right !important;
+  outline: none;
+}
+/* Raport: gdy edytujemy cenę wewnątrz okienka (input w środku) – bez "2 ramek" */
+#raport-overlay .item-price-total.editable-total{ position: relative; }
+#raport-overlay .item-price-total.editable-total .item-price-input.kalk-price-edit{
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+  padding: 0 10px !important;
+}
+
+/* INNE CZĘŚCI w raporcie: płaski styl jak wyżej */
+#raport-group-container .group-card{
+  margin: 0 !important;
+  border: none !important;
+  background: transparent !important;
+}
+#raport-group-container .group-header{
+  border: none;
+  background: transparent;
+  padding: 8px 0;
+}
+#raport-group-container .group-body{
+  background: transparent;
+  padding: 0;
+  gap: 10px;
+}
+#raport-group-container .sub-row{
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 10px 0;
+  margin: 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+#raport-group-container .sub-row.is-checked{ background: transparent; border-color: transparent; }
+#raport-group-container .sub-check-circle{
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: transparent;
+  margin: 0 12px 0 2px;
+}
+#raport-group-container .sub-check-circle.checked{
+  border-color: var(--blue);
+  background: var(--blue);
+}
+#raport-group-container .sub-check-circle svg{ width:10px; height:10px; }
+#raport-group-container .sub-name-input{ color:#fff; }
+#raport-group-container .sub-name-input::placeholder{ color: var(--text2); }
+#raport-group-container .sub-price-input{ color:#fff; }
+
+/* Kalkulator napraw: mniej "okienek" – płaskie wiersze */
+#kalkulator-overlay .items-list{ gap: 0; padding: 0; }
+#kalkulator-overlay .item-card{
+  margin: 0;
+  border: none;
+  background: transparent;
+  border-radius: 0;
+  overflow: visible;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+#kalkulator-overlay .item-card.qty-zero{
+  background: transparent !important;
+  border-color: transparent !important;
+  /* Separatory muszą być widoczne od razu (także zanim dodasz ilość) */
+  border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+}
+#kalkulator-overlay .items-list .item-card:first-child{ padding-top: 2px; }
+#kalkulator-overlay .items-list .item-card:last-child{ border-bottom: none; }
+#kalkulator-overlay .item-card:has(.item-check:checked){
+  background: transparent;
+}
+
+/* Zaznaczenie: niebieskie kółko (jak Inne części) */
+#kalkulator-overlay .item-check-circle{
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: transparent;
+  margin: 0 12px 0 2px;
+}
+#kalkulator-overlay .item-check-circle svg{ width: 10px; height: 10px; }
+#kalkulator-overlay .item-check-circle.checked{
+  border-color: var(--blue);
+  background: var(--blue);
+}
+
+/* Cena w kalkulatorze:
+   - zwykły tekst (bez editable-total) może być "goły"
+   - editable-total MUSI mieć czarne okienko (edytowalne kliknięciem) */
+#kalkulator-overlay .item-price-input{
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  width: auto !important;
+  min-width: 52px;
+}
+#kalkulator-overlay .item-price-total:not(.editable-total){
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  width: auto !important;
+  min-width: 52px;
+}
+/* Kalkulator: stałe okienko ceny (3 cyfry, duże) */
+#kalkulator-overlay .item-price-total.editable-total{
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  box-sizing: border-box;
+  width: 70px !important;      /* ~3 cyfry */
+  min-width: 70px !important;
+  height: 32px;
+  border: 1px solid rgba(255,255,255,0.14) !important;
+  background: #000 !important;
+  border-radius: 10px !important;
+  padding: 6px 10px !important;
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* WYBIERZ/OPIS w kalkulatorze: zawsze do samej ceny */
+#kalkulator-overlay .card-row{
+  display: flex;
+  align-items: center;
+}
+#kalkulator-overlay .kalk-csel-cell{
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
+#kalkulator-overlay .kalk-csel-cell .csel-wrap{
+  width: 100% !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
+#kalkulator-overlay .kalk-csel-cell .csel-btn{
+  width: 100% !important;
+}
+/* Kalkulator: gdy edytujemy cenę wewnątrz okienka (input w środku) – bez "2 ramek" */
+#kalkulator-overlay .item-price-total.editable-total{ position: relative; }
+#kalkulator-overlay .item-price-total.editable-total .item-price-input.kalk-price-edit{
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+  padding: 0 10px !important;
+}
+/* Podczas edycji ceny: ma być stała szerokość */
+#kalkulator-overlay .item-price-input.kalk-price-edit{
+  width: 70px !important;
+  min-width: 70px !important;
+  height: 32px;
+  border: 1px solid rgba(255,255,255,0.14) !important;
+  background: #000 !important;
+  border-radius: 10px !important;
+  padding: 6px 10px !important;
+  font-size: 20px;
+  font-weight: 700;
+  text-align: right;
+}
+
+/* Inne części: bez dodatkowej karty */
+#kalkulator-overlay .group-card{
+  margin: 0 !important;
+  border: none !important;
+  background: transparent !important;
+}
+#kalkulator-overlay .group-header{
+  border: none;
+  background: transparent;
+  padding: 8px 0;
+}
+#kalkulator-overlay .group-body{
+  background: transparent;
+  padding: 0;
+  gap: 10px;
+}
+
+/* Inne części: usuń "ciemniejszy" wewnętrzny banner */
+#kalkulator-overlay .sub-row{
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 10px 0;
+  margin: 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+#kalkulator-overlay .group-body .sub-row:last-child{
+  border-bottom: none;
+}
+#kalkulator-overlay .sub-row.is-checked{
+  background: transparent;
+  border-color: transparent;
+}
+#kalkulator-overlay .sub-check-circle{
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: transparent;
+  margin: 0 12px 0 2px;
+}
+#kalkulator-overlay .sub-check-circle.checked{
+  border-color: var(--blue);
+  background: var(--blue);
+}
+#kalkulator-overlay .sub-check-circle svg{
+  width: 10px;
+  height: 10px;
+}
+#kalkulator-overlay .sub-price-input{
+  color:#fff;
+}
+#kalkulator-overlay .sub-name-input{
+  color:#fff;
+}
+#kalkulator-overlay .sub-name-input::placeholder{
+  color: var(--text2);
+}
+
+/* ── DODAJ CZĘŚCI (nowe zlecenie): styl jak kalkulator (bez psucia edycji) ── */
+/* Uwaga: nie zmieniamy typu elementów (input/span), tylko wygląd */
+#items-list.items-list{ gap: 0; padding: 0; }
+#items-list .item-card{
+  margin: 0;
+  border: none;
+  background: transparent;
+  border-radius: 0;
+  overflow: visible;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+#items-list .item-card:has(.item-check:checked){ background: transparent; }
+#items-list .item-card.unchecked{ background: transparent; }
+#items-list .item-card.qty-zero{
+  background: transparent !important;
+  border-color: transparent !important;
+  /* Separator ma być widoczny nawet gdy qty=0 */
+  border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+}
+#items-list .card-row{ gap: 6px; }
+
+/* Niebieskie kółko jak w kalkulatorze */
+#items-list .item-check-circle{
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: transparent;
+  margin: 0 12px 0 2px;
+}
+#items-list .item-check-circle svg{ width:10px; height:10px; }
+#items-list .item-check-circle.checked{
+  border-color: var(--blue);
+  background: var(--blue);
+}
+
+/* WYBIERZ/OPIS: pill jak w kalkulatorze */
+#items-list .csel-wrap{ flex:1; min-width:0; width:100%; }
+#items-list .csel-btn{
+  width:100%;
+  justify-content:flex-end;
+  background:#000;
+  border:1px solid rgba(255,255,255,0.10);
+  border-radius:10px;
+  padding:6px 10px;
+  min-height:28px;
+  color:var(--text2);
+  font-weight:600;
+}
+#items-list .csel-btn span{ text-align:right; }
+#items-list .csel-btn svg{ display:none; }
+
+/* INNE CZĘŚCI (pod listą): płaski styl jak w kalkulatorze */
+#group-container .group-card{
+  margin: 0 !important;
+  border: none !important;
+  background: transparent !important;
+}
+#group-container .group-header{
+  border: none;
+  background: transparent;
+  padding: 8px 0;
+}
+#group-container .group-body{
+  background: transparent;
+  padding: 0;
+  gap: 10px;
+}
+#group-container .sub-row{
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 10px 0;
+  margin: 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+#group-container .sub-row.is-checked{ background: transparent; border-color: transparent; }
+#group-container .sub-check-circle{
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: transparent;
+  margin: 0 12px 0 2px;
+}
+#group-container .sub-check-circle.checked{
+  border-color: var(--blue);
+  background: var(--blue);
+}
+#group-container .sub-check-circle svg{ width:10px; height:10px; }
+#group-container .sub-name-input{ color:#fff; }
+#group-container .sub-name-input::placeholder{ color: var(--text2); }
+#group-container .sub-price-input{ color:#fff; }
+
+/* WYBIERZ/OPIS: spójny pill jak na screenie */
+#kalkulator-overlay .csel-wrap{
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+}
+#kalkulator-overlay .csel-btn{
+  width: 100%;
+  justify-content: flex-end;
+  background: #000;
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 10px;
+  padding: 6px 10px;
+  min-height: 28px;
+  color: var(--text2);
+  font-weight: 600;
+}
+#kalkulator-overlay .kalk-csel-cell{
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
+#kalkulator-overlay .kalk-csel-cell{
+  display:flex;
+  align-items:center;
+}
+#kalkulator-overlay .kalk-csel-cell .csel-wrap{
+  flex:1;
+  min-width:0;
+}
+#kalkulator-overlay .kalk-csel-cell .csel-btn{
+  flex:1;
+}
+
+/* Prawa kolumna (cena) nie może "zjadać" miejsca */
+#kalkulator-overlay .item-price-total{
+  min-width: 44px;
+}
+#kalkulator-overlay .item-price-input,
+#kalkulator-overlay .item-price-total.editable-total{
+  min-width: 44px;
+}
+#kalkulator-overlay .csel-btn span{
+  text-align: right;
+}
+#kalkulator-overlay .card-row{ gap: 6px; }
+#kalkulator-overlay .csel-btn svg{
+  display:none;
 }
 .modal-field input:focus { border-color: var(--blue); }
 .modal-field input::placeholder { color: #444470; }
@@ -409,6 +946,16 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
   cursor: pointer; transition: background 0.15s;
 }
 .btn-data:hover { background: #a93226; }
+
+/* PRZYJĘTE → EDYTUJ: przycisk DANE/COFNIJ ma być mniejszy + bez kropki */
+#btn-dane{
+  padding: 4px 8px !important;
+  min-height: 30px !important;
+}
+#btn-dane svg{
+  width: 12px !important;
+  height: 12px !important;
+}
 .modal-select {
   font-size: 20px;
   border: 1px solid var(--border);
@@ -587,6 +1134,54 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
 .overlay-full { scrollbar-width:none; }
 .btn-close { margin-left:auto;background:#ef4444;border:1px solid #ef4444;border-radius:var(--radius-btn);padding:6px var(--btn-px);cursor:pointer;color:#fff;font-size:var(--btn-font);font-weight:var(--btn-weight);text-transform:uppercase; }
 
+/* ── Ujednolicenie wyglądu okien (jak Kody Rabatowe) ── */
+.overlay-full .app header h1{
+  font-size:16px !important;
+  font-weight:700 !important;
+  letter-spacing:-0.3px !important;
+}
+#modal-overlay .app header h1{ font-size:16px !important; }
+#modal-overlay .app header h1{ color:#16a34a !important; }
+
+/* Spójne nagłówki: DODAJ / PRZEGLĄDAJ / WYCENA */
+#modal-overlay .app header,
+#history-overlay .app header,
+#kalkulator-overlay .app header{
+  gap: 10px;
+}
+#modal-overlay .app header svg,
+#history-overlay .app header svg,
+#kalkulator-overlay .app header svg{
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+/* Historia: spójne paddingi jak w rabatach */
+#history-overlay .app > div:nth-of-type(1){
+  padding:16px 16px 0 !important;
+}
+#history-overlay .app > div:nth-of-type(2){
+  padding:0 16px 8px !important;
+}
+
+/* Podgląd: spójne paddingi jak w rabatach */
+#podglad-overlay .app > div{
+  padding:16px 16px 40px !important;
+}
+
+/* Raport/Naprawa: spójny layout i "karty" jak w rabatach */
+#raport-overlay .app > div:first-child{
+  margin:16px 16px 0 !important;
+  border-radius:14px !important;
+}
+#raport-items-list{
+  padding:8px 16px !important;
+}
+#raport-group-container{
+  padding:0 16px;
+}
+
 /* ── Custom dropdown ── */
 .csel-wrap { position: relative; flex: 1; }
 .csel-btn {
@@ -643,25 +1238,25 @@ select.native-sel { display: none !important; }
       </div>
     </div>
     <div id="sync-status" style="font-size:11px;color:#556;text-align:center;min-height:14px;line-height:1.4;transition:color 0.3s;"></div>
-    <div class="btn-grid" style="grid-template-columns:1fr 1fr 1fr;">
+    <div class="btn-grid" style="grid-template-columns:1fr 3fr 3fr;">
       <button id="btn-dane" class="btn-data" onclick="openModal()" style="background:#3b7cf4;border-color:#3b7cf4;">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        Dane
-        <span id="btn-dane-dot" style="width:8px;height:8px;border-radius:50%;background:#ef4444;flex-shrink:0;"></span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
       </button>
       <button id="btn-lista-cofnij" onclick="showConfirm('Anulować zlecenie i wrócić do menu?', () => { anulujWycene(); })" class="btn-data">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-        Anuluj
+        ANULUJ
       </button>
       <button class="btn-save" onclick="saveWycena()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-        Dodaj zlecenie
+        ZAPISZ
       </button>
     </div>
   </div>
 
-  <div class="items-list" id="items-list"></div>
-  <div id="group-container"></div>
+  <div id="add-parts-banner" class="modal-banner" style="margin:12px 8px 0;">
+    <div class="items-list" id="items-list"></div>
+    <div id="group-container"></div>
+  </div>
 
 <!-- Hidden data fields -->
 <input type="hidden" id="cf-marka">
@@ -719,16 +1314,18 @@ select.native-sel { display: none !important; }
       </div>
       <div style="display:flex;gap:8px;width:100%;">
         <button onclick="closeRaport();" style="width:25%;padding:12px 0;background:none;border:1px solid #7f1d1d;border-radius:8px;cursor:pointer;color:#ef4444;font-size:13px;font-weight:700;">Anuluj</button>
-        <button id="btn-save-raport" onclick="saveRaportKoncowy()" style="width:75%;padding:12px;background:#7c3aed;border:1px solid #7c3aed;border-radius:8px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+        <button id="btn-save-raport" onclick="saveRaportKoncowy()" style="width:75%;padding:12px;background:#16a34a;border:1px solid #16a34a;border-radius:8px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-          Zapisz naprawę
+          ZAKOŃCZ
         </button>
       </div>
     </div>
 
     <!-- Items list -->
-    <div class="items-list" id="raport-items-list" style="padding:8px 0;"></div>
-    <div id="raport-group-container"></div>
+    <div id="raport-parts-banner" class="modal-banner" style="margin:12px 16px 0;">
+      <div class="items-list" id="raport-items-list" style="padding:8px 0;"></div>
+      <div id="raport-group-container"></div>
+    </div>
 
     <!-- Notatka -->
     <div style="padding:14px 16px 8px;">
@@ -769,6 +1366,9 @@ select.native-sel { display: none !important; }
       <div id="podglad-notatka" style="display:none;margin-top:14px;border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:8px;padding:12px 14px;">
         <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;">Notatka serwisowa</div>
         <div id="podglad-notatka-txt" style="font-size:13px;color:var(--text);line-height:1.6;white-space:pre-wrap;"></div>
+      </div>
+      <div id="podglad-action-bar" style="display:none;margin-top:14px;">
+        <button id="podglad-wydaj-btn" class="btn-history-load" style="width:100%;background:#ef4444;border-color:#ef4444;font-size:15px;font-weight:700;letter-spacing:.5px;min-height:66px;" onclick="">WYDAJ</button>
       </div>
     </div>
   </div>
@@ -909,16 +1509,67 @@ select.native-sel { display: none !important; }
   to { --angle: 360deg; }
 }
       .sync-dot-blink { animation: blink-red 0.9s ease-in-out infinite; }
+
+      /* Menu główne: stała kolumna na ikonę + równe odstępy */
+      .start-menu-btn{
+        width:75%;
+        align-self:center;
+        padding:16px 18px;
+        border:none;
+        border-radius:12px;
+        cursor:pointer;
+        letter-spacing:.4px;
+        display:flex;
+        align-items:center;
+        justify-content:flex-start; /* ikona bliżej krawędzi, tekst dalej */
+        gap:12px;
+      }
+      .start-menu-btn .smb-icon{
+        width:28px; /* stała kolumna: równe wyrównanie ikon */
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        flex:0 0 28px;
+      }
+      .start-menu-btn svg{ flex-shrink:0; }
+      .start-menu-btn .smb-text{
+        flex:1;
+        text-align:center;
+      }
+
+      /* Administracja modal: równe ikony jak w menu */
+      #admin-modal .admin-act-btn{
+        width:100%;
+        display:flex;
+        align-items:center;
+        justify-content:flex-start;
+        gap:14px;
+      }
+      #admin-modal .admin-act-btn .aab-icon{
+        width:28px;
+        flex:0 0 28px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+      }
+      #admin-modal .admin-act-btn .aab-text{
+        flex:1;
+        text-align:center;
+      }
     </style>
 
-    <button onclick="openKodyRabatowe()" style="width:75%;align-self:center;padding:16px;background:#f59e0b;border:none;border-radius:12px;color:#111827;font-size:17px;font-weight:800;cursor:pointer;letter-spacing:.4px;display:flex;align-items:center;justify-content:center;gap:12px;">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111827" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h7"/><path d="M18 2l4 4-10 10H8v-4z"/></svg>
-      Kody Rabatowe
+    <button onclick="openKodyRabatowe()" class="start-menu-btn" style="background:#f59e0b;color:#111827;font-size:17px;font-weight:800;">
+      <span class="smb-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111827" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h7"/><path d="M18 2l4 4-10 10H8v-4z"/></svg>
+      </span>
+      <span class="smb-text">Kody Rabatowe</span>
     </button>
 
-    <button onclick="openAdminModal()" style="width:75%;align-self:center;padding:16px;background:#c0392b;border:none;border-radius:12px;color:#111827;font-size:17px;font-weight:600;cursor:pointer;letter-spacing:.4px;display:flex;align-items:center;justify-content:center;gap:12px;">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
-      Administracja
+    <button onclick="openAdminModal()" class="start-menu-btn" style="background:#c0392b;color:#111827;font-size:17px;font-weight:600;">
+      <span class="smb-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+      </span>
+      <span class="smb-text">Administracja</span>
     </button>
   </div>
 </div>
@@ -1190,15 +1841,13 @@ select.native-sel { display: none !important; }
 
     <!-- Header -->
     <header>
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-      </svg>
-      <h1 style="color:#a78bfa;">Kalkulator napraw</h1>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="color:#a78bfa;"><path d="M4 2a1 1 0 0 0-1 1v18l3-2 3 2 3-2 3 2 3-2V3a1 1 0 0 0-1-1H4zm2 5h8a1 1 0 0 1 0 2H6a1 1 0 0 1 0-2zm0 4h8a1 1 0 0 1 0 2H6a1 1 0 0 1 0-2zm0 4h5a1 1 0 0 1 0 2H6a1 1 0 0 1 0-2z"/></svg>
+      <h1 style="color:#a78bfa;">WYCENA</h1>
     </header>
 
     <!-- Summary card -->
     <div class="summary-card" style="border-color:#7c3aed;border-left-color:#7c3aed;">
-      <div class="summary-top">
+      <div class="summary-top" style="margin-bottom:12px;">
         <div class="summary-left">
           <div class="summary-total" id="kalk-total">0,00</div>
         </div>
@@ -1210,21 +1859,22 @@ select.native-sel { display: none !important; }
         </button>
         <button onclick="kalkulatorDoZlecenia()" class="btn-save" style="grid-column:span 2;">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Dodaj zlecenie
+          ZAPISZ
         </button>
       </div>
     </div>
 
     <!-- Items -->
-    <div class="items-list" id="kalk-items-list" style="padding:4px 0;"></div>
-    <div id="kalk-group-container"></div>
+    <div class="modal-banner">
+      <div class="items-list" id="kalk-items-list" style="padding:4px 0;"></div>
+      <div id="kalk-group-container"></div>
 
-    <!-- Notatka serwisowa kalkulator -->
-    <div style="margin:12px 8px 0;">
-      <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;padding-left:2px;">Notatka serwisowa</div>
-      <textarea id="kalk-notatka" placeholder="Wpisz notatkę..." maxlength="500"
-        style="width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-size:14px;font-family:inherit;resize:none;outline:none;min-height:72px;line-height:1.5;"
-        onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'"></textarea>
+      <!-- Notatka serwisowa kalkulator -->
+      <div style="margin:0;">
+        <textarea id="kalk-notatka" placeholder="Notatka..." maxlength="500"
+          style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:12px 12px;color:var(--text);font-size:14px;font-family:inherit;resize:none;outline:none;min-height:72px;line-height:1.5;"
+          onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'"></textarea>
+      </div>
     </div>
 
     <div style="padding-bottom:40px;"></div>
@@ -1235,18 +1885,21 @@ select.native-sel { display: none !important; }
 <div id="history-overlay" class="overlay-full">
   <div class="app">
     <header>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="#c0392b" stroke="#c0392b" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-      <h1 style="font-size:16px;color:#c0392b;">SERWIS</h1>
-      <button onclick="closeHistoryToMenu()" class="btn-close">Zamknij</button>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="color:#2563eb;"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+      <h1 style="color:#2563eb;">PRZEGLĄDAJ</h1>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:8px;">
+        <button id="tab-kosz" onclick="switchTab('kosz')" title="Kosz"
+          style="background:none;border:1px solid var(--border);border-radius:var(--radius-btn);padding:6px 10px;cursor:pointer;color:var(--text2);display:inline-flex;align-items:center;justify-content:center;min-height:33px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+        </button>
+        <button onclick="closeHistoryToMenu()" class="btn-close">Zamknij</button>
+      </div>
     </header>
     <div style="padding:0 16px 0;">
       <div class="order-tabs">
         <button id="tab-historia" class="order-tab active" onclick="switchTab('historia')">Przyjęte</button>
         <button id="tab-wydanie" class="order-tab" onclick="switchTab('wydanie')">Do wydania</button>
         <button id="tab-archiwum" class="order-tab" onclick="switchTab('archiwum')">Wydane</button>
-        <button id="tab-kosz" class="order-tab order-tab-kosz" onclick="switchTab('kosz')" title="Kosz">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-        </button>
       </div>
       <div id="historia-search-wrap" style="display:none;padding:0 0 8px;">
         <input type="tel" id="historia-search-tel" placeholder="Szukaj: 000-000-000" maxlength="11"
@@ -1288,17 +1941,18 @@ select.native-sel { display: none !important; }
 <div id="modal-overlay" class="overlay-full">
   <div class="app">
     <header>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c0392b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      <h1 style="font-size:20px;">Dane klienta</h1>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" style="color:#16a34a;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      <h1>DODAJ</h1>
     </header>
     </header>
-    <div style="padding:0 16px 40px;display:flex;flex-direction:column;gap:18px;">
+    <div style="padding:16px 16px 40px;display:flex;flex-direction:column;gap:14px;">
+      <div class="modal-banner">
       <div class="modal-field">
         <label style="text-align:left;display:block;">Marka</label>
         <div style="display:flex;gap:8px;align-items:stretch;">
           <div style="flex:0 0 auto;min-width:0;width:72%;">
             <select id="modal-marka-sel" class="native-sel" data-title="Wybierz markę" >
-              <option value="">Wybierz</option>
+              <option value="">MARKA</option>
               <option value="ROWER">Rower</option>
               <option value="KROSS">Kross</option>
               <option value="ROMET">Romet</option>
@@ -1331,7 +1985,7 @@ select.native-sel { display: none !important; }
       </div>
       <div class="modal-field">
         <label>Model</label>
-        <input type="text" id="modal-marka" placeholder="np. Marlin 5" maxlength="12" style="text-transform:uppercase;" oninput="this.value=this.value.toUpperCase()">
+        <input type="text" id="modal-marka" placeholder="MODEL" maxlength="12" style="text-transform:uppercase;" oninput="this.value=this.value.toUpperCase()">
       </div>
       <div class="modal-field">
         <label>Kolor</label>
@@ -1358,9 +2012,11 @@ select.native-sel { display: none !important; }
         </div>
         <input type="text" id="modal-kolor-inny" placeholder="Wpisz kolor..." maxlength="30" style="display:none;margin-top:6px;">
       </div>
+      </div>
+      <div class="modal-banner">
       <div class="modal-field">
         <label>Numer telefonu</label>
-        <input type="tel" id="modal-tel" placeholder="000-000-000" maxlength="11" onkeydown="if(event.key==='Enter'){event.preventDefault();closeModal();}">
+        <input type="tel" id="modal-tel" placeholder="TELEFON" maxlength="11" onkeydown="if(event.key==='Enter'){event.preventDefault();closeModal();}">
       </div>
       <div class="modal-field">
         <label>Termin naprawy</label>
@@ -1374,6 +2030,8 @@ select.native-sel { display: none !important; }
           </div>
         </div>
       </div>
+      </div>
+      <div class="modal-banner">
       <div class="modal-field">
         <label>Zdjęcia roweru</label>
         <div class="photo-section-top" style="background:transparent;border:none;padding:0;margin:0;">
@@ -1385,54 +2043,14 @@ select.native-sel { display: none !important; }
         </div>
         <div class="photo-previews" id="photo-previews" style="margin-top:8px;"></div>
       </div>
+      </div>
       <div id="modal-error" style="display:none;font-size:14px;font-weight:600;color:#ef4444;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:6px;padding:10px 14px;"></div>
       <div style="display:flex;gap:8px;">
         <button onclick="confirmCancelModal()" style="flex:1;padding:16px 0;background:#c0392b;border:1px solid #c0392b;border-radius:10px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;">Anuluj</button>
-        <button onclick="closeModal()" style="flex:3;padding:16px;background:#16a34a;border:1px solid #16a34a;border-radius:10px;color:#fff;font-size:17px;font-weight:700;cursor:pointer;letter-spacing:.3px;">Przejdź do części →</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Modal Wydaj -->
-<div id="wydaj-overlay" class="overlay-full">
-  <div class="app">
-    <header>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-      <h1 style="font-size:16px;color:#a78bfa;">Wydanie roweru</h1>
-    </header>
-    <div style="padding:0 16px 40px;display:flex;flex-direction:column;gap:14px;">
-
-      <!-- Banner z danymi klienta -->
-      <div id="wydaj-banner" style="background:var(--bg2);border:1px solid rgba(124,58,237,0.4);border-left:3px solid #7c3aed;border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
-          <div style="display:flex;flex-direction:column;gap:3px;min-width:0;">
-            <div id="wydaj-banner-rower" style="font-size:16px;font-weight:700;color:#fff;"></div>
-            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-              <div id="wydaj-banner-tel" style="font-size:13px;color:#3b7cf4;font-weight:600;"></div>
-              <div id="wydaj-banner-kod" style="font-size:13px;font-weight:800;color:#f59e0b;letter-spacing:1px;"></div>
-            </div>
-          </div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;flex-shrink:0;">
-            <div style="font-size:10px;font-weight:600;color:#a78bfa;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;">Kwota do zapłaty</div>
-            <div id="wydaj-banner-kwota" style="font-size:32px;font-weight:800;color:#a78bfa;letter-spacing:-1px;"></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="modal-field">
-        <label>Kwota sprzedaży</label>
-        <input type="text" id="wydaj-kwota" inputmode="decimal" placeholder="0,00"
-          style="font-size:32px;font-weight:800;color:#7c3aed;text-align:center;letter-spacing:-0.5px;border:1px solid var(--border);border-radius:8px;padding:14px;background:var(--bg2);outline:none;width:100%;"
-          oninput="wydajFormatKwota(this)"
-          onkeydown="if(event.key==='Enter'){event.preventDefault();confirmWydaj();}">
-      </div>
-      <div id="wydaj-zmieniona-info" style="display:none;font-size:12px;color:#f59e0b;text-align:center;padding:4px 0;">
-        ⚠ Kwota różni się od kwoty zlecenia
-      </div>
-      <div style="display:flex;gap:10px;">
-        <button onclick="closeWydajModal()" style="flex:1;background:none;border:1px solid var(--border);border-radius:8px;padding:14px;color:var(--text2);font-size:15px;font-weight:600;cursor:pointer;">Anuluj</button>
-        <button id="btn-wydaj-confirm" onclick="confirmWydaj()" style="flex:2;background:#7c3aed;border:1px solid #7c3aed;border-radius:8px;padding:14px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;">✓ Potwierdzam</button>
+        <button onclick="closeModal()" style="flex:3;padding:16px;background:#16a34a;border:1px solid #16a34a;border-radius:10px;color:#fff;font-size:17px;font-weight:700;cursor:pointer;letter-spacing:.3px;display:flex;align-items:center;justify-content:center;gap:10px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polyline points="15 18 9 12 15 6"/></svg>
+          Przejdź do części
+        </button>
       </div>
     </div>
   </div>
@@ -1461,7 +2079,7 @@ function unlockBody() { document.body.classList.remove('overlay-open'); }
 // Auto lock/unlock body scroll gdy jakikolwiek overlay jest widoczny
 function updateBodyLock() {
   const overlayIds = ['raport-overlay','podglad-overlay','history-overlay',
-    'modal-overlay','wydaj-overlay','kalkulator-overlay','lancuch-overlay',
+    'modal-overlay','kalkulator-overlay','lancuch-overlay',
     'kalkulator-prosty-overlay','kody-rabatowe-overlay','rab-wydane-overlay','rab-assign-overlay','start-overlay'];
   const anyOpen = overlayIds.some(id => { const el = $(id); return el && getComputedStyle(el).display !== 'none'; });
   if (anyOpen) lockBody(); else unlockBody();
@@ -1469,7 +2087,7 @@ function updateBodyLock() {
 
 document.addEventListener('DOMContentLoaded', () => {
   const overlayIds = ['raport-overlay','podglad-overlay','history-overlay',
-    'modal-overlay','wydaj-overlay','kalkulator-overlay','lancuch-overlay',
+    'modal-overlay','kalkulator-overlay','lancuch-overlay',
     'kalkulator-prosty-overlay','kody-rabatowe-overlay','rab-wydane-overlay','rab-assign-overlay','start-overlay'];
   overlayIds.forEach(id => {
     const el = document.getElementById(id);
@@ -1514,8 +2132,10 @@ const DEFAULTS = [
   { name: 'Koło tylne',  price: 0,  checked: false },
   { name: 'Koło przednie', price: 0, checked: false },
   { name: 'Owijka/Chwyty', price: 0, checked: false },
+  { name: 'Siodło',     price: 0, checked: false },
   { name: 'Dźwignie',   price: 0, checked: false },
   { name: 'Amortyzator', price: 0,  checked: false },
+  { name: 'Akcesoria',  price: 0, checked: false },
   { name: 'Części i akcesoria', price: 0, checked: false, note: true },
 ];
 
@@ -2076,14 +2696,19 @@ function renderItems() {
   }
 }
 
-function buildCard(it, itemsCtx, renderCtx, recalcCtx) {
+function buildCard(it, itemsCtx, renderCtx, recalcCtx, uiCtx) {
   itemsCtx = itemsCtx || items;
   renderCtx = renderCtx || renderItems;
   recalcCtx = recalcCtx || recalc;
+  uiCtx = uiCtx || 'main'; // 'main' | 'kalk' | 'raport'
   const card = document.createElement('div');
   card.className = 'item-card';
   card.dataset.id = it.id;
   const isLocal = () => itemsCtx !== items;
+  // Uwaga: karta nie jest jeszcze w DOM podczas budowy, więc nie używamy closest().
+  // Wykrywamy kontekst po tym, jaka tablica items jest przekazana.
+  const inKalkulator = () => uiCtx === 'kalk';
+  const inRaport = () => uiCtx === 'raport';
   let presetSelRef = null;
 
   // Checkbox toggle (hidden) + blue circle visual
@@ -2226,6 +2851,12 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx) {
     updatePriceDisplay();
     recalcCtx();
   });
+
+  // Kalkulator: stałe okienko ceny + edycja kliknięciem (bez skakania layoutu)
+  if (inKalkulator()) {
+    totalEl.classList.add('editable-total');
+    totalEl.classList.add('visible');
+  }
   priceEl.addEventListener('keydown', e => {
     if (e.key === 'Enter') { e.preventDefault(); priceEl.blur(); }
   });
@@ -2234,8 +2865,12 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx) {
   function updatePriceDisplay() {
     const p = parseFloat(it.price) || 0;
     // Jeśli brak qty (pozycja bez licznika) — traktuj jako qty=1
-    const q = it.qty !== undefined ? (parseInt(it.qty) || 0) : 1;
-    priceEl.value = p || '';
+    let q = it.qty !== undefined ? (parseInt(it.qty) || 0) : 1;
+    // W kalkulatorze suma liczy qty=0 jako 1 (it.qty||1). Dopasuj widok, ale tylko gdy pozycja jest aktywna.
+    if (it.qty !== undefined && q === 0 && it.checked) q = 1;
+    const inRap = inRaport();
+    // W raporcie chcemy zawsze widzieć "0" w okienku (nie placeholder).
+    priceEl.value = (inRap && p === 0) ? '0' : (p || '');
     const tot = Math.round(p * q * 100) / 100;
     if (totalEl.classList.contains('editable-total')) {
       totalEl.textContent = tot > 0 ? tot : '0';
@@ -2245,6 +2880,61 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx) {
       totalEl.textContent = tot > 0 ? tot + ' zł' : '0 zł';
     }
     totalEl.classList.add('visible');
+  }
+
+  function bindKalkPriceEditor() {
+    if (!inKalkulator()) return;
+    if (!totalEl.classList.contains('editable-total')) return;
+    if (totalEl.dataset.kalkPriceBound === '1') return;
+    totalEl.dataset.kalkPriceBound = '1';
+    totalEl.title = 'Kliknij aby edytować cenę';
+    totalEl.addEventListener('click', () => {
+      let q = it.qty !== undefined ? (parseInt(it.qty) || 0) : 1;
+      if (it.qty !== undefined && q === 0 && it.checked) q = 1;
+      const cur = Math.round((parseFloat(it.price)||0) * (q || 1) * 100) / 100;
+
+      const inp = document.createElement('input');
+      inp.type = 'text'; inp.inputMode = 'decimal';
+      inp.className = 'item-price-input kalk-price-edit';
+      inp.value = cur || '';
+
+      totalEl.dataset.prev = totalEl.textContent;
+      totalEl.textContent = '';
+      totalEl.style.position = 'relative';
+      inp.style.position = 'absolute';
+      inp.style.inset = '0';
+      totalEl.appendChild(inp);
+      inp.focus(); inp.select();
+
+      const cleanup = (restorePrev) => {
+        inp.remove();
+        totalEl.textContent = restorePrev ? (totalEl.dataset.prev || '') : '';
+      };
+
+      const done = () => {
+        const total = parseFloat(inp.value.replace(',','.'));
+        if (!isNaN(total) && total >= 0) {
+          const denom = (q || 1);
+          it.price = denom > 0 ? Math.round((total / denom) * 100) / 100 : Math.round(total * 100) / 100;
+          priceEl.value = it.price || '';
+          if (it.qty !== undefined && it.qty === 0 && total > 0) {
+            it.qty = 1;
+            const qv = card.querySelector('.qty-val');
+            if (qv) qv.textContent = it.qty;
+          }
+          if (total > 0 && !bar.checked) { bar.checked = true; syncBarCircle(); it.checked = true; }
+        }
+        cleanup(false);
+        updatePriceDisplay();
+        recalcCtx();
+      };
+
+      inp.addEventListener('blur', done);
+      inp.addEventListener('keydown', e => {
+        if (e.key === 'Enter') { e.preventDefault(); inp.blur(); }
+        if (e.key === 'Escape') { e.preventDefault(); cleanup(true); }
+      });
+    });
   }
 
   function buildQty(onChange, step) {
@@ -2281,6 +2971,14 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx) {
         const cheapest = it.presets.reduce((min, p) => p.price < min.price ? p : min, it.presets[0]);
         it.price = cheapest.price;
         priceEl.value = it.price;
+        it.selectedPreset = it.presets.indexOf(cheapest) + 1;
+        const psel = presetSelRef || card.querySelector('.native-sel.preset-sel');
+        if (psel) {
+          psel.value = String(cheapest.price);
+          if (typeof psel._cselSync === 'function') psel._cselSync();
+          const btn = psel.closest('.csel-wrap')?.querySelector('.csel-btn span');
+          if (btn) btn.textContent = cheapest.label;
+        }
       }
       if (onChange) onChange(valEl);
       updatePriceDisplay();
@@ -2298,6 +2996,14 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx) {
           const cheapest = it.presets.reduce((min, p) => p.price < min.price ? p : min, it.presets[0]);
           it.price = cheapest.price;
           priceEl.value = it.price;
+          it.selectedPreset = it.presets.indexOf(cheapest) + 1;
+          const psel = presetSelRef || card.querySelector('.native-sel.preset-sel');
+          if (psel) {
+            psel.value = String(cheapest.price);
+            if (typeof psel._cselSync === 'function') psel._cselSync();
+            const btn = psel.closest('.csel-wrap')?.querySelector('.csel-btn span');
+            if (btn) btn.textContent = cheapest.label;
+          }
         }
         updatePriceDisplay();
         recalcCtx();
@@ -2343,7 +3049,7 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx) {
     const span = document.createElement('span');
     btn.appendChild(span);
     const sync = () => {
-      span.textContent = it.customName ? ('Opis: ' + it.customName) : 'Opis';
+      span.textContent = it.customName ? it.customName : 'Opis';
       btn.classList.toggle('has-val', !!(it.customName && it.customName.trim()));
     };
     btn.addEventListener('click', async () => {
@@ -2584,11 +3290,55 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx) {
 
     nameEl.style.flex = '0 0 auto';
     const btnWrap = document.createElement('div');
+    btnWrap.className = 'kalk-csel-cell';
     btnWrap.style.cssText = 'flex:1;min-width:0;';
     btnWrap.appendChild(openBtn);
     topRow.appendChild(btnWrap);
+    // W kalkulatorze nie pokazuj pustego inputa ceny (zjada miejsce na "Wybierz")
+    // Zamiast tego pokazujemy prawą kolumnę jako prostą kwotę (totalEl).
     priceEl.style.width = '52px';
-    topRow.appendChild(priceEl);
+    if (isLocal() && inKalkulator()) {
+      priceEl.style.display = 'none';
+      totalEl.classList.add('editable-total');
+      totalEl.classList.add('visible');
+      totalEl.dataset.kalkPriceBound = '1';
+      totalEl.title = 'Kliknij aby edytować cenę';
+      totalEl.addEventListener('click', () => {
+        const cur = Math.round((parseFloat(it.price)||0) * 100) / 100;
+        const inp = document.createElement('input');
+        inp.type = 'text'; inp.inputMode = 'decimal';
+        inp.className = 'item-price-input kalk-price-edit';
+        inp.style.cssText = 'width:52px;';
+        inp.value = cur || '';
+        totalEl.dataset.prev = totalEl.textContent;
+        totalEl.textContent = '';
+        totalEl.style.position = 'relative';
+        inp.style.position = 'absolute';
+        inp.style.inset = '0';
+        totalEl.appendChild(inp);
+        inp.focus(); inp.select();
+        const done = () => {
+          const total = parseFloat(inp.value.replace(',','.'));
+          if (!isNaN(total) && total >= 0) {
+            it.price = Math.round(total * 100) / 100;
+            priceEl.value = it.price || '';
+            if (total > 0 && !bar.checked) { bar.checked = true; syncBarCircle(); it.checked = true; }
+          }
+          inp.remove();
+          totalEl.textContent = totalEl.dataset.prev || '';
+          updatePriceDisplay();
+          recalcCtx();
+        };
+        inp.addEventListener('blur', done);
+        inp.addEventListener('keydown', e => {
+          if (e.key === 'Enter') { e.preventDefault(); inp.blur(); }
+          if (e.key === 'Escape') { e.preventDefault(); inp.remove(); totalEl.textContent = totalEl.dataset.prev || ''; }
+        });
+      });
+      topRow.appendChild(totalEl);
+    } else {
+      topRow.appendChild(priceEl);
+    }
     body.appendChild(topRow);
   }
 
@@ -2597,35 +3347,54 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx) {
     if (it.qty !== undefined) {
       // Z +/- : drop zostaje pod spodem, kontrolki qty w topRow
       const { ctrl } = buildQty(null);
-      priceEl.style.display = 'none';
-      totalEl.classList.add('editable-total');
-      totalEl.classList.add('visible');
-      totalEl.title = 'Kliknij aby edytować cenę';
-      totalEl.addEventListener('click', () => {
-        const q = parseInt(it.qty) || 1;
-        const cur = Math.round((parseFloat(it.price)||0) * q * 100) / 100;
-        const inp = document.createElement('input');
-        inp.type = 'text'; inp.inputMode = 'decimal';
-        inp.className = 'item-price-input';
-        inp.style.cssText = 'width:52px;';
-        inp.value = cur || '';
-        totalEl.replaceWith(inp);
-        inp.focus(); inp.select();
-        const done = () => {
-          const total = parseFloat(inp.value.replace(',','.'));
-          if (!isNaN(total) && total >= 0) {
-            const q2 = parseInt(it.qty) || 1;
-            it.price = q2 > 0 ? Math.round(total / q2 * 100) / 100 : total;
-            priceEl.value = it.price || '';
-            if (total > 0 && !bar.checked) { bar.checked = true; syncBarCircle(); it.checked = true; }
-          }
-          inp.replaceWith(totalEl);
-          updatePriceDisplay();
-          recalcCtx();
-        };
-        inp.addEventListener('blur', done);
-        inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); inp.blur(); } if (e.key === 'Escape') { inp.replaceWith(totalEl); } });
-      });
+      // Kalkulator ma specjalny edytor ceny (kwota po prawej jako okienko i edycja kliknięciem).
+      // W DODAJ / NAPRAWA nie używamy tego trybu (powodował "podwójne" okienka).
+      if (inKalkulator()) {
+        priceEl.style.display = 'none';
+        totalEl.classList.add('editable-total');
+        totalEl.classList.add('visible');
+        totalEl.dataset.kalkPriceBound = '1';
+        totalEl.title = 'Kliknij aby edytować cenę';
+        totalEl.addEventListener('click', () => {
+          const q = parseInt(it.qty) || 1;
+          const cur = Math.round((parseFloat(it.price)||0) * q * 100) / 100;
+          const inp = document.createElement('input');
+          inp.type = 'text'; inp.inputMode = 'decimal';
+          inp.className = 'item-price-input kalk-price-edit';
+          inp.style.cssText = 'width:52px;';
+          inp.value = cur || '';
+          totalEl.dataset.prev = totalEl.textContent;
+          totalEl.textContent = '';
+          totalEl.style.position = 'relative';
+          inp.style.position = 'absolute';
+          inp.style.inset = '0';
+          totalEl.appendChild(inp);
+          inp.focus(); inp.select();
+          const done = () => {
+            const total = parseFloat(inp.value.replace(',','.'));
+            if (!isNaN(total) && total >= 0) {
+              const q2 = parseInt(it.qty) || 1;
+              it.price = q2 > 0 ? Math.round(total / q2 * 100) / 100 : total;
+              priceEl.value = it.price || '';
+              if (it.qty !== undefined && it.qty === 0 && total > 0) {
+                it.qty = 1;
+                const qv = card.querySelector('.qty-val');
+                if (qv) qv.textContent = it.qty;
+              }
+              if (total > 0 && !bar.checked) { bar.checked = true; syncBarCircle(); it.checked = true; }
+            }
+            inp.remove();
+            totalEl.textContent = totalEl.dataset.prev || '';
+            updatePriceDisplay();
+            recalcCtx();
+          };
+          inp.addEventListener('blur', done);
+          inp.addEventListener('keydown', e => {
+            if (e.key === 'Enter') { e.preventDefault(); inp.blur(); }
+            if (e.key === 'Escape') { e.preventDefault(); inp.remove(); totalEl.textContent = totalEl.dataset.prev || ''; }
+          });
+        });
+      }
 
       // Drop w topRow między nazwą a +/-
       const psel = document.createElement('select');
@@ -2684,12 +3453,14 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx) {
       });
       nameEl.style.flex = '0 0 auto';
       const pselWrap2 = document.createElement('div');
+      pselWrap2.className = 'kalk-csel-cell';
       pselWrap2.style.cssText = 'flex:1;min-width:0;';
       pselWrap2.appendChild(psel);
       topRow.appendChild(pselWrap2);
       buildCsel(psel);
       topRow.appendChild(ctrl);
-      topRow.appendChild(totalEl);
+      if (inKalkulator()) topRow.appendChild(totalEl);
+      else topRow.appendChild(priceEl);
       body.appendChild(topRow);
 
     } else {
@@ -2781,11 +3552,55 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx) {
       });
 
       const pselWrap = document.createElement('div');
+      pselWrap.className = 'kalk-csel-cell';
       pselWrap.style.cssText = 'flex:1;min-width:0;';
       pselWrap.appendChild(psel);
       topRow.appendChild(pselWrap);
       buildCsel(psel);
-      topRow.appendChild(priceEl);
+      // W kalkulatorze nie pokazuj pustego inputa ceny (zjada miejsce na "Wybierz")
+      // Zamiast tego pokazujemy prawą kolumnę jako prostą kwotę (totalEl).
+    if (isLocal() && inKalkulator()) {
+        priceEl.style.display = 'none';
+        totalEl.classList.add('editable-total');
+        totalEl.classList.add('visible');
+        totalEl.dataset.kalkPriceBound = '1';
+        totalEl.title = 'Kliknij aby edytować cenę';
+        totalEl.addEventListener('click', () => {
+          const cur = Math.round((parseFloat(it.price)||0) * 100) / 100;
+          const inp = document.createElement('input');
+          inp.type = 'text'; inp.inputMode = 'decimal';
+          inp.className = 'item-price-input kalk-price-edit';
+          inp.style.cssText = 'width:52px;';
+          inp.value = cur || '';
+          totalEl.dataset.prev = totalEl.textContent;
+          totalEl.textContent = '';
+          totalEl.style.position = 'relative';
+          inp.style.position = 'absolute';
+          inp.style.inset = '0';
+          totalEl.appendChild(inp);
+          inp.focus(); inp.select();
+          const done = () => {
+            const total = parseFloat(inp.value.replace(',','.'));
+            if (!isNaN(total) && total >= 0) {
+              it.price = Math.round(total * 100) / 100;
+              priceEl.value = it.price || '';
+              if (total > 0 && !bar.checked) { bar.checked = true; syncBarCircle(); it.checked = true; }
+            }
+            inp.remove();
+            totalEl.textContent = totalEl.dataset.prev || '';
+            updatePriceDisplay();
+            recalcCtx();
+          };
+          inp.addEventListener('blur', done);
+          inp.addEventListener('keydown', e => {
+            if (e.key === 'Enter') { e.preventDefault(); inp.blur(); }
+            if (e.key === 'Escape') { e.preventDefault(); inp.remove(); totalEl.textContent = totalEl.dataset.prev || ''; }
+          });
+        });
+        topRow.appendChild(totalEl);
+      } else {
+        topRow.appendChild(priceEl);
+      }
       body.appendChild(topRow);
     }
   }
@@ -2795,50 +3610,74 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx) {
     if (it.qty !== undefined) {
       nameEl.style.flex = '0 0 auto';
       const opisWrap = document.createElement('div');
+      opisWrap.className = 'kalk-csel-cell';
       opisWrap.style.cssText = 'flex:1;min-width:0;';
       opisWrap.appendChild(buildOpisControl());
       const { ctrl } = buildQty(null, it.name === 'Końcówki' ? 5 : 1);
-      priceEl.style.display = 'none';
-      totalEl.classList.add('editable-total');
-      totalEl.classList.add('visible');
-      totalEl.title = 'Kliknij aby edytować cenę';
-      totalEl.addEventListener('click', () => {
-        const q = parseInt(it.qty) || 1;
-        const cur = Math.round((parseFloat(it.price)||0) * q * 100) / 100;
-        const inp = document.createElement('input');
-        inp.type = 'text'; inp.inputMode = 'decimal';
-        inp.className = 'item-price-input';
-        inp.style.cssText = 'width:52px;';
-        inp.value = cur || '';
-        totalEl.replaceWith(inp);
-        inp.focus(); inp.select();
-        const done = () => {
-          const total = parseFloat(inp.value.replace(',','.'));
-          if (!isNaN(total) && total >= 0) {
-            const q2 = parseInt(it.qty) || 1;
-            it.price = q2 > 0 ? Math.round(total / q2 * 100) / 100 : total;
-            priceEl.value = it.price || '';
-            if (total > 0 && !bar.checked) { bar.checked = true; syncBarCircle(); it.checked = true; }
-          }
-          inp.replaceWith(totalEl);
-          updatePriceDisplay();
-          recalcCtx();
-        };
-        inp.addEventListener('blur', done);
-        inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); inp.blur(); } if (e.key === 'Escape') { inp.replaceWith(totalEl); } });
-      });
       topRow.appendChild(opisWrap);
       topRow.appendChild(ctrl);
-      topRow.appendChild(totalEl);
+      if (inKalkulator()) {
+        priceEl.style.display = 'none';
+        totalEl.classList.add('editable-total');
+        totalEl.classList.add('visible');
+        totalEl.dataset.kalkPriceBound = '1';
+        totalEl.title = 'Kliknij aby edytować cenę';
+        totalEl.addEventListener('click', () => {
+          const q = parseInt(it.qty) || 1;
+          const cur = Math.round((parseFloat(it.price)||0) * q * 100) / 100;
+          const inp = document.createElement('input');
+          inp.type = 'text'; inp.inputMode = 'decimal';
+          inp.className = 'item-price-input kalk-price-edit';
+          inp.style.cssText = 'width:52px;';
+          inp.value = cur || '';
+          totalEl.dataset.prev = totalEl.textContent;
+          totalEl.textContent = '';
+          totalEl.style.position = 'relative';
+          inp.style.position = 'absolute';
+          inp.style.inset = '0';
+          totalEl.appendChild(inp);
+          inp.focus(); inp.select();
+          const done = () => {
+            const total = parseFloat(inp.value.replace(',','.'));
+            if (!isNaN(total) && total >= 0) {
+              const q2 = parseInt(it.qty) || 1;
+              it.price = q2 > 0 ? Math.round(total / q2 * 100) / 100 : total;
+              priceEl.value = it.price || '';
+              if (total > 0 && !bar.checked) { bar.checked = true; syncBarCircle(); it.checked = true; }
+            }
+            inp.remove();
+            totalEl.textContent = totalEl.dataset.prev || '';
+            updatePriceDisplay();
+            recalcCtx();
+          };
+          inp.addEventListener('blur', done);
+          inp.addEventListener('keydown', e => {
+            if (e.key === 'Enter') { e.preventDefault(); inp.blur(); }
+            if (e.key === 'Escape') { e.preventDefault(); inp.remove(); totalEl.textContent = totalEl.dataset.prev || ''; }
+          });
+        });
+        topRow.appendChild(totalEl);
+      } else {
+        topRow.appendChild(priceEl);
+      }
     } else {
       nameEl.style.flex = '0 0 auto';
       const opisWrap = document.createElement('div');
+      opisWrap.className = 'kalk-csel-cell';
       opisWrap.style.cssText = 'flex:1;min-width:0;';
       opisWrap.appendChild(buildOpisControl());
       priceEl.style.width = '52px';
       // font set by CSS
       topRow.appendChild(opisWrap);
-      topRow.appendChild(priceEl);
+      // Tylko w WYCENA/KALKULATOR chowamy input i pokazujemy prawą kolumnę jako "kwotę".
+      // W DO WYDANIA (edycja) i w DODAJ musi być normalne okienko ceny.
+      if (isLocal() && inKalkulator()) {
+        priceEl.style.display = 'none';
+        totalEl.classList.add('visible');
+        topRow.appendChild(totalEl);
+      } else {
+        topRow.appendChild(priceEl);
+      }
     }
     body.appendChild(topRow);
   }
@@ -2851,6 +3690,9 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx) {
   card.appendChild(bar);
   card.appendChild(barCircle);
   card.appendChild(body);
+
+  // Kalkulator: każda cena ma być edytowalna
+  bindKalkPriceEditor();
 
   // Ukryj "Części i akcesoria" gdy nic nie wprowadzono
   if (it.name === 'Części i akcesoria' && !it.checked && !(parseFloat(it.price) > 0) && !it.noteText) {
@@ -2996,15 +3838,19 @@ function buildSubRow(sub, subsArr, onAddRow, recalcFn) {
   priceEl.inputMode = 'numeric';
   priceEl.addEventListener('focus', () => priceEl.select());
   priceEl.addEventListener('input', () => {
-    const v = parseFloat(priceEl.value.replace(',', '.'));
-    if (!isNaN(v) && v > 0) {
+    const raw = (priceEl.value || '').trim();
+    const v = /[+\-*/x×]/.test(raw) ? evalExpr(raw) : parseFloat(raw.replace(',', '.'));
+    if (!isNaN(v) && v >= 0) {
       const iv = Math.round(v);
       sub.price = iv;
       if (isGlobal()) State.setSubPrice(sub.id, iv);
-      autoCheck();
-      autoAddNextRow();
-      recalcFn();
+      if (iv > 0) {
+        autoCheck();
+        autoAddNextRow();
+      }
     }
+    // przeliczaj na bieżąco (nawet gdy wpis jest w trakcie)
+    recalcFn();
   });
   priceEl.addEventListener('blur', () => {
     const v = evalExpr(priceEl.value);
@@ -3107,7 +3953,7 @@ function buildDocHTML() {
 
   return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
     *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:Arial,sans-serif;background:#fff;color:#000;width:680px;}
+    body{font-family:'Inter';background:#fff;color:#000;width:680px;}
     .page{padding:36px 44px;}
     .hdr{display:flex;justify-content:space-between;align-items:stretch;margin-bottom:24px;}
     .hdr-left{border-left:4px solid #000;padding-left:14px;display:flex;flex-direction:column;justify-content:center;gap:6px;}
@@ -4114,10 +4960,13 @@ function startKalkulator() {
       if (!it.checked) continue;
       total += it.price * (it.qty !== undefined ? (it.qty || 1) : 1);
     }
-    for (const s of kalkSubs) {
-      if (s.checked && s.price > 0) total += s.price;
-    }
+    const subsTotal = kalkSubs
+      .filter(s => s.checked && (parseFloat(s.price) || 0) > 0)
+      .reduce((a, s) => a + (parseFloat(s.price) || 0), 0);
+    total += subsTotal;
     $('kalk-total').textContent = fmt(total);
+    const sumEl = $('kalk-group-sum');
+    if (sumEl) sumEl.textContent = subsTotal > 0 ? String(Math.round(subsTotal)) : '0';
   }
 
   // Render items
@@ -4127,7 +4976,7 @@ function startKalkulator() {
   function renderKalkItems() {
     list.innerHTML = '';
     for (const it of kalkItems) {
-      const card = buildCard(it, kalkItems, renderKalkItems, recalcKalk);
+      const card = buildCard(it, kalkItems, renderKalkItems, recalcKalk, 'kalk');
       card.querySelectorAll('input,button,select').forEach(el => {
         el.addEventListener('change', recalcKalk);
         el.addEventListener('click', recalcKalk);
@@ -4138,7 +4987,7 @@ function startKalkulator() {
   }
 
   for (const it of kalkItems) {
-    const card = buildCard(it, kalkItems, renderKalkItems, recalcKalk);
+    const card = buildCard(it, kalkItems, renderKalkItems, recalcKalk, 'kalk');
     card.querySelectorAll('input,button,select').forEach(el => {
       el.addEventListener('change', recalcKalk);
       el.addEventListener('click', recalcKalk);
@@ -4165,6 +5014,7 @@ function startKalkulator() {
 
     const sumEl = document.createElement('span');
     sumEl.className = 'group-sum';
+    sumEl.id = 'kalk-group-sum';
     const subsTotal = kalkSubs.filter(s => s.checked && s.price > 0).reduce((a, s) => a + (parseFloat(s.price) || 0), 0);
     sumEl.textContent = subsTotal > 0 ? String(Math.round(subsTotal)) : '0';
 
@@ -4394,8 +5244,35 @@ function checkTerminSunday(val) {
 }
 function formatTermin(el) {
   let v = el.value.replace(/[^0-9.]/g, '');
-  const digits = v.replace(/\./g, '');
-  if (digits.length > 2) v = digits.slice(0,2) + '.' + digits.slice(2,4);
+  const digits = v.replace(/\./g, '').slice(0,4);
+
+  let dd = digits.slice(0,2);
+  let mm = digits.slice(2,4);
+
+  // Waliduj dopiero gdy mamy pełne DDMM
+  if (dd.length === 2 && mm.length === 2) {
+    let dNum = parseInt(dd, 10);
+    let mNum = parseInt(mm, 10);
+
+    if (!Number.isFinite(dNum)) dNum = 1;
+    if (!Number.isFinite(mNum)) mNum = 1;
+
+    // Miesiąc 01-12
+    if (mNum < 1) mNum = 1;
+    if (mNum > 12) mNum = 12;
+
+    const maxDays = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]; // 29 dla lutego (bez roku)
+    const maxD = maxDays[mNum - 1] || 31;
+
+    // Dzień 01-maxD
+    if (dNum < 1) dNum = 1;
+    if (dNum > maxD) dNum = maxD;
+
+    dd = String(dNum).padStart(2, '0');
+    mm = String(mNum).padStart(2, '0');
+  }
+
+  v = dd + (mm.length ? '.' + mm : '');
   el.value = v;
   checkTerminSunday(v);
 }
@@ -5224,8 +6101,7 @@ function renderWydanie(filterTel) {
         <button class="btn-history-load" style="background:#3b7cf4;border-color:#3b7cf4;" onclick="openRaportEdycja(${entry.id})" title="Edytuj"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
         <button class="btn-history-load" style="background:#6b7280;border-color:#6b7280;display:inline-flex;align-items:center;justify-content:center;" onclick="cofnijDoAktualne(${entry.id})" title="Cofnij do przyjętych"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg></button>
         <div style="margin-left:auto;display:flex;gap:6px;">
-          <button class="btn-history-load btn-history-icon btn-history-icon-orange-fill" onclick="openRaport(${entry.id})" title="Info">i</button>
-          <button class="btn-history-load" style="background:#ef4444;border-color:#ef4444;font-size:15px;font-weight:700;letter-spacing:.5px;" onclick="openWydajModal(${entry.id})">WYDAJ</button>
+          <button class="btn-history-load" style="background:#ef4444;border-color:#ef4444;font-size:15px;font-weight:700;letter-spacing:.5px;" onclick="openPodsumowanieDoWydania(${entry.id})">WYDAJ</button>
         </div>
       </div>
     `;
@@ -5718,7 +6594,7 @@ function generujRaportZDaty() {
   const html = `<!DOCTYPE html><html lang="pl"><head><meta charset="UTF-8">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: Arial, sans-serif; font-size: 10px; color: #111; background: #fff; padding: 14px 16px; }
+    body { font-family: 'Inter'; font-size: 10px; color: #111; background: #fff; padding: 14px 16px; }
     .page-header { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 2px solid #111; padding-bottom: 6px; margin-bottom: 10px; }
     .page-title { font-size: 14px; font-weight: 800; letter-spacing: -.2px; }
     .page-meta { font-size: 10px; color: #555; }
@@ -5859,7 +6735,7 @@ function buildArchiveHTML(entry, useRaport) {
 
   return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
     *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:'Segoe UI',Arial,sans-serif;background:#08080d;color:#e0e5f2;width:480px;padding:20px;}
+    body{font-family:'Inter';background:#08080d;color:#e0e5f2;width:480px;padding:20px;}
     .card{background:#111118;border:1px solid #1e1e30;border-left:4px solid #c0392b;border-radius:12px;padding:16px 18px;margin-bottom:12px;}
     .title-label{font-size:9px;font-weight:700;color:#c0392b;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
     .bike-name{font-size:22px;font-weight:800;color:#fff;line-height:1.2;}
@@ -6403,7 +7279,7 @@ function renderRaportEditor(entry, st, cfg) {
   const list = $('raport-items-list');
   list.innerHTML = '';
   for (const it of rItems) {
-    const card = buildCard(it, rItems, null, recalcRaport);
+    const card = buildCard(it, rItems, null, recalcRaport, 'raport');
     list.appendChild(card);
   }
 
@@ -6579,7 +7455,7 @@ function saveRaportKoncowy() {
   } else {
     btn.textContent = '⚠ Błąd zapisu';
     btn.style.background = '#ef4444';
-    setTimeout(() => { btn.textContent = 'Zapisz naprawę'; btn.style.background = '#7c3aed'; }, 2000);
+    setTimeout(() => { btn.textContent = 'ZAKOŃCZ'; btn.style.background = '#16a34a'; }, 2000);
   }
 }
 
@@ -6587,6 +7463,8 @@ window.saveRaportKoncowy = saveRaportKoncowy;
 
 function openPodglad(entry) {
   const rk = entry.raportKoncowy;
+  const actionBar = $('podglad-action-bar');
+  if (actionBar) actionBar.style.display = 'none';
 
   // Nagłówek
   const kolorDot = makeKolorDot(entry.kolor || '', 14);
@@ -6667,6 +7545,44 @@ function openPodglad(entry) {
   if (pdfBarEl) pdfBarEl.style.display = 'none';
 
   $('podglad-overlay').style.display = 'block';
+}
+
+function openPodgladDoWydania(id, showWydajBtn) {
+  const hist = getHistory();
+  const entry = hist.find(e => e.id === id);
+  if (!entry) { alert('Brak danych zlecenia'); return; }
+  if (!entry.raportKoncowy) { alert('Brak raportu końcowego'); return; }
+  raportReturnTab = 'wydanie';
+  openPodglad(entry);
+  const bar = $('podglad-action-bar');
+  const btn = $('podglad-wydaj-btn');
+  if (bar && btn) {
+    bar.style.display = showWydajBtn ? 'block' : 'none';
+    btn.onclick = () => openPodsumowanieDoWydania(id);
+  }
+}
+window.openPodgladDoWydania = openPodgladDoWydania;
+
+function wydajBezKwoty(id) {
+  const hist = getHistory();
+  const idx = hist.findIndex(e => e.id === id);
+  if (idx < 0) return;
+  const src = hist[idx];
+  const entry = {
+    ...src,
+    archivedAt: new Date().toISOString(),
+    kwotaSprzedazy: src.total || '',
+    dataWydania: new Date().toLocaleDateString('pl-PL', {day:'2-digit', month:'2-digit', year:'numeric'}),
+  };
+  const arch = getArchive();
+  arch.unshift(entry);
+  localStorage.setItem(ARCHIVE_KEY, JSON.stringify(arch));
+  hist.splice(idx, 1);
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(hist));
+  highlightZlecenie(entry.id);
+  closePodglad();
+  openHistory();
+  switchTab('archiwum');
 }
 
 function closePodglad() {
@@ -6804,6 +7720,106 @@ function openPodsumowanieWydane(id) {
   $('podglad-overlay').style.display = 'block';
 }
 window.openPodsumowanieWydane = openPodsumowanieWydane;
+
+function openPodsumowanieDoWydania(id) {
+  const hist = getHistory();
+  const entry = hist.find(e => e.id === id);
+  if (!entry) { alert('Brak danych'); return; }
+  if (!entry.raportKoncowy) { alert('Brak raportu końcowego'); return; }
+
+  raportReturnTab = 'wydanie';
+
+  const rk = entry.raportKoncowy;
+  const fmtPLN = v => Number(v||0).toLocaleString('pl-PL', {minimumFractionDigits:2,maximumFractionDigits:2});
+  const kolorDot = makeKolorDot(entry.kolor || '', 14);
+  const nameParts = [entry.marka, entry.model].filter(Boolean);
+
+  const leftHTML = `
+    <div style="flex:1;min-width:0;">
+      ${nameParts.length ? `<div style="display:flex;align-items:center;gap:6px;font-size:15px;font-weight:700;color:#fff;margin-bottom:6px;">${kolorDot}${escHTML(nameParts.join(' '))}</div>` : ''}
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        ${entry.tel ? `<a href="tel:${entry.tel.replace(/[^0-9+]/g,'')}" style="display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:700;color:#3b7cf4;text-decoration:none;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>${escHTML(entry.tel)}</a>` : ''}
+      </div>
+    </div>`;
+  const rightHTML = `
+    <div style="text-align:right;flex-shrink:0;display:flex;flex-direction:column;gap:3px;">
+      ${entry.label ? `<div style="font-size:11px;color:var(--text3);">Przyjęto: ${escHTML(entry.label)}</div>` : ''}
+      ${rk?.dataZakonczenia ? `<div style="font-size:11px;color:#ef4444;">Zakończono naprawę: ${escHTML(rk.dataZakonczenia)}</div>` : ''}
+    </div>`;
+
+  $('podglad-title').textContent = 'Podsumowanie';
+  $('podglad-header').innerHTML = `<div style="display:flex;align-items:flex-start;gap:12px;">${leftHTML}${rightHTML}</div>`;
+
+  const td  = 'style="padding:8px 10px;font-size:13px;color:var(--text);border-bottom:1px solid var(--border);"';
+  const tdr = 'style="padding:8px 10px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border);text-align:right;"';
+  const thead = `<thead><tr style="background:var(--bg);">
+    <td style="padding:7px 10px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;">Usługa / część</td>
+    <td style="padding:7px 10px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;text-align:right;">Cena</td>
+    <td style="padding:7px 10px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;text-align:right;">Szt.</td>
+    <td style="padding:7px 10px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;text-align:right;">Razem</td>
+  </tr></thead>`;
+
+  let html = '';
+  let stItems = [];
+  let zlecTotal = 0;
+  const st = entry.state ? safeParseJSON(entry.state, null) : null;
+  if (st?.items) stItems = st.items.filter(it => it.checked);
+
+  if (stItems.length) {
+    html += `<div style="padding:10px 12px 6px;font-size:13px;font-weight:800;color:#22c55e;text-transform:uppercase;letter-spacing:.8px;background:var(--bg);text-align:center;">Zlecone naprawy</div>`;
+    html += `<table style="width:100%;border-collapse:collapse;">${thead}<tbody>`;
+    stItems.forEach(it => {
+      const qty = it.qty !== undefined ? (it.qty || 1) : 1;
+      const price = parseFloat(it.price) || 0;
+      const total = Math.round(price * qty * 100) / 100;
+      zlecTotal += total;
+      const name = itemLabelWithDetails(it, true);
+      html += `<tr><td ${td}>${escHTML(name)}</td><td ${tdr}>${fmtPLN(price)}</td><td ${tdr}>${qty}</td><td ${tdr}>${fmtPLN(total)}</td></tr>`;
+    });
+    html += `<tr><td colspan="3" style="padding:8px 10px;font-size:12px;font-weight:700;color:var(--text3);">Razem zlecenie</td><td style="padding:8px 10px;font-size:14px;font-weight:800;color:#fff;text-align:right;">${fmtPLN(zlecTotal)} zł</td></tr>`;
+    html += `</tbody></table>`;
+  }
+
+  if (rk) {
+    let rapTotal = 0;
+    html += `<div style="padding:10px 12px 6px;font-size:13px;font-weight:800;color:#22c55e;text-transform:uppercase;letter-spacing:.8px;background:var(--bg);border-top:2px solid var(--border);margin-top:8px;text-align:center;">Wykonane naprawy</div>`;
+    html += `<table style="width:100%;border-collapse:collapse;">${thead}<tbody>`;
+    (rk.items || []).filter(it => it.checked).forEach(it => {
+      const qty = it.qty !== undefined ? (it.qty || 1) : 1;
+      const price = parseFloat(it.price) || 0;
+      const total = Math.round(price * qty * 100) / 100;
+      rapTotal += total;
+      const name = itemLabelWithDetails(it, true);
+      html += `<tr><td ${td}>${escHTML(name)}</td><td ${tdr}>${fmtPLN(price)}</td><td ${tdr}>${qty}</td><td ${tdr}>${fmtPLN(total)}</td></tr>`;
+    });
+    (rk.subs || []).filter(s => s.checked && s.name).forEach(s => {
+      const price = parseFloat(s.price) || 0;
+      rapTotal += price;
+      html += `<tr><td ${td}>${escHTML(s.name)}</td><td ${tdr}>${fmtPLN(price)}</td><td ${tdr}>1</td><td ${tdr}>${fmtPLN(price)}</td></tr>`;
+    });
+    html += `<tr><td colspan="3" style="padding:8px 10px;font-size:12px;font-weight:700;color:var(--text3);">Razem naprawa</td><td style="padding:8px 10px;font-size:14px;font-weight:800;color:#fff;text-align:right;">${fmtPLN(rapTotal)} zł</td></tr>`;
+    html += `</tbody></table>`;
+  }
+
+  $('podglad-table').innerHTML = html;
+  $('podglad-total').textContent = entry.total || '';
+
+  const kodEl = $('podglad-kod-odbioru'); if (kodEl) kodEl.style.display = 'none';
+  const kwotaEl = $('podglad-kwota-zaplacona'); if (kwotaEl) kwotaEl.style.display = 'none';
+  const notatkaEl = $('podglad-notatka'); if (notatkaEl) notatkaEl.style.display = 'none';
+  const pdfBarEl = $('podglad-pdf-bar'); if (pdfBarEl) pdfBarEl.style.display = 'none';
+
+  // Pokaż WYDAJ na dole (bez PDF)
+  const bar = $('podglad-action-bar');
+  const btn = $('podglad-wydaj-btn');
+  if (bar && btn) {
+    bar.style.display = 'block';
+    btn.onclick = () => wydajBezKwoty(id);
+  }
+
+  $('podglad-overlay').style.display = 'block';
+}
+window.openPodsumowanieDoWydania = openPodsumowanieDoWydania;
 window.closePodglad = closePodglad;
 window.closePodgladOutside = closePodgladOutside;
 
@@ -7882,17 +8898,23 @@ window.cselSetValue = cselSetValue;
       <button onclick="$('admin-modal').style.display='none'" style="background:#ef4444;border:1px solid #ef4444;border-radius:8px;padding:6px 14px;cursor:pointer;color:#fff;font-size:13px;font-weight:700;text-transform:uppercase;">Zamknij</button>
     </div>
 
-    <button onclick="otworzRaportZGlownego()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:14px;background:#0f0d1a;border:1px solid #4f46e5;border-radius:12px;padding:16px 18px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-      <span>Raport napraw</span>
+    <button onclick="otworzRaportZGlownego()" class="admin-act-btn" style="background:#0f0d1a;border:1px solid #4f46e5;border-radius:12px;padding:16px 18px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;">
+      <span class="aab-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      </span>
+      <span class="aab-text">Raport napraw</span>
     </button>
-    <button onclick="otworzKopiaZGlownego()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:14px;background:#1a0d0d;border:1px solid #c0392b;border-radius:12px;padding:16px 18px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      <span>Kopia zapasowa</span>
+    <button onclick="otworzKopiaZGlownego()" class="admin-act-btn" style="background:#1a0d0d;border:1px solid #c0392b;border-radius:12px;padding:16px 18px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;">
+      <span class="aab-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      </span>
+      <span class="aab-text">Kopia zapasowa</span>
     </button>
-    <button onclick="$('admin-modal').style.display='none';otworzGithubUpdate()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:14px;background:#0a160d;border:1px solid #238636;border-radius:12px;padding:16px 18px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3fb950" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
-      <span>Update App</span>
+    <button onclick="$('admin-modal').style.display='none';otworzGithubUpdate()" class="admin-act-btn" style="background:#0a160d;border:1px solid #238636;border-radius:12px;padding:16px 18px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;">
+      <span class="aab-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3fb950" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+      </span>
+      <span class="aab-text">Update App</span>
     </button>
   </div>
 </div>
@@ -7965,7 +8987,7 @@ function otworzGithubUpdate() {
         <label style="font-size:11px;font-weight:700;color:#8b949e;text-transform:uppercase;letter-spacing:.6px;">Token</label>
         <div style="position:relative;">
           <input type="password" id="gh-token-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
-            style="width:100%;font-size:12px;padding:10px 36px 10px 12px;border:1px solid #30363d;border-radius:8px;background:#161b22;color:#e6edf3;outline:none;font-family:monospace;">
+            style="width:100%;font-size:12px;padding:10px 36px 10px 12px;border:1px solid #30363d;border-radius:8px;background:#161b22;color:#e6edf3;outline:none;font-family:inherit;">
           <button id="gh-eye-btn" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:#8b949e;cursor:pointer;font-size:14px;">👁</button>
         </div>
       </div>
@@ -8105,4 +9127,3 @@ window.githubUpdate = githubUpdate;
 </script>
 </body>
 </html>
-usun ZLECENI
