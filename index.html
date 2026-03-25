@@ -30,6 +30,11 @@
   --text3: #7a82a0;
   --green: #22c55e;
   --radius: 10px;
+  --radius-btn: 8px;
+  --btn-py: 8px;
+  --btn-px: 14px;
+  --btn-font: 13px;
+  --btn-weight: 700;
 }
 
 body {
@@ -58,6 +63,46 @@ header {
   gap: 10px;
 }
 header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3px; }
+
+/* ── Tabs (zlecenia) ── */
+.order-tabs{
+  display:flex;
+  gap:8px;
+  padding:8px;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:12px;
+  margin:0 0 10px;
+}
+.order-tab{
+  flex:1;
+  background:transparent;
+  border:1px solid transparent;
+  border-radius:var(--radius-btn);
+  padding:10px 10px;
+  font-size:15px;
+  font-weight:900;
+  cursor:pointer;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+  color:var(--text3);
+}
+.order-tab.active{
+  color:#111827;
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.04) inset;
+}
+#tab-historia.order-tab.active{ background:#ef4444; border-color:#ef4444; }
+#tab-wydanie.order-tab.active{ background:#22c55e; border-color:#22c55e; }
+#tab-archiwum.order-tab.active{ background:#a78bfa; border-color:#a78bfa; }
+.order-tab-kosz{
+  flex:0 0 auto;
+  padding:10px 12px;
+}
+.order-tab-kosz.active{
+  background:#ef4444;
+  border-color:#ef4444;
+  color:#111827;
+}
 
 /* ── Summary card ── */
 .summary-card {
@@ -359,8 +404,8 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
 .btn-data {
   display: flex; align-items: center; justify-content: center; gap: 5px;
   background: #c0392b; color: #fff;
-  border: 1px solid #c0392b; border-radius: 8px;
-  padding: 12px 8px; font-size: 14px; font-weight: 700;
+  border: 1px solid #c0392b; border-radius: var(--radius-btn);
+  padding: var(--btn-py) var(--btn-px); font-size: var(--btn-font); font-weight: var(--btn-weight);
   cursor: pointer; transition: background 0.15s;
 }
 .btn-data:hover { background: #a93226; }
@@ -430,8 +475,8 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
 .btn-save {
   display: flex; align-items: center; justify-content: center; gap: 5px;
   background: #16a34a; color: #fff;
-  border: 1px solid #16a34a; border-radius: 8px;
-  padding: 12px 8px; font-size: 13px; font-weight: 700;
+  border: 1px solid #16a34a; border-radius: var(--radius-btn);
+  padding: var(--btn-py) var(--btn-px); font-size: var(--btn-font); font-weight: var(--btn-weight);
   cursor: pointer; transition: background 0.15s;
 }
 .btn-save:hover { background: #15803d; }
@@ -446,6 +491,21 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
   position: relative;
   overflow: hidden;
   padding-left: 34px;
+}
+.history-item.hl-red{
+  border-color: rgba(239,68,68,0.72) !important;
+  background-color: rgba(239,68,68,0.10) !important;
+  box-shadow: 0 0 0 2px rgba(239,68,68,0.14), 0 0 18px rgba(239,68,68,0.14) !important;
+}
+.history-item.hl-green{
+  border-color: rgba(34,197,94,0.90) !important;
+  background-color: rgba(34,197,94,0.14) !important;
+  box-shadow: 0 0 0 2px rgba(34,197,94,0.14), 0 0 18px rgba(34,197,94,0.14) !important;
+}
+.history-item.hl-purple{
+  border-color: rgba(167,139,250,0.82) !important;
+  background-color: rgba(167,139,250,0.12) !important;
+  box-shadow: 0 0 0 2px rgba(167,139,250,0.14), 0 0 18px rgba(167,139,250,0.14) !important;
 }
 .history-item.history-item-urgent,
 .history-item.history-item-urgent-today{
@@ -463,29 +523,57 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
 .history-item-total { font-size: 26px; font-weight: 800; color: #fff; flex-shrink: 0; letter-spacing: -0.5px; }
 .history-item-actions { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
 .btn-history-load {
-  background: var(--blue); color: #fff; border: 1px solid var(--blue);
-  border-radius: 6px; padding: 8px 14px;
-  font-size: 13px; font-weight: 600; cursor: pointer;
+  background: var(--blue); color: #111827; border: 1px solid var(--blue);
+  border-radius: var(--radius-btn); padding: var(--btn-py) var(--btn-px);
+  font-size: var(--btn-font); font-weight: 600; cursor: pointer;
   flex-shrink: 0; transition: background 0.1s;
+  min-height: 33px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  line-height: 1;
 }
 .btn-history-load:hover { opacity: 0.85; }
+.btn-history-icon{
+  width:33px;
+  min-width:33px;
+  padding:0;
+}
+.btn-history-icon svg{ width:14px; height:14px; }
+.btn-history-icon-orange{
+  background:none !important;
+  border-color:#f59e0b !important;
+  color:#f59e0b !important;
+}
+.btn-history-icon-orange-fill{
+  background:#f59e0b !important;
+  border-color:#f59e0b !important;
+  color:#111827 !important;
+  font-size:16px;
+  font-weight:900;
+}
 .btn-history-sms {
-  background: #16a34a; color: #fff; border: 1px solid #16a34a;
-  border-radius: 6px; padding: 8px 14px;
-  font-size: 13px; font-weight: 600; cursor: pointer;
+  background: #16a34a; color: #111827; border: 1px solid #16a34a;
+  border-radius: var(--radius-btn); padding: var(--btn-py) var(--btn-px);
+  font-size: var(--btn-font); font-weight: 600; cursor: pointer;
   flex-shrink: 0; text-decoration: none;
   display: inline-flex; align-items: center; gap: 4px;
+  min-height: 33px;
+  line-height: 1;
 }
 .btn-history-sms:hover { opacity: 0.85; }
-.btn-history-sms-sent { background: #3a3a3a; color: #888; border: 1px solid #3a3a3a; }
+.btn-history-sms-sent { background: #3a3a3a; color: #9ca3af; border: 1px solid #3a3a3a; }
 .btn-history-sms-sent:hover { opacity: 0.85; }
 .btn-history-del {
   background: none; border: 1px solid var(--red);
-  color: var(--red); font-size: 13px; font-weight: 600;
+  color: var(--red); font-size: var(--btn-font); font-weight: 600;
   cursor: pointer; opacity: 0.55;
-  padding: 8px 10px; flex-shrink: 0;
-  border-radius: 6px; transition: opacity 0.15s;
+  padding: var(--btn-py) 10px; flex-shrink: 0;
+  border-radius: var(--radius-btn); transition: opacity 0.15s;
   display: inline-flex; align-items: center; gap: 4px;
+  min-height: 33px;
+  line-height: 1;
 }
 .btn-history-del:hover { opacity: 1; }
 .history-empty { text-align: center; color: var(--text3); font-size: 13px; padding: 24px 0; }
@@ -497,7 +585,7 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
 #start-overlay::-webkit-scrollbar { display:none; }
 .overlay-full::-webkit-scrollbar { display:none; }
 .overlay-full { scrollbar-width:none; }
-.btn-close { margin-left:auto;background:#ef4444;border:1px solid #ef4444;border-radius:8px;padding:6px 14px;cursor:pointer;color:#fff;font-size:13px;font-weight:700;text-transform:uppercase; }
+.btn-close { margin-left:auto;background:#ef4444;border:1px solid #ef4444;border-radius:var(--radius-btn);padding:6px var(--btn-px);cursor:pointer;color:#fff;font-size:var(--btn-font);font-weight:var(--btn-weight);text-transform:uppercase; }
 
 /* ── Custom dropdown ── */
 .csel-wrap { position: relative; flex: 1; }
@@ -828,7 +916,7 @@ select.native-sel { display: none !important; }
       Kody Rabatowe
     </button>
 
-    <button onclick="openAdminModal()" style="width:75%;align-self:center;padding:16px;background:#c0392b;border:none;border-radius:12px;color:#fff;font-size:17px;font-weight:600;cursor:pointer;letter-spacing:.4px;display:flex;align-items:center;justify-content:center;gap:12px;">
+    <button onclick="openAdminModal()" style="width:75%;align-self:center;padding:16px;background:#c0392b;border:none;border-radius:12px;color:#111827;font-size:17px;font-weight:600;cursor:pointer;letter-spacing:.4px;display:flex;align-items:center;justify-content:center;gap:12px;">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
       Administracja
     </button>
@@ -847,14 +935,12 @@ select.native-sel { display: none !important; }
     <div style="padding:16px 16px 40px;display:flex;flex-direction:column;gap:14px;">
       <!-- Szukaj kodów -->
       <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:12px 12px;">
-        <div style="font-size:11px;font-weight:900;color:#f59e0b;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;">Szukaj</div>
         <input id="rab-search" type="text" placeholder="Szukaj po numerze telefonu (xxx-xxx-xxx) lub kodzie (8 cyfr)"
           style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:12px 12px;color:#fff;font-size:14px;font-weight:800;outline:none;">
       </div>
 
       <!-- Predefiniowane kategorie -->
       <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:12px 12px;">
-        <div style="font-size:11px;font-weight:900;color:#f59e0b;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;">Kategorie</div>
         <div id="rab-templates" style="display:flex;flex-direction:column;gap:10px;"></div>
       </div>
 
@@ -1154,34 +1240,34 @@ select.native-sel { display: none !important; }
       <button onclick="closeHistoryToMenu()" class="btn-close">Zamknij</button>
     </header>
     <div style="padding:0 16px 0;">
-      <div style="display:flex;border-bottom:1px solid var(--border);margin-bottom:10px;">
-        <button id="tab-historia" onclick="switchTab('historia')" style="flex:1;background:none;border:none;border-bottom:2px solid #ef4444;color:#ef4444;font-size:13px;font-weight:700;padding:10px 0;cursor:pointer;text-transform:uppercase;letter-spacing:.5px;">Przyjęte</button>
-        <button id="tab-wydanie" onclick="switchTab('wydanie')" style="flex:1;background:none;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:13px;font-weight:700;padding:10px 0;cursor:pointer;text-transform:uppercase;letter-spacing:.5px;">Do wydania</button>
-        <button id="tab-archiwum" onclick="switchTab('archiwum')" style="flex:1;background:none;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:13px;font-weight:700;padding:10px 0;cursor:pointer;text-transform:uppercase;letter-spacing:.5px;">Wydane</button>
-        <button id="tab-kosz" onclick="switchTab('kosz')" style="flex:0 0 auto;background:none;border:none;border-bottom:2px solid transparent;color:var(--text3);font-size:13px;font-weight:700;padding:10px 10px;cursor:pointer;" title="Kosz">
+      <div class="order-tabs">
+        <button id="tab-historia" class="order-tab active" onclick="switchTab('historia')">Przyjęte</button>
+        <button id="tab-wydanie" class="order-tab" onclick="switchTab('wydanie')">Do wydania</button>
+        <button id="tab-archiwum" class="order-tab" onclick="switchTab('archiwum')">Wydane</button>
+        <button id="tab-kosz" class="order-tab order-tab-kosz" onclick="switchTab('kosz')" title="Kosz">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
         </button>
       </div>
       <div id="historia-search-wrap" style="display:none;padding:0 0 8px;">
         <input type="tel" id="historia-search-tel" placeholder="Szukaj: 000-000-000" maxlength="11"
-          style="width:100%;font-size:15px;border:1px solid var(--border);border-radius:8px;padding:8px 12px;background:var(--bg2);color:var(--text);outline:none;"
+          style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:12px 12px;color:#fff;font-size:14px;font-weight:800;outline:none;"
           onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
       </div>
       <div id="wydanie-search-wrap" style="display:none;padding:0 0 8px;">
         <input type="tel" id="wydanie-search-tel" placeholder="Szukaj: telefon lub kod odbioru" maxlength="20" inputmode="numeric"
-          style="width:100%;font-size:15px;border:1px solid var(--border);border-radius:8px;padding:8px 12px;background:var(--bg2);color:var(--text);outline:none;"
+          style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:12px 12px;color:#fff;font-size:14px;font-weight:800;outline:none;"
           onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'"
           oninput="this.value=this.value.replace(/[^0-9]/g,'');renderWydanie(this.value)">
       </div>
       <div id="archive-search-wrap" style="display:none;padding:0 0 8px;">
         <input type="text" id="archive-search-tel" placeholder="Szukaj: telefon lub kod odbioru" maxlength="20"
-          style="width:100%;font-size:15px;border:1px solid var(--border);border-radius:8px;padding:8px 12px;background:var(--bg2);color:var(--text);outline:none;"
+          style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:12px 12px;color:#fff;font-size:14px;font-weight:800;outline:none;"
           onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
       </div>
       <div id="kosz-search-wrap" style="display:none;padding:0 0 8px;">
         <div style="display:flex;gap:8px;align-items:center;">
           <input type="tel" id="kosz-search-tel" placeholder="Szukaj: 000-000-000" maxlength="11"
-            style="flex:1;font-size:15px;border:1px solid var(--border);border-radius:8px;padding:8px 12px;background:var(--bg2);color:var(--text);outline:none;"
+            style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:12px 12px;color:#fff;font-size:14px;font-weight:800;outline:none;"
             onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
           <button onclick="wyczyscKosz()" style="flex-shrink:0;background:none;border:1px solid var(--red);border-radius:8px;padding:8px 12px;color:var(--red);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">Wyczyść</button>
         </div>
@@ -3508,13 +3594,11 @@ function _smsRabatyBody(r) {
   const name = (r?.templateLabel || '').trim();
   const valid = r?.validUntil ? _fmtDatePL(r.validUntil) : (r?.validUntilStr || '');
   return [
-    'Dziekujemy za skorzystanie z naszych usług.',
-    '',
-    'Otrzymuejsz kod rabatowy - ' + (code || '-'),
+    'Przesyłamy kod rabatowy',
+    (code || '-'),
     (name || ''),
+    '(bez kosztów części)',
     'Data ważności - ' + (valid || '-'),
-    'Kod obejmuje tylko usługi mechaniczne, bez kosztów części.',
-    '',
     'Zapraszamy ponownie',
   ].filter(Boolean).join('\n');
 }
@@ -3638,14 +3722,15 @@ function renderRabatyActive() {
     right.style.cssText = 'display:flex;flex-direction:row;gap:8px;align-items:center;flex-shrink:0;';
 
     const usedBtn = document.createElement('button');
-    usedBtn.style.cssText = 'background:#16a34a;border:none;border-radius:10px;color:#052e1a;font-size:13px;font-weight:900;padding:10px 12px;cursor:pointer;';
-    usedBtn.textContent = 'Zrealizuj';
+    usedBtn.style.cssText = 'background:#60a5fa;border:none;border-radius:10px;color:#111827;font-size:13px;font-weight:900;padding:10px 12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;line-height:1;';
+    usedBtn.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Zrealizuj</span>';
     usedBtn.onclick = () => moveRabToUsed(r);
 
     const smsBtn = document.createElement('button');
     const smsSent = !!r.smsSent;
-    smsBtn.style.cssText = 'background:' + (smsSent ? '#374151' : '#111827') + ';border:1px solid ' + (smsSent ? '#4b5563' : '#60a5fa') + ';border-radius:10px;color:' + (smsSent ? '#9ca3af' : '#60a5fa') + ';font-size:13px;font-weight:900;padding:10px 12px;cursor:pointer;';
-    smsBtn.textContent = 'SMS';
+    smsBtn.className = 'btn-history-sms' + (smsSent ? ' btn-history-sms-sent' : '');
+    smsBtn.style.cssText = 'font-weight:900;gap:6px;';
+    smsBtn.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> SMS';
     smsBtn.title = smsSent ? 'SMS wysłany' : 'Wyślij SMS z kodem';
     smsBtn.disabled = smsSent;
     smsBtn.onclick = () => {
@@ -3657,8 +3742,8 @@ function renderRabatyActive() {
     };
 
     const del = document.createElement('button');
-    del.style.cssText = 'background:none;border:1px solid #7f1d1d;border-radius:10px;color:#ef4444;font-size:16px;font-weight:900;padding:10px 12px;cursor:pointer;line-height:1;';
-    del.textContent = 'X';
+    del.style.cssText = 'background:none;border:1px solid #7f1d1d;border-radius:10px;color:#ef4444;font-size:16px;font-weight:900;padding:10px 12px;cursor:pointer;line-height:1;display:inline-flex;align-items:center;justify-content:center;';
+    del.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
     del.title = 'Usuń';
     del.onclick = () => {
       showConfirm('Czy chcesz usunąć kod?', () => {
@@ -4673,9 +4758,10 @@ function renderHistory(filterTel) {
     // Pomarańczowa ramka dla wszystkich zleceń w Przyjęte
     const isHL = _zlecHighlightId && String(entry.id ?? '') === String(_zlecHighlightId) && Date.now() < (_zlecHighlightUntil || 0);
     // Bazowe kolory (czerwone) przygaszone ~70%; podświetlenie w tym samym kolorze, mocniejsze.
-    item.style.borderColor = isHL ? 'rgba(239,68,68,0.72)' : 'rgba(239,68,68,0.22)';
-    item.style.backgroundColor = isHL ? 'rgba(239,68,68,0.10)' : 'rgba(239,68,68,0.03)';
-    item.style.boxShadow = isHL ? '0 0 0 2px rgba(239,68,68,0.14), 0 0 18px rgba(239,68,68,0.14)' : 'none';
+    item.style.borderColor = 'rgba(239,68,68,0.22)';
+    item.style.backgroundColor = 'rgba(239,68,68,0.03)';
+    item.style.boxShadow = 'none';
+    if (isHL) item.classList.add('hl-red');
 
     // Nowe wpisy mają osobne pola model/kolor, stare mają wszystko w marka
     const hasNewFields = entry.model || entry.kolor;
@@ -4728,7 +4814,7 @@ function renderHistory(filterTel) {
             })())
       : '';
     const terminHTML = terminDisplay
-      ? `<div style="font-size:13px;color:${terminColor};font-weight:800;">${terminDisplay}</div>`
+      ? `<div style="font-size:13px;color:${terminColor};font-weight:600;">${terminDisplay}</div>`
       : '';
 
     item.innerHTML = `
@@ -4749,10 +4835,10 @@ function renderHistory(filterTel) {
       </div>
       <div class="history-item-actions">
         ${entry.tel ? `<a class="btn-history-sms${entry.smsSent ? ' btn-history-sms-sent' : ''}" onclick="markSmsSent(${entry.id}, this)" href="sms:${entry.tel.replace(/[^0-9+]/g,'')}?body=${encodeURIComponent((_smsRower(entry.marka, entry.model) || '') + ' - przyjęto na serwis.' + (entry.termin ? '\nWstępna data naprawy: ' + entry.termin : '') + '\nPo zakończeniu naprawy otrzymasz SMS z kodem odbioru. Serwis')}"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> SMS</a>` : ''}
-        <button class="btn-history-load" style="background:#3b7cf4;border-color:#3b7cf4;" onclick="loadWycena(${entry.id})">Edytuj</button>
+        <button class="btn-history-load" style="background:#3b7cf4;border-color:#3b7cf4;" onclick="loadWycena(${entry.id})" title="Edytuj"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
         <div style="margin-left:auto;display:flex;gap:6px;">
-          <button class="btn-history-load" style="background:#22c55e;border-color:#22c55e;" onclick="openPodgladZlecenia(${entry.id})">INFO</button>
-          <button class="btn-history-load" style="background:#7c3aed;border-color:#7c3aed;" onclick="openRaport(${entry.id})">Naprawa</button>
+          <button class="btn-history-load btn-history-icon btn-history-icon-orange-fill" onclick="openPodgladZlecenia(${entry.id})" title="Info">i</button>
+          <button class="btn-history-load" style="background:#ef4444;border-color:#ef4444;font-size:15px;font-weight:700;letter-spacing:.5px;" onclick="openRaport(${entry.id})">NAPRAWA</button>
         </div>
       </div>
     `;
@@ -5013,25 +5099,20 @@ function switchTab(tab) {
   $('wydanie-search-wrap').style.display = 'none';
   $('archive-search-wrap').style.display = 'none';
   $('kosz-search-wrap').style.display = 'none';
-  [tabHist, tabWyd, tabArch, tabKosz].forEach(el => {
-    el.style.borderBottomColor = 'transparent';
-    el.style.color = 'var(--text3)';
-  });
+  [tabHist, tabWyd, tabArch, tabKosz].forEach(el => el.classList.remove('active'));
 
   if (tab === 'historia') {
     histList.style.display = '';
     $('historia-search-wrap').style.display = 'block';
     $('historia-search-tel').value = '';
-    tabHist.style.borderBottomColor = '#ef4444';
-    tabHist.style.color = '#ef4444';
+    tabHist.classList.add('active');
     renderHistory();
     setTimeout(() => scrollToHighlightedZlecenie('history-list'), 80);
   } else if (tab === 'wydanie') {
     wydList.style.display = '';
     $('wydanie-search-wrap').style.display = 'block';
     $('wydanie-search-tel').value = '';
-    tabWyd.style.borderBottomColor = '#22c55e';
-    tabWyd.style.color = '#22c55e';
+    tabWyd.classList.add('active');
     renderWydanie();
     setTimeout(() => scrollToHighlightedZlecenie('wydanie-list'), 80);
     setTimeout(() => { const s = $('wydanie-search-tel'); if (s) s.focus(); }, 80);
@@ -5040,15 +5121,13 @@ function switchTab(tab) {
     koszList.style.display = '';
     $('kosz-search-wrap').style.display = 'block';
     $('kosz-search-tel').value = '';
-    tabKosz.style.borderBottomColor = '#ef4444';
-    tabKosz.style.color = '#ef4444';
+    tabKosz.classList.add('active');
     renderKosz();
   } else {
     archList.style.display = '';
     $('archive-search-wrap').style.display = 'block';
     $('archive-search-tel').value = '';
-    tabArch.style.borderBottomColor = '#a78bfa';
-    tabArch.style.color = '#a78bfa';
+    tabArch.classList.add('active');
     renderArchive();
     setTimeout(() => scrollToHighlightedZlecenie('archive-list'), 80);
   }
@@ -5102,21 +5181,15 @@ function renderWydanie(filterTel) {
     item.className = 'history-item';
     item.dataset.orderId = String(entry.id ?? '');
     const isHL = _zlecHighlightId && String(entry.id ?? '') === String(_zlecHighlightId) && Date.now() < (_zlecHighlightUntil || 0);
-    if (isHL) {
-      // Podświetlenie w kolorze kategorii (zielony)
-      item.style.borderColor = 'rgba(34,197,94,0.90)';
-      item.style.backgroundColor = 'rgba(34,197,94,0.14)';
-      item.style.boxShadow = '0 0 0 2px rgba(34,197,94,0.14), 0 0 18px rgba(34,197,94,0.14)';
-    } else if (entry.smsSent) {
-      // Bazowe (przygaszone ~70%)
+    if (entry.smsSent) {
       item.style.borderColor = 'rgba(34,197,94,0.27)';
       item.style.backgroundColor = 'rgba(34,197,94,0.04)';
-      item.style.boxShadow = 'none';
     } else {
       item.style.borderColor = 'rgba(34,197,94,0.22)';
       item.style.backgroundColor = 'rgba(34,197,94,0.03)';
-      item.style.boxShadow = 'none';
     }
+    item.style.boxShadow = 'none';
+    if (isHL) item.classList.add('hl-green');
 
     const kolorBar = makeKolorBarHTML(entry.kolor || '');
     const terminLine   = entry.termin ? 'Data naprawy: ' + entry.termin + ' ' + dayOfWeek(entry.termin) : '';
@@ -5148,11 +5221,11 @@ function renderWydanie(filterTel) {
       </div>
       <div class="history-item-actions">
         ${entry.tel ? '<a class="btn-history-sms' + (entry.smsSent ? ' btn-history-sms-sent' : '') + '" href="sms:' + entry.tel.replace(/[^0-9+]/g,'') + '?body=' + encodeURIComponent((_smsRower(entry.marka, entry.model) || '') + ' - przygotowany do odbioru\n\nGodziny otwarcia\nPn-pt 10:00-18:00\nSobota 9:00-14:00\n\nKwota do zapłaty - ' + entry.total + ' zł\nPłatność gotówka/karta/BLIK\n\nKod odbioru: ' + (entry.kodOdbioru || '–')) + '" onclick="markSmsSent(' + entry.id + ', this)"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> SMS</a>' : ''}
-        <button class="btn-history-load" style="background:#3b7cf4;border-color:#3b7cf4;" onclick="openRaportEdycja(${entry.id})">Edytuj</button>
+        <button class="btn-history-load" style="background:#3b7cf4;border-color:#3b7cf4;" onclick="openRaportEdycja(${entry.id})" title="Edytuj"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
         <button class="btn-history-load" style="background:#6b7280;border-color:#6b7280;display:inline-flex;align-items:center;justify-content:center;" onclick="cofnijDoAktualne(${entry.id})" title="Cofnij do przyjętych"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg></button>
         <div style="margin-left:auto;display:flex;gap:6px;">
-          <button class="btn-history-load" style="background:#22c55e;border-color:#22c55e;" onclick="openRaport(${entry.id})">INFO</button>
-          <button class="btn-history-load" style="background:#7c3aed;border-color:#7c3aed;" onclick="openWydajModal(${entry.id})">Wydaj</button>
+          <button class="btn-history-load btn-history-icon btn-history-icon-orange-fill" onclick="openRaport(${entry.id})" title="Info">i</button>
+          <button class="btn-history-load" style="background:#ef4444;border-color:#ef4444;font-size:15px;font-weight:700;letter-spacing:.5px;" onclick="openWydajModal(${entry.id})">WYDAJ</button>
         </div>
       </div>
     `;
@@ -5205,10 +5278,11 @@ function renderArchive(filterStr) {
     item.className = 'history-item';
     item.dataset.orderId = String(entry.id ?? '');
     const isHL = _zlecHighlightId && String(entry.id ?? '') === String(_zlecHighlightId) && Date.now() < (_zlecHighlightUntil || 0);
-    // Bazowe kolory (fioletowe) przygaszone ~70%; podświetlenie w tym samym kolorze, mocniejsze.
-    item.style.borderColor = isHL ? 'rgba(167,139,250,0.82)' : 'rgba(167,139,250,0.25)';
-    item.style.backgroundColor = isHL ? 'rgba(167,139,250,0.12)' : 'rgba(167,139,250,0.04)';
-    item.style.boxShadow = isHL ? '0 0 0 2px rgba(167,139,250,0.14), 0 0 18px rgba(167,139,250,0.14)' : 'none';
+    // Bazowe kolory (fioletowe) przygaszone ~70%
+    item.style.borderColor = 'rgba(167,139,250,0.25)';
+    item.style.backgroundColor = 'rgba(167,139,250,0.04)';
+    item.style.boxShadow = 'none';
+    if (isHL) item.classList.add('hl-purple');
     const terminLine   = entry.termin ? 'Planowana data naprawy: ' + entry.termin : '';
     const przyjęcieLine = entry.label ? 'Przyjęto na serwis: ' + entry.label.split(' ')[0].split('.').slice(0,2).join('.') : '';
     const stripYear = s => s ? s.split('.').slice(0,2).join('.') : '';
