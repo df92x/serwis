@@ -445,7 +445,7 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
   margin-bottom: 10px;
   position: relative;
   overflow: hidden;
-  padding-left: 24px;
+  padding-left: 34px;
 }
 .history-item.history-item-urgent,
 .history-item.history-item-urgent-today{
@@ -454,8 +454,9 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
 .history-color-bar{
   position:absolute;
   left:0; top:0; bottom:0;
-  width:10px;
+  width:20px;
   border-radius:10px 0 0 10px;
+  box-shadow: inset -1px 0 0 rgba(239,68,68,0.9);
 }
 .history-item:hover { border-color: rgba(59,124,244,0.25); }
 .history-item-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
@@ -4337,10 +4338,10 @@ function renderWydanie(filterTel) {
     const naprawaColor = _prev > 0 ? (_curr <= _prev ? '#22c55e' : '#ef4444') : '#f59e0b';
 
     item.innerHTML = `
+      ${kolorBar}
       <div class="history-item-top">
         <div class="history-item-info">
           <div style="display:flex;align-items:center;gap:6px;">
-            ${kolorDot}
             <span style="font-size:17px;font-weight:700;color:#fff;">${escHTML(nameParts || '')}</span>${(entry.ebike || entry.marka === 'E-BIKE') ? '<span style=\'margin-left:5px;font-size:16px;\' title=\'e-Bike\'>⚡</span>' : ''}
           </div>
           <div style="display:flex;align-items:center;gap:8px;margin-top:2px;flex-wrap:wrap;">
@@ -4423,7 +4424,7 @@ function renderArchive(filterStr) {
       ? '<a class="btn-history-sms" href="sms:' + entry.tel.replace(/[^0-9+]/g,'') + '?body=' + encodeURIComponent((_smsRower(entry.marka, entry.model) || '') + ' - przygotowany do odbioru\n\nGodziny otwarcia\nPn-pt 10:00-18:00\nSobota 9:00-14:00\n\nKwota do zapłaty - ' + entry.total + ' zł\nPłatność gotówka/karta/BLIK\n\nKod odbioru: ' + (entry.kodOdbioru || '–')) + '"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d=\"M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z\"/></svg> SMS</a>'
       : '';
 
-    const kolorDot = makeKolorDot(entry.kolor || '', 17);
+    const kolorBar = makeKolorBarHTML(entry.kolor || '');
     const nameParts = [(entry.marka || null), entry.model].filter(Boolean).join(' ');
     const _archPrev = parseFloat(String(entry.totalZlecenia || entry.totalPrzedRaportem || '').replace(/\s/g,'').replace(',','.')) || 0;
     const _archCurr = parseFloat(String(entry.total || '').replace(/\s/g,'').replace(',','.')) || 0;
