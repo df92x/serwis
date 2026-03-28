@@ -171,6 +171,7 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
 .summary-top { display: flex; flex-direction: column; align-items: center; gap: 2px; }
 .summary-left { display: flex; flex-direction: column; align-items: center; gap: 2px; }
 .summary-total { font-size: 40px; font-weight: 800; color: #fff; letter-spacing: -1.5px; line-height: 1.05; transition: color 0.4s; text-align: center; }
+#summary-card-main .summary-total { text-align: right; }
 .summary-total.flash-up { color: #22c55e; }
 .summary-total.flash-down { color: #ef4444; }
 .btn-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; width: 100%; }
@@ -943,6 +944,35 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
 #group-container .sub-name-input::placeholder{ color: var(--text2); }
 #group-container .sub-price-input{ color:#fff; }
 
+/* Notatka na dole ekranu edycji (pod „Inne części”) */
+.notatka-bottom-wrap{
+  margin-top: 18px;
+  padding: 0 4px 20px;
+}
+.notatka-bottom-label{
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+.notatka-bottom-textarea{
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  color: var(--text);
+  font-size: 15px;
+  font-family: inherit;
+  resize: vertical;
+  outline: none;
+  min-height: 100px;
+  line-height: 1.5;
+}
+
 /* WYBIERZ/OPIS: spójny pill jak na screenie */
 #kalkulator-overlay .csel-wrap{
   flex: 1;
@@ -1271,25 +1301,18 @@ select.native-sel { display: none !important; }
 
   <div class="summary-card" id="summary-card-main">
     <span id="summary-kolor-bar"></span>
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
-      <!-- Lewa: dane klienta/roweru -->
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:4px;">
+      <!-- Lewa: marka/model, telefon, termin -->
       <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;">
         <div id="bike-info-bar" style="display:none;align-items:center;gap:5px;">
-          <span id="bike-name" style="font-size:17px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></span>
+          <span id="bike-name" style="font-size:16px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></span>
         </div>
-        <div id="client-info-bar" style="display:none;font-size:12px;color:var(--text2);"></div>
+        <div id="client-info-bar" style="display:none;font-size:11px;color:var(--text2);"></div>
         <div id="termin-info-bar" style="display:none;font-size:11px;color:#f59e0b;"></div>
       </div>
-      <!-- Środek: kwota -->
-      <div style="flex:0 0 auto;text-align:center;">
+      <!-- Prawa: kwota -->
+      <div style="flex:0 0 auto;text-align:right;min-width:0;padding-top:1px;">
         <div class="summary-total" id="total-display">0,00</div>
-      </div>
-      <!-- Prawa: notatka -->
-      <div style="flex:1;display:flex;justify-content:flex-end;">
-        <button id="btn-notatka" onclick="openNotatkaModal()" style="background:#1a1400;border:1px solid #f59e0b;border-radius:8px;padding:6px 8px;cursor:pointer;color:#f59e0b;flex-shrink:0;transition:all 0.15s;position:relative;">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-          <span id="btn-notatka-dot" style="position:absolute;top:2px;right:2px;width:7px;height:7px;border-radius:50%;background:transparent;display:block;"></span>
-        </button>
       </div>
     </div>
     <div id="sync-status" style="display:none;font-size:11px;color:#556;text-align:center;min-height:0;height:0;line-height:1;transition:color 0.3s;"></div>
@@ -1311,6 +1334,13 @@ select.native-sel { display: none !important; }
   <div id="add-parts-banner" class="modal-banner" style="margin:12px 8px 0;">
     <div class="items-list" id="items-list"></div>
     <div id="group-container"></div>
+    <div id="notatka-bottom-wrap" class="notatka-bottom-wrap">
+      <div class="notatka-bottom-label">Notatka serwisowa</div>
+      <textarea id="notatka-serwisowa" placeholder="Wpisz notatkę..." maxlength="500"
+        class="notatka-bottom-textarea"
+        onfocus="this.style.borderColor='var(--blue)'"
+        onblur="this.style.borderColor='var(--border)';save();"></textarea>
+    </div>
   </div>
 
 <!-- Hidden data fields -->
@@ -1320,23 +1350,6 @@ select.native-sel { display: none !important; }
 <input type="hidden" id="cf-model">
 <input type="hidden" id="cf-kolor">
 <input type="hidden" id="cf-termin">
-</div>
-
-<!-- Notatka modal -->
-<div id="notatka-modal" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.75);align-items:flex-end;justify-content:center;">
-  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px 14px 0 0;padding:20px 16px 32px;width:100%;max-width:620px;display:flex;flex-direction:column;gap:12px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;">
-      <div style="display:flex;align-items:center;gap:8px;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-        <span style="font-size:14px;font-weight:700;color:#fff;">Notatka serwisowa</span>
-      </div>
-      <button onclick="closeNotatkaModal()" style="background:none;border:none;color:var(--text3);font-size:22px;cursor:pointer;line-height:1;padding:0 4px;">&times;</button>
-    </div>
-    <textarea id="notatka-serwisowa" placeholder="Wpisz notatkę..." maxlength="500"
-      style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;color:var(--text);font-size:15px;font-family:inherit;resize:none;outline:none;min-height:120px;line-height:1.6;"
-      onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)';save();"></textarea>
-    <button onclick="closeNotatkaModal()" style="width:100%;padding:13px;background:var(--blue);border:none;border-radius:8px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;">Zapisz</button>
-  </div>
 </div>
 
 <!-- Raport modal -->
@@ -2579,19 +2592,20 @@ function load() {
     // Reset inne części unless loading from history
     if (!sessionStorage.getItem('from-history')) {
       subs = [1,2,3].map(() => ({ id: newSubId(), name: '', price: 0, checked: false }));
+      groupOpen = true;
     } else {
       subs = (st.subs || []).map(s => ({ id: newSubId(), name: s.name, price: s.price, checked: s.checked }));
       if (!subs.length) subs = [1,2,3].map(() => ({ id: newSubId(), name: '', price: 0, checked: false }));
+      while (subs.length < 3) subs.push({ id: newSubId(), name: '', price: 0, checked: false });
+      groupOpen = st.groupOpen !== false;
     }
-
-    groupOpen = st.groupOpen ?? true;
     if (st.marka)  $('cf-marka').value  = st.marka;
     if (st.ebike !== undefined) $('cf-ebike').value = st.ebike;
     if (st.tel)    $('cf-tel').value    = st.tel;
     if (st.model)  $('cf-model').value  = st.model;
     if (st.kolor)  $('cf-kolor').value  = st.kolor;
     if (st.termin) $('cf-termin').value = st.termin;
-    if ($('notatka-serwisowa')) { $('notatka-serwisowa').value = st.notatka || ''; updateNotatkaIcon(); }
+    if ($('notatka-serwisowa')) $('notatka-serwisowa').value = st.notatka || '';
     return true;
   } catch { return false; }
 }
@@ -5298,7 +5312,8 @@ function kalkulatorDoZlecenia() {
     presets: it.presets ? it.presets.map(x => ({...x})) : undefined,
   }));
   subs = kalkSubs.map(s => ({ id: newSubId(), name: s.name, price: s.price, checked: s.checked }));
-  if (!subs.length) subs = [{ id: newSubId(), name: '', price: 0, checked: false }];
+  if (!subs.length) subs = [1,2,3].map(() => ({ id: newSubId(), name: '', price: 0, checked: false }));
+  while (subs.length < 3) subs.push({ id: newSubId(), name: '', price: 0, checked: false });
 
   // Wyczyść dane klienta
   $('cf-marka').value  = ''; if ($('cf-ebike')) $('cf-ebike').value = '0';
@@ -5314,7 +5329,7 @@ function kalkulatorDoZlecenia() {
   }
 
   // Zapisz stan i renderuj
-  groupOpen = false;
+  groupOpen = true;
   renderItems();
   renderGroup();
   recalc();
@@ -5480,7 +5495,7 @@ function updateClientInfoBar() {
     const el = $('client-info-bar');
     if (el) {
       if (tel) {
-        el.innerHTML = '<div style="display:flex;align-items:center;gap:4px;font-size:16px;font-weight:600;color:#3b7cf4;margin-top:2px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>' + escHTML(tel) + '</div>';
+        el.innerHTML = '<div style="display:flex;align-items:center;gap:4px;font-size:15px;font-weight:600;color:#3b7cf4;margin-top:2px;"><svg width="11" height="11" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>' + escHTML(tel) + '</div>';
         el.style.display = 'block';
       } else {
         el.innerHTML = '';
@@ -7178,8 +7193,8 @@ function anulujWycene() {
   // Reset wyceny do wartości domyślnych
   idSeq = 0;
   items = cloneDefaults();
-  subs  = [{ id: newSubId(), name: '', price: 0, checked: false }];
-  groupOpen = false;
+  subs  = [1,2,3].map(() => ({ id: newSubId(), name: '', price: 0, checked: false }));
+  groupOpen = true;
   renderItems();
   renderGroup();
   recalc();
@@ -7228,21 +7243,13 @@ function updateModalKolorPreview() {
 }
 
 function openNotatkaModal() {
-  const modal = $('notatka-modal');
-  if (modal) { modal.style.display = 'flex'; document.body.classList.add('overlay-open'); }
-  setTimeout(() => { const ta = $('notatka-serwisowa'); if (ta) ta.focus(); }, 100);
+  const ta = $('notatka-serwisowa');
+  const wrap = $('notatka-bottom-wrap');
+  if (wrap) wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  setTimeout(() => { if (ta) ta.focus(); }, 150);
 }
 function closeNotatkaModal() {
-  const modal = $('notatka-modal');
-  if (modal) { modal.style.display = 'none'; document.body.classList.remove('overlay-open'); }
   save();
-  updateNotatkaIcon();
-}
-function updateNotatkaIcon() {
-  const dot = $('btn-notatka-dot');
-  if (!dot) return;
-  const val = ($('notatka-serwisowa') || {}).value || '';
-  dot.style.background = val.trim().length > 0 ? '#fff' : 'transparent';
 }
 window.openNotatkaModal = openNotatkaModal;
 window.closeNotatkaModal = closeNotatkaModal;
