@@ -128,7 +128,8 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
   border: 1px solid rgba(192,57,43,0.4);
   border-left: none; /* kolor obsługuje pełny pasek #summary-kolor-bar */
   border-radius: var(--radius);
-  padding: 8px 14px 10px;
+  /* Lewy padding ≥ szerokość paska (20px) + odstęp od treści */
+  padding: 8px 14px 10px 28px;
   margin: 0 8px 10px;
   display: flex;
   flex-direction: column;
@@ -146,10 +147,11 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
   left:0;
   top:0;
   bottom:0;
-  width:10px; /* identycznie jak .history-color-bar */
+  width:20px;
+  box-sizing:border-box;
   border-top-left-radius:var(--radius);
   border-bottom-left-radius:var(--radius);
-  border-right:none;
+  border:none;
   background:transparent;
   pointer-events:none;
 }
@@ -158,9 +160,11 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
   left:0;
   top:0;
   bottom:0;
-  width:10px; /* jak w PRZEGLĄDAJ */
+  width:20px;
+  box-sizing:border-box;
   border-top-left-radius:12px;
   border-bottom-left-radius:12px;
+  border:none;
   background:transparent;
   pointer-events:none;
 }
@@ -1289,7 +1293,7 @@ select.native-sel { display: none !important; }
       </div>
     </div>
     <div id="sync-status" style="display:none;font-size:11px;color:#556;text-align:center;min-height:0;height:0;line-height:1;transition:color 0.3s;"></div>
-    <div class="btn-grid" style="grid-template-columns:1fr 3fr 3fr;">
+    <div class="btn-grid" style="grid-template-columns:2fr 3fr 3fr;">
       <button id="btn-dane" class="btn-data" onclick="openModal()" style="background:#3b7cf4;border-color:#3b7cf4;">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
       </button>
@@ -1340,10 +1344,10 @@ select.native-sel { display: none !important; }
   <div class="app">
 
     <!-- Sticky header -->
-    <div id="raport-summary-card" style="position:sticky;top:0;z-index:10;background:var(--bg2);border:1px solid var(--red);border-left:none;border-radius:12px;padding:12px 16px 16px;margin:12px 8px 0;display:flex;flex-direction:column;gap:8px;overflow:hidden;">
+    <div id="raport-summary-card" style="position:sticky;top:0;z-index:10;background:var(--bg2);border:1px solid var(--red);border-left:none;border-radius:12px;padding:12px 16px 16px 28px;margin:12px 8px 0;display:flex;flex-direction:column;gap:14px;overflow:hidden;">
       <span id="raport-summary-kolor-bar"></span>
-      <div style="display:flex;align-items:center;justify-content:space-between;">
-        <div>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;width:100%;min-width:0;">
+        <div style="flex:1;min-width:0;">
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">
             <span id="raport-title" style="font-size:17px;font-weight:700;color:#fff;"></span>
           </div>
@@ -1354,16 +1358,16 @@ select.native-sel { display: none !important; }
             </div>
             <div id="raport-kod-line" style="display:none;font-size:13px;font-weight:800;color:#f59e0b;letter-spacing:2px;">🔑 <span id="raport-kod-val"></span></div>
           </div>
-          <div id="raport-wstepna" style="display:none;margin-top:4px;font-size:13px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;">
-            Wstępna wycena: <span id="raport-wstepna-val" style="color:var(--text2);font-weight:800;font-size:14px;letter-spacing:0;text-transform:none;"></span>
+          <div id="raport-wstepna" style="display:none;margin-top:6px;padding-bottom:2px;font-size:13px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;line-height:1.35;">
+            Zlecenie - <span id="raport-wstepna-val" style="color:var(--text2);font-weight:800;font-size:14px;letter-spacing:0;text-transform:none;"></span>
           </div>
         </div>
-        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0;">
           <div style="font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;">Aktualna cena</div>
-          <div id="raport-total-display" style="font-size:32px;font-weight:800;color:#fff;letter-spacing:-1px;"></div>
+          <div id="raport-total-display" style="font-size:32px;font-weight:800;color:#fff;letter-spacing:-1px;line-height:1.1;"></div>
         </div>
       </div>
-      <div style="display:flex;gap:8px;width:100%;">
+      <div style="display:flex;gap:8px;width:100%;flex-shrink:0;margin-top:2px;">
         <button onclick="closeRaport();" style="width:25%;padding:12px 0;background:none;border:1px solid #7f1d1d;border-radius:8px;cursor:pointer;color:#ef4444;font-size:13px;font-weight:700;">Anuluj</button>
         <button id="btn-save-raport" onclick="saveRaportKoncowy()" style="width:75%;padding:12px;background:#16a34a;border:1px solid #16a34a;border-radius:8px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
@@ -8595,9 +8599,10 @@ function _entryStatus(e) {
   // 5. Wydane
   // 6. Kosz
   if (e.deletedAt) return 6; // kosz
-  // Cofnięte z WYDANE do DO WYDANIA ma wyższy priorytet niż zwykłe WYDANE,
-  // żeby przy sync nie wracało z powrotem do archiwum.
-  if (e.unarchivedAt && e.raportKoncowy && !e.dataWydania && !e.archivedAt) return 5.5;
+  // Cofnięte z WYDANE → DO WYDANIA (unarchive): wyżej niż zwykłe WYDANE na Drive,
+  // żeby scalanie nie przywracało archiwum. Bez wymogu raportKoncowy — inaczej
+  // brak/niepełny raport dawał status 3–4 i przegrywał ze zdalnym WYDANE (5).
+  if (e.unarchivedAt && !e.dataWydania && !e.archivedAt) return 5.5;
   if (e.dataWydania || e.archivedAt) return 5; // wydane
   if (e.raportKoncowy) return e.smsSent ? 4 : 3; // do wydania
   return e.smsSent ? 2 : 1; // przyjęte
