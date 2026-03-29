@@ -1658,9 +1658,20 @@ select.native-sel { display: none !important; }
           style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:12px 12px;color:#fff;font-size:14px;font-weight:800;outline:none;">
       </div>
 
-      <!-- Predefiniowane kategorie -->
-      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:12px 12px;">
-        <div id="rab-templates" style="display:flex;flex-direction:column;gap:10px;"></div>
+      <!-- Jedna promocja + generowanie (cała logika tutaj, nie w overlay) -->
+      <div id="rab-main-promo-card" style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:12px 12px;display:flex;flex-direction:column;gap:10px;">
+        <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;">Promocja — wybierz</div>
+        <select id="rab-main-template-sel" class="modal-select" style="font-size:15px;padding:10px 12px;"></select>
+        <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap;align-items:center;">
+          <span style="font-size:12px;color:var(--text3);align-self:center;">Ważność:</span>
+          <button type="button" id="rab-main-valid-1" onclick="setRabValidity(1)" style="padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:#fff;font-weight:900;cursor:pointer;">1 mies.</button>
+          <button type="button" id="rab-main-valid-3" onclick="setRabValidity(3)" style="padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:#fff;font-weight:900;cursor:pointer;">3 mies.</button>
+          <button type="button" id="rab-main-valid-6" onclick="setRabValidity(6)" style="padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:#fff;font-weight:900;cursor:pointer;">6 mies.</button>
+          <button type="button" id="rab-main-valid-12" onclick="setRabValidity(12)" style="padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:#fff;font-weight:900;cursor:pointer;">12 mies.</button>
+          <button type="button" id="rab-main-valid-fix2026" onclick="setRabValidity('fix2026')" style="padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:#fff;font-weight:900;cursor:pointer;">do 31.12.26</button>
+        </div>
+        <button type="button" onclick="generateRabCodePromoOnly()" style="width:100%;padding:12px;background:#22c55e;border:1px solid #22c55e;border-radius:10px;color:#111827;font-size:14px;font-weight:900;cursor:pointer;">Generuj kod (bez zlecenia)</button>
+        <button type="button" onclick="openRabWydane()" style="width:100%;padding:12px;background:#f59e0b;border:1px solid #f59e0b;border-radius:10px;color:#111827;font-size:14px;font-weight:900;cursor:pointer;">Przypisz do wydanego zlecenia</button>
       </div>
 
       <!-- Aktywne kody -->
@@ -1686,22 +1697,25 @@ select.native-sel { display: none !important; }
 
 <!-- Wydane zlecenia: picker do generowania kodu -->
 <div id="rab-wydane-overlay" style="display:none;position:fixed;inset:0;z-index:70;background:rgba(0,0,0,0.75);align-items:center;justify-content:center;">
-  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;width:92%;max-width:520px;max-height:85vh;display:flex;flex-direction:column;overflow:hidden;">
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;width:92%;max-width:520px;max-height:85vh;display:flex;flex-direction:column;overflow:hidden;min-height:0;">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 16px 12px;border-bottom:1px solid var(--border);flex-shrink:0;">
       <span id="rab-wydane-title" style="flex:1;font-size:16px;font-weight:900;color:#fff;text-align:center;">Wybierz wydane zlecenie</span>
       <button onclick="closeRabWydane()" style="background:none;border:none;color:#ef4444;font-size:22px;cursor:pointer;line-height:1;padding:0 4px;">&times;</button>
     </div>
-    <div id="rab-wydane-list" style="overflow-y:auto;padding:8px 0;"></div>
+    <div style="padding:10px 16px 6px;font-size:12px;color:var(--text3);line-height:1.35;flex-shrink:0;">Promocja i ważność ustawiasz u góry na stronie <b style="color:var(--text2);">Kody rabatowe</b>.</div>
+    <div id="rab-wydane-list" style="overflow-y:auto;padding:8px 0;flex:1;min-height:0;"></div>
     <div style="padding:12px 16px;border-top:1px solid var(--border);flex-shrink:0;">
       <div style="display:flex;flex-direction:column;gap:10px;">
         <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap;">
           <span style="font-size:12px;color:var(--text3);align-self:center;">Ważność:</span>
+          <button id="rab-valid-1" onclick="setRabValidity(1)" style="padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:#fff;font-weight:900;cursor:pointer;">1 mies.</button>
           <button id="rab-valid-3" onclick="setRabValidity(3)" style="padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:#fff;font-weight:900;cursor:pointer;">3 mies.</button>
           <button id="rab-valid-6" onclick="setRabValidity(6)" style="padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:#fff;font-weight:900;cursor:pointer;">6 mies.</button>
           <button id="rab-valid-12" onclick="setRabValidity(12)" style="padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:#fff;font-weight:900;cursor:pointer;">12 mies.</button>
+          <button id="rab-valid-fix2026" onclick="setRabValidity('fix2026')" style="padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:#fff;font-weight:900;cursor:pointer;">do 31.12.26</button>
         </div>
         <div style="font-size:12px;color:var(--text3);text-align:center;">
-          Po wyborze zlecenia zostanie wygenerowany kod rabatowy (8 cyfr).
+          Po wyborze zlecenia zostanie wygenerowany kod (8 cyfr) z promocją z głównej strony.
         </div>
       </div>
     </div>
@@ -1718,9 +1732,11 @@ select.native-sel { display: none !important; }
     <div id="rab-assign-body" style="overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:12px;">
       <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap;">
         <span style="font-size:12px;color:var(--text3);align-self:center;">Ważność:</span>
+        <button id="rab-assign-valid-1" onclick="setRabValidity(1);syncRabAssignValidityUI()" style="padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:#fff;font-weight:900;cursor:pointer;">1 mies.</button>
         <button id="rab-assign-valid-3" onclick="setRabValidity(3);syncRabAssignValidityUI()" style="padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:#fff;font-weight:900;cursor:pointer;">3 mies.</button>
         <button id="rab-assign-valid-6" onclick="setRabValidity(6);syncRabAssignValidityUI()" style="padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:#fff;font-weight:900;cursor:pointer;">6 mies.</button>
         <button id="rab-assign-valid-12" onclick="setRabValidity(12);syncRabAssignValidityUI()" style="padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:#fff;font-weight:900;cursor:pointer;">12 mies.</button>
+        <button id="rab-assign-valid-fix2026" onclick="setRabValidity('fix2026');syncRabAssignValidityUI()" style="padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:#fff;font-weight:900;cursor:pointer;">do 31.12.26</button>
       </div>
       <div id="rab-assign-cats" style="display:flex;flex-direction:column;gap:10px;"></div>
     </div>
@@ -4421,7 +4437,8 @@ const RABATY_TEMPLATES = [
   { id: 'DARMOWY_PODSTAWOWY', label: 'Darmowy Przegląd Podstawowy', percent: 0 },
 ];
 let _rabSearchQ = '';
-let _rabValidityMonths = 6;
+/** '1' | '3' | '6' | '12' | 'fix2026' — fix2026 = ważny do 31.12.2026 włącznie */
+let _rabValidityKey = '6';
 let _rabHighlightCode = '';
 let _rabHighlightUntil = 0;
 
@@ -4475,28 +4492,54 @@ function _addMonths(ts, months) {
   if (d.getDate() !== day) d.setDate(0);
   return d.getTime();
 }
+/** Koniec dnia 31.12.2026 (lokalnie) */
+function _rabEndOf2026Ts() {
+  return new Date(2026, 11, 31, 23, 59, 59, 999).getTime();
+}
+function _rabComputeValidUntil(createdAt) {
+  if (_rabValidityKey === 'fix2026') return _rabEndOf2026Ts();
+  const mo = parseInt(_rabValidityKey, 10);
+  if (![1, 3, 6, 12].includes(mo)) return _addMonths(createdAt, 6);
+  return _addMonths(createdAt, mo);
+}
+/** Do zapisu w obiekcie kodu: miesiące lub 0 gdy data stała */
+function _rabValidityMonthsStored() {
+  if (_rabValidityKey === 'fix2026') return 0;
+  const mo = parseInt(_rabValidityKey, 10);
+  return [1, 3, 6, 12].includes(mo) ? mo : 6;
+}
 function _fmtDatePL(ts) {
   try { return new Date(ts).toLocaleDateString('pl-PL', { day:'2-digit', month:'2-digit', year:'numeric' }); }
   catch { return ''; }
 }
+const _RAB_VALIDITY_KEYS = ['1', '3', '6', '12', 'fix2026'];
 function setRabValidity(m) {
-  _rabValidityMonths = (m === 3 || m === 6 || m === 12) ? m : 6;
-  [3,6,12].forEach(x => {
-    const b = $('rab-valid-' + x);
-    if (!b) return;
-    const active = x === _rabValidityMonths;
-    b.style.borderColor = active ? '#f59e0b' : 'var(--border)';
-    b.style.background = active ? '#111827' : 'var(--bg)';
-    b.style.color = active ? '#f59e0b' : '#fff';
+  if (m !== undefined && m !== null && m !== '') {
+    if (m === 'fix2026' || m === '2026') _rabValidityKey = 'fix2026';
+    else if (m === 1 || m === 3 || m === 6 || m === 12) _rabValidityKey = String(m);
+    else if (m === '1' || m === '3' || m === '6' || m === '12') _rabValidityKey = m;
+    else _rabValidityKey = '6';
+  }
+  _RAB_VALIDITY_KEYS.forEach(k => {
+    const active = _rabValidityKey === k;
+    const apply = (el) => {
+      if (!el) return;
+      el.style.borderColor = active ? '#f59e0b' : 'var(--border)';
+      el.style.background = active ? '#111827' : 'var(--bg)';
+      el.style.color = active ? '#f59e0b' : '#fff';
+    };
+    apply($('rab-valid-' + k));
+    apply($('rab-main-valid-' + k));
   });
+  syncRabAssignValidityUI();
 }
 window.setRabValidity = setRabValidity;
 
 function syncRabAssignValidityUI() {
-  [3,6,12].forEach(x => {
-    const b = $('rab-assign-valid-' + x);
+  _RAB_VALIDITY_KEYS.forEach(k => {
+    const b = $('rab-assign-valid-' + k);
     if (!b) return;
-    const active = x === _rabValidityMonths;
+    const active = _rabValidityKey === k;
     b.style.borderColor = active ? '#f59e0b' : 'var(--border)';
     b.style.background = active ? '#111827' : 'var(--bg)';
     b.style.color = active ? '#f59e0b' : '#fff';
@@ -4528,8 +4571,7 @@ function openRabAssignForArchive(entryId) {
   _rabAssignEntryId = id;
   const title = $('rab-assign-title');
   if (title) title.textContent = 'Wybierz rabat';
-  setRabValidity(_rabValidityMonths || 6);
-  syncRabAssignValidityUI();
+  setRabValidity();
   renderRabAssignCats();
   $('rab-assign-overlay').style.display = 'flex';
 }
@@ -4630,29 +4672,34 @@ function genUnique8() {
   return String(Date.now()).slice(-8);
 }
 
-function renderRabatyTemplates() {
-  const box = $('rab-templates');
-  if (!box) return;
-  box.innerHTML = '';
+function syncRabMainTemplateSelect() {
+  const sel = $('rab-main-template-sel');
+  if (!sel) return;
+  if (!sel.dataset.bound) {
+    sel.dataset.bound = '1';
+    sel.addEventListener('change', () => {
+      const t = RABATY_TEMPLATES.find(x => x.id === sel.value);
+      if (t) _rabTemplate = t;
+    });
+  }
+  const prevId = (sel.value && RABATY_TEMPLATES.some(x => x.id === sel.value))
+    ? sel.value
+    : ((_rabTemplate && _rabTemplate.id) ? _rabTemplate.id : '');
+  sel.innerHTML = '';
   RABATY_TEMPLATES.forEach(t => {
-    const row = document.createElement('div');
-    row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:12px 12px;background:var(--bg);border:1px solid var(--border);border-radius:12px;';
-    const left = document.createElement('div');
-    left.style.cssText = 'flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;';
-    const title = document.createElement('div');
-    title.style.cssText = 'font-size:15px;font-weight:900;color:#fff;';
-    title.textContent = t.label;
-    left.appendChild(title);
-
-    const btn = document.createElement('button');
-    btn.style.cssText = 'background:#f59e0b;border:none;border-radius:10px;color:#111827;font-size:13px;font-weight:900;padding:10px 12px;cursor:pointer;';
-    btn.textContent = 'Generuj';
-    btn.onclick = () => openRabWydane(t);
-
-    row.appendChild(left);
-    row.appendChild(btn);
-    box.appendChild(row);
+    const o = document.createElement('option');
+    o.value = t.id;
+    o.textContent = t.label;
+    sel.appendChild(o);
   });
+  if (prevId && RABATY_TEMPLATES.some(x => x.id === prevId)) sel.value = prevId;
+  else { sel.selectedIndex = 0; }
+  _rabTemplate = RABATY_TEMPLATES.find(x => x.id === sel.value) || RABATY_TEMPLATES[0] || null;
+}
+
+function renderRabatyTemplates() {
+  syncRabMainTemplateSelect();
+  setRabValidity();
 }
 
 function renderRabatyActive() {
@@ -4861,14 +4908,16 @@ function moveRabToUsed(r) {
 }
 
 let _rabTemplate = null;
-function openRabWydane(template) {
-  _rabTemplate = template;
-  const title = $('rab-wydane-title');
-  if (title) title.textContent = 'Wybierz zlecenie - ' + (template?.label || '');
-  setRabValidity(_rabValidityMonths || 6);
+function openRabWydane() {
+  const sel = $('rab-main-template-sel');
+  const t = sel ? RABATY_TEMPLATES.find(x => x.id === sel.value) : null;
+  _rabTemplate = t || RABATY_TEMPLATES[0] || null;
+  if (!_rabTemplate) { alert('Wybierz promocję.'); return; }
+  setRabValidity();
   renderRabWydaneList();
   $('rab-wydane-overlay').style.display = 'flex';
 }
+window.openRabWydane = openRabWydane;
 function closeRabWydane() {
   $('rab-wydane-overlay').style.display = 'none';
   _rabTemplate = null;
@@ -4943,6 +4992,11 @@ function renderRabWydaneList() {
 }
 
 function generateRabCodeForEntry(entry) {
+  const sel = $('rab-main-template-sel');
+  if (sel && sel.value) {
+    const t = RABATY_TEMPLATES.find(x => x.id === sel.value);
+    if (t) _rabTemplate = t;
+  }
   if (!_rabTemplate || !entry) return;
   const list = getRabatyActive();
   const entryKey = rabEntryKey(entry);
@@ -4952,8 +5006,8 @@ function generateRabCodeForEntry(entry) {
     return;
   }
   const createdAt = Date.now();
-  const validMonths = (_rabValidityMonths === 3 || _rabValidityMonths === 6 || _rabValidityMonths === 12) ? _rabValidityMonths : 6;
-  const validUntil = _addMonths(createdAt, validMonths);
+  const validMonths = _rabValidityMonthsStored();
+  const validUntil = _rabComputeValidUntil(createdAt);
   const code = genUnique8();
   list.unshift({
     code,
@@ -4980,6 +5034,52 @@ function generateRabCodeForEntry(entry) {
   renderRabatyActive();
   return code;
 }
+
+function generateRabCodePromoOnly() {
+  const sel = $('rab-main-template-sel');
+  const t = sel ? RABATY_TEMPLATES.find(x => x.id === sel.value) : null;
+  if (t) _rabTemplate = t;
+  if (!_rabTemplate) { alert('Wybierz promocję.'); return; }
+  const list = getRabatyActive();
+  const createdAt = Date.now();
+  const validMonths = _rabValidityMonthsStored();
+  const validUntil = _rabComputeValidUntil(createdAt);
+  const code = genUnique8();
+  const entryKey = 'promo:' + createdAt + ':' + code;
+  list.unshift({
+    code,
+    percent: _rabTemplate.percent,
+    amount: _rabTemplate.amount || 0,
+    templateId: _rabTemplate.id,
+    templateLabel: _rabTemplate.label,
+    entryId: null,
+    entryKey,
+    tel: '',
+    kodOdbioru: '',
+    marka: '',
+    modelName: '',
+    model: '',
+    dataWydania: '',
+    validMonths,
+    validUntil,
+    createdAt,
+    promoOnly: true,
+  });
+  saveRabatyActive(list);
+  const wrap = $('rab-active-wrap');
+  if (wrap) wrap.style.display = 'block';
+  renderRabatyActive();
+  _rabHighlightCode = String(code || '');
+  _rabHighlightUntil = Date.now() + 12000;
+  setTimeout(() => {
+    try {
+      const el = document.querySelector('#rab-active-list [data-code="' + CSS.escape(_rabHighlightCode) + '"]');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } catch {}
+  }, 60);
+  return code;
+}
+window.generateRabCodePromoOnly = generateRabCodePromoOnly;
 
 function openKodyRabatowe() {
   $('start-overlay').style.display = 'none';
