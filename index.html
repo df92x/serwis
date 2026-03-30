@@ -5860,21 +5860,12 @@ function dayOfWeek(dateStr) {
   return ['Niedziela','Poniedziałek','Wtorek','Środa','Czwartek','Piątek','Sobota'][day];
 }
 
-function renderHistory(filterTel) {
-  const list = $('history-list');
+function getPrzyjeteList(filterTel) {
   let hist = getHistory().filter(e => !e.raportKoncowy);
-  // Filtruj po numerze telefonu
   if (filterTel && filterTel.replace(/\D/g,'').length >= 3) {
     const clean = filterTel.replace(/\D/g,'');
     hist = hist.filter(e => e.tel && e.tel.replace(/\D/g,'').includes(clean));
   }
-  if (!hist.length) {
-    list.innerHTML = '<div class="history-empty">Brak zapisanych wycen</div>';
-    return;
-  }
-  list.innerHTML = '';
-
-  // Sortuj po terminie od najwcześniejszego, wpisy bez terminu na końcu
   const currentYear = new Date().getFullYear();
   const toDate = t => {
     if (!t) return new Date(9999, 0, 1);
@@ -5884,7 +5875,17 @@ function renderHistory(filterTel) {
     const y = parts.length >= 3 ? parseInt(parts[2]) : currentYear;
     return new Date(y, m, d);
   };
-  const sorted = hist.slice().sort((a, b) => toDate(a.termin) - toDate(b.termin));
+  return hist.slice().sort((a, b) => toDate(a.termin) - toDate(b.termin));
+}
+
+function renderHistory(filterTel) {
+  const list = $('history-list');
+  const sorted = getPrzyjeteList(filterTel);
+  if (!sorted.length) {
+    list.innerHTML = '<div class="history-empty">Brak zapisanych wycen</div>';
+    return;
+  }
+  list.innerHTML = '';
 
   const todayMs = new Date().setHours(0,0,0,0);
   sorted.forEach(entry => {
@@ -5994,6 +5995,20 @@ function renderHistory(filterTel) {
     `;
     list.appendChild(item);
   });
+
+  const suma = sorted.reduce((acc, e) => {
+    return acc + (parseFloat(String(e.total || '').replace(/\s/g,'').replace(',','.')) || 0);
+  }, 0);
+  const pdfIco = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
+  const footH = document.createElement('div');
+  footH.style.cssText = 'margin:10px 0 4px;display:flex;flex-direction:row;align-items:center;gap:10px;width:100%;box-sizing:border-box;';
+  footH.innerHTML = '<button type="button" onclick="generujZleceniaPrzyjete()" title="Generuj zlecenia — PDF" '
+    + 'style="flex:0 0 25%;width:25%;max-width:25%;min-width:0;min-height:48px;box-sizing:border-box;padding:10px 6px;background:#ef4444;border:1px solid #b91c1c;border-radius:10px;color:#fff;font-size:13px;font-weight:800;letter-spacing:.2px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;">'
+    + pdfIco + '<span>PDF</span></button>'
+    + '<div style="flex:1;min-width:0;min-height:48px;display:flex;justify-content:flex-end;align-items:center;gap:10px;padding:0 14px;background:#000;border-radius:10px;box-sizing:border-box;">'
+    + '<span style="font-size:11px;font-weight:800;color:var(--text3);letter-spacing:.55px;">WARTOŚĆ</span>'
+    + '<span style="font-size:22px;font-weight:800;color:#22c55e;letter-spacing:-0.5px;">' + fmt(suma) + ' zł</span></div>';
+  list.appendChild(footH);
 }
 
 function loadWycena(id) {
@@ -6297,12 +6312,10 @@ function markSmsSent(id, el) {
   el.classList.add('btn-history-sms-sent');
 }
 
-// ── Renderowanie zakładki 'Do wydania' ──
-function renderWydanie(filterTel) {
-  const list = $('wydanie-list');
+// ── Lista „Do wydania” (opcjonalny filtr jak w polu szukania) ──
+function getDoWydaniaList(filterTel) {
   const hist = getHistory();
   let doWydania = hist.filter(e => e.raportKoncowy);
-  // Filtruj po numerze telefonu lub kodzie odbioru
   if (filterTel && filterTel.trim().length >= 2) {
     const cleanDigits = filterTel.replace(/\D/g,'');
     const cleanStr    = filterTel.trim().toUpperCase().replace(/\s/g,'');
@@ -6311,20 +6324,24 @@ function renderWydanie(filterTel) {
       (e.kodOdbioru && String(e.kodOdbioru).replace(/\s/g,'').toUpperCase().includes(cleanStr))
     );
   }
+  doWydania.sort((a, b) => {
+    const tA = a.raportKoncowy?.savedAt ? new Date(a.raportKoncowy.savedAt).getTime() : 0;
+    const tB = b.raportKoncowy?.savedAt ? new Date(b.raportKoncowy.savedAt).getTime() : 0;
+    return tB - tA;
+  });
+  return doWydania;
+}
+
+// ── Renderowanie zakładki 'Do wydania' ──
+function renderWydanie(filterTel) {
+  const list = $('wydanie-list');
+  const doWydania = getDoWydaniaList(filterTel);
 
   if (!doWydania.length) {
     list.innerHTML = '<div class="history-empty">Brak zleceń do wydania</div>';
     return;
   }
   list.innerHTML = '';
-
-  // Sortuj po czasie zakończenia naprawy — najnowsze na górze
-  doWydania.sort((a, b) => {
-    const tA = a.raportKoncowy?.savedAt ? new Date(a.raportKoncowy.savedAt).getTime() : 0;
-    const tB = b.raportKoncowy?.savedAt ? new Date(b.raportKoncowy.savedAt).getTime() : 0;
-    return tB - tA;
-  });
-
 
   doWydania.forEach(entry => {
     const item = document.createElement('div');
@@ -6381,16 +6398,170 @@ function renderWydanie(filterTel) {
     list.appendChild(item);
   });
 
-  // Podsumowanie
   const suma = doWydania.reduce((acc, e) => {
     return acc + (parseFloat(String(e.total || '').replace(/\s/g,'').replace(',','.')) || 0);
   }, 0);
-  const summary = document.createElement('div');
-  summary.style.cssText = 'margin:6px 0 4px;padding:12px 16px;background:#000;border-radius:10px;display:flex;justify-content:space-between;align-items:center;';
-  summary.innerHTML = '<span style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;">Do zapłaty łącznie</span>'
-    + '<span style="font-size:22px;font-weight:800;color:#f59e0b;letter-spacing:-0.5px;">' + fmt(suma) + ' zł</span>';
-  list.appendChild(summary);
+  const pdfIcoW = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
+  const footW = document.createElement('div');
+  footW.style.cssText = 'margin:10px 0 4px;display:flex;flex-direction:row;align-items:center;gap:10px;width:100%;box-sizing:border-box;';
+  footW.innerHTML = '<button type="button" onclick="generujPotwierdzeniaDoWydania()" title="Generuj potwierdzenia — PDF" '
+    + 'style="flex:0 0 25%;width:25%;max-width:25%;min-width:0;min-height:48px;box-sizing:border-box;padding:10px 6px;background:#16a34a;border:1px solid #15803d;border-radius:10px;color:#fff;font-size:13px;font-weight:800;letter-spacing:.2px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;">'
+    + pdfIcoW + '<span>PDF</span></button>'
+    + '<div style="flex:1;min-width:0;min-height:48px;display:flex;justify-content:flex-end;align-items:center;gap:10px;padding:0 14px;background:#000;border-radius:10px;box-sizing:border-box;">'
+    + '<span style="font-size:11px;font-weight:800;color:var(--text3);letter-spacing:.55px;">WARTOŚĆ</span>'
+    + '<span style="font-size:22px;font-weight:800;color:#f59e0b;letter-spacing:-0.5px;">' + fmt(suma) + ' zł</span></div>';
+  list.appendChild(footW);
 }
+
+function openPotGridPrintWindow(docTitle, cardsHtml, themeOpts) {
+  const w = window.open('', '_blank');
+  if (!w) {
+    alert('Zezwól na wyskakujące okno, aby wygenerować dokument.');
+    return false;
+  }
+  const t = themeOpts || {};
+  const G = t.accent || '#16a34a';
+  const Gb = t.accentBorder || '#15803d';
+  const css = 'body{font-family:system-ui,-apple-system,Segoe UI,sans-serif;margin:0;padding:16px;background:#fff;color:#111;font-size:13px;line-height:1.35;}'
+    + '.no-print{text-align:center;margin-bottom:16px;}'
+    + '.no-print button{padding:10px 20px;font-size:15px;font-weight:700;border-radius:8px;border:1px solid ' + Gb + ';background:' + G + ';color:#fff;cursor:pointer;}'
+    + '.grid{display:grid;grid-template-columns:1fr;gap:16px;max-width:960px;margin:0 auto;}'
+    + '@media(min-width:720px){.grid{grid-template-columns:1fr 1fr;gap:14px;}}'
+    + '@media print{.no-print{display:none!important;}.grid{grid-template-columns:1fr 1fr;gap:10px;max-width:none;}.pot-card{break-inside:avoid;page-break-inside:avoid;box-shadow:none!important;border-color:#bbb!important;}}'
+    + '.pot-card{border:1px solid #ccc;border-radius:10px;padding:12px 14px;background:#fafafa;box-shadow:0 1px 3px rgba(0,0,0,.06);}'
+    + '.pot-mm{margin:0 0 10px;font-size:17px;font-weight:800;}'
+    + '.pot-row{display:flex;flex-wrap:wrap;gap:6px 12px;margin-bottom:6px;font-size:12px;}'
+    + '.pot-l{color:#555;font-weight:600;min-width:11em;}'
+    + '.pot-v{font-weight:600;color:#111;}'
+    + '.pot-h3{margin:12px 0 8px;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:' + Gb + ';}'
+    + '.pot-tbl{width:100%;border-collapse:collapse;font-size:11px;margin:0 0 8px;}'
+    + '.pot-tbl th,.pot-tbl td{border-bottom:1px solid #ddd;padding:5px 4px;text-align:left;vertical-align:top;}'
+    + '.pot-tbl th{background:#eee;font-weight:700;}'
+    + '.pot-tbl .r{text-align:right;white-space:nowrap;}'
+    + '.pot-muted{color:#888;font-size:12px;margin:0;}'
+    + '.pot-sum{display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding-top:8px;border-top:2px solid ' + G + ';font-size:14px;font-weight:700;}';
+  w.document.write('<!DOCTYPE html><html lang="pl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>' + escHTML(docTitle) + '</title><style>' + css + '</style></head><body>');
+  w.document.write('<div class="no-print"><button type="button" onclick="window.print()">Drukuj / zapisz jako PDF</button></div>');
+  w.document.write('<div class="grid">' + cardsHtml + '</div></body></html>');
+  w.document.close();
+  return true;
+}
+
+function generujPotwierdzeniaDoWydania() {
+  const filterTel = ($('wydanie-search-tel') && $('wydanie-search-tel').value) || '';
+  const doWydania = getDoWydaniaList(filterTel);
+  if (!doWydania.length) {
+    alert('Brak zleceń do wydania na liście.');
+    return;
+  }
+  const fmtPLN = v => Number(v || 0).toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  const cards = doWydania.map(entry => {
+    const rk = entry.raportKoncowy;
+    const mmParts = [entry.marka, entry.model].filter(Boolean);
+    const mm = mmParts.length ? mmParts.join(' / ') : '—';
+    const tel = entry.tel ? escHTML(entry.tel) : '—';
+    const kod = entry.kodOdbioru ? escHTML(String(entry.kodOdbioru)) : '—';
+    const dataPrzyj = entry.label ? escHTML(entry.label) : '—';
+    const dataZak = rk && rk.dataZakonczenia ? escHTML(rk.dataZakonczenia) : '—';
+
+    let rapTotal = 0;
+    let rows = '';
+    if (rk) {
+      (rk.items || []).filter(it => it.checked).forEach(it => {
+        const qty = it.qty !== undefined ? (it.qty || 1) : 1;
+        const price = parseFloat(it.price) || 0;
+        const total = Math.round(price * qty * 100) / 100;
+        rapTotal += total;
+        rows += '<tr><td>' + escHTML(itemLabelWithDetails(it, true)) + '</td><td class="r">' + fmtPLN(price) + '</td><td class="r">' + qty + '</td><td class="r">' + fmtPLN(total) + '</td></tr>';
+      });
+      (rk.subs || []).filter(s => s.checked && s.name).forEach(s => {
+        const price = parseFloat(s.price) || 0;
+        rapTotal += price;
+        rows += '<tr><td>' + escHTML(s.name) + '</td><td class="r">' + fmtPLN(price) + '</td><td class="r">1</td><td class="r">' + fmtPLN(price) + '</td></tr>';
+      });
+    }
+    const tbl = rows
+      ? '<table class="pot-tbl"><thead><tr><th>Usługa / część</th><th class="r">Cena</th><th class="r">Szt.</th><th class="r">Razem</th></tr></thead><tbody>' + rows + '</tbody></table>'
+      : '<p class="pot-muted">Brak pozycji w raporcie końcowym.</p>';
+
+    const totRaw = entry.total != null && entry.total !== '' ? String(entry.total) : '';
+    const sumaHtml = totRaw
+      ? (totRaw.toLowerCase().includes('zł') ? escHTML(totRaw) : escHTML(totRaw) + ' zł')
+      : fmtPLN(rapTotal) + ' zł';
+
+    return '<article class="pot-card">'
+      + '<h2 class="pot-mm">' + escHTML(mm) + '</h2>'
+      + '<div class="pot-row"><span class="pot-l">Telefon</span><span class="pot-v">' + tel + '</span></div>'
+      + '<div class="pot-row"><span class="pot-l">Kod odbioru</span><span class="pot-v">' + kod + '</span></div>'
+      + '<div class="pot-row"><span class="pot-l">Data przyjęcia zlecenia</span><span class="pot-v">' + dataPrzyj + '</span></div>'
+      + '<div class="pot-row"><span class="pot-l">Data zakończenia naprawy</span><span class="pot-v">' + dataZak + '</span></div>'
+      + '<h3 class="pot-h3">Wykonane naprawy</h3>'
+      + tbl
+      + '<div class="pot-sum"><span>Suma końcowa</span><strong>' + sumaHtml + '</strong></div>'
+      + '</article>';
+  }).join('');
+
+  openPotGridPrintWindow('Potwierdzenia — Do wydania', cards);
+}
+window.generujPotwierdzeniaDoWydania = generujPotwierdzeniaDoWydania;
+
+function generujZleceniaPrzyjete() {
+  const filterTel = ($('historia-search-tel') && $('historia-search-tel').value) || '';
+  const przyjete = getPrzyjeteList(filterTel);
+  if (!przyjete.length) {
+    alert('Brak zleceń na liście Przyjęte.');
+    return;
+  }
+  const fmtPLN = v => Number(v || 0).toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  const cards = przyjete.map(entry => {
+    const mmParts = [entry.marka, entry.model].filter(Boolean);
+    const mm = mmParts.length ? mmParts.join(' / ') : '—';
+    const tel = entry.tel ? escHTML(entry.tel) : '—';
+    const kod = entry.kodOdbioru ? escHTML(String(entry.kodOdbioru)) : '—';
+    const dataPrzyj = entry.label ? escHTML(entry.label) : '—';
+
+    const st = entry.state ? safeParseJSON(entry.state, null) : null;
+    let zlecTotal = 0;
+    let rows = '';
+    if (st) {
+      (st.items || []).filter(it => it.checked).forEach(it => {
+        const qty = it.qty !== undefined ? (it.qty || 1) : 1;
+        const price = parseFloat(it.price) || 0;
+        const total = Math.round(price * qty * 100) / 100;
+        zlecTotal += total;
+        rows += '<tr><td>' + escHTML(itemLabelWithDetails(it, true)) + '</td><td class="r">' + fmtPLN(price) + '</td><td class="r">' + qty + '</td><td class="r">' + fmtPLN(total) + '</td></tr>';
+      });
+      (st.subs || []).filter(s => s.checked && s.name).forEach(s => {
+        const price = parseFloat(s.price) || 0;
+        zlecTotal += price;
+        rows += '<tr><td>' + escHTML(s.name) + '</td><td class="r">' + fmtPLN(price) + '</td><td class="r">1</td><td class="r">' + fmtPLN(price) + '</td></tr>';
+      });
+    }
+    const tbl = rows
+      ? '<table class="pot-tbl"><thead><tr><th>Usługa / część</th><th class="r">Cena</th><th class="r">Szt.</th><th class="r">Razem</th></tr></thead><tbody>' + rows + '</tbody></table>'
+      : '<p class="pot-muted">Brak zaznaczonych pozycji w zleceniu.</p>';
+
+    const totRaw = entry.total != null && entry.total !== '' ? String(entry.total) : '';
+    const sumaHtml = totRaw
+      ? (totRaw.toLowerCase().includes('zł') ? escHTML(totRaw) : escHTML(totRaw) + ' zł')
+      : fmtPLN(zlecTotal) + ' zł';
+
+    return '<article class="pot-card">'
+      + '<h2 class="pot-mm">' + escHTML(mm) + '</h2>'
+      + '<div class="pot-row"><span class="pot-l">Telefon</span><span class="pot-v">' + tel + '</span></div>'
+      + '<div class="pot-row"><span class="pot-l">Kod odbioru</span><span class="pot-v">' + kod + '</span></div>'
+      + '<div class="pot-row"><span class="pot-l">Data przyjęcia zlecenia</span><span class="pot-v">' + dataPrzyj + '</span></div>'
+      + '<h3 class="pot-h3">Zlecone naprawy</h3>'
+      + tbl
+      + '<div class="pot-sum"><span>Suma końcowa</span><strong>' + sumaHtml + '</strong></div>'
+      + '</article>';
+  }).join('');
+
+  openPotGridPrintWindow('Zlecenia — Przyjęte', cards, { accent: '#ef4444', accentBorder: '#b91c1c' });
+}
+window.generujZleceniaPrzyjete = generujZleceniaPrzyjete;
 
 // ── Renderowanie zakładki 'Wydane' ──
 function renderArchive(filterStr) {
