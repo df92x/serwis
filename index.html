@@ -483,11 +483,15 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
   width: 10px !important;
 }
 #modal-kolor-preview .mkp-text{
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 20px;
+  font-weight: 500;
   color: #fff;
-  text-transform: uppercase;
-  letter-spacing: .02em;
+  letter-spacing: normal;
+  font-family: inherit;
+}
+#modal-kolor-swatches{
+  margin-top: 12px;
+  padding-top: 0;
 }
 #modal-overlay .modal-banner{
   background: var(--bg2);
@@ -2028,35 +2032,34 @@ select.native-sel { display: none !important; }
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" style="color:#16a34a;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
       <h1>DODAJ</h1>
     </header>
-    </header>
     <div style="padding:16px 16px 40px;display:flex;flex-direction:column;gap:14px;">
       <div class="modal-banner">
       <div class="modal-field">
-        <label style="text-align:left;display:block;">Marka</label>
+        <label style="display:none;">Marka</label>
         <div style="display:flex;gap:8px;align-items:stretch;">
           <div style="flex:0 0 auto;min-width:0;width:72%;">
             <select id="modal-marka-sel" class="native-sel" data-title="Wybierz markę" >
-              <option value="">MARKA</option>
-              <option value="ROWER">Rower</option>
+              <option value="ROWER" selected>Rower</option>
               <option value="KROSS">Kross</option>
               <option value="ROMET">Romet</option>
-              <option value="MERIDA">Merida</option>
+              <option value="DZIECIĘCY">Dziecięcy</option>
+              <option value="BIANCHI">Bianchi</option>
+              <option value="BMX">BMX</option>
               <option value="BTWIN">Btwin</option>
-              <option value="TRIBAN">Triban</option>
-              <option value="TREK">Trek</option>
-              <option value="SCOTT">Scott</option>
+              <option value="CANNONDALE">Cannondale</option>
               <option value="CUBE">Cube</option>
+              <option value="FOCUS">Focus</option>
+              <option value="FOLTA">Folta</option>
               <option value="GIANT">Giant</option>
               <option value="GHOST">Ghost</option>
-              <option value="CANNONDALE">Cannondale</option>
-              <option value="RADON">Radon</option>
-              <option value="BIANCHI">Bianchi</option>
               <option value="KANDS">Kands</option>
+              <option value="MERIDA">Merida</option>
+              <option value="RADON">Radon</option>
+              <option value="SCOTT">Scott</option>
+              <option value="TREK">Trek</option>
+              <option value="TRIBAN">Triban</option>
               <option value="UNIBIKE">Unibike</option>
-              <option value="FOLTA">Folta</option>
               <option value="WOOM">Woom</option>
-              <option value="BMX">BMX</option>
-              <option value="DZIECIĘCY">Dziecięcy</option>
               <option value="OVERFLY">Overfly</option>
               <option value="ECOBIKE">Ecobike</option>
             </select>
@@ -2075,27 +2078,29 @@ select.native-sel { display: none !important; }
         <label>Kolor</label>
         <input type="hidden" id="modal-kolor" value="">
         <div id="modal-kolor-preview">
-          <span class="mkp-text">KOLOR</span>
+          <span class="mkp-text">MARKA MODEL</span>
         </div>
-        <div id="modal-kolor-swatches" style="display:flex;gap:8px;padding:4px 0;flex-wrap:nowrap;width:100%;">
+        <div id="modal-kolor-swatches" style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));grid-template-rows:repeat(2,auto);grid-auto-flow:row;gap:8px;padding:0 0 4px;width:100%;box-sizing:border-box;">
           <button type="button" class="kolor-swatch" data-val="CZARNY" title="Czarny"
-            style="flex:1 1 0;height:68px;border-radius:10px;background:#111;border:1px solid #444;cursor:pointer;"></button>
+            style="width:100%;min-height:48px;height:100%;border-radius:10px;background:#111;border:1px solid #444;cursor:pointer;"></button>
+          <button type="button" class="kolor-swatch" data-val="BRĄZOWY" title="Brązowy"
+            style="width:100%;min-height:48px;height:100%;border-radius:10px;background:#6b4423;border:1px solid #4a2f1a;cursor:pointer;"></button>
           <button type="button" class="kolor-swatch" data-val="SZARY" title="Szary"
-            style="flex:1 1 0;height:68px;border-radius:10px;background:#9ca3af;border:1px solid #6b7280;cursor:pointer;"></button>
+            style="width:100%;min-height:48px;height:100%;border-radius:10px;background:#9ca3af;border:1px solid #6b7280;cursor:pointer;"></button>
           <button type="button" class="kolor-swatch" data-val="BIAŁY" title="Biały"
-            style="flex:1 1 0;height:68px;border-radius:10px;background:#f0f0f0;border:1px solid #aaa;cursor:pointer;"></button>
+            style="width:100%;min-height:48px;height:100%;border-radius:10px;background:#f0f0f0;border:1px solid #aaa;cursor:pointer;"></button>
           <button type="button" class="kolor-swatch" data-val="CZERWONY" title="Czerwony"
-            style="flex:1 1 0;height:68px;border-radius:10px;background:#dc2626;border:1px solid #b91c1c;cursor:pointer;"></button>
+            style="width:100%;min-height:48px;height:100%;border-radius:10px;background:#dc2626;border:1px solid #b91c1c;cursor:pointer;"></button>
           <button type="button" class="kolor-swatch" data-val="NIEBIESKI" title="Niebieski"
-            style="flex:1 1 0;height:68px;border-radius:10px;background:#2563eb;border:1px solid #1d4ed8;cursor:pointer;"></button>
+            style="width:100%;min-height:48px;height:100%;border-radius:10px;background:#2563eb;border:1px solid #1d4ed8;cursor:pointer;"></button>
           <button type="button" class="kolor-swatch" data-val="FIOLETOWY" title="Fioletowy"
-            style="flex:1 1 0;height:68px;border-radius:10px;background:#9333ea;border:1px solid #7e22ce;cursor:pointer;"></button>
+            style="width:100%;min-height:48px;height:100%;border-radius:10px;background:#9333ea;border:1px solid #7e22ce;cursor:pointer;"></button>
           <button type="button" class="kolor-swatch" data-val="ZIELONY" title="Zielony"
-            style="flex:1 1 0;height:68px;border-radius:10px;background:#16a34a;border:1px solid #15803d;cursor:pointer;"></button>
+            style="width:100%;min-height:48px;height:100%;border-radius:10px;background:#16a34a;border:1px solid #15803d;cursor:pointer;"></button>
           <button type="button" class="kolor-swatch" data-val="ZŁOTY" title="Złoty"
-            style="flex:1 1 0;height:68px;border-radius:10px;background:#d97706;border:1px solid #b45309;cursor:pointer;"></button>
+            style="width:100%;min-height:48px;height:100%;border-radius:10px;background:#d97706;border:1px solid #b45309;cursor:pointer;"></button>
           <button type="button" class="kolor-swatch" data-val="INNY" title="Inny..."
-            style="flex:1 1 0;height:68px;border-radius:10px;background:#1e1e30;border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:var(--text3);">✕</button>
+            style="width:100%;min-height:48px;height:100%;border-radius:10px;background:#1e1e30;border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:var(--text3);">✕</button>
         </div>
         <input type="text" id="modal-kolor-inny" placeholder="Wpisz kolor..." maxlength="30" style="display:none;margin-top:6px;">
       </div>
@@ -2267,7 +2272,7 @@ function cloneDefaults() {
 // ─────────────────────────────────────────
 const $ = id => document.getElementById(id);
 
-const COLOR_MAP = {'CZARNY':'#111','SZARY':'#9ca3af','BIAŁY':'#f0f0f0','CZERWONY':'#dc2626','NIEBIESKI':'#2563eb','FIOLETOWY':'#9333ea','ZIELONY':'#16a34a','ZŁOTY':'#d97706'};
+const COLOR_MAP = {'CZARNY':'#111','BRĄZOWY':'#6b4423','SZARY':'#9ca3af','BIAŁY':'#f0f0f0','CZERWONY':'#dc2626','NIEBIESKI':'#2563eb','FIOLETOWY':'#9333ea','ZIELONY':'#16a34a','ZŁOTY':'#d97706'};
 
 
 // Pomocnicza: nazwa roweru do SMS
@@ -7161,8 +7166,8 @@ function openModal() {
 
   // Fallback tylko dla bardzo starych wpisów: brak model i kolor, cf-marka zawiera wszystko
   if (!model && !kolor && marka && marka.includes(' ')) {
-    const brands = ['KROSS','ROMET','MERIDA','TREK','SCOTT','CUBE','GHOST','CANNONDALE','RADON','BIANCHI','E-BIKE'];
-    const colors  = ['CZARNY','SZARY','BIAŁY','SREBRNY','NIEBIESKI','CZERWONY','ZIELONY','ŻÓŁTY','BIANCHI'];
+    const brands = ['ROWER','KROSS','ROMET','DZIECIĘCY','BIANCHI','BMX','BTWIN','CANNONDALE','CUBE','FOCUS','FOLTA','GIANT','GHOST','KANDS','MERIDA','RADON','SCOTT','TREK','TRIBAN','UNIBIKE','WOOM','OVERFLY','ECOBIKE','E-BIKE'];
+    const colors  = ['CZARNY','BRĄZOWY','SZARY','BIAŁY','SREBRNY','NIEBIESKI','CZERWONY','ZIELONY','ŻÓŁTY','BIANCHI'];
     const parts = marka.split(' ');
     const brandIdx = brands.findIndex(b => parts[0] && parts[0].toUpperCase() === b);
     const colorIdx = colors.findIndex(col => parts[parts.length-1] && parts[parts.length-1].toUpperCase() === col);
@@ -7179,7 +7184,7 @@ function openModal() {
   } else if (marka) {
     selEl.value = 'INNY'; cselSetValue('modal-marka-sel', 'INNY');
   } else {
-    selEl.value = '';
+    selEl.value = 'ROWER'; cselSetValue('modal-marka-sel', 'ROWER');
   }
 
   $('modal-marka').value = (model || '').toUpperCase();
@@ -7308,7 +7313,7 @@ window.anulujWycene = anulujWycene;
 
 function cancelModal() {
   // Wyczyść wszystkie pola formularza
-  $('modal-marka-sel').value = ''; cselSetValue('modal-marka-sel', '');
+  $('modal-marka-sel').value = 'ROWER'; cselSetValue('modal-marka-sel', 'ROWER');
 
   $('modal-marka').value = '';
   $('modal-kolor').value = '';
@@ -7338,7 +7343,14 @@ function updateModalKolorPreview() {
   const kolorInny = ($('modal-kolor-inny') || { value:'' }).value.trim();
   const finalKolor = kolorSel === 'INNY' ? kolorInny : kolorSel;
   const bar = makeKolorBarHTML(finalKolor || '');
-  const label = finalKolor ? escHTML(String(finalKolor).toUpperCase()) : 'KOLOR';
+  const sel = $('modal-marka-sel');
+  const opt = sel && sel.selectedOptions && sel.selectedOptions[0];
+  const markaPart = opt ? String(opt.textContent || '').trim() : '';
+  const modelVal = (($('modal-marka') || {}).value || '').trim().toUpperCase();
+  const parts = [];
+  if (markaPart) parts.push(escHTML(markaPart));
+  if (modelVal) parts.push(escHTML(modelVal));
+  const label = parts.length ? parts.join(' ') : 'MARKA MODEL';
   box.innerHTML = (bar || '') + '<span class="mkp-text">' + label + '</span>';
 }
 
@@ -7360,9 +7372,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const markaSel = $('modal-marka-sel');
   if (markaSel) {
     buildCsel(markaSel, 'full left');
-    markaSel.addEventListener('change', () => {
-    });
+    markaSel.addEventListener('change', updateModalKolorPreview);
   }
+  const modalModelInp = $('modal-marka');
+  if (modalModelInp) modalModelInp.addEventListener('input', updateModalKolorPreview);
 
   const kolorInny = $('modal-kolor-inny');
   const isDualColor = v => String(v || '').includes('/');
