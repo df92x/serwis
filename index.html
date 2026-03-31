@@ -2194,15 +2194,15 @@ document.addEventListener('DOMContentLoaded', () => {
 // ─────────────────────────────────────────
 const DEFAULTS = [
   { name: 'Naprawa',    price: 0, checked: false,
-    options: [{label:'Przygotowanie',price:100},{label:'Przegląd PODSTAWOWY',price:150},{label:'Przegląd PEŁNY',price:250},{label:'Złożenie roweru',price:150},{label:'Wymiana dętki/opony przód',price:30},{label:'Wymiana dętki/opony tył',price:35},{label:'Serwis koło przód',price:40},{label:'Serwis koło tył',price:50},{label:'Centrowanie',price:40},{label:'Diagnostyka e-Bike',price:100}] },
+    options: [{label:'Przygotowanie',price:100},{label:'Przegląd PODSTAWOWY',price:150},{label:'Przegląd PEŁNY',price:250},{label:'Złożenie roweru',price:150},{label:'Regulacja',price:40},{label:'Wymiana dętki/opony przód',price:30},{label:'Wymiana dętki/opony tył',price:35},{label:'Serwis koło przód',price:40},{label:'Serwis koło tył',price:50},{label:'Centrowanie',price:40},{label:'Diagnostyka e-Bike',price:100}] },
   { name: 'Korba',      price: 0,   checked: false,
-    presets: [{label:'3x8 Kwadrat',price:119},{label:'3x9 Hollowtech',price:229}] },
+    presets: [{label:'Kwadrat',price:119},{label:'Octalink',price:189},{label:'Hollowtech',price:229}] },
   { name: 'Support',    price: 0,   checked: false,
     presets: [{label:'Neco',price:45},{label:'Nexelo',price:65},{label:'Octalink',price:80},{label:'Hollowtech',price:79},{label:'Hollowtech Pro',price:129},{label:'TOKEN',price:229}] },
   { name: 'Łańcuch',    price: 0,   checked: false,
     presets: [{label:'7/8s KMC',price:39},{label:'7/8s Shimano HG40',price:59},{label:'7/8s Shimano HG71',price:70},{label:'7/8s KMC X8',price:65},{label:'7/8s KMC X8S',price:79},{label:'9s KMC X9',price:85},{label:'10s Shimano',price:79},{label:'10s KMC X10',price:89},{label:'10s KMC X10S',price:109},{label:'11s KMC X11',price:99},{label:'11s KMC X11BS',price:119},{label:'12s KMC X12',price:169},{label:'E10 KMC',price:129},{label:'E11 KMC',price:139},{label:'E12 KMC',price:159}] },
   { name: 'Kaseta',     price: 0,   checked: false,
-    presets: [{label:'6s Wolnobieg SHI',price:69},{label:'7s Wolnobieg SHI',price:79},{label:'8s Shimano',price:99},{label:'9s Shimano',price:109}] },
+    presets: [{label:'6s Wolnobieg SHI',price:69},{label:'7s Wolnobieg SHI',price:79},{label:'8s Shimano',price:99},{label:'9s Shimano',price:109},{label:'10s Shimano',price:149}] },
   { name: 'Przerzutka przednia', price: 0, checked: false },
   { name: 'Przerzutka tylna',  price: 0, checked: false,
     presets: [{label:'Kółka maszynowe',price:45}] },
@@ -7010,14 +7010,14 @@ function generujRaportZDaty() {
       const qty = (it.qty || 1);
       const cenaRazem = (Math.round(it.price * qty * 100) / 100).toFixed(2).replace('.', ',');
       const cenaJedn = it.price.toFixed(2).replace('.', ',');
-      const qtyTxt = qty > 1 ? `<td class="r">${qty}× ${cenaJedn}</td>` : '<td></td>';
-      czesciRows += `<tr><td>${escHTML(itemLabelWithDetails(it, true))}</td>${qtyTxt}<td class="r">${cenaRazem}</td></tr>`;
+      const qtyTxt = qty > 1 ? `<td class="col-qty r">${qty}× ${cenaJedn}</td>` : '<td class="col-qty r">—</td>';
+      czesciRows += `<tr><td class="col-name">${escHTML(itemLabelWithDetails(it, true))}</td>${qtyTxt}<td class="col-sum r">${cenaRazem}</td></tr>`;
     });
     sourceSubs.forEach(s => {
       const cena = parseFloat(String(s.price || 0)).toFixed(2).replace('.', ',');
-      czesciRows += `<tr><td>${escHTML(s.name || 'Część')}</td><td></td><td class="r">${cena}</td></tr>`;
+      czesciRows += `<tr><td class="col-name">${escHTML(s.name || 'Część')}</td><td class="col-qty r">—</td><td class="col-sum r">${cena}</td></tr>`;
     });
-    if (!czesciRows) czesciRows = `<tr><td colspan="3" style="color:#999;font-style:italic;font-size:9px;">Brak pozycji</td></tr>`;
+    if (!czesciRows) czesciRows = `<tr><td colspan="3" class="col-empty">Brak pozycji</td></tr>`;
 
     const totalFmt = total.toFixed(2).replace('.', ',');
     const notatka = entry.raportKoncowy?.notatka ? `<div class="notatka">📝 ${escHTML(entry.raportKoncowy.notatka)}</div>` : '';
@@ -7031,6 +7031,7 @@ function generujRaportZDaty() {
         </div>
         ${entry.tel ? `<div class="card-tel">📞 ${escHTML(entry.tel)}</div>` : ''}
         <table>
+          <thead><tr><th class="col-name">Pozycja</th><th class="col-qty r">Ilość / cena</th><th class="col-sum r">Razem</th></tr></thead>
           <tbody>${czesciRows}</tbody>
         </table>
         ${notatka}
@@ -7042,38 +7043,106 @@ function generujRaportZDaty() {
   const html = `<!DOCTYPE html><html lang="pl"><head><meta charset="UTF-8">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter'; font-size: 10px; color: #111; background: #fff; padding: 14px 16px; }
-    .page-header { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 2px solid #111; padding-bottom: 6px; margin-bottom: 10px; }
-    .page-title { font-size: 14px; font-weight: 800; letter-spacing: -.2px; }
-    .page-meta { font-size: 10px; color: #555; }
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .card { border: 1px solid #bbb; border-radius: 4px; padding: 7px 9px; break-inside: avoid; }
-    .card-header { display: flex; align-items: baseline; gap: 5px; margin-bottom: 3px; }
-    .card-num { font-size: 9px; font-weight: 700; color: #fff; background: #333; border-radius: 3px; padding: 1px 5px; flex-shrink: 0; }
-    .card-title { font-size: 11px; font-weight: 700; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .card-total { font-size: 13px; font-weight: 800; white-space: nowrap; flex-shrink: 0; }
-    .card-tel { font-size: 9px; color: #555; margin-bottom: 4px; }
-    table { width: 100%; border-collapse: collapse; }
-    td { padding: 2px 3px; border-bottom: 1px solid #f0f0f0; font-size: 10px; line-height: 1.3; }
-    td:last-child { text-align: right; font-weight: 600; white-space: nowrap; }
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-size: 11px;
+      line-height: 1.45;
+      color: #111;
+      background: #fff;
+      padding: 16px 18px;
+      -webkit-font-smoothing: antialiased;
+    }
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px 12px;
+      border-bottom: 2px solid #111;
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+    }
+    .page-title { font-size: 16px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.2; }
+    .page-meta { font-size: 11px; color: #444; font-weight: 500; line-height: 1.3; text-align: right; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .card { border: 1px solid #c4c4c4; border-radius: 6px; padding: 10px 10px 8px; break-inside: avoid; }
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+      min-height: 1.5em;
+    }
+    .card-num {
+      font-size: 10px;
+      font-weight: 800;
+      color: #fff;
+      background: #333;
+      border-radius: 4px;
+      padding: 3px 7px;
+      flex-shrink: 0;
+      line-height: 1.2;
+    }
+    .card-title {
+      font-size: 12px;
+      font-weight: 700;
+      flex: 1;
+      min-width: 0;
+      line-height: 1.35;
+      word-break: break-word;
+    }
+    .card-total { font-size: 13px; font-weight: 800; white-space: nowrap; flex-shrink: 0; line-height: 1.2; }
+    .card-tel { font-size: 10px; color: #555; margin-bottom: 6px; font-weight: 500; }
+    table { width: 100%; border-collapse: collapse; table-layout: fixed; margin-top: 2px; }
+    th {
+      padding: 5px 4px 4px;
+      border-bottom: 1px solid #bbb;
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #555;
+      vertical-align: bottom;
+      line-height: 1.2;
+    }
+    td {
+      padding: 5px 4px;
+      border-bottom: 1px solid #eee;
+      font-size: 10px;
+      line-height: 1.4;
+      vertical-align: top;
+    }
+    .col-name { width: 52%; word-wrap: break-word; overflow-wrap: break-word; }
+    .col-qty { width: 26%; }
+    .col-sum { width: 22%; font-weight: 700; white-space: nowrap; }
+    .col-empty { color: #888; font-style: italic; font-size: 10px; text-align: center; padding: 8px 4px; }
     .r { text-align: right; }
-    .notatka { font-size: 9px; color: #666; margin-top: 4px; font-style: italic; }
-    .summary { border-top: 2px solid #111; margin-top: 10px; padding-top: 7px; display: flex; justify-content: space-between; align-items: baseline; }
-    .summary-lbl { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: #444; }
-    .summary-val { font-size: 18px; font-weight: 800; }
-    .summary-count { font-size: 10px; color: #777; }
-    @media print { body { padding: 10px 12px; } .card { break-inside: avoid; } }
+    .notatka { font-size: 10px; color: #555; margin-top: 8px; padding-top: 6px; border-top: 1px dashed #ddd; line-height: 1.4; }
+    .summary {
+      border-top: 2px solid #111;
+      margin-top: 14px;
+      padding-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .summary-lbl { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: #333; }
+    .summary-val { font-size: 20px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; }
+    .summary-count { font-size: 11px; color: #666; margin-top: 2px; font-weight: 500; }
+    @media print { body { padding: 12px 14px; } .card { break-inside: avoid; } }
   </style>
   </head><body>
   <div class="page-header">
     <div class="page-title">Raport dobowy</div>
-    <div class="page-meta">Data: ${dataStr} &nbsp;·&nbsp; Napraw: ${dzisiaj.length}</div>
+    <div class="page-meta">Data: ${dataStr}<br>Napraw: ${dzisiaj.length}</div>
   </div>
   <div class="grid">${cards}</div>
   <div class="summary">
     <div>
       <div class="summary-lbl">Łącznie</div>
-      <div class="summary-count">${dzisiaj.length} zlecen</div>
+      <div class="summary-count">${dzisiaj.length} zleceń</div>
     </div>
     <span class="summary-val">${sumaFmt} zł</span>
   </div>
