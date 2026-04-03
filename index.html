@@ -112,15 +112,29 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
 #tab-historia.order-tab.active{ background:#ef4444; border-color:#ef4444; }
 #tab-wydanie.order-tab.active{ background:#22c55e; border-color:#22c55e; }
 #tab-archiwum.order-tab.active{ background:#a78bfa; border-color:#a78bfa; }
-.order-tab-kosz{
-  flex:0 0 auto;
-  padding:10px 12px;
+
+/* Przeglądaj: ikona kosza obok Zamknij */
+#history-overlay .btn-kosz-header{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  min-height:33px;
+  padding:6px 10px;
+  background:none;
+  border:1px solid var(--border);
+  border-radius:var(--radius-btn);
+  color:var(--text2);
+  cursor:pointer;
+  flex-shrink:0;
 }
-.order-tab-kosz.active{
-  background:#ef4444;
-  border-color:#ef4444;
-  color:#111827;
+#history-overlay .btn-kosz-header:hover{ opacity:0.92; }
+#history-overlay #tab-kosz.active{
+  border-color:#6b7280;
+  background:#6b7280;
+  color:#fff;
 }
+#history-overlay .btn-kosz-header svg{ flex-shrink:0; display:block; }
 
 /* ── Summary card ── */
 .summary-card {
@@ -153,6 +167,25 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
   border-bottom-left-radius:var(--radius);
   border:none;
   background:transparent;
+  pointer-events:none;
+}
+/* Wycena (kalkulator): fioletowy pasek jak kolor-bar w edycji zlecenia */
+#kalkulator-overlay #kalk-summary-card{
+  position:relative;
+  overflow:hidden;
+  border-left:none !important;
+  border-color:rgba(124,58,237,0.45) !important;
+}
+#kalk-summary-side-bar{
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  width:20px;
+  box-sizing:border-box;
+  border-top-left-radius:var(--radius);
+  border-bottom-left-radius:var(--radius);
+  background:#7c3aed;
   pointer-events:none;
 }
 #raport-summary-kolor-bar{
@@ -1223,40 +1256,35 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
 .overlay-full { scrollbar-width:none; }
 .btn-close { margin-left:auto;background:#ef4444;border:1px solid #ef4444;border-radius:var(--radius-btn);padding:6px var(--btn-px);cursor:pointer;color:#fff;font-size:var(--btn-font);font-weight:var(--btn-weight);text-transform:uppercase; }
 
-/* ── Ujednolicenie wyglądu okien (jak Kody Rabatowe) ── */
-.overlay-full .app header h1{
-  font-size:16px !important;
-  font-weight:700 !important;
-  letter-spacing:-0.3px !important;
-}
-#modal-overlay .app header h1{ font-size:16px !important; }
-#modal-overlay .app header h1{ color:#16a34a !important; }
-
-/* Spójne nagłówki: DODAJ / PRZEGLĄDAJ / WYCENA */
-#modal-overlay .app header,
-#history-overlay .app header,
-#kalkulator-overlay .app header{
-  gap: 10px;
-}
-#modal-overlay .app header svg,
-#history-overlay .app header svg,
-#kalkulator-overlay .app header svg{
-  width: 18px;
-  height: 18px;
-  flex-shrink: 0;
-}
-
-/* Historia: spójne paddingi jak w rabatach */
+/* Historia: zakładki + wiersz wyszukiwania, lista */
 #history-overlay .app > div:nth-of-type(1){
   padding:16px 16px 0 !important;
 }
 #history-overlay .app > div:nth-of-type(2){
   padding:0 16px 8px !important;
 }
+#history-overlay .history-filter-bar input[type="tel"],
+#history-overlay .history-filter-bar input[type="text"]{
+  width:100%;
+  box-sizing:border-box;
+  padding:8px 10px !important;
+  font-size:13px !important;
+  font-weight:700 !important;
+  border-radius:10px !important;
+}
+#history-overlay .history-search-slot{
+  flex:1 1 0;
+  min-width:0;
+}
+#history-overlay .history-search-slot > div{
+  width:100%;
+  min-width:0;
+  box-sizing:border-box;
+}
 
-/* Podgląd: spójne paddingi jak w rabatach */
-#podglad-overlay .app > div{
-  padding:16px 16px 40px !important;
+/* Podgląd: treść pod paskiem zamknięcia */
+#podglad-overlay .app > div.podglad-body{
+  padding:0 16px 40px !important;
 }
 
 /* Raport/Naprawa: spójny layout i "karty" jak w rabatach */
@@ -1293,16 +1321,6 @@ select.native-sel { display: none !important; }
 <body>
 <div class="app">
 
-  <header>
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="#c0392b" stroke="#c0392b" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
-    </svg>
-    <h1 style="color:#c0392b;">SERWIS</h1>
-    <button id="btn-usun-zlecenie" onclick="usunZlecenie()" style="display:none;margin-left:auto;background:none;border:none;padding:6px 8px;cursor:pointer;color:#ef4444;">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-    </button>
-  </header>
-
   <div class="summary-card" id="summary-card-main">
     <span id="summary-kolor-bar"></span>
     <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:4px;">
@@ -1321,9 +1339,14 @@ select.native-sel { display: none !important; }
     </div>
     <div id="sync-status" style="display:none;font-size:11px;color:#556;text-align:center;min-height:0;height:0;line-height:1;transition:color 0.3s;"></div>
     <div class="btn-grid" style="grid-template-columns:2fr 3fr 3fr;">
-      <button id="btn-dane" class="btn-data" onclick="openModal()" style="background:#3b7cf4;border-color:#3b7cf4;">
+      <div style="display:flex;gap:4px;align-items:stretch;min-width:0;">
+        <button id="btn-usun-zlecenie" type="button" onclick="usunZlecenie()" title="Przenieś do kosza" style="display:none;flex-shrink:0;align-items:center;justify-content:center;background:none;border:1px solid rgba(239,68,68,0.45);border-radius:var(--radius-btn);padding:4px 8px;cursor:pointer;color:#ef4444;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+        </button>
+        <button id="btn-dane" class="btn-data" onclick="openModal()" style="flex:1;min-width:0;background:#3b7cf4;border-color:#3b7cf4;">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
       </button>
+      </div>
       <button id="btn-lista-cofnij" onclick="showConfirm('Anulować zlecenie i wrócić do menu?', () => { anulujWycene(); })" class="btn-data">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         ANULUJ
@@ -1415,12 +1438,11 @@ select.native-sel { display: none !important; }
 <!-- Podgląd naprawy (read-only) -->
 <div id="podglad-overlay" class="overlay-full" style="z-index:55;">
   <div class="app">
-    <header>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="#c0392b" stroke="#c0392b" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-      <h1 id="podglad-title" style="font-size:16px;">Naprawa</h1>
-      <button onclick="closePodglad()" class="btn-close">Zamknij</button>
-    </header>
-    <div style="padding:0 16px 40px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 16px 0;">
+      <span id="podglad-title" style="font-size:15px;font-weight:700;color:var(--text2);min-width:0;"></span>
+      <button onclick="closePodglad()" class="btn-close" style="flex-shrink:0;">Zamknij</button>
+    </div>
+    <div class="podglad-body">
       <div id="podglad-header" style="font-size:13px;color:var(--text2);margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border);"></div>
       <table id="podglad-table" style="width:100%;border-collapse:collapse;"></table>
       <div style="margin-top:14px;background:#000;border-radius:10px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;">
@@ -1649,11 +1671,9 @@ select.native-sel { display: none !important; }
 <!-- Kody rabatowe -->
 <div id="kody-rabatowe-overlay" class="overlay-full" style="z-index:60;display:none;">
   <div class="app">
-    <header>
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h7"/><path d="M18 2l4 4-10 10H8v-4z"/></svg>
-      <h1 style="font-size:16px;">Kody rabatowe</h1>
+    <div style="display:flex;justify-content:flex-end;padding:8px 16px 0;">
       <button onclick="closeKodyRabatowe()" class="btn-close">Zamknij</button>
-    </header>
+    </div>
 
     <div style="padding:16px 16px 40px;display:flex;flex-direction:column;gap:14px;">
       <!-- Szukaj kodów -->
@@ -1750,11 +1770,9 @@ select.native-sel { display: none !important; }
 <!-- Kalkulator prosty -->
 <div id="kalkulator-prosty-overlay" class="overlay-full">
   <div class="app">
-    <header>
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/></svg>
-      <h1 style="font-size:16px;">Kalkulator</h1>
+    <div style="display:flex;justify-content:flex-end;padding:8px 16px 0;">
       <button onclick="closeKalkulatorProsty()" class="btn-close">Zamknij</button>
-    </header>
+    </div>
     <div style="padding:16px;">
       <!-- Wyświetlacz -->
       <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:12px;text-align:right;">
@@ -1855,14 +1873,9 @@ select.native-sel { display: none !important; }
 <!-- Łańcuch - pełny ekran -->
 <div id="lancuch-overlay" class="overlay-full">
   <div class="app">
-    <header>
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0891b2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
-      </svg>
-      <h1 style="color:#67e8f9;">Łańcuch</h1>
+    <div style="display:flex;justify-content:flex-end;padding:8px 16px 0;">
       <button onclick="closeLancuch()" class="btn-close">Zamknij</button>
-    </header>
+    </div>
 
     <div style="padding:0 16px 40px;display:flex;flex-direction:column;gap:16px;">
 
@@ -1927,14 +1940,9 @@ select.native-sel { display: none !important; }
 <div id="kalkulator-overlay" class="overlay-full">
   <div class="app">
 
-    <!-- Header -->
-    <header>
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="color:#a78bfa;"><path d="M4 2a1 1 0 0 0-1 1v18l3-2 3 2 3-2 3 2 3-2V3a1 1 0 0 0-1-1H4zm2 5h8a1 1 0 0 1 0 2H6a1 1 0 0 1 0-2zm0 4h8a1 1 0 0 1 0 2H6a1 1 0 0 1 0-2zm0 4h5a1 1 0 0 1 0 2H6a1 1 0 0 1 0-2z"/></svg>
-      <h1 style="color:#a78bfa;">WYCENA</h1>
-    </header>
-
     <!-- Summary card -->
-    <div class="summary-card" style="border-color:#7c3aed;border-left-color:#7c3aed;">
+    <div class="summary-card" id="kalk-summary-card">
+      <span id="kalk-summary-side-bar" aria-hidden="true"></span>
       <div class="summary-top" style="margin-bottom:12px;">
         <div class="summary-left">
           <div class="summary-total" id="kalk-total">0,00</div>
@@ -1972,45 +1980,44 @@ select.native-sel { display: none !important; }
 
 <div id="history-overlay" class="overlay-full">
   <div class="app">
-    <header>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="color:#2563eb;"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-      <h1 style="color:#2563eb;">PRZEGLĄDAJ</h1>
-      <div style="margin-left:auto;display:flex;align-items:center;gap:8px;">
-        <button id="tab-kosz" onclick="switchTab('kosz')" title="Kosz"
-          style="background:none;border:1px solid var(--border);border-radius:var(--radius-btn);padding:6px 10px;cursor:pointer;color:var(--text2);display:inline-flex;align-items:center;justify-content:center;min-height:33px;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-        </button>
-        <button onclick="closeHistoryToMenu()" class="btn-close">Zamknij</button>
-      </div>
-    </header>
     <div style="padding:0 16px 0;">
       <div class="order-tabs">
         <button id="tab-historia" class="order-tab active" onclick="switchTab('historia')">Przyjęte</button>
         <button id="tab-wydanie" class="order-tab" onclick="switchTab('wydanie')">Do wydania</button>
         <button id="tab-archiwum" class="order-tab" onclick="switchTab('archiwum')">Wydane</button>
       </div>
-      <div id="historia-search-wrap" style="display:none;padding:0 0 8px;">
-        <input type="tel" id="historia-search-tel" placeholder="Szukaj: 000-000-000" maxlength="11"
-          style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:12px 12px;color:#fff;font-size:14px;font-weight:800;outline:none;"
-          onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
-      </div>
-      <div id="wydanie-search-wrap" style="display:none;padding:0 0 8px;">
-        <input type="tel" id="wydanie-search-tel" placeholder="Szukaj: telefon lub kod odbioru" maxlength="20" inputmode="numeric"
-          style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:12px 12px;color:#fff;font-size:14px;font-weight:800;outline:none;"
-          onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'"
-          oninput="this.value=this.value.replace(/[^0-9]/g,'');renderWydanie(this.value)">
-      </div>
-      <div id="archive-search-wrap" style="display:none;padding:0 0 8px;">
-        <input type="text" id="archive-search-tel" placeholder="Szukaj: telefon lub kod odbioru" maxlength="20"
-          style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:12px 12px;color:#fff;font-size:14px;font-weight:800;outline:none;"
-          onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
-      </div>
-      <div id="kosz-search-wrap" style="display:none;padding:0 0 8px;">
-        <div style="display:flex;gap:8px;align-items:center;">
-          <input type="tel" id="kosz-search-tel" placeholder="Szukaj: 000-000-000" maxlength="11"
-            style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:12px 12px;color:#fff;font-size:14px;font-weight:800;outline:none;"
-            onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
-          <button onclick="wyczyscKosz()" style="flex-shrink:0;background:none;border:1px solid var(--red);border-radius:8px;padding:8px 12px;color:var(--red);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;">Wyczyść</button>
+      <div class="history-filter-bar" style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0 8px;flex-wrap:wrap;width:100%;">
+        <div class="history-search-slot">
+          <div id="historia-search-wrap" style="display:none;">
+            <input type="tel" id="historia-search-tel" placeholder="Szukaj: 000-000-000" maxlength="11"
+              style="background:var(--bg);border:1px solid var(--border);color:#fff;outline:none;"
+              onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
+          </div>
+          <div id="wydanie-search-wrap" style="display:none;">
+            <input type="tel" id="wydanie-search-tel" placeholder="Szukaj: tel. / kod" maxlength="20" inputmode="numeric"
+              style="background:var(--bg);border:1px solid var(--border);color:#fff;outline:none;"
+              onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'"
+              oninput="this.value=this.value.replace(/[^0-9]/g,'');renderWydanie(this.value)">
+          </div>
+          <div id="archive-search-wrap" style="display:none;">
+            <input type="text" id="archive-search-tel" placeholder="Szukaj: tel. / kod" maxlength="20"
+              style="background:var(--bg);border:1px solid var(--border);color:#fff;outline:none;"
+              onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
+          </div>
+          <div id="kosz-search-wrap" style="display:none;">
+            <div style="display:flex;gap:6px;align-items:center;">
+              <input type="tel" id="kosz-search-tel" placeholder="Szukaj: 000-000-000" maxlength="11"
+                style="flex:1;min-width:0;background:var(--bg);border:1px solid var(--border);color:#fff;outline:none;"
+                onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
+              <button type="button" onclick="wyczyscKosz()" style="flex-shrink:0;background:none;border:1px solid var(--red);border-radius:8px;padding:6px 10px;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;">Wyczyść</button>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+        <button id="tab-kosz" type="button" class="btn-kosz-header" onclick="switchTab('kosz')" title="Kosz" style="display:none;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+        </button>
+        <button type="button" onclick="closeHistoryToMenu()" class="btn-close" style="margin-left:0;">Zamknij</button>
         </div>
       </div>
     </div>
@@ -2028,10 +2035,6 @@ select.native-sel { display: none !important; }
 <!-- Modal Dane -->
 <div id="modal-overlay" class="overlay-full">
   <div class="app">
-    <header>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" style="color:#16a34a;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      <h1>DODAJ</h1>
-    </header>
     <div style="padding:16px 16px 40px;display:flex;flex-direction:column;gap:14px;">
       <div class="modal-banner">
       <div class="modal-field">
@@ -2048,13 +2051,16 @@ select.native-sel { display: none !important; }
               <option value="BTWIN">Btwin</option>
               <option value="CANNONDALE">Cannondale</option>
               <option value="CUBE">Cube</option>
+              <option value="DECATHLON">Decathlon</option>
               <option value="FOCUS">Focus</option>
               <option value="FOLTA">Folta</option>
               <option value="GIANT">Giant</option>
               <option value="GHOST">Ghost</option>
               <option value="KANDS">Kands</option>
+              <option value="KELLYS">Kellys</option>
               <option value="MERIDA">Merida</option>
               <option value="RADON">Radon</option>
+              <option value="ROCKRIDER">Rockrider</option>
               <option value="SCOTT">Scott</option>
               <option value="TREK">Trek</option>
               <option value="TRIBAN">Triban</option>
@@ -2200,14 +2206,14 @@ const DEFAULTS = [
   { name: 'Support',    price: 0,   checked: false,
     presets: [{label:'Neco',price:45},{label:'Nexelo',price:65},{label:'Octalink',price:80},{label:'Hollowtech',price:79},{label:'Hollowtech Pro',price:129},{label:'TOKEN',price:229}] },
   { name: 'Łańcuch',    price: 0,   checked: false,
-    presets: [{label:'7/8s KMC',price:39},{label:'7/8s Shimano HG40',price:59},{label:'7/8s Shimano HG71',price:70},{label:'7/8s KMC X8',price:65},{label:'7/8s KMC X8S',price:79},{label:'9s KMC X9',price:85},{label:'10s Shimano',price:79},{label:'10s KMC X10',price:89},{label:'10s KMC X10S',price:109},{label:'11s KMC X11',price:99},{label:'11s KMC X11BS',price:119},{label:'12s KMC X12',price:169},{label:'E10 KMC',price:129},{label:'E11 KMC',price:139},{label:'E12 KMC',price:159}] },
+    presets: [{label:'7/8s KMC',price:39},{label:'7/8s Shimano HG40',price:59},{label:'7/8s Shimano HG71',price:70},{label:'7/8s KMC X8',price:65},{label:'7/8s KMC X8S',price:79},{label:'9s KMC X9',price:85},{label:'10s Shimano',price:79},{label:'10s KMC X10',price:89},{label:'10s KMC X10S',price:109},{label:'11s KMC X11',price:99},{label:'11s KMC X11BS',price:119},{label:'12s KMC X12',price:169},{label:'E10 KMC',price:129},{label:'E11 KMC',price:139},{label:'E12 KMC',price:159},{label:'Wippermann',price:199}] },
   { name: 'Kaseta',     price: 0,   checked: false,
     presets: [{label:'6s Wolnobieg SHI',price:69},{label:'7s Wolnobieg SHI',price:79},{label:'8s Shimano',price:99},{label:'9s Shimano',price:109},{label:'10s Shimano',price:149}] },
   { name: 'Przerzutka przednia', price: 0, checked: false },
   { name: 'Przerzutka tylna',  price: 0, checked: false,
     presets: [{label:'Kółka maszynowe',price:45}] },
   { name: 'Pedała',     price: 0,   checked: false,
-    presets: [{label:'Plastikowe',price:25},{label:'Aluminium',price:39},{label:'Nexelo',price:79}] },
+    presets: [{label:'Plastikowe',price:25},{label:'Aluminium',price:39},{label:'Nexelo',price:79},{label:'Zeray',price:119}] },
   { name: 'Tarcza',     price: 0,   checked: false, qty: 0,
     presets: [{label:'RT10',price:45},{label:'RT56',price:65},{label:'RT66',price:90},{label:'Centerline',price:120},{label:'Magura',price:120}] },
   { name: 'Klocki',     price: 0,   checked: false, qty: 0,
@@ -2226,6 +2232,7 @@ const DEFAULTS = [
   { name: 'Owijka/Chwyty', price: 0, checked: false },
   { name: 'Siodło',     price: 0, checked: false },
   { name: 'Dźwignie',   price: 0, checked: false },
+  { name: 'Hamulce',    price: 0, checked: false },
   { name: 'Amortyzator', price: 0,  checked: false },
   { name: 'Akcesoria',  price: 0, checked: false },
   { name: 'Części i akcesoria', price: 0, checked: false, note: true },
@@ -2775,6 +2782,7 @@ const ITEM_ICONS = {
   'Koło przednie':        `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="9"/><line x1="12" y1="15" x2="12" y2="22"/><line x1="2" y1="12" x2="9" y2="12"/><line x1="15" y1="12" x2="22" y2="12"/></svg>`,
   'Owijka/Chwyty':        `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v18M18 3v18M6 8h12M6 16h12"/></svg>`,
   'Dźwignie':             `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 3a3 3 0 0 0-3 3v12a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3zM6 3a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z"/></svg>`,
+  'Hamulce':              `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="4" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="20"/><line x1="4" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="20" y2="12"/></svg>`,
   'Amortyzator':          `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="22"/><path d="M8 6h8M8 18h8M9 10h6M9 14h6"/></svg>`,
   'Części i akcesoria':   `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3"/><circle cx="16" cy="16" r="3"/><line x1="8" y1="11" x2="8" y2="16"/><line x1="11" y1="8" x2="16" y2="8"/></svg>`,
 };
@@ -4375,7 +4383,7 @@ if (!sessionStorage.getItem('from-history')) {
   const editId = sessionStorage.getItem('from-history-id');
   const btnUsun = $('btn-usun-zlecenie');
   if (btnUsun && editId) {
-    btnUsun.style.display = 'block';
+    btnUsun.style.display = 'inline-flex';
   }
 }
 updateClientInfoBar();
@@ -6296,6 +6304,8 @@ function switchTab(tab) {
     renderArchive();
     setTimeout(() => scrollToHighlightedZlecenie('archive-list'), 80);
   }
+
+  if (tabKosz) tabKosz.style.display = (tab === 'archiwum') ? '' : 'none';
 }
 
 function markSmsSent(id, el) {
@@ -6388,8 +6398,8 @@ function renderWydanie(filterTel) {
       </div>
       <div class="history-item-actions">
         ${entry.tel ? '<a class="btn-history-sms' + (entry.smsSent ? ' btn-history-sms-sent' : '') + '" href="sms:' + entry.tel.replace(/[^0-9+]/g,'') + '?body=' + encodeURIComponent((_smsRower(entry.marka, entry.model) || '') + ' - przygotowany do odbioru\n\nGodziny otwarcia\nPn-pt 10:00-18:00\nSobota 9:00-14:00\n\nKwota do zapłaty - ' + entry.total + ' zł\nPłatność gotówka/karta/BLIK\n\nKod odbioru: ' + (entry.kodOdbioru || '–')) + '" onclick="markSmsSent(' + entry.id + ', this)"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> SMS</a>' : ''}
-        <button class="btn-history-load" style="background:#3b7cf4;border-color:#3b7cf4;" onclick="openRaportEdycja(${entry.id})" title="Edytuj"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
         <button class="btn-history-load" style="background:#6b7280;border-color:#6b7280;display:inline-flex;align-items:center;justify-content:center;" onclick="cofnijDoAktualne(${entry.id})" title="Cofnij do przyjętych"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg></button>
+        <button class="btn-history-load" style="background:#3b7cf4;border-color:#3b7cf4;" onclick="openRaportEdycja(${entry.id})" title="Edytuj"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
         <div style="margin-left:auto;display:flex;gap:6px;">
           <button class="btn-history-load" style="background:#ef4444;border-color:#ef4444;font-size:15px;font-weight:700;letter-spacing:.5px;" onclick="openPodsumowanieDoWydania(${entry.id})">WYDAJ</button>
         </div>
@@ -6640,12 +6650,12 @@ function renderArchive(filterStr) {
         '</div>' +
       '</div>' +
       '<div class="history-item-actions">' +
+        '<button class="btn-history-del" onclick="deleteArchive(' + entry.id + ')" title="Przenieś do kosza"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>' +
         '<button class="btn-history-load" style="background:#6b7280;border-color:#6b7280;display:inline-flex;align-items:center;justify-content:center;" onclick="unarchiveWycena(' + entry.id + ')" title="Cofnij"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg></button>' +
         (entry.raportKoncowy ? '<button class="btn-history-load" style="background:#16a34a;border-color:#16a34a;" onclick="downloadRaportPDF(' + entry.id + ')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Naprawa</button>' : '') +
 
         '<button class="btn-history-load" style="background:#7c3aed;border-color:#7c3aed;" onclick="openPodsumowanieWydane(' + entry.id + ')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> PDF</button>' +
         '<button class="btn-history-load" style="background:#f59e0b;border-color:#f59e0b;color:#111827;display:inline-flex;align-items:center;justify-content:center;padding:8px 14px;min-height:33px;font-size:13px;" onclick="openRabAssignForArchive(' + entry.id + ')" title="Dodaj kod rabatowy"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#111827" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v7a2 2 0 0 1-2 2H7l-4-4V5a2 2 0 0 1 2-2h7"/><path d="M16 2l6 6"/><path d="M14 8l8-8"/></svg></button>' +
-        '<button class="btn-history-del" style="margin-left:auto;" onclick="deleteArchive(' + entry.id + ')" title="Przenieś do kosza"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>' +
       '</div>';
 
     list.appendChild(item);
@@ -6820,13 +6830,16 @@ function renderKosz(filterTel) {
 window.restoreFromKosz = restoreFromKosz;
 window.deletePermanently = deletePermanently;
 
+function _koszTabIconSvg() {
+  return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>';
+}
 function updateKoszBadge() {
   const tab = $('tab-kosz');
   if (!tab) return;
   const count = getKosz().length;
-  const icon = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>';
+  const icon = _koszTabIconSvg();
   if (count > 0) {
-    tab.innerHTML = icon + '<span style="background:#ef4444;color:#fff;font-size:9px;font-weight:700;border-radius:8px;padding:1px 5px;margin-left:3px;line-height:1.4;">' + count + '</span>';
+    tab.innerHTML = icon + '<span style="display:inline-block;background:#ef4444;color:#fff;font-size:10px;font-weight:800;border-radius:8px;padding:1px 6px;line-height:1.3;vertical-align:middle;">' + count + '</span>';
   } else {
     tab.innerHTML = icon;
   }
@@ -7406,7 +7419,7 @@ function openModal() {
 
   // Fallback tylko dla bardzo starych wpisów: brak model i kolor, cf-marka zawiera wszystko
   if (!model && !kolor && marka && marka.includes(' ')) {
-    const brands = ['ROWER','KROSS','ROMET','DZIECIĘCY','BIANCHI','BMX','BTWIN','CANNONDALE','CUBE','FOCUS','FOLTA','GIANT','GHOST','KANDS','MERIDA','RADON','SCOTT','TREK','TRIBAN','UNIBIKE','WOOM','OVERFLY','ECOBIKE','E-BIKE'];
+    const brands = ['ROWER','KROSS','ROMET','DZIECIĘCY','BIANCHI','BMX','BTWIN','CANNONDALE','CUBE','DECATHLON','FOCUS','FOLTA','GIANT','GHOST','KANDS','KELLYS','MERIDA','RADON','ROCKRIDER','SCOTT','TREK','TRIBAN','UNIBIKE','WOOM','OVERFLY','ECOBIKE','E-BIKE'];
     const colors  = ['CZARNY','BRĄZOWY','SZARY','BIAŁY','SREBRNY','NIEBIESKI','CZERWONY','ZIELONY','ŻÓŁTY','BIANCHI'];
     const parts = marka.split(' ');
     const brandIdx = brands.findIndex(b => parts[0] && parts[0].toUpperCase() === b);
