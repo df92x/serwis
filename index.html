@@ -6684,8 +6684,10 @@ function unarchiveWycena(id) {
   const entry = arch[idx];
   delete entry.archivedAt;
   delete entry.dataWydania;
-  // Znacznik "cofnięto z wydanych" — używany w priorytecie synchronizacji.
-  entry.unarchivedAt = new Date().toISOString();
+  // Znacznik "cofnięto z wydanych" — daje priorytet 3.5 w sync, wyższy niż WYDANE (3).
+  // Dzięki temu Drive nie może nadpisać cofnięcia starą wersją WYDANE.
+  entry.cofnietoZWydane = new Date().toISOString();
+  delete entry.unarchivedAt; // stary znacznik — czyścimy
   const hist = getHistory();
   hist.unshift(entry);
   localStorage.setItem(HISTORY_KEY, JSON.stringify(hist));
@@ -6922,6 +6924,7 @@ function confirmWydaj() {
     dataWydania: new Date().toLocaleDateString('pl-PL', {day:'2-digit', month:'2-digit', year:'numeric'}),
   };
   delete entry.unarchivedAt;
+  delete entry.cofnietoZWydane; // czyścimy znacznik cofnięcia — wpis wraca do WYDANE
   const arch = getArchive();
   arch.unshift(entry);
   localStorage.setItem(ARCHIVE_KEY, JSON.stringify(arch));
@@ -8169,6 +8172,7 @@ function wydajBezKwoty(id) {
     dataWydania: new Date().toLocaleDateString('pl-PL', {day:'2-digit', month:'2-digit', year:'numeric'}),
   };
   delete entry.unarchivedAt;
+  delete entry.cofnietoZWydane; // czyścimy znacznik cofnięcia — wpis wraca do WYDANE
   const arch = getArchive();
   arch.unshift(entry);
   localStorage.setItem(ARCHIVE_KEY, JSON.stringify(arch));
@@ -8967,14 +8971,16 @@ async function _saveFile(folderId, filename, json) {
 // ── Status zlecenia (do scalania) ─────────
 function _entryStatus(e) {
   // Priorytety (im wyżej, tym ważniejsze):
-  // 4. Kosz
-  // 3. Wydane
-  // 2. Do wydania
-  // 1. Przyjęte
-  if (e.deletedAt)                    return 4; // kosz
-  if (e.dataWydania || e.archivedAt)  return 3; // wydane
-  if (e.raportKoncowy)                return 2; // do wydania
-  return 1;                                      // przyjęte
+  // 4.  Kosz
+  // 3.5 Cofnięte z wydanych (bije WYDANE żeby sync nie cofał z powrotem)
+  // 3.  Wydane
+  // 2.  Do wydania
+  // 1.  Przyjęte
+  if (e.deletedAt)                                      return 4;
+  if (e.cofnietoZWydane && !e.dataWydania && !e.archivedAt) return 3.5;
+  if (e.dataWydania || e.archivedAt)                    return 3;
+  if (e.raportKoncowy)                                  return 2;
+  return 1;
 }
 
 // ── Pobierz dane z Drive ──────────────────
@@ -9021,9 +9027,10 @@ function _mergeData(remote) {
   const mergedH = [], mergedA = [], mergedK = [];
   for (const e of map.values()) {
     // Routing wg realnego stanu wpisu — spójny z _entryStatus
-    if (e.deletedAt)                    mergedK.push(e);
-    else if (e.dataWydania || e.archivedAt) mergedA.push(e);
-    else                                mergedH.push(e);
+    if (e.deletedAt)                                        mergedK.push(e);
+    else if (e.cofnietoZWydane && !e.dataWydania && !e.archivedAt) mergedH.push(e);
+    else if (e.dataWydania || e.archivedAt)                 mergedA.push(e);
+    else                                                    mergedH.push(e);
   }
 
   localStorage.setItem(HISTORY_KEY, JSON.stringify(mergedH));
