@@ -6692,6 +6692,8 @@ function unarchiveWycena(id) {
   arch.splice(idx, 1);
   localStorage.setItem(ARCHIVE_KEY, JSON.stringify(arch));
   switchTab('wydanie');
+  // Natychmiast wyślij na Drive, żeby inne urządzenia nie przywróciły starego WYDANE
+  if (typeof syncToDrive === 'function') syncToDrive();
 }
 // ─────────────────────────────────────────
 // KOSZ
@@ -9016,6 +9018,12 @@ function _mergeData(remote) {
     if (_entryStatus(entry) === _entryStatus(ex)) {
       const merged = Object.assign({}, ex, entry);
       if (ex.smsSent || entry.smsSent) merged.smsSent = true;
+      // Jeśli wygrała wersja z unarchivedAt (cofnięta z WYDANE → DO WYDANIA),
+      // usuń pola archiwum, które Object.assign mógł dołożyć ze starszego wpisu.
+      if (merged.unarchivedAt) {
+        delete merged.dataWydania;
+        delete merged.archivedAt;
+      }
       map.set(id, merged);
     }
   };
@@ -9025,10 +9033,19 @@ function _mergeData(remote) {
 
   const mergedH = [], mergedA = [], mergedK = [];
   for (const e of map.values()) {
-    // Docelowa lista wg realnego stanu wpisu (nie wg numeru priorytetu)
-    if (e.deletedAt) mergedK.push(e);
-    else if (e.dataWydania || e.archivedAt) mergedA.push(e);
-    else mergedH.push(e);
+    // Docelowa lista wg realnego stanu wpisu (nie wg numeru priorytetu).
+    // unarchivedAt oznacza świadome cofnięcie z WYDANE → DO WYDANIA;
+    // musi wygrać nad dataWydania/archivedAt (które Object.assign mógł
+    // dołożyć ze starszej wersji zdalnej o niższym priorytecie).
+    if (e.deletedAt) {
+      mergedK.push(e);
+    } else if (e.unarchivedAt && !e.dataWydania && !e.archivedAt) {
+      mergedH.push(e); // cofnięte z WYDANE → DO WYDANIA
+    } else if (e.dataWydania || e.archivedAt) {
+      mergedA.push(e);
+    } else {
+      mergedH.push(e);
+    }
   }
 
   localStorage.setItem(HISTORY_KEY, JSON.stringify(mergedH));
