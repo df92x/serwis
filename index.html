@@ -1263,6 +1263,13 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
 #history-overlay .app > div:nth-of-type(2){
   padding:0 16px 8px !important;
 }
+#history-overlay .order-tabs{
+  margin-bottom:10px !important; /* równy odstęp nad/pod paskiem Szukaj/Zamknij */
+}
+#history-overlay .history-filter-bar{
+  padding:0 !important;          /* nad/pod kontrolujemy marginesami */
+  margin:0 0 10px !important;    /* taki sam odstęp jak pod zakładkami */
+}
 #history-overlay .history-filter-bar input[type="tel"],
 #history-overlay .history-filter-bar input[type="text"]{
   width:100%;
@@ -1344,7 +1351,7 @@ select.native-sel { display: none !important; }
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
         </button>
         <button id="btn-dane" class="btn-data" onclick="openModal()" style="flex:1;min-width:0;background:#3b7cf4;border-color:#3b7cf4;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Dane
       </button>
       </div>
       <button id="btn-lista-cofnij" onclick="showConfirm('Anulować zlecenie i wrócić do menu?', () => { anulujWycene(); })" class="btn-data">
@@ -2058,6 +2065,7 @@ select.native-sel { display: none !important; }
               <option value="GHOST">Ghost</option>
               <option value="KANDS">Kands</option>
               <option value="KELLYS">Kellys</option>
+              <option value="LAPIERRE">Lapierre</option>
               <option value="MERIDA">Merida</option>
               <option value="RADON">Radon</option>
               <option value="ROCKRIDER">Rockrider</option>
@@ -2121,10 +2129,10 @@ select.native-sel { display: none !important; }
         <div style="display:flex;gap:8px;align-items:stretch;height:56px;">
           <input type="text" id="modal-termin" placeholder="DD.MM" maxlength="5" style="width:100px;font-size:22px;font-weight:700;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:#fff;outline:none;flex-shrink:0;box-sizing:border-box;" oninput="formatTermin(this);clearTerminBtns();">
           <div style="display:flex;gap:6px;flex:1;">
-            <button type="button" class="btn-termin" style="background:#16a34a;color:#fff;flex:1;font-size:22px;font-weight:700;padding:0;border:none;border-radius:8px;" onclick="setTerminDays(this,1)">1D</button>
-            <button type="button" class="btn-termin" style="background:#f59e0b;color:#fff;flex:1;font-size:22px;font-weight:700;padding:0;border:none;border-radius:8px;" onclick="setTerminDays(this,2)">2D</button>
-            <button type="button" class="btn-termin" style="background:#ef4444;color:#fff;flex:1;font-size:22px;font-weight:700;padding:0;border:none;border-radius:8px;" onclick="setTerminDays(this,3)">3D</button>
-            <button type="button" class="btn-termin" style="background:#7f1d1d;color:#fff;flex:1;font-size:22px;font-weight:700;padding:0;border:none;border-radius:8px;" onclick="setTerminDays(this,7)">7D</button>
+            <button type="button" class="btn-termin" data-days="1" style="background:#16a34a;color:#fff;flex:1;font-size:22px;font-weight:700;padding:0;border:none;border-radius:8px;" onclick="setTerminQuick(this)">--</button>
+            <button type="button" class="btn-termin" data-days="2" style="background:#f59e0b;color:#fff;flex:1;font-size:22px;font-weight:700;padding:0;border:none;border-radius:8px;" onclick="setTerminQuick(this)">--</button>
+            <button type="button" class="btn-termin" data-days="3" style="background:#ef4444;color:#fff;flex:1;font-size:22px;font-weight:700;padding:0;border:none;border-radius:8px;" onclick="setTerminQuick(this)">--</button>
+            <button type="button" class="btn-termin" data-days="7" style="background:#7f1d1d;color:#fff;flex:1;font-size:22px;font-weight:700;padding:0;border:none;border-radius:8px;" onclick="setTerminQuick(this)">--</button>
           </div>
         </div>
       </div>
@@ -2146,7 +2154,6 @@ select.native-sel { display: none !important; }
       <div style="display:flex;gap:8px;">
         <button onclick="confirmCancelModal()" style="flex:1;padding:16px 0;background:#c0392b;border:1px solid #c0392b;border-radius:10px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;">Anuluj</button>
         <button onclick="closeModal()" style="flex:3;padding:16px;background:#16a34a;border:1px solid #16a34a;border-radius:10px;color:#fff;font-size:17px;font-weight:700;cursor:pointer;letter-spacing:.3px;display:flex;align-items:center;justify-content:center;gap:10px;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polyline points="15 18 9 12 15 6"/></svg>
           Przejdź do części
         </button>
       </div>
@@ -5558,9 +5565,53 @@ function setTerminDays(btn, days) {
   document.querySelectorAll('.btn-termin').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
 }
+function _terminWeekAbbr(d) {
+  // 0..6 => ND..SB
+  return ['ND','PN','WT','ŚR','CZ','PT','SB'][d.getDay()] || '';
+}
+function _terminDDMM(d) {
+  const dd = String(d.getDate()).padStart(2,'0');
+  const mm = String(d.getMonth()+1).padStart(2,'0');
+  return dd + '.' + mm;
+}
+function initTerminQuickBtns() {
+  const btns = Array.from(document.querySelectorAll('#modal-overlay .btn-termin'));
+  if (!btns.length) return;
+
+  const base = new Date();
+  base.setHours(0,0,0,0);
+  const used = new Set();
+
+  btns.forEach(btn => {
+    const addDays = parseInt(btn.dataset.days || '0', 10) || 0;
+    let d = new Date(base);
+    d.setDate(d.getDate() + addDays);
+
+    // Niedziela zawsze wolna: przesuń na poniedziałek.
+    // Dodatkowo: jeśli wypadnie duplikat z innym przyciskiem, przesuń dalej.
+    while (d.getDay() === 0 || used.has(_terminDDMM(d))) {
+      d.setDate(d.getDate() + 1);
+    }
+
+    const ddmm = _terminDDMM(d);
+    used.add(ddmm);
+    btn.dataset.date = ddmm;
+    btn.textContent = _terminWeekAbbr(d);
+  });
+}
+function setTerminQuick(btn) {
+  const ddmm = btn && btn.dataset ? btn.dataset.date : '';
+  if (!ddmm) return;
+  $('modal-termin').value = ddmm;
+  hideTerminSundayWarn();
+  document.querySelectorAll('.btn-termin').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
 window.formatTermin = formatTermin;
 window.clearTerminBtns = clearTerminBtns;
 window.setTerminDays = setTerminDays;
+window.initTerminQuickBtns = initTerminQuickBtns;
+window.setTerminQuick = setTerminQuick;
 window.showTerminSundayWarn = showTerminSundayWarn;
 window.hideTerminSundayWarn = hideTerminSundayWarn;
 window.checkTerminSunday = checkTerminSunday;
@@ -5983,7 +6034,7 @@ function renderHistory(filterTel) {
           <div style="display:flex;align-items:center;gap:6px;">
             <span style="font-size:17px;font-weight:700;color:#fff;">${escHTML(nameParts || '')}</span>${(entry.ebike || entry.marka === 'E-BIKE') ? '<span style=\'margin-left:5px;font-size:16px;\' title=\'e-Bike\'>⚡</span>' : ''}
           </div>
-          ${entry.tel ? `<div style="display:flex;align-items:center;gap:4px;font-size:16px;font-weight:600;color:#3b7cf4;margin-top:2px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>${escHTML(entry.tel)}</div>` : ''}
+          ${entry.tel ? `<a href="tel:${String(entry.tel).replace(/[^0-9+]/g,'')}" style="display:flex;align-items:center;gap:4px;font-size:16px;font-weight:600;color:#3b7cf4;margin-top:2px;text-decoration:none;"><svg width="12" height="12" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19 0 0 1 4.69 12 19.79 19 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>${escHTML(entry.tel)}</a>` : ''}
           ${terminHTML}
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
@@ -6684,18 +6735,14 @@ function unarchiveWycena(id) {
   const entry = arch[idx];
   delete entry.archivedAt;
   delete entry.dataWydania;
-  // Znacznik "cofnięto z wydanych" — daje priorytet 3.5 w sync, wyższy niż WYDANE (3).
-  // Dzięki temu Drive nie może nadpisać cofnięcia starą wersją WYDANE.
-  entry.cofnietoZWydane = new Date().toISOString();
-  delete entry.unarchivedAt; // stary znacznik — czyścimy
+  // Znacznik "cofnięto z wydanych" — używany w priorytecie synchronizacji.
+  entry.unarchivedAt = new Date().toISOString();
   const hist = getHistory();
   hist.unshift(entry);
   localStorage.setItem(HISTORY_KEY, JSON.stringify(hist));
   arch.splice(idx, 1);
   localStorage.setItem(ARCHIVE_KEY, JSON.stringify(arch));
   switchTab('wydanie');
-  // Natychmiast wyślij na Drive, żeby inne urządzenia nie przywróciły starego WYDANE
-  if (typeof syncToDrive === 'function') syncToDrive();
 }
 // ─────────────────────────────────────────
 // KOSZ
@@ -6924,7 +6971,6 @@ function confirmWydaj() {
     dataWydania: new Date().toLocaleDateString('pl-PL', {day:'2-digit', month:'2-digit', year:'numeric'}),
   };
   delete entry.unarchivedAt;
-  delete entry.cofnietoZWydane; // czyścimy znacznik cofnięcia — wpis wraca do WYDANE
   const arch = getArchive();
   arch.unshift(entry);
   localStorage.setItem(ARCHIVE_KEY, JSON.stringify(arch));
@@ -7483,6 +7529,7 @@ function openModal() {
     $('modal-termin').value = '';
   }
   document.querySelectorAll('.btn-termin').forEach(b => b.classList.remove('active'));
+  initTerminQuickBtns();
   $('modal-overlay').style.display = 'block';
   setTimeout(() => $('modal-marka-sel')?.focus(), 100);
 }
@@ -8077,12 +8124,12 @@ function openPodglad(entry) {
     </div>`;
 
   const rightHTML = `
-    <div style="text-align:right;flex-shrink:0;display:flex;flex-direction:column;gap:3px;">
+    <div style="text-align:right;flex-shrink:0;display:flex;flex-direction:column;gap:3px;justify-content:center;align-self:stretch;">
       ${entry.label ? `<div style="font-size:11px;color:#ef4444;font-weight:600;">Przyjęto: ${escHTML(entry.label)}</div>` : ''}
       ${rk?.dataZakonczenia ? `<div style="font-size:11px;color:#22c55e;font-weight:600;">Zakończono: ${escHTML(rk.dataZakonczenia)}</div>` : ''}
     </div>`;
 
-  $('podglad-header').innerHTML = `<div style="display:flex;align-items:flex-start;gap:12px;">${leftHTML}${rightHTML}</div>`;
+  $('podglad-header').innerHTML = `<div style="display:flex;align-items:stretch;gap:12px;">${leftHTML}${rightHTML}</div>`;
 
   const fmtPLN = v => Number(v||0).toLocaleString('pl-PL', {minimumFractionDigits:2,maximumFractionDigits:2});
   const td  = 'style="padding:8px 10px;font-size:13px;color:var(--text);border-bottom:1px solid var(--border);"';
@@ -8172,7 +8219,6 @@ function wydajBezKwoty(id) {
     dataWydania: new Date().toLocaleDateString('pl-PL', {day:'2-digit', month:'2-digit', year:'numeric'}),
   };
   delete entry.unarchivedAt;
-  delete entry.cofnietoZWydane; // czyścimy znacznik cofnięcia — wpis wraca do WYDANE
   const arch = getArchive();
   arch.unshift(entry);
   localStorage.setItem(ARCHIVE_KEY, JSON.stringify(arch));
@@ -8219,14 +8265,14 @@ function openPodsumowanieWydane(id) {
       </div>
     </div>`;
   const rightHTML = `
-    <div style="text-align:right;flex-shrink:0;display:flex;flex-direction:column;gap:3px;">
+    <div style="text-align:right;flex-shrink:0;display:flex;flex-direction:column;gap:3px;justify-content:center;align-self:stretch;">
       ${entry.label ? `<div style="font-size:11px;color:var(--text3);">Przyjęto: ${escHTML(entry.label)}</div>` : ''}
       ${rk?.dataZakonczenia ? `<div style="font-size:11px;color:#ef4444;">Zakończono naprawę: ${escHTML(rk.dataZakonczenia)}</div>` : ''}
       ${entry.dataWydania ? `<div style="font-size:11px;color:#a78bfa;">Wydano: ${escHTML(entry.dataWydania)}</div>` : ''}
     </div>`;
 
   $('podglad-title').textContent = 'Podsumowanie';
-  $('podglad-header').innerHTML = `<div style="display:flex;align-items:flex-start;gap:12px;">${leftHTML}${rightHTML}</div>`;
+  $('podglad-header').innerHTML = `<div style="display:flex;align-items:stretch;gap:12px;">${leftHTML}${rightHTML}</div>`;
 
   const td  = 'style="padding:8px 10px;font-size:13px;color:var(--text);border-bottom:1px solid var(--border);"';
   const tdr = 'style="padding:8px 10px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border);text-align:right;"';
@@ -8342,13 +8388,13 @@ function openPodsumowanieDoWydania(id) {
       </div>
     </div>`;
   const rightHTML = `
-    <div style="text-align:right;flex-shrink:0;display:flex;flex-direction:column;gap:3px;">
+    <div style="text-align:right;flex-shrink:0;display:flex;flex-direction:column;gap:3px;justify-content:center;align-self:stretch;">
       ${entry.label ? `<div style="font-size:11px;color:var(--text3);">Przyjęto: ${escHTML(entry.label)}</div>` : ''}
       ${rk?.dataZakonczenia ? `<div style="font-size:11px;color:#ef4444;">Zakończono naprawę: ${escHTML(rk.dataZakonczenia)}</div>` : ''}
     </div>`;
 
   $('podglad-title').textContent = 'Podsumowanie';
-  $('podglad-header').innerHTML = `<div style="display:flex;align-items:flex-start;gap:12px;">${leftHTML}${rightHTML}</div>`;
+  $('podglad-header').innerHTML = `<div style="display:flex;align-items:stretch;gap:12px;">${leftHTML}${rightHTML}</div>`;
 
   const td  = 'style="padding:8px 10px;font-size:13px;color:var(--text);border-bottom:1px solid var(--border);"';
   const tdr = 'style="padding:8px 10px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border);text-align:right;"';
@@ -8648,13 +8694,13 @@ function openPodgladZlecenia(id) {
     </div>`;
 
   const rightHTML = `
-    <div style="text-align:right;flex-shrink:0;display:flex;flex-direction:column;gap:3px;">
+    <div style="text-align:right;flex-shrink:0;display:flex;flex-direction:column;gap:3px;justify-content:center;align-self:stretch;">
       ${entry.label ? `<div style="font-size:11px;color:#ef4444;font-weight:600;">Przyjęto na serwis: ${escHTML(entry.label)}</div>` : ''}
       ${entry.termin ? `<div style="font-size:11px;color:#f59e0b;font-weight:600;">Data naprawy: ${escHTML(entry.termin)}</div>` : ''}
     </div>`;
 
   $('podglad-title').textContent = 'Zlecenie';
-  $('podglad-header').innerHTML = `<div style="display:flex;align-items:flex-start;gap:12px;">${leftHTML}${rightHTML}</div>`;
+  $('podglad-header').innerHTML = `<div style="display:flex;align-items:stretch;gap:12px;">${leftHTML}${rightHTML}</div>`;
 
   const fmtPLN = v => Number(v||0).toLocaleString('pl-PL', {minimumFractionDigits:2,maximumFractionDigits:2});
   const td  = 'style="padding:8px 10px;font-size:13px;color:var(--text);border-bottom:1px solid var(--border);"';
@@ -8970,17 +9016,21 @@ async function _saveFile(folderId, filename, json) {
 
 // ── Status zlecenia (do scalania) ─────────
 function _entryStatus(e) {
-  // Priorytety (im wyżej, tym ważniejsze):
-  // 4.  Kosz
-  // 3.5 Cofnięte z wydanych (bije WYDANE żeby sync nie cofał z powrotem)
-  // 3.  Wydane
-  // 2.  Do wydania
-  // 1.  Przyjęte
-  if (e.deletedAt)                                      return 4;
-  if (e.cofnietoZWydane && !e.dataWydania && !e.archivedAt) return 3.5;
-  if (e.dataWydania || e.archivedAt)                    return 3;
-  if (e.raportKoncowy)                                  return 2;
-  return 1;
+  // Priorytety konfliktów (im wyżej, tym ważniejsze):
+  // 1. Przyjęte - SMS niewysłane
+  // 2. Przyjęte - SMS wysłane
+  // 3. Do wydania - SMS niewysłane
+  // 4. Do wydania - SMS wysłane
+  // 5. Wydane
+  // 6. Kosz
+  if (e.deletedAt) return 6; // kosz
+  // Cofnięte z WYDANE → DO WYDANIA (unarchive): wyżej niż zwykłe WYDANE na Drive,
+  // żeby scalanie nie przywracało archiwum. Bez wymogu raportKoncowy — inaczej
+  // brak/niepełny raport dawał status 3–4 i przegrywał ze zdalnym WYDANE (5).
+  if (e.unarchivedAt && !e.dataWydania && !e.archivedAt) return 5.5;
+  if (e.dataWydania || e.archivedAt) return 5; // wydane
+  if (e.raportKoncowy) return e.smsSent ? 4 : 3; // do wydania
+  return e.smsSent ? 2 : 1; // przyjęte
 }
 
 // ── Pobierz dane z Drive ──────────────────
@@ -9014,9 +9064,10 @@ function _mergeData(remote) {
     const ex  = map.get(id);
     if (!ex) { map.set(id, entry); return; }
     if (_entryStatus(entry) > _entryStatus(ex)) { map.set(id, entry); return; }
-    // Przy równym statusie: scal pola (wersja lokalna ma priorytet przez kolejność add)
+    // Przy równym statusie: scal pola — zachowaj smsSent jeśli którakolwiek wersja ma true
     if (_entryStatus(entry) === _entryStatus(ex)) {
       const merged = Object.assign({}, ex, entry);
+      if (ex.smsSent || entry.smsSent) merged.smsSent = true;
       map.set(id, merged);
     }
   };
@@ -9026,11 +9077,10 @@ function _mergeData(remote) {
 
   const mergedH = [], mergedA = [], mergedK = [];
   for (const e of map.values()) {
-    // Routing wg realnego stanu wpisu — spójny z _entryStatus
-    if (e.deletedAt)                                        mergedK.push(e);
-    else if (e.cofnietoZWydane && !e.dataWydania && !e.archivedAt) mergedH.push(e);
-    else if (e.dataWydania || e.archivedAt)                 mergedA.push(e);
-    else                                                    mergedH.push(e);
+    // Docelowa lista wg realnego stanu wpisu (nie wg numeru priorytetu)
+    if (e.deletedAt) mergedK.push(e);
+    else if (e.dataWydania || e.archivedAt) mergedA.push(e);
+    else mergedH.push(e);
   }
 
   localStorage.setItem(HISTORY_KEY, JSON.stringify(mergedH));
