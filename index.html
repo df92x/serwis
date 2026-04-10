@@ -7764,6 +7764,7 @@ function buildRaportLocalItems(st, entry, filterEbikeItems) {
     name: canonicalName(it.name), price: it.price, checked: it.checked,
     qty: it.qty, selectedPreset: it.selectedPreset ?? -1,
     customName: it.customName ?? '', customLabel: it.customLabel || undefined,
+    selectedOptions: it.selectedOptions || [],
     noteText: it.noteText || '',
     options: findDefault(it.name)?.options?.map(x => ({...x})),
     presets: findDefault(it.name)?.presets?.map(x => ({...x})),
@@ -7924,6 +7925,7 @@ function saveRaportKoncowy() {
     qty: it.qty,
     selectedPreset: it.selectedPreset ?? -1,
     customLabel: it.customLabel || undefined,
+    selectedOptions: it.selectedOptions || undefined,
     noteText: it.noteText || '',
   }));
 
