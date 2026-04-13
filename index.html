@@ -6,6 +6,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>SERWIS</title>
+<meta name="description" content="Aplikacja serwisowa – zarządzanie zleceniami napraw rowerów, wyceny, raporty.">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <meta name="theme-color" content="#0a0a0f">
 <meta name="mobile-web-app-capable" content="yes">
@@ -37,6 +38,20 @@
   --btn-weight: 700;
   --typo-weight: 600;
   --typo-tracking: 0.01em;
+  /* Extended palette */
+  --red-500: #ef4444;
+  --red-700: #7f1d1d;
+  --red-brand: #c0392b;
+  --green-500: #22c55e;
+  --green-600: #16a34a;
+  --green-700: #15803d;
+  --green-900: #14532d;
+  --amber-500: #f59e0b;
+  --purple-400: #a78bfa;
+  --purple-600: #7c3aed;
+  --indigo-500: #6366f1;
+  --cyan-600: #0891b2;
+  --cyan-300: #67e8f9;
 }
 
 body {
@@ -104,7 +119,7 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
   color:#111827;
   box-shadow: 0 0 0 2px rgba(255,255,255,0.04) inset;
 }
-#tab-historia.order-tab.active{ background:#ef4444; border-color:#ef4444; }
+#tab-historia.order-tab.active{ background:var(--red-500); border-color:var(--red-500); }
 #tab-wydanie.order-tab.active{ background:#22c55e; border-color:#22c55e; }
 #tab-archiwum.order-tab.active{ background:#a78bfa; border-color:#a78bfa; }
 
@@ -201,7 +216,7 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
 .summary-total { font-size: 40px; font-weight: 800; color: #fff; letter-spacing: -1.5px; line-height: 1.05; transition: color 0.4s; text-align: center; }
 #summary-card-main .summary-total { text-align: right; }
 .summary-total.flash-up { color: #22c55e; }
-.summary-total.flash-down { color: #ef4444; }
+.summary-total.flash-down { color: var(--red-500); }
 .btn-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; width: 100%; }
 .summary-date { font-size: 11px; color: var(--text2); line-height: 1.6; text-align: center; }
 
@@ -403,7 +418,7 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
 .qty-btn:hover { background: var(--border); }
 .qty-btn:active { background: var(--border2); }
 .qty-btn.plus { color: #fff; border-color: #14532d; }
-.qty-btn.minus { color: #ef4444; border-color: #7f1d1d; }
+.qty-btn.minus { color: var(--red-500); border-color: #7f1d1d; }
 .qty-val { font-size: 15px; font-weight: 700; color: #fff; min-width: 24px; text-align: center; }
 
 /* Preset select */
@@ -598,42 +613,9 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
 #raport-overlay .card-row{ gap: 6px; }
 
 
-/* Stałe okienko ceny (raport + dodaj części) */
-.fixed-price-box{
-  box-sizing: border-box;
-  width: 70px !important;
-  min-width: 70px !important;
-  height: 32px !important;
-  flex: 0 0 70px !important;
-  flex-shrink: 0 !important;
-  border: 1px solid rgba(255,255,255,0.14) !important;
-  background: #000 !important;
-  border-radius: 10px !important;
-  padding: 6px 10px !important;
-  font-size: 20px !important;
-  font-weight: 700 !important;
-  color: #fff !important;
-  text-align: right !important;
-  outline: none;
-}
+/* Fixed-price-box: moved to unified class below */
 #raport-overlay .item-price-input,
-#add-parts-banner .item-price-input{
-  box-sizing: border-box;
-  width: 70px !important;
-  min-width: 70px !important;
-  height: 32px !important;
-  flex: 0 0 70px !important;
-  flex-shrink: 0 !important;
-  border: 1px solid rgba(255,255,255,0.14) !important;
-  background: #000 !important;
-  border-radius: 10px !important;
-  padding: 6px 10px !important;
-  font-size: 20px !important;
-  font-weight: 700 !important;
-  color: #fff !important;
-  text-align: right !important;
-  outline: none;
-}
+#add-parts-banner .item-price-input{ /* uses .fixed-price-box class */ }
 /* Raport: gdy edytujemy cenę wewnątrz okienka (input w środku) – bez "2 ramek" */
 #raport-overlay .item-price-total.editable-total{ position: relative; }
 #raport-overlay .item-price-total.editable-total .item-price-input.kalk-price-edit{
@@ -661,17 +643,17 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
    - zwykły tekst (bez editable-total) może być "goły"
    - editable-total MUSI mieć czarne okienko (edytowalne kliknięciem) */
 #kalkulator-overlay .item-price-input{
-  border: none !important;
-  background: transparent !important;
-  padding: 0 !important;
-  width: auto !important;
+  border: none;
+  background: transparent;
+  padding: 0;
+  width: auto;
   min-width: 52px;
 }
 #kalkulator-overlay .item-price-total:not(.editable-total){
-  border: none !important;
-  background: transparent !important;
-  padding: 0 !important;
-  width: auto !important;
+  border: none;
+  background: transparent;
+  padding: 0;
+  width: auto;
   min-width: 52px;
 }
 /* Kalkulator: stałe okienko ceny (3 cyfry, duże) */
@@ -680,13 +662,13 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
   align-items: center;
   justify-content: flex-end;
   box-sizing: border-box;
-  width: 70px !important;      /* ~3 cyfry */
-  min-width: 70px !important;
+  width: 70px;
+  min-width: 70px;
   height: 32px;
-  border: 1px solid rgba(255,255,255,0.14) !important;
-  background: #000 !important;
-  border-radius: 10px !important;
-  padding: 6px 10px !important;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: #000;
+  border-radius: 10px;
+  padding: 6px 10px;
   font-size: 20px;
   font-weight: 700;
   color: #fff;
@@ -1001,12 +983,10 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
 .kp-btn-num { padding:18px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;color:#fff;font-size:22px;font-weight:600;cursor:pointer; }
 .kp-btn-op  { padding:18px;background:#1e3a5f;border:1px solid var(--border2);border-radius:10px;color:#7ba8f5;font-size:22px;font-weight:700;cursor:pointer; }
 .overlay-full { display:none;position:fixed;inset:0;background:var(--bg);z-index:50;overflow-y:scroll;scrollbar-gutter:stable; }
-/* Modal danych nad menu start (100), inaczej z-index 50 mógł dawać dziwne warstwy na niektórych urządzeniach */
-#modal-overlay { z-index: 110; }
 #start-overlay::-webkit-scrollbar { display:none; }
 .overlay-full::-webkit-scrollbar { display:none; }
 .overlay-full { scrollbar-width:none; }
-.btn-close { margin-left:auto;background:#ef4444;border:1px solid #ef4444;border-radius:var(--radius-btn);padding:6px var(--btn-px);cursor:pointer;color:#fff;font-size:var(--btn-font);font-weight:var(--btn-weight);text-transform:uppercase; }
+.btn-close { margin-left:auto;background:var(--red-500);border:1px solid #ef4444;border-radius:var(--radius-btn);padding:6px var(--btn-px);cursor:pointer;color:#fff;font-size:var(--btn-font);font-weight:var(--btn-weight);text-transform:uppercase; }
 
 /* Historia: zakładki + wiersz wyszukiwania, lista */
 #history-overlay .app > div:nth-of-type(1){
@@ -1075,6 +1055,432 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
 
 /* hidden native select for form compat */
 select.native-sel { display: none !important; }
+
+/* ── Extended: reusable component classes ── */
+
+/* Main menu buttons (start-overlay) */
+.btn-main-menu{
+  margin-bottom:16px;
+  width:100%;
+  padding:16px 20px;
+  border:none;
+  border-radius:16px;
+  color:#fff;
+  font-size:22px;
+  font-weight:700;
+  cursor:pointer;
+  letter-spacing:.5px;
+  text-transform:uppercase;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:0;
+}
+.btn-main-menu .btn-icon{
+  flex:0 0 80px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.btn-main-menu .btn-label{
+  flex:1;
+  text-align:center;
+}
+.btn-main-menu .btn-spacer{
+  flex:0 0 80px;
+}
+.btn-main-dodaj{ background:linear-gradient(180deg,#1db954 0%,#16a34a 50%,#0f7a38 100%); }
+.btn-main-przegladaj{ background:linear-gradient(180deg,#3b82f6 0%,#2563eb 50%,#1a4fc4 100%); }
+.btn-main-wycena{ background:linear-gradient(180deg,#8b5cf6 0%,#6d28d9 50%,#521fa3 100%); }
+
+/* Secondary menu buttons */
+.btn-secondary-menu{
+  width:75%;
+  align-self:center;
+  padding:12px;
+  background:none;
+  border:1px solid var(--cyan-600);
+  border-radius:12px;
+  color:var(--cyan-300);
+  font-size:17px;
+  font-weight:600;
+  cursor:pointer;
+  letter-spacing:.4px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+}
+
+/* Overlay common patterns */
+.overlay-header{
+  display:flex;
+  justify-content:flex-end;
+  padding:8px 16px 0;
+}
+.overlay-header-between{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  padding:8px 16px 0;
+}
+.overlay-body-padded{
+  padding:16px 16px 40px;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+/* Modal action buttons (Anuluj / Zapisz / Generuj pattern) */
+.btn-action-red{
+  flex:1;
+  padding:12px;
+  background:var(--red-brand);
+  border:1px solid var(--red-brand);
+  border-radius:8px;
+  color:#fff;
+  font-size:14px;
+  font-weight:700;
+  cursor:pointer;
+}
+.btn-action-green{
+  flex:1;
+  padding:12px;
+  background:var(--green-600);
+  border:1px solid var(--green-600);
+  border-radius:8px;
+  color:#fff;
+  font-size:14px;
+  font-weight:700;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+.btn-action-indigo{
+  flex:1;
+  padding:12px;
+  background:var(--indigo-500);
+  border:1px solid var(--indigo-500);
+  border-radius:8px;
+  color:#fff;
+  font-size:14px;
+  font-weight:700;
+  cursor:pointer;
+}
+.btn-action-amber{
+  width:100%;
+  padding:12px;
+  background:var(--amber-500);
+  border:1px solid var(--amber-500);
+  border-radius:10px;
+  color:#111827;
+  font-size:14px;
+  font-weight:900;
+  cursor:pointer;
+}
+
+/* Card/banner common */
+.card-banner{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:12px 12px;
+}
+.card-banner-col{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:12px 12px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+/* Section label */
+.section-label{
+  font-size:11px;
+  font-weight:700;
+  color:var(--text3);
+  text-transform:uppercase;
+  letter-spacing:.5px;
+}
+
+/* Divider */
+.menu-divider{
+  width:100%;
+  height:1px;
+  background:var(--border);
+  margin:2px 0;
+}
+
+/* Validity button (kody rabatowe) */
+.btn-validity{
+  padding:8px 10px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  background:var(--bg);
+  color:#fff;
+  font-weight:900;
+  cursor:pointer;
+}
+
+/* Toggle section buttons (aktywne/wykorzystane kody) */
+.btn-toggle-section{
+  width:100%;
+  padding:12px;
+  border-radius:12px;
+  font-size:14px;
+  font-weight:900;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+.btn-toggle-active{
+  background:#052e1a;
+  border:1px solid var(--green-500);
+  color:var(--green-500);
+}
+.btn-toggle-used{
+  background:#2a0f0f;
+  border:1px solid var(--red-500);
+  color:var(--red-500);
+}
+
+/* Fixed price box – SINGLE SOURCE (was duplicated 3x) */
+.fixed-price-box{
+  box-sizing:border-box;
+  width:70px;
+  min-width:70px;
+  height:32px;
+  flex:0 0 70px;
+  flex-shrink:0;
+  border:1px solid rgba(255,255,255,0.14);
+  background:#000;
+  border-radius:10px;
+  padding:6px 10px;
+  font-size:20px;
+  font-weight:700;
+  color:#fff;
+  text-align:right;
+  outline:none;
+}
+
+/* Confirm modal pattern */
+.modal-close-x{
+  background:none;
+  border:none;
+  color:var(--red-500);
+  font-size:22px;
+  cursor:pointer;
+  line-height:1;
+  padding:0 4px;
+}
+
+/* Start overlay */
+.start-overlay-inner{
+  max-width:560px;
+  width:100%;
+  margin:0 auto;
+  padding:16px 24px 20px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  min-height:100dvh;
+  justify-content:center;
+}
+.start-logo{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+  margin-bottom:10px;
+}
+.start-logo-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.start-logo-text{
+  font-size:36px;
+  font-weight:900;
+  color:var(--red-brand);
+  letter-spacing:2px;
+}
+
+/* Raport date modal common */
+.raport-date-modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:200;
+  background:rgba(0,0,0,0.8);
+  align-items:center;
+  justify-content:center;
+}
+
+/* ── Responsive: basic tablet/desktop adjustments ── */
+@media (min-width: 768px) {
+  .app { max-width: 680px; }
+  .btn-main-menu { padding: 18px 24px; font-size: 24px; }
+  .start-menu-btn { width: 65%; padding: 18px 20px; }
+  .history-item { padding: 12px 14px 12px 36px; }
+  .summary-card { margin: 0 12px 10px; }
+  .item-card { margin: 0 12px; }
+}
+@media (min-width: 1024px) {
+  .app { max-width: 720px; }
+}
+
+
+/* ── Moved from body: animations & menu styles ── */
+@keyframes blink-red { 0%,100%{opacity:1} 50%{opacity:0.2} }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes border-rotate {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 400% 50%; }
+}
+.history-item-urgent {
+  position: relative;
+  border-color: rgba(239,68,68,0.4) !important;
+}
+.history-item-urgent::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 12px;
+  padding: 2px;
+  background: conic-gradient(
+    from var(--angle, 0deg),
+    transparent 0deg,
+    transparent 260deg,
+    #ef4444 270deg,
+    #ff6b6b 280deg,
+    #ef4444 290deg,
+    transparent 300deg,
+    transparent 360deg
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: spin-border 7.5s linear infinite;
+  pointer-events: none;
+}
+.history-item-urgent-today {
+  position: relative;
+  border-color: rgba(239,68,68,0.6) !important;
+}
+.history-item-urgent-today::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 12px;
+  padding: 2px;
+  background: conic-gradient(
+    from var(--angle, 0deg),
+    transparent 0deg,
+    transparent 250deg,
+    #ef4444 260deg,
+    #ff6b6b 270deg,
+    #fff 280deg,
+    #ff6b6b 290deg,
+    #ef4444 300deg,
+    transparent 310deg,
+    transparent 360deg
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: spin-border 7.5s linear infinite;
+  pointer-events: none;
+}
+.history-item-urgent-today::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 12px;
+  padding: 2px;
+  background: conic-gradient(
+    from calc(var(--angle, 0deg) + 180deg),
+    transparent 0deg,
+    transparent 250deg,
+    #ef4444 260deg,
+    #ff6b6b 270deg,
+    #fff 280deg,
+    #ff6b6b 290deg,
+    #ef4444 300deg,
+    transparent 310deg,
+    transparent 360deg
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: spin-border 7.5s linear infinite;
+  pointer-events: none;
+}
+@property --angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+@keyframes spin-border {
+  to { --angle: 360deg; }
+}
+      .sync-dot-blink { animation: blink-red 0.9s ease-in-out infinite; }
+
+      /* Menu główne: stała kolumna na ikonę + równe odstępy */
+      .start-menu-btn{
+        width:75%;
+        align-self:center;
+        padding:16px 18px;
+        border:none;
+        border-radius:12px;
+        cursor:pointer;
+        letter-spacing:.4px;
+        display:flex;
+        align-items:center;
+        justify-content:flex-start; /* ikona bliżej krawędzi, tekst dalej */
+        gap:12px;
+      }
+      .start-menu-btn .smb-icon{
+        width:28px; /* stała kolumna: równe wyrównanie ikon */
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        flex:0 0 28px;
+      }
+      .start-menu-btn svg{ flex-shrink:0; }
+      .start-menu-btn .smb-text{
+        flex:1;
+        text-align:center;
+      }
+
+      /* Administracja modal: równe ikony jak w menu */
+      #admin-modal .admin-act-btn{
+        width:100%;
+        display:flex;
+        align-items:center;
+        justify-content:flex-start;
+        gap:14px;
+      }
+      #admin-modal .admin-act-btn .aab-icon{
+        width:28px;
+        flex:0 0 28px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+      }
+      #admin-modal .admin-act-btn .aab-text{
+        flex:1;
+        text-align:center;
+      }
 </style>
 </head>
 <body>
@@ -1228,188 +1634,44 @@ select.native-sel { display: none !important; }
 </div>
 
 <div id="start-overlay" style="display:flex;position:fixed;inset:0;background:var(--bg);z-index:100;overflow-y:auto;flex-direction:column;scrollbar-width:none;-ms-overflow-style:none;">
-  <div style="max-width:560px;width:100%;margin:0 auto;padding:16px 24px 20px;display:flex;flex-direction:column;gap:8px;min-height:100dvh;justify-content:center;">
+  <div class="start-overlay-inner">
 
-    <div style="display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:10px;">
-      <div style="display:flex;align-items:center;gap:10px;">
+    <div class="start-logo">
+      <div class="start-logo-row">
         <svg width="40" height="40" viewBox="0 0 24 24" fill="#c0392b" stroke="#c0392b" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-        <span style="font-size:36px;font-weight:900;color:#c0392b;letter-spacing:2px;">SERWIS</span>
+        <span class="start-logo-text">SERWIS</span>
       </div>
       <div id="main-sync-panel" style="width:75%;background:#0d0d14;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-top:4px;"></div>
     </div>
 
-    <button onclick="startNowe()" style="margin-bottom:16px;width:100%;padding:16px 20px;background:linear-gradient(180deg,#1db954 0%,#16a34a 50%,#0f7a38 100%);border:none;border-radius:16px;color:#fff;font-size:22px;font-weight:700;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:0;">
-      <span style="flex:0 0 80px;display:flex;align-items:center;justify-content:center;"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
-      <span style="flex:1;text-align:center;">DODAJ</span>
-      <span style="flex:0 0 80px;"></span>
+    <button onclick="startNowe()" class="btn-main-menu btn-main-dodaj">
+      <span class="btn-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+      <span class="btn-label">DODAJ</span>
+      <span class="btn-spacer"></span>
     </button>
-    <button onclick="startAktualne()" style="margin-bottom:16px;width:100%;padding:16px 20px;background:linear-gradient(180deg,#3b82f6 0%,#2563eb 50%,#1a4fc4 100%);border:none;border-radius:16px;color:#fff;font-size:22px;font-weight:700;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:0;">
-      <span style="flex:0 0 80px;display:flex;align-items:center;justify-content:center;"><svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>
-      <span style="flex:1;text-align:center;">PRZEGLĄDAJ</span>
-      <span style="flex:0 0 80px;"></span>
+    <button onclick="startAktualne()" class="btn-main-menu btn-main-przegladaj">
+      <span class="btn-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>
+      <span class="btn-label">PRZEGLĄDAJ</span>
+      <span class="btn-spacer"></span>
     </button>
-    <button onclick="startKalkulator()" style="margin-bottom:16px;width:100%;padding:16px 20px;background:linear-gradient(180deg,#8b5cf6 0%,#6d28d9 50%,#521fa3 100%);border:none;border-radius:16px;color:#fff;font-size:22px;font-weight:700;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:0;">
-      <span style="flex:0 0 80px;display:flex;align-items:center;justify-content:center;"><svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M4 2a1 1 0 0 0-1 1v18l3-2 3 2 3-2 3 2 3-2V3a1 1 0 0 0-1-1H4zm2 5h8a1 1 0 0 1 0 2H6a1 1 0 0 1 0-2zm0 4h8a1 1 0 0 1 0 2H6a1 1 0 0 1 0-2zm0 4h5a1 1 0 0 1 0 2H6a1 1 0 0 1 0-2z"/></svg></span>
-      <span style="flex:1;text-align:center;">WYCENA</span>
-      <span style="flex:0 0 80px;"></span>
+    <button onclick="startKalkulator()" class="btn-main-menu btn-main-wycena">
+      <span class="btn-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M4 2a1 1 0 0 0-1 1v18l3-2 3 2 3-2 3 2 3-2V3a1 1 0 0 0-1-1H4zm2 5h8a1 1 0 0 1 0 2H6a1 1 0 0 1 0-2zm0 4h8a1 1 0 0 1 0 2H6a1 1 0 0 1 0-2zm0 4h5a1 1 0 0 1 0 2H6a1 1 0 0 1 0-2z"/></svg></span>
+      <span class="btn-label">WYCENA</span>
+      <span class="btn-spacer"></span>
     </button>
-    <div style="width:100%;height:1px;background:var(--border);margin:2px 0;"></div>
-    <button onclick="startLancuch()" style="width:75%;align-self:center;padding:12px;background:none;border:1px solid #0891b2;border-radius:12px;color:#67e8f9;font-size:17px;font-weight:600;cursor:pointer;letter-spacing:.4px;display:flex;align-items:center;justify-content:center;gap:12px;">
+    <div class="menu-divider"></div>
+    <button onclick="startLancuch()" class="btn-secondary-menu">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
       Łańcuch
     </button>
-    <button onclick="startKalkulatorProsty()" style="width:75%;align-self:center;padding:12px;background:none;border:1px solid #0891b2;border-radius:12px;color:#67e8f9;font-size:17px;font-weight:600;cursor:pointer;letter-spacing:.4px;display:flex;align-items:center;justify-content:center;gap:12px;">
+    <button onclick="startKalkulatorProsty()" class="btn-secondary-menu">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" stroke="#0891b2" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><rect x="7" y="7" width="4" height="2" rx="0.5" fill="#0e7490"/><rect x="13" y="7" width="4" height="2" rx="0.5" fill="#0e7490"/><rect x="7" y="11" width="4" height="2" rx="0.5" fill="#0e7490"/><rect x="13" y="11" width="4" height="2" rx="0.5" fill="#0e7490"/><rect x="7" y="15" width="4" height="2" rx="0.5" fill="#0e7490"/><rect x="13" y="15" width="4" height="4" rx="0.5" fill="#0e7490"/></svg>
       Kalkulator
     </button>
 
-    <div style="width:100%;height:1px;background:var(--border);margin:2px 0;"></div>
+    <div class="menu-divider"></div>
 
-    <style>
-      @keyframes blink-red { 0%,100%{opacity:1} 50%{opacity:0.2} }
-@keyframes spin { to { transform: rotate(360deg); } }
-@keyframes border-rotate {
-  0%   { background-position: 0% 50%; }
-  100% { background-position: 400% 50%; }
-}
-.history-item-urgent {
-  position: relative;
-  border-color: rgba(239,68,68,0.4) !important;
-}
-.history-item-urgent::before {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  border-radius: 12px;
-  padding: 2px;
-  background: conic-gradient(
-    from var(--angle, 0deg),
-    transparent 0deg,
-    transparent 260deg,
-    #ef4444 270deg,
-    #ff6b6b 280deg,
-    #ef4444 290deg,
-    transparent 300deg,
-    transparent 360deg
-  );
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  animation: spin-border 7.5s linear infinite;
-  pointer-events: none;
-}
-.history-item-urgent-today {
-  position: relative;
-  border-color: rgba(239,68,68,0.6) !important;
-}
-.history-item-urgent-today::before {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  border-radius: 12px;
-  padding: 2px;
-  background: conic-gradient(
-    from var(--angle, 0deg),
-    transparent 0deg,
-    transparent 250deg,
-    #ef4444 260deg,
-    #ff6b6b 270deg,
-    #fff 280deg,
-    #ff6b6b 290deg,
-    #ef4444 300deg,
-    transparent 310deg,
-    transparent 360deg
-  );
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  animation: spin-border 7.5s linear infinite;
-  pointer-events: none;
-}
-.history-item-urgent-today::after {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  border-radius: 12px;
-  padding: 2px;
-  background: conic-gradient(
-    from calc(var(--angle, 0deg) + 180deg),
-    transparent 0deg,
-    transparent 250deg,
-    #ef4444 260deg,
-    #ff6b6b 270deg,
-    #fff 280deg,
-    #ff6b6b 290deg,
-    #ef4444 300deg,
-    transparent 310deg,
-    transparent 360deg
-  );
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  animation: spin-border 7.5s linear infinite;
-  pointer-events: none;
-}
-@property --angle {
-  syntax: '<angle>';
-  initial-value: 0deg;
-  inherits: false;
-}
-@keyframes spin-border {
-  to { --angle: 360deg; }
-}
-      .sync-dot-blink { animation: blink-red 0.9s ease-in-out infinite; }
-
-      /* Menu główne: stała kolumna na ikonę + równe odstępy */
-      .start-menu-btn{
-        width:75%;
-        align-self:center;
-        padding:16px 18px;
-        border:none;
-        border-radius:12px;
-        cursor:pointer;
-        letter-spacing:.4px;
-        display:flex;
-        align-items:center;
-        justify-content:flex-start; /* ikona bliżej krawędzi, tekst dalej */
-        gap:12px;
-      }
-      .start-menu-btn .smb-icon{
-        width:28px; /* stała kolumna: równe wyrównanie ikon */
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        flex:0 0 28px;
-      }
-      .start-menu-btn svg{ flex-shrink:0; }
-      .start-menu-btn .smb-text{
-        flex:1;
-        text-align:center;
-      }
-
-      /* Administracja modal: równe ikony jak w menu */
-      #admin-modal .admin-act-btn{
-        width:100%;
-        display:flex;
-        align-items:center;
-        justify-content:flex-start;
-        gap:14px;
-      }
-      #admin-modal .admin-act-btn .aab-icon{
-        width:28px;
-        flex:0 0 28px;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-      }
-      #admin-modal .admin-act-btn .aab-text{
-        flex:1;
-        text-align:center;
-      }
-    </style>
+    
 
     <button onclick="openKodyRabatowe()" class="start-menu-btn" style="background:#f59e0b;color:#111827;font-size:17px;font-weight:800;">
       <span class="smb-icon">
@@ -1933,21 +2195,6 @@ function _appVerLabel() {
 function lockBody()   { document.body.classList.add('overlay-open'); }
 function unlockBody() { document.body.classList.remove('overlay-open'); }
 
-// Po zamknięciu modala pełnoekranowego mobilna przeglądarka często wysyła „ghost click”
-// w to samo miejsce — trafiało w „ZAPISZ” (saveWycena → openHistory). Chwilowo blokujemy tylko pasek z ZAPISZ.
-let _summaryPointerGuardTimer = null;
-function armSummaryPointerGuard(ms) {
-  const el = $('summary-card-main');
-  if (!el) return;
-  const dur = ms || 450;
-  clearTimeout(_summaryPointerGuardTimer);
-  el.style.pointerEvents = 'none';
-  _summaryPointerGuardTimer = setTimeout(() => {
-    el.style.pointerEvents = '';
-    _summaryPointerGuardTimer = null;
-  }, dur);
-}
-
 // Auto lock/unlock body scroll gdy jakikolwiek overlay jest widoczny
 function updateBodyLock() {
   const overlayIds = ['raport-overlay','podglad-overlay','history-overlay',
@@ -2340,13 +2587,6 @@ let _saveDebounceTimer = null;
 function save() {
   clearTimeout(_saveDebounceTimer);
   _saveDebounceTimer = setTimeout(_doSave, 250);
-}
-
-/** Zapis natychmiastowy (bez debounce) — używaj przed odczytem wycena-v2 z dysku, np. saveWycena(). */
-function flushSave() {
-  clearTimeout(_saveDebounceTimer);
-  _saveDebounceTimer = null;
-  _doSave();
 }
 
 // ── Odczyt z localStorage ──
@@ -4025,10 +4265,6 @@ window.handlePhotos = handlePhotos;
 window.removePhoto = removePhoto;
 
 // ─────────────────────────────────────────
-// CLOCK
-// ─────────────────────────────────────────
-
-// ─────────────────────────────────────────
 // BOOT
 // ─────────────────────────────────────────
 if (!load()) {
@@ -4080,7 +4316,6 @@ if (savedPhotos) {
 
 window.addEventListener('beforeunload', e => {
   if (sessionStorage.getItem('allow-reload')) return;
-  try { flushSave(); } catch (_) {}
   e.preventDefault();
   e.returnValue = '';
 });
@@ -5388,7 +5623,6 @@ function getHistory() {
 
 // ── Zapis zlecenia do historii ──
 function saveWycena() {
-  flushSave();
   const total = $('total-display').textContent;
   const marka  = $('cf-marka').value.trim();
   const model  = $('cf-model').value.trim();
@@ -5750,7 +5984,7 @@ function renderHistory(filterTel) {
 
 function loadWycena(id) {
   const hist = getHistory();
-  const entry = hist.find(e => String(e.id) === String(id));
+  const entry = hist.find(e => e.id === id);
   if (!entry || !entry.state) return;
 
   // Wstrzyknij nowe pola do state jeśli ich tam nie ma
@@ -7250,8 +7484,7 @@ function closeModal() {
   $('modal-overlay').style.display = 'none';
   $('start-overlay').style.display = 'none';
   updateClientInfoBar();
-  flushSave();
-  armSummaryPointerGuard(450);
+  save();
 }
 function closeModalOutside(e) {
   if (e.target === $('modal-overlay')) {
@@ -7531,6 +7764,7 @@ function buildRaportLocalItems(st, entry, filterEbikeItems) {
     name: canonicalName(it.name), price: it.price, checked: it.checked,
     qty: it.qty, selectedPreset: it.selectedPreset ?? -1,
     customName: it.customName ?? '', customLabel: it.customLabel || undefined,
+    selectedOptions: it.selectedOptions || [],
     noteText: it.noteText || '',
     options: findDefault(it.name)?.options?.map(x => ({...x})),
     presets: findDefault(it.name)?.presets?.map(x => ({...x})),
@@ -7647,7 +7881,7 @@ function renderRaportEditor(entry, st, cfg) {
 function openRaport(id) {
   raportEntryId = id;
   const hist = getHistory();
-  const entry = hist.find(e => String(e.id) === String(id));
+  const entry = hist.find(e => e.id === id);
   if (!entry || !entry.state) { alert('Brak danych zlecenia'); return; }
 
   // Zapamiętaj do której zakładki wrócić
@@ -7691,6 +7925,7 @@ function saveRaportKoncowy() {
     qty: it.qty,
     selectedPreset: it.selectedPreset ?? -1,
     customLabel: it.customLabel || undefined,
+    selectedOptions: it.selectedOptions || undefined,
     noteText: it.noteText || '',
   }));
 
@@ -7725,7 +7960,7 @@ function saveRaportKoncowy() {
   let saved = false;
   for (let i = 0; i < ARCHIVE_SEARCHED.length; i++) {
     const list = ARCHIVE_SEARCHED[i];
-    const idx = list.findIndex(e => String(e.id) === String(raportEntryId));
+    const idx = list.findIndex(e => e.id === raportEntryId);
     if (idx >= 0) {
       // Generuj kod odbioru jeśli jeszcze nie ma
       const kodOdbioru = list[idx].kodOdbioru || String(Math.floor(10000 + Math.random() * 90000));
@@ -7861,7 +8096,7 @@ function openPodglad(entry) {
 
 function openPodgladDoWydania(id, showWydajBtn) {
   const hist = getHistory();
-  const entry = hist.find(e => String(e.id) === String(id));
+  const entry = hist.find(e => e.id === id);
   if (!entry) { alert('Brak danych zlecenia'); return; }
   if (!entry.raportKoncowy) { alert('Brak raportu końcowego'); return; }
   raportReturnTab = 'wydanie';
@@ -7877,7 +8112,7 @@ window.openPodgladDoWydania = openPodgladDoWydania;
 
 function wydajBezKwoty(id) {
   const hist = getHistory();
-  const idx = hist.findIndex(e => String(e.id) === String(id));
+  const idx = hist.findIndex(e => e.id === id);
   if (idx < 0) return;
   const src = hist[idx];
   const entry = {
@@ -8342,7 +8577,7 @@ window.generujPodsumowaniePDF = generujPodsumowaniePDF;
 
 function openPodgladZlecenia(id) {
   const hist = getHistory();
-  const entry = hist.find(e => String(e.id) === String(id));
+  const entry = hist.find(e => e.id === id);
   if (!entry || !entry.state) { alert('Brak danych zlecenia'); return; }
 
   const st = safeParseJSON(entry.state, null);
@@ -8428,7 +8663,7 @@ function openRaportEdycja(id) {
   raportReturnTab = 'wydanie';
 
   const hist = getHistory();
-  const entry = hist.find(e => String(e.id) === String(id));
+  const entry = hist.find(e => e.id === id);
   if (!entry) { alert('Brak danych zlecenia'); return; }
 
   // Użyj danych z raportu końcowego (jeśli istnieje), inaczej z oryginalnego stanu
@@ -8846,13 +9081,7 @@ try { if (typeof purgExpiredKosz === 'function') purgExpiredKosz(); } catch(e) {
 // ─────────────────────────────────────────
 let euroRate = null; // current fetched rate
 
-function openEuroPanel() {
-  // no-op — euro section is now inline in the calculator
-}
-
-function closeEuroPanel() {
-  // no-op — euro section is now inline in the calculator
-}
+/* openEuroPanel/closeEuroPanel removed — no-op dead code */
 
 function initEuroSection() {
   // Set today's date as default when calculator opens
@@ -8940,8 +9169,7 @@ function euroConvert(direction) {
   }
 }
 
-window.openEuroPanel  = openEuroPanel;
-window.closeEuroPanel = closeEuroPanel;
+/* openEuroPanel/closeEuroPanel were no-op — exports removed */
 window.fetchEuroRate  = fetchEuroRate;
 window.euroConvert    = euroConvert;
 
@@ -9276,18 +9504,18 @@ window.cselSetValue = cselSetValue;
 
 <script>
 function ghModalClose() {
-  var m = document.getElementById('github-update-modal');
+  const m = document.getElementById('github-update-modal');
   if (m) m.remove();
 }
 
 function otworzGithubUpdate() {
-  var old = document.getElementById('github-update-modal');
+  const old = document.getElementById('github-update-modal');
   if (old) old.remove();
 
-  var token = localStorage.getItem('gh_token') || '';
-  var repo  = localStorage.getItem('gh_repo')  || '';
+  const token = localStorage.getItem('gh_token') || '';
+  const repo  = localStorage.getItem('gh_repo')  || '';
 
-  var overlay = document.createElement('div');
+  const overlay = document.createElement('div');
   overlay.id = 'github-update-modal';
   overlay.style.cssText = 'position:fixed;inset:0;z-index:1100;background:rgba(0,0,0,0.88);display:flex;align-items:center;justify-content:center;';
   overlay.innerHTML = `
@@ -9343,9 +9571,9 @@ function otworzGithubUpdate() {
 
   // Podgląd nazwy pliku po wyborze
   document.getElementById('gh-file-input').addEventListener('change', function() {
-    var f = this.files[0];
-    var nameEl = document.getElementById('gh-file-name');
-    var labelEl = document.getElementById('gh-file-label');
+    const f = this.files[0];
+    const nameEl = document.getElementById('gh-file-name');
+    const labelEl = document.getElementById('gh-file-label');
     if (f) {
       // Niezależnie od nazwy pliku, aktualizacja zawsze idzie do index.html
       nameEl.textContent = 'index.html';
@@ -9363,14 +9591,14 @@ function otworzGithubUpdate() {
   document.getElementById('gh-cancel-btn').onclick = ghModalClose;
   document.getElementById('gh-upload-btn').onclick = githubUpdate;
   document.getElementById('gh-eye-btn').onclick = function() {
-    var i = document.getElementById('gh-token-input');
+    const i = document.getElementById('gh-token-input');
     i.type = i.type === 'password' ? 'text' : 'password';
   };
   overlay.addEventListener('click', function(e) { if (e.target === overlay) ghModalClose(); });
 }
 
 function ghStatus(msg, type) {
-  var s = document.getElementById('gh-status');
+  const s = document.getElementById('gh-status');
   if (!s) return;
   s.style.display = 'block';
   s.textContent = msg;
@@ -9381,17 +9609,17 @@ function ghStatus(msg, type) {
 
 // ── Auto-update GitHub ──
 async function githubUpdate() {
-  var token = (document.getElementById('gh-token-input') || {value:''}).value.trim();
-  var repo  = (document.getElementById('gh-repo-input')  || {value:''}).value.trim().replace(/^https?:\/\/github\.com\//,'').replace(/\/$/,'');
-  var fileInput = document.getElementById('gh-file-input');
-  var file = fileInput && fileInput.files[0];
+  const token = (document.getElementById('gh-token-input') || {value:''}).value.trim();
+  const repo  = (document.getElementById('gh-repo-input')  || {value:''}).value.trim().replace(/^https?:\/\/github\.com\//,'').replace(/\/$/,'');
+  const fileInput = document.getElementById('gh-file-input');
+  const file = fileInput && fileInput.files[0];
 
   if (!token) { ghStatus('⚠️ Wpisz Token!', 'err'); return; }
   if (!repo || !repo.includes('/')) { ghStatus('⚠️ Wpisz repo: user/nazwa', 'err'); return; }
   if (!file) { ghStatus('⚠️ Wybierz plik HTML!', 'err'); return; }
   if (!/\.html$/i.test(file.name || '')) { ghStatus('⚠️ Plik musi mieć rozszerzenie .html', 'err'); return; }
 
-  var saveEl = document.getElementById('gh-save');
+  const saveEl = document.getElementById('gh-save');
   if (saveEl && saveEl.checked) {
     localStorage.setItem('gh_token', token);
     localStorage.setItem('gh_repo',  repo);
@@ -9400,38 +9628,38 @@ async function githubUpdate() {
     localStorage.removeItem('gh_repo');
   }
 
-  var btn = document.getElementById('gh-upload-btn');
+  const btn = document.getElementById('gh-upload-btn');
   if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; }
 
   // Zawsze publikujemy jako index.html (nazwa lokalnego pliku nie ma znaczenia)
-  var apiUrl = 'https://api.github.com/repos/' + repo + '/contents/index.html';
-  var headers = { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' };
+  const apiUrl = 'https://api.github.com/repos/' + repo + '/contents/index.html';
+  const headers = { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' };
 
   try {
     ghStatus('🔍 Pobieranie SHA…', 'info');
-    var getRes = await fetch(apiUrl, { headers: headers });
-    var sha = null;
+    const getRes = await fetch(apiUrl, { headers: headers });
+    let sha = null;
     if (getRes.status === 200) { sha = (await getRes.json()).sha; }
     else if (getRes.status === 401) { throw new Error('Nieprawidłowy token GitHub.'); }
     else if (getRes.status !== 404) { throw new Error('GitHub API: HTTP ' + getRes.status); }
 
     ghStatus('📄 Wczytywanie pliku…', 'info');
-    var html = await new Promise(function(resolve, reject) {
-      var reader = new FileReader();
+    const html = await new Promise(function(resolve, reject) {
+      const reader = new FileReader();
       reader.onload = function(e) { resolve(e.target.result); };
       reader.onerror = function() { reject(new Error('Błąd odczytu pliku')); };
       reader.readAsText(file, 'UTF-8');
     });
 
     ghStatus('⬆️ Wysyłanie…', 'info');
-    var body = {
+    const body = {
       message: 'Update App ' + new Date().toLocaleString('pl-PL'),
       content: btoa(unescape(encodeURIComponent(html))),
       branch:  'main'
     };
     if (sha) body.sha = sha;
-    var putRes = await fetch(apiUrl, { method: 'PUT', headers: headers, body: JSON.stringify(body) });
-    if (!putRes.ok) { var e = await putRes.json(); throw new Error(e.message || 'HTTP ' + putRes.status); }
+    const putRes = await fetch(apiUrl, { method: 'PUT', headers: headers, body: JSON.stringify(body) });
+    if (!putRes.ok) { const e = await putRes.json(); throw new Error(e.message || 'HTTP ' + putRes.status); }
 
     // Zapisz datę kliknięcia
     localStorage.setItem('gh_last_update', new Date().toISOString());
