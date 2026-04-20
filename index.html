@@ -4,9 +4,8 @@
 <meta charset="UTF-8">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SERWIS</title>
-<meta name="description" content="Aplikacja serwisowa – zarządzanie zleceniami napraw rowerów, wyceny, raporty.">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <meta name="theme-color" content="#0a0a0f">
 <meta name="mobile-web-app-capable" content="yes">
@@ -38,20 +37,6 @@
   --btn-weight: 700;
   --typo-weight: 600;
   --typo-tracking: 0.01em;
-  /* Extended palette */
-  --red-500: #ef4444;
-  --red-700: #7f1d1d;
-  --red-brand: #c0392b;
-  --green-500: #22c55e;
-  --green-600: #16a34a;
-  --green-700: #15803d;
-  --green-900: #14532d;
-  --amber-500: #f59e0b;
-  --purple-400: #a78bfa;
-  --purple-600: #7c3aed;
-  --indigo-500: #6366f1;
-  --cyan-600: #0891b2;
-  --cyan-300: #67e8f9;
 }
 
 body {
@@ -119,7 +104,7 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
   color:#111827;
   box-shadow: 0 0 0 2px rgba(255,255,255,0.04) inset;
 }
-#tab-historia.order-tab.active{ background:var(--red-500); border-color:var(--red-500); }
+#tab-historia.order-tab.active{ background:#ef4444; border-color:#ef4444; }
 #tab-wydanie.order-tab.active{ background:#22c55e; border-color:#22c55e; }
 #tab-archiwum.order-tab.active{ background:#a78bfa; border-color:#a78bfa; }
 
@@ -216,7 +201,7 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
 .summary-total { font-size: 40px; font-weight: 800; color: #fff; letter-spacing: -1.5px; line-height: 1.05; transition: color 0.4s; text-align: center; }
 #summary-card-main .summary-total { text-align: right; }
 .summary-total.flash-up { color: #22c55e; }
-.summary-total.flash-down { color: var(--red-500); }
+.summary-total.flash-down { color: #ef4444; }
 .btn-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; width: 100%; }
 .summary-date { font-size: 11px; color: var(--text2); line-height: 1.6; text-align: center; }
 
@@ -418,7 +403,7 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
 .qty-btn:hover { background: var(--border); }
 .qty-btn:active { background: var(--border2); }
 .qty-btn.plus { color: #fff; border-color: #14532d; }
-.qty-btn.minus { color: var(--red-500); border-color: #7f1d1d; }
+.qty-btn.minus { color: #ef4444; border-color: #7f1d1d; }
 .qty-val { font-size: 15px; font-weight: 700; color: #fff; min-width: 24px; text-align: center; }
 
 /* Preset select */
@@ -613,9 +598,42 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
 #raport-overlay .card-row{ gap: 6px; }
 
 
-/* Fixed-price-box: moved to unified class below */
+/* Stałe okienko ceny (raport + dodaj części) */
+.fixed-price-box{
+  box-sizing: border-box;
+  width: 70px !important;
+  min-width: 70px !important;
+  height: 32px !important;
+  flex: 0 0 70px !important;
+  flex-shrink: 0 !important;
+  border: 1px solid rgba(255,255,255,0.14) !important;
+  background: #000 !important;
+  border-radius: 10px !important;
+  padding: 6px 10px !important;
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  color: #fff !important;
+  text-align: right !important;
+  outline: none;
+}
 #raport-overlay .item-price-input,
-#add-parts-banner .item-price-input{ /* uses .fixed-price-box class */ }
+#add-parts-banner .item-price-input{
+  box-sizing: border-box;
+  width: 70px !important;
+  min-width: 70px !important;
+  height: 32px !important;
+  flex: 0 0 70px !important;
+  flex-shrink: 0 !important;
+  border: 1px solid rgba(255,255,255,0.14) !important;
+  background: #000 !important;
+  border-radius: 10px !important;
+  padding: 6px 10px !important;
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  color: #fff !important;
+  text-align: right !important;
+  outline: none;
+}
 /* Raport: gdy edytujemy cenę wewnątrz okienka (input w środku) – bez "2 ramek" */
 #raport-overlay .item-price-total.editable-total{ position: relative; }
 #raport-overlay .item-price-total.editable-total .item-price-input.kalk-price-edit{
@@ -643,17 +661,17 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
    - zwykły tekst (bez editable-total) może być "goły"
    - editable-total MUSI mieć czarne okienko (edytowalne kliknięciem) */
 #kalkulator-overlay .item-price-input{
-  border: none;
-  background: transparent;
-  padding: 0;
-  width: auto;
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  width: auto !important;
   min-width: 52px;
 }
 #kalkulator-overlay .item-price-total:not(.editable-total){
-  border: none;
-  background: transparent;
-  padding: 0;
-  width: auto;
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  width: auto !important;
   min-width: 52px;
 }
 /* Kalkulator: stałe okienko ceny (3 cyfry, duże) */
@@ -662,13 +680,13 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
   align-items: center;
   justify-content: flex-end;
   box-sizing: border-box;
-  width: 70px;
-  min-width: 70px;
+  width: 70px !important;      /* ~3 cyfry */
+  min-width: 70px !important;
   height: 32px;
-  border: 1px solid rgba(255,255,255,0.14);
-  background: #000;
-  border-radius: 10px;
-  padding: 6px 10px;
+  border: 1px solid rgba(255,255,255,0.14) !important;
+  background: #000 !important;
+  border-radius: 10px !important;
+  padding: 6px 10px !important;
   font-size: 20px;
   font-weight: 700;
   color: #fff;
@@ -986,7 +1004,7 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
 #start-overlay::-webkit-scrollbar { display:none; }
 .overlay-full::-webkit-scrollbar { display:none; }
 .overlay-full { scrollbar-width:none; }
-.btn-close { margin-left:auto;background:var(--red-500);border:1px solid #ef4444;border-radius:var(--radius-btn);padding:6px var(--btn-px);cursor:pointer;color:#fff;font-size:var(--btn-font);font-weight:var(--btn-weight);text-transform:uppercase; }
+.btn-close { margin-left:auto;background:#ef4444;border:1px solid #ef4444;border-radius:var(--radius-btn);padding:6px var(--btn-px);cursor:pointer;color:#fff;font-size:var(--btn-font);font-weight:var(--btn-weight);text-transform:uppercase; }
 
 /* Historia: zakładki + wiersz wyszukiwania, lista */
 #history-overlay .app > div:nth-of-type(1){
@@ -1055,432 +1073,6 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
 
 /* hidden native select for form compat */
 select.native-sel { display: none !important; }
-
-/* ── Extended: reusable component classes ── */
-
-/* Main menu buttons (start-overlay) */
-.btn-main-menu{
-  margin-bottom:16px;
-  width:100%;
-  padding:16px 20px;
-  border:none;
-  border-radius:16px;
-  color:#fff;
-  font-size:22px;
-  font-weight:700;
-  cursor:pointer;
-  letter-spacing:.5px;
-  text-transform:uppercase;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:0;
-}
-.btn-main-menu .btn-icon{
-  flex:0 0 80px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-.btn-main-menu .btn-label{
-  flex:1;
-  text-align:center;
-}
-.btn-main-menu .btn-spacer{
-  flex:0 0 80px;
-}
-.btn-main-dodaj{ background:linear-gradient(180deg,#1db954 0%,#16a34a 50%,#0f7a38 100%); }
-.btn-main-przegladaj{ background:linear-gradient(180deg,#3b82f6 0%,#2563eb 50%,#1a4fc4 100%); }
-.btn-main-wycena{ background:linear-gradient(180deg,#8b5cf6 0%,#6d28d9 50%,#521fa3 100%); }
-
-/* Secondary menu buttons */
-.btn-secondary-menu{
-  width:75%;
-  align-self:center;
-  padding:12px;
-  background:none;
-  border:1px solid var(--cyan-600);
-  border-radius:12px;
-  color:var(--cyan-300);
-  font-size:17px;
-  font-weight:600;
-  cursor:pointer;
-  letter-spacing:.4px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:12px;
-}
-
-/* Overlay common patterns */
-.overlay-header{
-  display:flex;
-  justify-content:flex-end;
-  padding:8px 16px 0;
-}
-.overlay-header-between{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-  padding:8px 16px 0;
-}
-.overlay-body-padded{
-  padding:16px 16px 40px;
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-}
-
-/* Modal action buttons (Anuluj / Zapisz / Generuj pattern) */
-.btn-action-red{
-  flex:1;
-  padding:12px;
-  background:var(--red-brand);
-  border:1px solid var(--red-brand);
-  border-radius:8px;
-  color:#fff;
-  font-size:14px;
-  font-weight:700;
-  cursor:pointer;
-}
-.btn-action-green{
-  flex:1;
-  padding:12px;
-  background:var(--green-600);
-  border:1px solid var(--green-600);
-  border-radius:8px;
-  color:#fff;
-  font-size:14px;
-  font-weight:700;
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-}
-.btn-action-indigo{
-  flex:1;
-  padding:12px;
-  background:var(--indigo-500);
-  border:1px solid var(--indigo-500);
-  border-radius:8px;
-  color:#fff;
-  font-size:14px;
-  font-weight:700;
-  cursor:pointer;
-}
-.btn-action-amber{
-  width:100%;
-  padding:12px;
-  background:var(--amber-500);
-  border:1px solid var(--amber-500);
-  border-radius:10px;
-  color:#111827;
-  font-size:14px;
-  font-weight:900;
-  cursor:pointer;
-}
-
-/* Card/banner common */
-.card-banner{
-  background:var(--bg2);
-  border:1px solid var(--border);
-  border-radius:14px;
-  padding:12px 12px;
-}
-.card-banner-col{
-  background:var(--bg2);
-  border:1px solid var(--border);
-  border-radius:14px;
-  padding:12px 12px;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-
-/* Section label */
-.section-label{
-  font-size:11px;
-  font-weight:700;
-  color:var(--text3);
-  text-transform:uppercase;
-  letter-spacing:.5px;
-}
-
-/* Divider */
-.menu-divider{
-  width:100%;
-  height:1px;
-  background:var(--border);
-  margin:2px 0;
-}
-
-/* Validity button (kody rabatowe) */
-.btn-validity{
-  padding:8px 10px;
-  border-radius:10px;
-  border:1px solid var(--border);
-  background:var(--bg);
-  color:#fff;
-  font-weight:900;
-  cursor:pointer;
-}
-
-/* Toggle section buttons (aktywne/wykorzystane kody) */
-.btn-toggle-section{
-  width:100%;
-  padding:12px;
-  border-radius:12px;
-  font-size:14px;
-  font-weight:900;
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-}
-.btn-toggle-active{
-  background:#052e1a;
-  border:1px solid var(--green-500);
-  color:var(--green-500);
-}
-.btn-toggle-used{
-  background:#2a0f0f;
-  border:1px solid var(--red-500);
-  color:var(--red-500);
-}
-
-/* Fixed price box – SINGLE SOURCE (was duplicated 3x) */
-.fixed-price-box{
-  box-sizing:border-box;
-  width:70px;
-  min-width:70px;
-  height:32px;
-  flex:0 0 70px;
-  flex-shrink:0;
-  border:1px solid rgba(255,255,255,0.14);
-  background:#000;
-  border-radius:10px;
-  padding:6px 10px;
-  font-size:20px;
-  font-weight:700;
-  color:#fff;
-  text-align:right;
-  outline:none;
-}
-
-/* Confirm modal pattern */
-.modal-close-x{
-  background:none;
-  border:none;
-  color:var(--red-500);
-  font-size:22px;
-  cursor:pointer;
-  line-height:1;
-  padding:0 4px;
-}
-
-/* Start overlay */
-.start-overlay-inner{
-  max-width:560px;
-  width:100%;
-  margin:0 auto;
-  padding:16px 24px 20px;
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-  min-height:100dvh;
-  justify-content:center;
-}
-.start-logo{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:6px;
-  margin-bottom:10px;
-}
-.start-logo-row{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-.start-logo-text{
-  font-size:36px;
-  font-weight:900;
-  color:var(--red-brand);
-  letter-spacing:2px;
-}
-
-/* Raport date modal common */
-.raport-date-modal{
-  display:none;
-  position:fixed;
-  inset:0;
-  z-index:200;
-  background:rgba(0,0,0,0.8);
-  align-items:center;
-  justify-content:center;
-}
-
-/* ── Responsive: basic tablet/desktop adjustments ── */
-@media (min-width: 768px) {
-  .app { max-width: 680px; }
-  .btn-main-menu { padding: 18px 24px; font-size: 24px; }
-  .start-menu-btn { width: 65%; padding: 18px 20px; }
-  .history-item { padding: 12px 14px 12px 36px; }
-  .summary-card { margin: 0 12px 10px; }
-  .item-card { margin: 0 12px; }
-}
-@media (min-width: 1024px) {
-  .app { max-width: 720px; }
-}
-
-
-/* ── Moved from body: animations & menu styles ── */
-@keyframes blink-red { 0%,100%{opacity:1} 50%{opacity:0.2} }
-@keyframes spin { to { transform: rotate(360deg); } }
-@keyframes border-rotate {
-  0%   { background-position: 0% 50%; }
-  100% { background-position: 400% 50%; }
-}
-.history-item-urgent {
-  position: relative;
-  border-color: rgba(239,68,68,0.4) !important;
-}
-.history-item-urgent::before {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  border-radius: 12px;
-  padding: 2px;
-  background: conic-gradient(
-    from var(--angle, 0deg),
-    transparent 0deg,
-    transparent 260deg,
-    #ef4444 270deg,
-    #ff6b6b 280deg,
-    #ef4444 290deg,
-    transparent 300deg,
-    transparent 360deg
-  );
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  animation: spin-border 7.5s linear infinite;
-  pointer-events: none;
-}
-.history-item-urgent-today {
-  position: relative;
-  border-color: rgba(239,68,68,0.6) !important;
-}
-.history-item-urgent-today::before {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  border-radius: 12px;
-  padding: 2px;
-  background: conic-gradient(
-    from var(--angle, 0deg),
-    transparent 0deg,
-    transparent 250deg,
-    #ef4444 260deg,
-    #ff6b6b 270deg,
-    #fff 280deg,
-    #ff6b6b 290deg,
-    #ef4444 300deg,
-    transparent 310deg,
-    transparent 360deg
-  );
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  animation: spin-border 7.5s linear infinite;
-  pointer-events: none;
-}
-.history-item-urgent-today::after {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  border-radius: 12px;
-  padding: 2px;
-  background: conic-gradient(
-    from calc(var(--angle, 0deg) + 180deg),
-    transparent 0deg,
-    transparent 250deg,
-    #ef4444 260deg,
-    #ff6b6b 270deg,
-    #fff 280deg,
-    #ff6b6b 290deg,
-    #ef4444 300deg,
-    transparent 310deg,
-    transparent 360deg
-  );
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  animation: spin-border 7.5s linear infinite;
-  pointer-events: none;
-}
-@property --angle {
-  syntax: '<angle>';
-  initial-value: 0deg;
-  inherits: false;
-}
-@keyframes spin-border {
-  to { --angle: 360deg; }
-}
-      .sync-dot-blink { animation: blink-red 0.9s ease-in-out infinite; }
-
-      /* Menu główne: stała kolumna na ikonę + równe odstępy */
-      .start-menu-btn{
-        width:75%;
-        align-self:center;
-        padding:16px 18px;
-        border:none;
-        border-radius:12px;
-        cursor:pointer;
-        letter-spacing:.4px;
-        display:flex;
-        align-items:center;
-        justify-content:flex-start; /* ikona bliżej krawędzi, tekst dalej */
-        gap:12px;
-      }
-      .start-menu-btn .smb-icon{
-        width:28px; /* stała kolumna: równe wyrównanie ikon */
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        flex:0 0 28px;
-      }
-      .start-menu-btn svg{ flex-shrink:0; }
-      .start-menu-btn .smb-text{
-        flex:1;
-        text-align:center;
-      }
-
-      /* Administracja modal: równe ikony jak w menu */
-      #admin-modal .admin-act-btn{
-        width:100%;
-        display:flex;
-        align-items:center;
-        justify-content:flex-start;
-        gap:14px;
-      }
-      #admin-modal .admin-act-btn .aab-icon{
-        width:28px;
-        flex:0 0 28px;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-      }
-      #admin-modal .admin-act-btn .aab-text{
-        flex:1;
-        text-align:center;
-      }
 </style>
 </head>
 <body>
@@ -1634,44 +1226,188 @@ select.native-sel { display: none !important; }
 </div>
 
 <div id="start-overlay" style="display:flex;position:fixed;inset:0;background:var(--bg);z-index:100;overflow-y:auto;flex-direction:column;scrollbar-width:none;-ms-overflow-style:none;">
-  <div class="start-overlay-inner">
+  <div style="max-width:560px;width:100%;margin:0 auto;padding:16px 24px 20px;display:flex;flex-direction:column;gap:8px;min-height:100dvh;justify-content:center;">
 
-    <div class="start-logo">
-      <div class="start-logo-row">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:10px;">
+      <div style="display:flex;align-items:center;gap:10px;">
         <svg width="40" height="40" viewBox="0 0 24 24" fill="#c0392b" stroke="#c0392b" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-        <span class="start-logo-text">SERWIS</span>
+        <span style="font-size:36px;font-weight:900;color:#c0392b;letter-spacing:2px;">SERWIS</span>
       </div>
       <div id="main-sync-panel" style="width:75%;background:#0d0d14;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-top:4px;"></div>
     </div>
 
-    <button onclick="startNowe()" class="btn-main-menu btn-main-dodaj">
-      <span class="btn-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
-      <span class="btn-label">DODAJ</span>
-      <span class="btn-spacer"></span>
+    <button onclick="startNowe()" style="margin-bottom:16px;width:100%;padding:16px 20px;background:linear-gradient(180deg,#1db954 0%,#16a34a 50%,#0f7a38 100%);border:none;border-radius:16px;color:#fff;font-size:22px;font-weight:700;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:0;">
+      <span style="flex:0 0 80px;display:flex;align-items:center;justify-content:center;"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+      <span style="flex:1;text-align:center;">DODAJ</span>
+      <span style="flex:0 0 80px;"></span>
     </button>
-    <button onclick="startAktualne()" class="btn-main-menu btn-main-przegladaj">
-      <span class="btn-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>
-      <span class="btn-label">PRZEGLĄDAJ</span>
-      <span class="btn-spacer"></span>
+    <button onclick="startAktualne()" style="margin-bottom:16px;width:100%;padding:16px 20px;background:linear-gradient(180deg,#3b82f6 0%,#2563eb 50%,#1a4fc4 100%);border:none;border-radius:16px;color:#fff;font-size:22px;font-weight:700;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:0;">
+      <span style="flex:0 0 80px;display:flex;align-items:center;justify-content:center;"><svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>
+      <span style="flex:1;text-align:center;">PRZEGLĄDAJ</span>
+      <span style="flex:0 0 80px;"></span>
     </button>
-    <button onclick="startKalkulator()" class="btn-main-menu btn-main-wycena">
-      <span class="btn-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M4 2a1 1 0 0 0-1 1v18l3-2 3 2 3-2 3 2 3-2V3a1 1 0 0 0-1-1H4zm2 5h8a1 1 0 0 1 0 2H6a1 1 0 0 1 0-2zm0 4h8a1 1 0 0 1 0 2H6a1 1 0 0 1 0-2zm0 4h5a1 1 0 0 1 0 2H6a1 1 0 0 1 0-2z"/></svg></span>
-      <span class="btn-label">WYCENA</span>
-      <span class="btn-spacer"></span>
+    <button onclick="startKalkulator()" style="margin-bottom:16px;width:100%;padding:16px 20px;background:linear-gradient(180deg,#8b5cf6 0%,#6d28d9 50%,#521fa3 100%);border:none;border-radius:16px;color:#fff;font-size:22px;font-weight:700;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:0;">
+      <span style="flex:0 0 80px;display:flex;align-items:center;justify-content:center;"><svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M4 2a1 1 0 0 0-1 1v18l3-2 3 2 3-2 3 2 3-2V3a1 1 0 0 0-1-1H4zm2 5h8a1 1 0 0 1 0 2H6a1 1 0 0 1 0-2zm0 4h8a1 1 0 0 1 0 2H6a1 1 0 0 1 0-2zm0 4h5a1 1 0 0 1 0 2H6a1 1 0 0 1 0-2z"/></svg></span>
+      <span style="flex:1;text-align:center;">WYCENA</span>
+      <span style="flex:0 0 80px;"></span>
     </button>
-    <div class="menu-divider"></div>
-    <button onclick="startLancuch()" class="btn-secondary-menu">
+    <div style="width:100%;height:1px;background:var(--border);margin:2px 0;"></div>
+    <button onclick="startLancuch()" style="width:75%;align-self:center;padding:12px;background:none;border:1px solid #0891b2;border-radius:12px;color:#67e8f9;font-size:17px;font-weight:600;cursor:pointer;letter-spacing:.4px;display:flex;align-items:center;justify-content:center;gap:12px;">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
       Łańcuch
     </button>
-    <button onclick="startKalkulatorProsty()" class="btn-secondary-menu">
+    <button onclick="startKalkulatorProsty()" style="width:75%;align-self:center;padding:12px;background:none;border:1px solid #0891b2;border-radius:12px;color:#67e8f9;font-size:17px;font-weight:600;cursor:pointer;letter-spacing:.4px;display:flex;align-items:center;justify-content:center;gap:12px;">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" stroke="#0891b2" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><rect x="7" y="7" width="4" height="2" rx="0.5" fill="#0e7490"/><rect x="13" y="7" width="4" height="2" rx="0.5" fill="#0e7490"/><rect x="7" y="11" width="4" height="2" rx="0.5" fill="#0e7490"/><rect x="13" y="11" width="4" height="2" rx="0.5" fill="#0e7490"/><rect x="7" y="15" width="4" height="2" rx="0.5" fill="#0e7490"/><rect x="13" y="15" width="4" height="4" rx="0.5" fill="#0e7490"/></svg>
       Kalkulator
     </button>
 
-    <div class="menu-divider"></div>
+    <div style="width:100%;height:1px;background:var(--border);margin:2px 0;"></div>
 
-    
+    <style>
+      @keyframes blink-red { 0%,100%{opacity:1} 50%{opacity:0.2} }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes border-rotate {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 400% 50%; }
+}
+.history-item-urgent {
+  position: relative;
+  border-color: rgba(239,68,68,0.4) !important;
+}
+.history-item-urgent::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 12px;
+  padding: 2px;
+  background: conic-gradient(
+    from var(--angle, 0deg),
+    transparent 0deg,
+    transparent 260deg,
+    #ef4444 270deg,
+    #ff6b6b 280deg,
+    #ef4444 290deg,
+    transparent 300deg,
+    transparent 360deg
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: spin-border 7.5s linear infinite;
+  pointer-events: none;
+}
+.history-item-urgent-today {
+  position: relative;
+  border-color: rgba(239,68,68,0.6) !important;
+}
+.history-item-urgent-today::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 12px;
+  padding: 2px;
+  background: conic-gradient(
+    from var(--angle, 0deg),
+    transparent 0deg,
+    transparent 250deg,
+    #ef4444 260deg,
+    #ff6b6b 270deg,
+    #fff 280deg,
+    #ff6b6b 290deg,
+    #ef4444 300deg,
+    transparent 310deg,
+    transparent 360deg
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: spin-border 7.5s linear infinite;
+  pointer-events: none;
+}
+.history-item-urgent-today::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 12px;
+  padding: 2px;
+  background: conic-gradient(
+    from calc(var(--angle, 0deg) + 180deg),
+    transparent 0deg,
+    transparent 250deg,
+    #ef4444 260deg,
+    #ff6b6b 270deg,
+    #fff 280deg,
+    #ff6b6b 290deg,
+    #ef4444 300deg,
+    transparent 310deg,
+    transparent 360deg
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: spin-border 7.5s linear infinite;
+  pointer-events: none;
+}
+@property --angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+@keyframes spin-border {
+  to { --angle: 360deg; }
+}
+      .sync-dot-blink { animation: blink-red 0.9s ease-in-out infinite; }
+
+      /* Menu główne: stała kolumna na ikonę + równe odstępy */
+      .start-menu-btn{
+        width:75%;
+        align-self:center;
+        padding:16px 18px;
+        border:none;
+        border-radius:12px;
+        cursor:pointer;
+        letter-spacing:.4px;
+        display:flex;
+        align-items:center;
+        justify-content:flex-start; /* ikona bliżej krawędzi, tekst dalej */
+        gap:12px;
+      }
+      .start-menu-btn .smb-icon{
+        width:28px; /* stała kolumna: równe wyrównanie ikon */
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        flex:0 0 28px;
+      }
+      .start-menu-btn svg{ flex-shrink:0; }
+      .start-menu-btn .smb-text{
+        flex:1;
+        text-align:center;
+      }
+
+      /* Administracja modal: równe ikony jak w menu */
+      #admin-modal .admin-act-btn{
+        width:100%;
+        display:flex;
+        align-items:center;
+        justify-content:flex-start;
+        gap:14px;
+      }
+      #admin-modal .admin-act-btn .aab-icon{
+        width:28px;
+        flex:0 0 28px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+      }
+      #admin-modal .admin-act-btn .aab-text{
+        flex:1;
+        text-align:center;
+      }
+    </style>
 
     <button onclick="openKodyRabatowe()" class="start-menu-btn" style="background:#f59e0b;color:#111827;font-size:17px;font-weight:800;">
       <span class="smb-icon">
@@ -1742,7 +1478,7 @@ select.native-sel { display: none !important; }
 
 <!-- Wydane zlecenia: picker do generowania kodu -->
 <div id="rab-wydane-overlay" style="display:none;position:fixed;inset:0;z-index:70;background:rgba(0,0,0,0.75);align-items:center;justify-content:center;">
-  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;width:92%;max-width:520px;max-height:85vh;display:flex;flex-direction:column;overflow:hidden;min-height:0;">
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;width:95vw;max-width:95vw;max-height:85vh;display:flex;flex-direction:column;overflow:hidden;min-height:0;">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 16px 12px;border-bottom:1px solid var(--border);flex-shrink:0;">
       <span id="rab-wydane-title" style="flex:1;font-size:16px;font-weight:900;color:#fff;text-align:center;">Wybierz wydane zlecenie</span>
       <button onclick="closeRabWydane()" style="background:none;border:none;color:#ef4444;font-size:22px;cursor:pointer;line-height:1;padding:0 4px;">&times;</button>
@@ -1769,7 +1505,7 @@ select.native-sel { display: none !important; }
 
 <!-- Przypisz kod rabatowy do zlecenia (WYDANE) -->
 <div id="rab-assign-overlay" style="display:none;position:fixed;inset:0;z-index:70;background:rgba(0,0,0,0.75);align-items:center;justify-content:center;">
-  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;width:92%;max-width:520px;max-height:85vh;display:flex;flex-direction:column;overflow:hidden;">
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;width:95vw;max-width:95vw;max-height:85vh;display:flex;flex-direction:column;overflow:hidden;">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 16px 12px;border-bottom:1px solid var(--border);flex-shrink:0;">
       <span id="rab-assign-title" style="flex:1;font-size:16px;font-weight:900;color:#fff;text-align:center;">Wybierz rabat</span>
       <button onclick="closeRabAssign()" style="background:none;border:none;color:#ef4444;font-size:22px;cursor:pointer;line-height:1;padding:0 4px;">&times;</button>
@@ -2064,6 +1800,7 @@ select.native-sel { display: none !important; }
           <div style="flex:0 0 auto;min-width:0;width:72%;">
             <select id="modal-marka-sel" class="native-sel" data-title="Wybierz markę" >
               <option value="ROWER" selected>Rower</option>
+              <option value="INNY">Inne</option>
               <option value="KROSS">Kross</option>
               <option value="ROMET">Romet</option>
               <option value="DZIECIĘCY">Dziecięcy</option>
@@ -2076,12 +1813,16 @@ select.native-sel { display: none !important; }
               <option value="FOCUS">Focus</option>
               <option value="FOLTA">Folta</option>
               <option value="GIANT">Giant</option>
+              <option value="GOETZE">Goetze</option>
               <option value="GHOST">Ghost</option>
               <option value="KANDS">Kands</option>
+              <option value="KTM">KTM</option>
               <option value="KELLYS">Kellys</option>
               <option value="LAPIERRE">Lapierre</option>
+              <option value="HAIBIKE">Haibike</option>
               <option value="MERIDA">Merida</option>
               <option value="RADON">Radon</option>
+              <option value="RONDO">Rondo</option>
               <option value="ROCKRIDER">Rockrider</option>
               <option value="SCOTT">Scott</option>
               <option value="TREK">Trek</option>
@@ -2166,8 +1907,8 @@ select.native-sel { display: none !important; }
       </div>
       <div id="modal-error" style="display:none;font-size:14px;font-weight:600;color:#ef4444;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:6px;padding:10px 14px;"></div>
       <div style="display:flex;gap:8px;">
-        <button onclick="confirmCancelModal()" style="flex:1;padding:16px 0;background:#c0392b;border:1px solid #c0392b;border-radius:10px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;">Anuluj</button>
-        <button onclick="closeModal()" style="flex:3;padding:16px;background:#16a34a;border:1px solid #16a34a;border-radius:10px;color:#fff;font-size:17px;font-weight:700;cursor:pointer;letter-spacing:.3px;display:flex;align-items:center;justify-content:center;gap:10px;">
+        <button type="button" onclick="confirmCancelModal()" style="flex:1;padding:16px 0;background:#c0392b;border:1px solid #c0392b;border-radius:10px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;">Anuluj</button>
+        <button type="button" onclick="closeModal()" style="flex:3;padding:16px;background:#16a34a;border:1px solid #16a34a;border-radius:10px;color:#fff;font-size:17px;font-weight:700;cursor:pointer;letter-spacing:.3px;display:flex;align-items:center;justify-content:center;gap:10px;">
           Przejdź do części
         </button>
       </div>
@@ -2221,7 +1962,31 @@ document.addEventListener('DOMContentLoaded', () => {
 // ─────────────────────────────────────────
 const DEFAULTS = [
   { name: 'Naprawa',    price: 0, checked: false,
-    options: [{label:'Przygotowanie',price:100},{label:'Przegląd PODSTAWOWY',price:150},{label:'Przegląd PEŁNY',price:250},{label:'Złożenie roweru',price:150},{label:'Regulacja',price:40},{label:'Wymiana dętki/opony przód',price:30},{label:'Wymiana dętki/opony tył',price:35},{label:'Serwis koło przód',price:40},{label:'Serwis koło tył',price:50},{label:'Centrowanie',price:40},{label:'Diagnostyka e-Bike',price:100}] },
+    options: [
+      {label:'Przygotowanie',price:100},
+      {label:'Przegląd podstawowy',price:150},
+      {label:'Przegląd pełny',price:250},
+      {label:'Diagnostyka e-Bike',price:0},
+      {label:'Regulacja przerzutek',price:0},
+      {label:'Regulacja hamulców',price:0},
+      {label:'Wymiana dętki przód',price:0},
+      {label:'Wymiana opony przód',price:0},
+      {label:'Wymiana dętki tył',price:0},
+      {label:'Wymiana opony tył',price:0},
+      {label:'Wymiana linek przerzutki',price:0},
+      {label:'Wymiana linek hamulca',price:0},
+      {label:'Serwis koła przód',price:0},
+      {label:'Serwis koła tył',price:0},
+      {label:'Serwis hydrauliki przód',price:0},
+      {label:'Serwis hydrauliki tył',price:0},
+      {label:'Wymiana łoży. kierownicy',price:0},
+      {label:'Wymiana supportu',price:0},
+      {label:'Wymiana przerzutki',price:0},
+      {label:'Montaż akcesoriów',price:0},
+      {label:'Serwis Tubeless',price:0},
+      {label:'Centrowanie',price:0},
+      {label:'Serwis amortyzatora',price:0},
+    ] },
   { name: 'Korba',      price: 0,   checked: false,
     presets: [{label:'Kwadrat',price:119},{label:'Octalink',price:189},{label:'Hollowtech',price:229}] },
   { name: 'Support',    price: 0,   checked: false,
@@ -2232,7 +1997,13 @@ const DEFAULTS = [
     presets: [{label:'6s Wolnobieg SHI',price:69},{label:'7s Wolnobieg SHI',price:79},{label:'8s Shimano',price:99},{label:'9s Shimano',price:109},{label:'10s Shimano',price:149}] },
   { name: 'Przerzutka przednia', price: 0, checked: false },
   { name: 'Przerzutka tylna',  price: 0, checked: false,
-    presets: [{label:'Kółka maszynowe',price:45}] },
+    presets: [
+      {label:'Kółka maszynowe',price:45},
+      {label:'6/7/8',price:69},
+      {label:'7/8',price:89},
+      {label:'8/9',price:99},
+      {label:'10/11',price:149}
+    ] },
   { name: 'Pedała',     price: 0,   checked: false,
     presets: [{label:'Plastikowe',price:25},{label:'Aluminium',price:39},{label:'Nexelo',price:79},{label:'Zeray',price:119}] },
   { name: 'Tarcza',     price: 0,   checked: false, qty: 0,
@@ -2305,7 +2076,11 @@ const COLOR_MAP = {'CZARNY':'#111','BRĄZOWY':'#6b4423','SZARY':'#9ca3af','BIAŁ
 
 // Pomocnicza: nazwa roweru do SMS
 function _smsRower(marka, model) {
-  return [marka, model].filter(Boolean).join(' ');
+  const m = String(marka || '').trim();
+  const mm = String(model || '').trim();
+  // Nie wypisuj "INNY/INNE" w SMS — to ma być tylko faktyczna marka/model.
+  const markaClean = (m.toUpperCase() === 'INNY' || m.toUpperCase() === 'INNE') ? '' : m;
+  return [markaClean, mm].filter(Boolean).join(' ');
 }
 // Zwraca HTML kółeczka koloru; dla nieznanych kolorów — kółko przekreślone
 function makeKolorDot(kolor, size) {
@@ -2587,6 +2362,17 @@ let _saveDebounceTimer = null;
 function save() {
   clearTimeout(_saveDebounceTimer);
   _saveDebounceTimer = setTimeout(_doSave, 250);
+}
+
+// Natychmiastowy zapis (np. przed zamknięciem modala / zmianą widoku)
+function flushSave() {
+  try {
+    clearTimeout(_saveDebounceTimer);
+    _saveDebounceTimer = null;
+    _doSave();
+  } catch (e) {
+    // _doSave ma własne statusy/logi
+  }
 }
 
 // ── Odczyt z localStorage ──
@@ -3320,10 +3106,9 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx, uiCtx) {
     // Ensure selectedOptions exists
     if (!it.selectedOptions) it.selectedOptions = [];
 
-    // Sync price from selectedOptions
+    // NAPRAWA: opcje bez cen. Cena "Naprawa" jest wpisywana ręcznie w polu po prawej
+    // i nie jest wyliczana z listy opcji.
     function syncNaprawa() {
-      it.price = it.selectedOptions.reduce((s, o) => s + (parseFloat(o.price) || 0), 0);
-      priceEl.value = it.price || '';
       // Build label
       it.customLabel = it.selectedOptions.map(o => o.label).join(' + ') || '';
       if (it.selectedOptions.length > 0 && !it.checked) { it.checked = true; card.className = 'item-card'; bar.checked = true; syncBarCircle(); }
@@ -3353,7 +3138,7 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx, uiCtx) {
       overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.75);display:flex;align-items:center;justify-content:center;';
 
       const sheet = document.createElement('div');
-      sheet.style.cssText = 'background:var(--bg2);border:1px solid var(--border);border-radius:14px;width:92%;max-width:340px;max-height:85vh;display:flex;flex-direction:column;overflow:hidden;';
+      sheet.style.cssText = 'background:var(--bg2);border:1px solid var(--border);border-radius:14px;width:95vw;max-width:95vw;max-height:85vh;display:flex;flex-direction:column;overflow:hidden;';
 
       // Header
       const hdr = document.createElement('div');
@@ -3374,14 +3159,17 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx, uiCtx) {
 
       const allOpts = [...it.options, {label:'Inne...', price: 0, custom: true}];
 
-      // Declared early so cb listeners can reference it; defined in footer block
-      let sumVal = null;
-      function updateSum() {
-        const total = tempSelected.reduce((s, o) => s + (parseFloat(o.price) || 0), 0);
-        if (sumVal) {
-          sumVal.textContent = total.toLocaleString('pl-PL', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' zł';
-          sumVal.style.color = total > 0 ? '#fff' : 'var(--text3)';
-        }
+      // Footer total input (editable). Auto-sums only until user overrides.
+      let sumInp = null;
+      let sumDirty = false;
+      function computedSum() {
+        return tempSelected.reduce((s, o) => s + (parseFloat(o.price) || 0), 0);
+      }
+      function syncSumInput(force) {
+        if (!sumInp) return;
+        if (sumDirty && !force) return;
+        const v = Math.round(computedSum() * 100) / 100;
+        sumInp.value = v ? String(v).replace('.', ',') : '';
       }
 
       allOpts.forEach(opt => {
@@ -3407,13 +3195,13 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx, uiCtx) {
         labelEl.textContent = opt.label;
         labelEl.style.cssText = 'flex:1;font-size:15px;font-weight:500;color:' + (isSelected ? 'var(--blue)' : 'var(--text)') + ';';
 
-        // Price — editable on click, shown as text normally
-        let currentPrice = existing ? existing.price : (opt.custom ? 0 : opt.price);
-        const priceEl = document.createElement('span');
-        priceEl.style.cssText = 'font-size:15px;font-weight:700;color:' + (isSelected ? 'var(--blue)' : '#fff') + ';flex-shrink:0;cursor:text;min-width:40px;text-align:right;';
-        priceEl.textContent = currentPrice ? currentPrice + ' zł' : (opt.custom ? '— zł' : currentPrice + ' zł');
+        // Prawa kolumna: cena tylko dla wybranych opcji (np. przeglądy)
+        const rightSpacer = document.createElement('span');
+        const basePrice = existing ? (parseFloat(existing.price) || 0) : (opt.custom ? 0 : (parseFloat(opt.price) || 0));
+        rightSpacer.style.cssText = 'font-size:12px;font-weight:800;color:var(--text3);flex-shrink:0;min-width:56px;text-align:right;';
+        rightSpacer.textContent = basePrice > 0 ? (basePrice + ' zł') : '';
 
-        // Blue checkmark — shown when selected
+        // Blue checkmark — shown when selected (legacy; trzymamy wyłączone)
         const tick = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         tick.setAttribute('width', '14'); tick.setAttribute('height', '14');
         tick.setAttribute('viewBox', '0 0 24 24'); tick.setAttribute('fill', 'none');
@@ -3428,43 +3216,17 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx, uiCtx) {
           checkCircle.style.background = checked ? 'var(--blue)' : 'transparent';
           checkCircle.innerHTML = checked ? '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' : '';
           labelEl.style.color = checked ? 'var(--blue)' : 'var(--text)';
-          priceEl.style.color = checked ? 'var(--blue)' : '#fff';
           tick.style.display = 'none';
         }
 
-        // Click price to edit inline
-        priceEl.addEventListener('click', e => {
-          e.stopPropagation();
-          const inp = document.createElement('input');
-          inp.type = 'text'; inp.inputMode = 'decimal';
-          inp.value = currentPrice || '';
-          inp.placeholder = '0';
-          inp.style.cssText = 'width:90px;font-size:15px;font-weight:700;color:#fff;border:1px solid var(--blue);background:var(--bg);border-radius:6px;padding:3px 8px;text-align:right;outline:none;';
-          priceEl.replaceWith(inp);
-          inp.focus(); inp.select();
-          const done = () => {
-            const v = parseFloat(inp.value.replace(',','.'));
-            if (!isNaN(v) && v >= 0) {
-              currentPrice = v;
-              const s = tempSelected.find(s => s.label === opt.label);
-              if (s) s.price = v;
-            }
-            priceEl.textContent = currentPrice + ' zł';
-            inp.replaceWith(priceEl);
-            updateSum();
-          };
-          inp.addEventListener('blur', done);
-          inp.addEventListener('keydown', e => { if (e.key === 'Enter') inp.blur(); });
-        });
-
         cb.addEventListener('change', () => {
           if (cb.checked) {
-            tempSelected.push({ label: opt.label, price: currentPrice });
+            tempSelected.push({ label: opt.label, price: basePrice });
           } else {
             tempSelected = tempSelected.filter(s => s.label !== opt.label);
           }
           syncRow();
-          updateSum();
+          syncSumInput(false);
         });
 
         row.addEventListener('click', e => {
@@ -3476,7 +3238,7 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx, uiCtx) {
         row.appendChild(cb);
         row.appendChild(checkCircle);
         row.appendChild(labelEl);
-        row.appendChild(priceEl);
+        row.appendChild(rightSpacer);
         list.appendChild(row);
       });
 
@@ -3489,30 +3251,26 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx, uiCtx) {
       const sumLabel = document.createElement('span');
       sumLabel.style.cssText = 'font-size:13px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;';
       sumLabel.textContent = 'Suma';
-      const sumVal2 = document.createElement('span');
-      sumVal2.style.cssText = 'font-size:16px;font-weight:800;color:#fff;';
-      sumVal = sumVal2;
-      updateSum();
+      const sumInp2 = document.createElement('input');
+      sumInp2.type = 'text';
+      sumInp2.inputMode = 'decimal';
+      sumInp2.placeholder = '0';
+      sumInp2.style.cssText = 'width:120px;font-size:18px;font-weight:900;color:#fff;border:1px solid rgba(255,255,255,0.12);background:var(--bg);border-radius:10px;padding:8px 10px;text-align:right;outline:none;';
+      sumInp2.addEventListener('focus', () => { sumInp2.style.borderColor = 'var(--blue)'; });
+      sumInp2.addEventListener('blur', () => { sumInp2.style.borderColor = 'rgba(255,255,255,0.12)'; });
+      sumInp2.addEventListener('input', () => { sumDirty = true; });
+      sumInp = sumInp2;
 
-      // Patch checkbox and price input listeners to also update sum
-      list.querySelectorAll && setTimeout(() => {}, 0); // noop, listeners already set above
-
-      // Override tempSelected push/filter to trigger sum update
-      const origPush = Array.prototype.push;
-      // Instead: wrap cb change listeners — re-attach with sum update
-      list.addEventListener('change', () => updateSum());
-      list.addEventListener('input', () => {
-        // Update price in tempSelected on input
-        list.querySelectorAll('input[type="text"]').forEach((inp, i) => {
-          const opt = allOpts[i];
-          const s = tempSelected.find(s => s.label === opt.label);
-          if (s) s.price = parseFloat(inp.value.replace(',','.')) || 0;
-        });
-        updateSum();
-      });
+      // Prefill: keep existing manual price; otherwise use computed
+      if (parseFloat(it.price) > 0) {
+        sumDirty = true;
+        sumInp2.value = String(it.price).replace('.', ',');
+      } else {
+        syncSumInput(true);
+      }
 
       sumRow.appendChild(sumLabel);
-      sumRow.appendChild(sumVal2);
+      sumRow.appendChild(sumInp2);
       footer.appendChild(sumRow);
 
       const confirmBtn = document.createElement('button');
@@ -3520,7 +3278,11 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx, uiCtx) {
       confirmBtn.textContent = 'Zatwierdź';
       confirmBtn.addEventListener('click', () => {
         it.selectedOptions = tempSelected;
+        const raw = String(sumInp && sumInp.value ? sumInp.value : '').replace(/\s/g,'').replace(',','.');
+        const v = parseFloat(raw);
+        it.price = (!isNaN(v) && v >= 0) ? (Math.round(v * 100) / 100) : 0;
         syncNaprawa();
+        updatePriceDisplay();
         overlay.remove();
       });
       footer.appendChild(confirmBtn);
@@ -3789,6 +3551,10 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx, uiCtx) {
 
   // Kalkulator: każda cena ma być edytowalna
   bindKalkPriceEditor();
+
+  // Ujednolić widok ceny po zbudowaniu karty:
+  // dla pozycji z qty w głównym widoku pokazuj w polu kwotę łączną (qty * cena).
+  updatePriceDisplay();
 
   // Ukryj "Części i akcesoria" gdy nic nie wprowadzono
   if (it.name === 'Części i akcesoria' && !it.checked && !(parseFloat(it.price) > 0) && !it.noteText) {
@@ -4263,6 +4029,10 @@ function renderPhotos() {
 window.triggerPhotoInput = triggerPhotoInput;
 window.handlePhotos = handlePhotos;
 window.removePhoto = removePhoto;
+
+// ─────────────────────────────────────────
+// CLOCK
+// ─────────────────────────────────────────
 
 // ─────────────────────────────────────────
 // BOOT
@@ -7484,7 +7254,9 @@ function closeModal() {
   $('modal-overlay').style.display = 'none';
   $('start-overlay').style.display = 'none';
   updateClientInfoBar();
-  save();
+  // Wymuś zapis natychmiast — szczególnie przy pierwszym zleceniu dnia,
+  // gdy użytkownik szybko przechodzi dalej.
+  flushSave();
 }
 function closeModalOutside(e) {
   if (e.target === $('modal-overlay')) {
@@ -7764,7 +7536,6 @@ function buildRaportLocalItems(st, entry, filterEbikeItems) {
     name: canonicalName(it.name), price: it.price, checked: it.checked,
     qty: it.qty, selectedPreset: it.selectedPreset ?? -1,
     customName: it.customName ?? '', customLabel: it.customLabel || undefined,
-    selectedOptions: it.selectedOptions || [],
     noteText: it.noteText || '',
     options: findDefault(it.name)?.options?.map(x => ({...x})),
     presets: findDefault(it.name)?.presets?.map(x => ({...x})),
@@ -7925,7 +7696,6 @@ function saveRaportKoncowy() {
     qty: it.qty,
     selectedPreset: it.selectedPreset ?? -1,
     customLabel: it.customLabel || undefined,
-    selectedOptions: it.selectedOptions || undefined,
     noteText: it.noteText || '',
   }));
 
@@ -9081,7 +8851,13 @@ try { if (typeof purgExpiredKosz === 'function') purgExpiredKosz(); } catch(e) {
 // ─────────────────────────────────────────
 let euroRate = null; // current fetched rate
 
-/* openEuroPanel/closeEuroPanel removed — no-op dead code */
+function openEuroPanel() {
+  // no-op — euro section is now inline in the calculator
+}
+
+function closeEuroPanel() {
+  // no-op — euro section is now inline in the calculator
+}
 
 function initEuroSection() {
   // Set today's date as default when calculator opens
@@ -9169,7 +8945,8 @@ function euroConvert(direction) {
   }
 }
 
-/* openEuroPanel/closeEuroPanel were no-op — exports removed */
+window.openEuroPanel  = openEuroPanel;
+window.closeEuroPanel = closeEuroPanel;
 window.fetchEuroRate  = fetchEuroRate;
 window.euroConvert    = euroConvert;
 
@@ -9186,8 +8963,49 @@ window.euroConvert    = euroConvert;
   const ml = document.getElementById('pwa-manifest');
   if (ml) ml.href = URL.createObjectURL(new Blob([JSON.stringify(manifest)], {type:'application/manifest+json'}));
   if ('serviceWorker' in navigator) {
-    const sw = `"use strict";var C="wycena-v3";self.addEventListener("install",e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(["."])));self.skipWaiting();});self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C).map(k=>caches.delete(k)))));self.clients.claim();});self.addEventListener("fetch",e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(res=>{caches.open(C).then(c=>c.put(e.request,res.clone()));return res;}).catch(()=>caches.match("."))));});`;
-    navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw], {type:'text/javascript'}))).catch(()=>{});
+    const sw = `"use strict";
+var C="wycena-v3";
+var CORE=["."];
+function isCacheable(req){
+  try{
+    if(!req||req.method!=="GET") return false;
+    var u=new URL(req.url);
+    if(u.origin!==self.location.origin) return false;
+    // Nie cache'uj blob/data ani dziwnych schematów
+    if(u.protocol!=="http:" && u.protocol!=="https:") return false;
+    // (Opcjonalnie) pomiń niektóre ścieżki jeśli kiedyś dojdą endpointy dynamiczne
+    return true;
+  }catch(e){ return false; }
+}
+self.addEventListener("install",function(e){
+  e.waitUntil(caches.open(C).then(function(c){ return c.addAll(CORE); }));
+  self.skipWaiting();
+});
+self.addEventListener("activate",function(e){
+  e.waitUntil(caches.keys().then(function(ks){
+    return Promise.all(ks.filter(function(k){return k!==C;}).map(function(k){return caches.delete(k);})); 
+  }));
+  self.clients.claim();
+});
+self.addEventListener("fetch",function(e){
+  var req=e.request;
+  if(!isCacheable(req)) return;
+  e.respondWith(
+    caches.match(req).then(function(r){
+      if(r) return r;
+      return fetch(req).then(function(res){
+        // Nie cache'uj odpowiedzi błędnych/opaque
+        try{
+          if(res && res.ok && res.type==="basic"){
+            caches.open(C).then(function(c){ c.put(req,res.clone()); });
+          }
+        }catch(_){}
+        return res;
+      }).catch(function(){ return caches.match("."); });
+    })
+  );
+});`;
+    navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw], {type:'text/javascript'}))).catch(function(){});
   }
 })();
 
@@ -9203,7 +9021,7 @@ function openOpisBanner(initialValue) {
     overlay.style.cssText = 'position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,0.75);display:flex;align-items:center;justify-content:center;';
 
     const sheet = document.createElement('div');
-    sheet.style.cssText = 'background:var(--bg2);border:1px solid var(--border);border-radius:14px;width:92%;max-width:340px;display:flex;flex-direction:column;overflow:hidden;';
+    sheet.style.cssText = 'background:var(--bg2);border:1px solid var(--border);border-radius:14px;width:95vw;max-width:95vw;display:flex;flex-direction:column;overflow:hidden;';
 
     const hdr = document.createElement('div');
     hdr.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:16px 16px 12px;border-bottom:1px solid var(--border);';
@@ -9288,7 +9106,7 @@ function buildCsel(sel, extraClass) {
     overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.75);display:flex;align-items:center;justify-content:center;';
 
     const sheet = document.createElement('div');
-    sheet.style.cssText = 'background:var(--bg2);border:1px solid var(--border);border-radius:14px;width:92%;max-width:340px;max-height:80vh;display:flex;flex-direction:column;overflow:hidden;';
+    sheet.style.cssText = 'background:var(--bg2);border:1px solid var(--border);border-radius:14px;width:95vw;max-width:95vw;max-height:80vh;display:flex;flex-direction:column;overflow:hidden;';
 
     // Header
     const hdr = document.createElement('div');
@@ -9381,7 +9199,7 @@ window.cselSetValue = cselSetValue;
 </script>
 <!-- Kopia zapasowa modal -->
 <div id="kopia-modal" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.75);align-items:center;justify-content:center;">
-  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:24px 20px;max-width:340px;width:92%;margin:0 auto;display:flex;flex-direction:column;gap:14px;">
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:24px 20px;max-width:95vw;width:95vw;margin:0 auto;display:flex;flex-direction:column;gap:14px;">
     <div style="display:flex;align-items:center;justify-content:space-between;">
       <span style="font-size:16px;font-weight:700;color:#fff;">Kopia zapasowa</span>
       <button onclick="$('kopia-modal').style.display='none'" style="background:#ef4444;border:1px solid #ef4444;border-radius:8px;padding:6px 14px;cursor:pointer;color:#fff;font-size:13px;font-weight:700;text-transform:uppercase;">Zamknij</button>
@@ -9416,7 +9234,7 @@ window.cselSetValue = cselSetValue;
 
 <!-- Kopia lokalna sub-modal -->
 <div id="kopia-lokalnie-modal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.8);align-items:center;justify-content:center;">
-  <div style="background:var(--bg2);border:1px solid #14532d;border-radius:14px;padding:24px 20px;max-width:320px;width:92%;margin:0 auto;display:flex;flex-direction:column;gap:16px;text-align:center;">
+  <div style="background:var(--bg2);border:1px solid #14532d;border-radius:14px;padding:24px 20px;max-width:95vw;width:95vw;margin:0 auto;display:flex;flex-direction:column;gap:16px;text-align:center;">
     <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
     <div>
       <div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:6px;">Kopia lokalna</div>
@@ -9432,7 +9250,7 @@ window.cselSetValue = cselSetValue;
 
 <!-- Przywróć dane sub-modal -->
 <div id="przywroc-modal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.8);align-items:center;justify-content:center;">
-  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:24px 20px;max-width:320px;width:92%;margin:0 auto;display:flex;flex-direction:column;gap:14px;text-align:center;">
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:24px 20px;max-width:95vw;width:95vw;margin:0 auto;display:flex;flex-direction:column;gap:14px;text-align:center;">
     <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--text2)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto;"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/></svg>
     <div style="font-size:16px;font-weight:700;color:#fff;">Przywróć dane</div>
     <div style="display:flex;flex-direction:column;gap:10px;">
@@ -9446,7 +9264,7 @@ window.cselSetValue = cselSetValue;
 </div>
 <!-- Admin modal -->
 <div id="admin-modal" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.75);align-items:center;justify-content:center;">
-  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:24px 20px;max-width:320px;width:92%;margin:0 auto;display:flex;flex-direction:column;gap:12px;">
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:24px 20px;max-width:95vw;width:95vw;margin:0 auto;display:flex;flex-direction:column;gap:12px;">
     <div style="display:flex;align-items:center;justify-content:space-between;">
       <span style="font-size:16px;font-weight:700;color:#fff;">Administracja</span>
       <button onclick="$('admin-modal').style.display='none'" style="background:#ef4444;border:1px solid #ef4444;border-radius:8px;padding:6px 14px;cursor:pointer;color:#fff;font-size:13px;font-weight:700;text-transform:uppercase;">Zamknij</button>
@@ -9473,7 +9291,7 @@ window.cselSetValue = cselSetValue;
   </div>
 </div>
 <div id="confirm-modal" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;">
-  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:24px 20px;max-width:320px;width:90%;margin:0 auto;display:flex;flex-direction:column;gap:16px;">
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:24px 20px;max-width:95vw;width:95vw;margin:0 auto;display:flex;flex-direction:column;gap:16px;">
     <div id="confirm-msg" style="font-size:15px;font-weight:600;color:var(--text);line-height:1.5;text-align:center;"></div>
     <div style="display:flex;gap:10px;">
       <button id="confirm-no" style="flex:1;padding:12px;background:none;border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:14px;font-weight:700;cursor:pointer;">Anuluj</button>
@@ -9484,7 +9302,7 @@ window.cselSetValue = cselSetValue;
 
 <!-- Data picker modal dla raportu dobowego -->
 <div id="raport-date-modal" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;">
-  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:24px 20px;max-width:320px;width:90%;margin:0 auto;display:flex;flex-direction:column;gap:16px;">
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:24px 20px;max-width:95vw;width:95vw;margin:0 auto;display:flex;flex-direction:column;gap:16px;">
     <div style="font-size:15px;font-weight:700;color:#fff;text-align:center;">Raport dobowy</div>
     <div style="display:flex;flex-direction:column;gap:6px;">
       <label style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;">Wybierz dzień</label>
@@ -9504,22 +9322,22 @@ window.cselSetValue = cselSetValue;
 
 <script>
 function ghModalClose() {
-  const m = document.getElementById('github-update-modal');
+  var m = document.getElementById('github-update-modal');
   if (m) m.remove();
 }
 
 function otworzGithubUpdate() {
-  const old = document.getElementById('github-update-modal');
+  var old = document.getElementById('github-update-modal');
   if (old) old.remove();
 
-  const token = localStorage.getItem('gh_token') || '';
-  const repo  = localStorage.getItem('gh_repo')  || '';
+  var token = localStorage.getItem('gh_token') || '';
+  var repo  = localStorage.getItem('gh_repo')  || '';
 
-  const overlay = document.createElement('div');
+  var overlay = document.createElement('div');
   overlay.id = 'github-update-modal';
   overlay.style.cssText = 'position:fixed;inset:0;z-index:1100;background:rgba(0,0,0,0.88);display:flex;align-items:center;justify-content:center;';
   overlay.innerHTML = `
-    <div style="background:#0d1117;border:1px solid #238636;border-radius:16px;padding:24px 20px;max-width:360px;width:92%;margin:0 auto;display:flex;flex-direction:column;gap:14px;">
+    <div style="background:#0d1117;border:1px solid #238636;border-radius:16px;padding:24px 20px;max-width:95vw;width:95vw;margin:0 auto;display:flex;flex-direction:column;gap:14px;">
       <div style="display:flex;align-items:center;justify-content:space-between;">
         <div style="display:flex;align-items:center;gap:8px;">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3fb950" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
@@ -9571,9 +9389,9 @@ function otworzGithubUpdate() {
 
   // Podgląd nazwy pliku po wyborze
   document.getElementById('gh-file-input').addEventListener('change', function() {
-    const f = this.files[0];
-    const nameEl = document.getElementById('gh-file-name');
-    const labelEl = document.getElementById('gh-file-label');
+    var f = this.files[0];
+    var nameEl = document.getElementById('gh-file-name');
+    var labelEl = document.getElementById('gh-file-label');
     if (f) {
       // Niezależnie od nazwy pliku, aktualizacja zawsze idzie do index.html
       nameEl.textContent = 'index.html';
@@ -9591,14 +9409,14 @@ function otworzGithubUpdate() {
   document.getElementById('gh-cancel-btn').onclick = ghModalClose;
   document.getElementById('gh-upload-btn').onclick = githubUpdate;
   document.getElementById('gh-eye-btn').onclick = function() {
-    const i = document.getElementById('gh-token-input');
+    var i = document.getElementById('gh-token-input');
     i.type = i.type === 'password' ? 'text' : 'password';
   };
   overlay.addEventListener('click', function(e) { if (e.target === overlay) ghModalClose(); });
 }
 
 function ghStatus(msg, type) {
-  const s = document.getElementById('gh-status');
+  var s = document.getElementById('gh-status');
   if (!s) return;
   s.style.display = 'block';
   s.textContent = msg;
@@ -9609,17 +9427,22 @@ function ghStatus(msg, type) {
 
 // ── Auto-update GitHub ──
 async function githubUpdate() {
-  const token = (document.getElementById('gh-token-input') || {value:''}).value.trim();
-  const repo  = (document.getElementById('gh-repo-input')  || {value:''}).value.trim().replace(/^https?:\/\/github\.com\//,'').replace(/\/$/,'');
-  const fileInput = document.getElementById('gh-file-input');
-  const file = fileInput && fileInput.files[0];
+  var token = (document.getElementById('gh-token-input') || {value:''}).value.trim();
+  var repo  = (document.getElementById('gh-repo-input')  || {value:''}).value.trim().replace(/^https?:\/\/github\.com\//,'').replace(/\/$/,'');
+  var fileInput = document.getElementById('gh-file-input');
+  var file = fileInput && fileInput.files[0];
 
   if (!token) { ghStatus('⚠️ Wpisz Token!', 'err'); return; }
+  // Podstawowa walidacja formatu (GitHub classic: ghp_..., fine-grained: github_pat_...)
+  if (!/^ghp_[A-Za-z0-9_]{20,}$/.test(token) && !/^github_pat_[A-Za-z0-9_]{20,}$/.test(token)) {
+    ghStatus('⚠️ Token wygląda niepoprawnie (oczekiwane: ghp_… lub github_pat_…)', 'err');
+    return;
+  }
   if (!repo || !repo.includes('/')) { ghStatus('⚠️ Wpisz repo: user/nazwa', 'err'); return; }
   if (!file) { ghStatus('⚠️ Wybierz plik HTML!', 'err'); return; }
   if (!/\.html$/i.test(file.name || '')) { ghStatus('⚠️ Plik musi mieć rozszerzenie .html', 'err'); return; }
 
-  const saveEl = document.getElementById('gh-save');
+  var saveEl = document.getElementById('gh-save');
   if (saveEl && saveEl.checked) {
     localStorage.setItem('gh_token', token);
     localStorage.setItem('gh_repo',  repo);
@@ -9628,38 +9451,62 @@ async function githubUpdate() {
     localStorage.removeItem('gh_repo');
   }
 
-  const btn = document.getElementById('gh-upload-btn');
+  var btn = document.getElementById('gh-upload-btn');
   if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; }
 
   // Zawsze publikujemy jako index.html (nazwa lokalnego pliku nie ma znaczenia)
-  const apiUrl = 'https://api.github.com/repos/' + repo + '/contents/index.html';
-  const headers = { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' };
+  var apiUrl = 'https://api.github.com/repos/' + repo + '/contents/index.html';
+  var headers = {
+    'Authorization': 'Bearer ' + token,
+    'Accept': 'application/vnd.github+json',
+    'Content-Type': 'application/json',
+    'X-GitHub-Api-Version': '2022-11-28'
+  };
 
   try {
     ghStatus('🔍 Pobieranie SHA…', 'info');
-    const getRes = await fetch(apiUrl, { headers: headers });
-    let sha = null;
-    if (getRes.status === 200) { sha = (await getRes.json()).sha; }
-    else if (getRes.status === 401) { throw new Error('Nieprawidłowy token GitHub.'); }
-    else if (getRes.status !== 404) { throw new Error('GitHub API: HTTP ' + getRes.status); }
+    var getRes = await fetch(apiUrl, { headers: headers });
+    var sha = null;
+    if (getRes.status === 200) {
+      sha = (await getRes.json()).sha;
+    } else if (getRes.status === 404) {
+      // ok: plik nie istnieje — będziemy tworzyć
+    } else {
+      let msg = '';
+      try { msg = (await getRes.json()).message || ''; } catch {}
+      if (getRes.status === 401) {
+        throw new Error('Token odrzucony (401). Upewnij się, że token jest poprawny i aktywny.');
+      }
+      if (getRes.status === 403) {
+        throw new Error((msg || 'Brak uprawnień (403).') + ' Token musi mieć dostęp do repo i uprawnienia do zapisu plików (Contents: Read/Write).');
+      }
+      throw new Error((msg ? ('GitHub API: ' + msg) : ('GitHub API: HTTP ' + getRes.status)));
+    }
 
     ghStatus('📄 Wczytywanie pliku…', 'info');
-    const html = await new Promise(function(resolve, reject) {
-      const reader = new FileReader();
+    var html = await new Promise(function(resolve, reject) {
+      var reader = new FileReader();
       reader.onload = function(e) { resolve(e.target.result); };
       reader.onerror = function() { reject(new Error('Błąd odczytu pliku')); };
       reader.readAsText(file, 'UTF-8');
     });
 
     ghStatus('⬆️ Wysyłanie…', 'info');
-    const body = {
+    var body = {
       message: 'Update App ' + new Date().toLocaleString('pl-PL'),
       content: btoa(unescape(encodeURIComponent(html))),
       branch:  'main'
     };
     if (sha) body.sha = sha;
-    const putRes = await fetch(apiUrl, { method: 'PUT', headers: headers, body: JSON.stringify(body) });
-    if (!putRes.ok) { const e = await putRes.json(); throw new Error(e.message || 'HTTP ' + putRes.status); }
+    var putRes = await fetch(apiUrl, { method: 'PUT', headers: headers, body: JSON.stringify(body) });
+    if (!putRes.ok) {
+      var e = null;
+      try { e = await putRes.json(); } catch {}
+      var m = (e && e.message) ? e.message : ('HTTP ' + putRes.status);
+      if (putRes.status === 401) m = 'Token odrzucony (401) — sprawdź token.';
+      if (putRes.status === 403) m = m + ' (Brak uprawnień do zapisu. Token musi mieć Contents: Read/Write dla repo.)';
+      throw new Error(m);
+    }
 
     // Zapisz datę kliknięcia
     localStorage.setItem('gh_last_update', new Date().toISOString());
