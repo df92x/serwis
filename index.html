@@ -4849,6 +4849,9 @@ window.otworzRaportZGlownego = otworzRaportZGlownego;
 window.otworzKopiaZGlownego = otworzKopiaZGlownego;
 
 function startNowe() {
+  // Jeśli użytkownik uruchomił "Nowe" z poziomu Przyjęte/Historia,
+  // zamknij overlay historii, żeby po zamknięciu modala nie wracać na listę.
+  try { closeHistory(); } catch(e) { try { $('history-overlay').style.display = 'none'; } catch(_) {} }
   // Wyczyść wszystkie dane klienta i resetuj pozycje
   $('cf-marka').value  = ''; if ($('cf-ebike')) $('cf-ebike').value = '0';
   $('cf-tel').value    = '';
@@ -5341,7 +5344,19 @@ function updateClientInfoBar() {
     const el = $('client-info-bar');
     if (el) {
       if (tel) {
-        el.innerHTML = '<div style="display:flex;align-items:center;gap:4px;font-size:15px;font-weight:600;color:#3b7cf4;margin-top:2px;"><svg width="11" height="11" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>' + escHTML(tel) + '</div>';
+        el.innerHTML =
+          '<div style="display:flex;align-items:center;gap:6px;font-size:15px;font-weight:600;color:#3b7cf4;margin-top:2px;">'
+          + '<svg width="11" height="11" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>'
+          + '<span style="user-select:text;">' + escHTML(tel) + '</span>'
+          + '<button type="button" onclick="copyTelToClipboard()" title="Kopiuj numer"'
+          + ' style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:22px;padding:0;border-radius:6px;'
+          + ' background:rgba(59,124,244,0.14);border:1px solid rgba(59,124,244,0.35);color:#3b7cf4;cursor:pointer;">'
+          + '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">'
+          + '<rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>'
+          + '<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>'
+          + '</svg>'
+          + '</button>'
+          + '</div>';
         el.style.display = 'block';
       } else {
         el.innerHTML = '';
@@ -5366,6 +5381,32 @@ function updateClientInfoBar() {
 }
 window.updateClientInfoBar = updateClientInfoBar;
 document.addEventListener('DOMContentLoaded', () => updateClientInfoBar());
+
+async function copyTelToClipboard() {
+  const tel = ($('cf-tel') ? $('cf-tel').value : '').trim();
+  if (!tel) return;
+  const text = tel.replace(/\s+/g, '');
+  try {
+    if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+      await navigator.clipboard.writeText(text);
+      return;
+    }
+  } catch (e) { /* fallback below */ }
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    ta.style.top = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    ta.setSelectionRange(0, ta.value.length);
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  } catch (e2) { /* silent */ }
+}
+window.copyTelToClipboard = copyTelToClipboard;
 
 function generateCurrentPDF() {
   // Zapisz tymczasowo do historii i pobierz ID
