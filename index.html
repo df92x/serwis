@@ -1877,7 +1877,16 @@ select.native-sel { display: none !important; }
       <div class="modal-banner">
       <div class="modal-field">
         <label>Numer telefonu</label>
-        <input type="tel" id="modal-tel" placeholder="TELEFON" maxlength="11" onkeydown="if(event.key==='Enter'){event.preventDefault();closeModal();}">
+        <div style="display:flex;gap:8px;align-items:stretch;">
+          <input type="tel" id="modal-tel" placeholder="TELEFON" maxlength="11" style="flex:1;min-width:0;" onkeydown="if(event.key==='Enter'){event.preventDefault();closeModal();}">
+          <button type="button" onclick="copyModalTelToClipboard()" title="Kopiuj numer"
+            style="flex:0 0 auto;width:56px;height:56px;border-radius:10px;background:rgba(59,124,244,0.14);border:1px solid rgba(59,124,244,0.35);color:#3b7cf4;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+          </button>
+        </div>
       </div>
       <div class="modal-field">
         <label>Termin naprawy</label>
@@ -5407,6 +5416,32 @@ async function copyTelToClipboard() {
   } catch (e2) { /* silent */ }
 }
 window.copyTelToClipboard = copyTelToClipboard;
+
+async function copyModalTelToClipboard() {
+  const tel = ($('modal-tel') ? $('modal-tel').value : '').trim();
+  if (!tel) return;
+  const text = tel.replace(/\s+/g, '');
+  try {
+    if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+      await navigator.clipboard.writeText(text);
+      return;
+    }
+  } catch (e) { /* fallback below */ }
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    ta.style.top = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    ta.setSelectionRange(0, ta.value.length);
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  } catch (e2) { /* silent */ }
+}
+window.copyModalTelToClipboard = copyModalTelToClipboard;
 
 function generateCurrentPDF() {
   // Zapisz tymczasowo do historii i pobierz ID
