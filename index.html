@@ -164,25 +164,6 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
   background:transparent;
   pointer-events:none;
 }
-/* Wycena (kalkulator): fioletowy pasek jak kolor-bar w edycji zlecenia */
-#kalkulator-overlay #kalk-summary-card{
-  position:relative;
-  overflow:hidden;
-  border-left:none !important;
-  border-color:rgba(124,58,237,0.45) !important;
-}
-#kalk-summary-side-bar{
-  position:absolute;
-  left:0;
-  top:0;
-  bottom:0;
-  width:20px;
-  box-sizing:border-box;
-  border-top-left-radius:var(--radius);
-  border-bottom-left-radius:var(--radius);
-  background:#7c3aed;
-  pointer-events:none;
-}
 #raport-summary-kolor-bar{
   position:absolute;
   left:0;
@@ -574,14 +555,9 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
   margin-top: 12px;
   padding-top: 0;
 }
-#kalkulator-overlay .modal-banner{
-  margin: 12px 8px 0;
-}
-
-/* ── Wspólny styl bannerów części (kalkulator, raport, dodaj) ── */
+/* ── Wspólny styl bannerów części (raport, dodaj) ── */
 .parts-banner,
-#modal-overlay .modal-banner,
-#kalkulator-overlay .modal-banner{
+#modal-overlay .modal-banner{
   background: var(--bg2);
   border: 1px solid var(--border);
   border-radius: 14px;
@@ -650,99 +626,6 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
 
 /* INNE CZĘŚCI w raporcie: via .flat-group (dodane w HTML) */
 
-/* Kalkulator napraw: via .flat-list .flat-csel (dodane w HTML) */
-#kalkulator-overlay .items-list .item-card:first-child{ padding-top: 2px; }
-#kalkulator-overlay .items-list .item-card:last-child{ border-bottom: none; }
-#kalkulator-overlay .item-card:has(.item-check:checked){
-  background: transparent;
-}
-
-/* Cena w kalkulatorze:
-   - zwykły tekst (bez editable-total) może być "goły"
-   - editable-total MUSI mieć czarne okienko (edytowalne kliknięciem) */
-#kalkulator-overlay .item-price-input{
-  border: none !important;
-  background: transparent !important;
-  padding: 0 !important;
-  width: auto !important;
-  min-width: 52px;
-}
-#kalkulator-overlay .item-price-total:not(.editable-total){
-  border: none !important;
-  background: transparent !important;
-  padding: 0 !important;
-  width: auto !important;
-  min-width: 52px;
-}
-/* Kalkulator: stałe okienko ceny (3 cyfry, duże) */
-#kalkulator-overlay .item-price-total.editable-total{
-  display: inline-flex;
-  align-items: center;
-  justify-content: flex-end;
-  box-sizing: border-box;
-  width: 70px !important;      /* ~3 cyfry */
-  min-width: 70px !important;
-  height: 32px;
-  border: 1px solid rgba(255,255,255,0.14) !important;
-  background: #000 !important;
-  border-radius: 10px !important;
-  padding: 6px 10px !important;
-  font-size: 20px;
-  font-weight: 700;
-  color: #fff;
-}
-
-/* WYBIERZ/OPIS w kalkulatorze: zawsze do samej ceny */
-#kalkulator-overlay .card-row{
-  display: flex;
-  align-items: center;
-}
-#kalkulator-overlay .kalk-csel-cell{
-  flex: 1 1 auto !important;
-  min-width: 0 !important;
-  display: flex;
-  align-items: center;
-}
-#kalkulator-overlay .kalk-csel-cell .csel-wrap{
-  width: 100% !important;
-  flex: 1 1 auto !important;
-  min-width: 0 !important;
-}
-#kalkulator-overlay .kalk-csel-cell .csel-btn{
-  width: 100% !important;
-}
-/* Kalkulator: gdy edytujemy cenę wewnątrz okienka (input w środku) – bez "2 ramek" */
-#kalkulator-overlay .item-price-total.editable-total{ position: relative; }
-#kalkulator-overlay .item-price-total.editable-total .item-price-input.kalk-price-edit{
-  position: absolute !important;
-  inset: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  min-width: 0 !important;
-  border: none !important;
-  background: transparent !important;
-  border-radius: 0 !important;
-  padding: 0 10px !important;
-}
-/* Podczas edycji ceny: ma być stała szerokość */
-#kalkulator-overlay .item-price-input.kalk-price-edit{
-  width: 70px !important;
-  min-width: 70px !important;
-  height: 32px;
-  border: 1px solid rgba(255,255,255,0.14) !important;
-  background: #000 !important;
-  border-radius: 10px !important;
-  padding: 6px 10px !important;
-  font-size: 20px;
-  font-weight: 700;
-  text-align: right;
-}
-
-/* Kalkulator: inne części via .flat-group (dodane w HTML) */
-#kalkulator-overlay .group-body .sub-row:last-child{
-  border-bottom: none;
-}
-
 /* ── DODAJ CZĘŚCI (nowe zlecenie): via .flat-list .flat-csel .flat-group ── */
 #group-container .sub-price-input{ color:#fff; }
 
@@ -775,39 +658,6 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
   line-height: 1.5;
 }
 
-/* WYBIERZ/OPIS: spójny pill jak na screenie */
-#kalkulator-overlay .csel-wrap{
-  flex: 1;
-  min-width: 0;
-  width: 100%;
-}
-#kalkulator-overlay .csel-btn{
-  width: 100%;
-  justify-content: flex-end;
-  background: #000;
-  border: 1px solid rgba(255,255,255,0.10);
-  border-radius: 10px;
-  padding: 6px 10px;
-  min-height: 28px;
-  color: var(--text2);
-  font-weight: 600;
-}
-
-/* Prawa kolumna (cena) nie może "zjadać" miejsca */
-#kalkulator-overlay .item-price-total{
-  min-width: 44px;
-}
-#kalkulator-overlay .item-price-input,
-#kalkulator-overlay .item-price-total.editable-total{
-  min-width: 44px;
-}
-#kalkulator-overlay .csel-btn span{
-  text-align: right;
-}
-#kalkulator-overlay .card-row{ gap: 6px; }
-#kalkulator-overlay .csel-btn svg{
-  display:none;
-}
 .modal-field input:focus { border-color: var(--blue); }
 .modal-field input::placeholder { color: #444470; }
 .btn-data {
@@ -1244,11 +1094,6 @@ select.native-sel { display: none !important; }
     <button onclick="startAktualne()" style="margin-bottom:16px;width:100%;padding:16px 20px;background:linear-gradient(180deg,#3b82f6 0%,#2563eb 50%,#1a4fc4 100%);border:none;border-radius:16px;color:#fff;font-size:22px;font-weight:700;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:0;">
       <span style="flex:0 0 80px;display:flex;align-items:center;justify-content:center;"><svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>
       <span style="flex:1;text-align:center;">PRZEGLĄDAJ</span>
-      <span style="flex:0 0 80px;"></span>
-    </button>
-    <button onclick="startKalkulator()" style="margin-bottom:16px;width:100%;padding:16px 20px;background:linear-gradient(180deg,#8b5cf6 0%,#6d28d9 50%,#521fa3 100%);border:none;border-radius:16px;color:#fff;font-size:22px;font-weight:700;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:0;">
-      <span style="flex:0 0 80px;display:flex;align-items:center;justify-content:center;"><svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M4 2a1 1 0 0 0-1 1v18l3-2 3 2 3-2 3 2 3-2V3a1 1 0 0 0-1-1H4zm2 5h8a1 1 0 0 1 0 2H6a1 1 0 0 1 0-2zm0 4h8a1 1 0 0 1 0 2H6a1 1 0 0 1 0-2zm0 4h5a1 1 0 0 1 0 2H6a1 1 0 0 1 0-2z"/></svg></span>
-      <span style="flex:1;text-align:center;">WYCENA</span>
       <span style="flex:0 0 80px;"></span>
     </button>
     <div style="width:100%;height:1px;background:var(--border);margin:2px 0;"></div>
@@ -1693,48 +1538,6 @@ select.native-sel { display: none !important; }
   </div>
 </div>
 
-<!-- Kalkulator napraw - pełny ekran -->
-<div id="kalkulator-overlay" class="overlay-full">
-  <div class="app">
-
-    <!-- Summary card -->
-    <div class="summary-card" id="kalk-summary-card">
-      <span id="kalk-summary-side-bar" aria-hidden="true"></span>
-      <div class="summary-top" style="margin-bottom:12px;">
-        <div class="summary-left">
-          <div class="summary-total" id="kalk-total">0,00</div>
-        </div>
-      </div>
-      <div class="btn-grid" style="grid-template-columns:1fr 1fr 1fr;">
-        <button onclick="closeKalkulator()" class="btn-data">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          Anuluj
-        </button>
-        <button onclick="kalkulatorDoZlecenia()" class="btn-save" style="grid-column:span 2;">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          ZAPISZ
-        </button>
-      </div>
-    </div>
-
-    <!-- Items -->
-    <div class="modal-banner">
-      <div class="items-list flat-list flat-csel" id="kalk-items-list" style="padding:4px 0;"></div>
-      <div id="kalk-group-container" class="flat-group"></div>
-
-      <!-- Notatka serwisowa kalkulator -->
-      <div style="margin:0;">
-        <textarea id="kalk-notatka" placeholder="Notatka..." maxlength="500"
-          style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:12px 12px;color:var(--text);font-size:14px;font-family:inherit;resize:none;outline:none;min-height:72px;line-height:1.5;"
-          onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'"></textarea>
-      </div>
-    </div>
-
-    <div style="padding-bottom:40px;"></div>
-
-  </div>
-</div>
-
 <div id="history-overlay" class="overlay-full">
   <div class="app">
     <div style="padding:0 16px 0;">
@@ -1961,7 +1764,7 @@ function unlockBody() { document.body.classList.remove('overlay-open'); }
 // Auto lock/unlock body scroll gdy jakikolwiek overlay jest widoczny
 function updateBodyLock() {
   const overlayIds = ['raport-overlay','podglad-overlay','history-overlay',
-    'modal-overlay','kalkulator-overlay','lancuch-overlay',
+    'modal-overlay','lancuch-overlay',
     'kalkulator-prosty-overlay','kody-rabatowe-overlay','rab-wydane-overlay','rab-assign-overlay','start-overlay'];
   const anyOpen = overlayIds.some(id => { const el = $(id); return el && getComputedStyle(el).display !== 'none'; });
   if (anyOpen) lockBody(); else unlockBody();
@@ -1969,7 +1772,7 @@ function updateBodyLock() {
 
 document.addEventListener('DOMContentLoaded', () => {
   const overlayIds = ['raport-overlay','podglad-overlay','history-overlay',
-    'modal-overlay','kalkulator-overlay','lancuch-overlay',
+    'modal-overlay','lancuch-overlay',
     'kalkulator-prosty-overlay','kody-rabatowe-overlay','rab-wydane-overlay','rab-assign-overlay','start-overlay'];
   overlayIds.forEach(id => {
     const el = document.getElementById(id);
@@ -2635,54 +2438,6 @@ function autoSelectCtx(itemsArr, itemName, keyword) {
 }
 
 // ─────────────────────────────────────────
-// SHARED: Editable total click handler
-// ─────────────────────────────────────────
-function attachEditableTotal(totalEl, it, priceEl, bar, syncBarCircle, updatePriceDisplay, recalcCtx, useQty) {
-  totalEl.classList.add('editable-total', 'visible');
-  totalEl.dataset.kalkPriceBound = '1';
-  totalEl.title = 'Kliknij aby edytować cenę';
-  totalEl.addEventListener('click', () => {
-    const q = useQty ? (parseInt(it.qty) || 1) : 1;
-    const cur = Math.round((parseFloat(it.price)||0) * q * 100) / 100;
-    const inp = document.createElement('input');
-    inp.type = 'text'; inp.inputMode = 'decimal';
-    inp.className = 'item-price-input kalk-price-edit';
-    inp.style.cssText = 'width:52px;';
-    inp.value = cur || '';
-    totalEl.dataset.prev = totalEl.textContent;
-    totalEl.textContent = '';
-    totalEl.style.position = 'relative';
-    inp.style.position = 'absolute';
-    inp.style.inset = '0';
-    totalEl.appendChild(inp);
-    inp.focus(); inp.select();
-    const done = () => {
-      const total = parseFloat(inp.value.replace(',','.'));
-      if (!isNaN(total) && total >= 0) {
-        const q2 = useQty ? (parseInt(it.qty) || 1) : 1;
-        it.price = (useQty && q2 > 0) ? Math.round(total / q2 * 100) / 100 : Math.round(total * 100) / 100;
-        priceEl.value = it.price || '';
-        if (useQty && it.qty !== undefined && it.qty === 0 && total > 0) {
-          it.qty = 1;
-          const qv = totalEl.closest('.item-card')?.querySelector('.qty-val');
-          if (qv) qv.textContent = it.qty;
-        }
-        if (total > 0 && !bar.checked) { bar.checked = true; syncBarCircle(); it.checked = true; }
-      }
-      inp.remove();
-      totalEl.textContent = totalEl.dataset.prev || '';
-      updatePriceDisplay();
-      recalcCtx();
-    };
-    inp.addEventListener('blur', done);
-    inp.addEventListener('keydown', e => {
-      if (e.key === 'Enter') { e.preventDefault(); inp.blur(); }
-      if (e.key === 'Escape') { e.preventDefault(); inp.remove(); totalEl.textContent = totalEl.dataset.prev || ''; }
-    });
-  });
-}
-
-// ─────────────────────────────────────────
 // RENDER ITEMS
 // ─────────────────────────────────────────
 function renderItems() {
@@ -2699,14 +2454,13 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx, uiCtx) {
   itemsCtx = itemsCtx || items;
   renderCtx = renderCtx || renderItems;
   recalcCtx = recalcCtx || recalc;
-  uiCtx = uiCtx || 'main'; // 'main' | 'kalk' | 'raport'
+  uiCtx = uiCtx || 'main'; // 'main' | 'raport'
   const card = document.createElement('div');
   card.className = 'item-card';
   card.dataset.id = it.id;
   const isLocal = () => itemsCtx !== items;
   // Uwaga: karta nie jest jeszcze w DOM podczas budowy, więc nie używamy closest().
   // Wykrywamy kontekst po tym, jaka tablica items jest przekazana.
-  const inKalkulator = () => uiCtx === 'kalk';
   const inRaport = () => uiCtx === 'raport';
   let presetSelRef = null;
 
@@ -2826,7 +2580,7 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx, uiCtx) {
   }
   priceEl.addEventListener('focus', () => {
     // DODAJ ZLECENIE: dla pozycji z +/- pokazujemy w inputie cenę sumaryczną (qty * unit)
-    const showQtyTotalInInput = (!inKalkulator() && it.qty !== undefined && (!isLocal() || inRaport()));
+    const showQtyTotalInInput = (it.qty !== undefined && (!isLocal() || inRaport()));
     if (showQtyTotalInInput) {
       const p = parseFloat(it.price) || 0;
       const q = parseInt(it.qty) || 0;
@@ -2841,7 +2595,7 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx, uiCtx) {
     const raw = priceEl.value.split('×')[0].split('=')[0].trim();
     const v = evalExpr(raw);
     if (!isNaN(v) && v >= 0) {
-      const showQtyTotalInInput = (!inKalkulator() && it.qty !== undefined && (!isLocal() || inRaport()));
+      const showQtyTotalInInput = (it.qty !== undefined && (!isLocal() || inRaport()));
       // W kontekście raportu (rItems) operujemy bezpośrednio na it,
       // bo State.setItemPrice szuka po id w globalnym items[].
       if (isLocal()) {
@@ -2881,11 +2635,6 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx, uiCtx) {
     recalcCtx();
   });
 
-  // Kalkulator: stałe okienko ceny + edycja kliknięciem (bez skakania layoutu)
-  if (inKalkulator()) {
-    totalEl.classList.add('editable-total');
-    totalEl.classList.add('visible');
-  }
   priceEl.addEventListener('keydown', e => {
     if (e.key === 'Enter') { e.preventDefault(); priceEl.blur(); }
   });
@@ -2897,7 +2646,7 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx, uiCtx) {
     let q = it.qty !== undefined ? (parseInt(it.qty) || 0) : 1;
     // W kalkulatorze suma liczy qty=0 jako 1 (it.qty||1). Dopasuj widok, ale tylko gdy pozycja jest aktywna.
     if (it.qty !== undefined && q === 0 && it.checked) q = 1;
-    const showQtyTotalInInput = (!inKalkulator() && it.qty !== undefined && (!isLocal() || inRaport()));
+    const showQtyTotalInInput = (it.qty !== undefined && (!isLocal() || inRaport()));
     const inRap = inRaport();
     const tot = Math.round(p * q * 100) / 100;
     // W DODAJ ZLECENIE (+/-) input pokazuje sumę, nie cenę jednostkową.
@@ -2915,61 +2664,6 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx, uiCtx) {
       totalEl.textContent = tot > 0 ? tot + ' zł' : '0 zł';
     }
     totalEl.classList.add('visible');
-  }
-
-  function bindKalkPriceEditor() {
-    if (!inKalkulator()) return;
-    if (!totalEl.classList.contains('editable-total')) return;
-    if (totalEl.dataset.kalkPriceBound === '1') return;
-    totalEl.dataset.kalkPriceBound = '1';
-    totalEl.title = 'Kliknij aby edytować cenę';
-    totalEl.addEventListener('click', () => {
-      let q = it.qty !== undefined ? (parseInt(it.qty) || 0) : 1;
-      if (it.qty !== undefined && q === 0 && it.checked) q = 1;
-      const cur = Math.round((parseFloat(it.price)||0) * (q || 1) * 100) / 100;
-
-      const inp = document.createElement('input');
-      inp.type = 'text'; inp.inputMode = 'decimal';
-      inp.className = 'item-price-input kalk-price-edit';
-      inp.value = cur || '';
-
-      totalEl.dataset.prev = totalEl.textContent;
-      totalEl.textContent = '';
-      totalEl.style.position = 'relative';
-      inp.style.position = 'absolute';
-      inp.style.inset = '0';
-      totalEl.appendChild(inp);
-      inp.focus(); inp.select();
-
-      const cleanup = (restorePrev) => {
-        inp.remove();
-        totalEl.textContent = restorePrev ? (totalEl.dataset.prev || '') : '';
-      };
-
-      const done = () => {
-        const total = parseFloat(inp.value.replace(',','.'));
-        if (!isNaN(total) && total >= 0) {
-          const denom = (q || 1);
-          it.price = denom > 0 ? Math.round((total / denom) * 100) / 100 : Math.round(total * 100) / 100;
-          priceEl.value = it.price || '';
-          if (it.qty !== undefined && it.qty === 0 && total > 0) {
-            it.qty = 1;
-            const qv = card.querySelector('.qty-val');
-            if (qv) qv.textContent = it.qty;
-          }
-          if (total > 0 && !bar.checked) { bar.checked = true; syncBarCircle(); it.checked = true; }
-        }
-        cleanup(false);
-        updatePriceDisplay();
-        recalcCtx();
-      };
-
-      inp.addEventListener('blur', done);
-      inp.addEventListener('keydown', e => {
-        if (e.key === 'Enter') { e.preventDefault(); inp.blur(); }
-        if (e.key === 'Escape') { e.preventDefault(); cleanup(true); }
-      });
-    });
   }
 
   function buildQty(onChange, step) {
@@ -3323,16 +3017,8 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx, uiCtx) {
     btnWrap.style.cssText = 'flex:1;min-width:0;';
     btnWrap.appendChild(openBtn);
     topRow.appendChild(btnWrap);
-    // W kalkulatorze nie pokazuj pustego inputa ceny (zjada miejsce na "Wybierz")
-    // Zamiast tego pokazujemy prawą kolumnę jako prostą kwotę (totalEl).
     priceEl.style.width = '52px';
-    if (isLocal() && inKalkulator()) {
-      priceEl.style.display = 'none';
-      attachEditableTotal(totalEl, it, priceEl, bar, syncBarCircle, updatePriceDisplay, recalcCtx, false);
-      topRow.appendChild(totalEl);
-    } else {
-      topRow.appendChild(priceEl);
-    }
+    topRow.appendChild(priceEl);
     body.appendChild(topRow);
   }
 
@@ -3341,12 +3027,6 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx, uiCtx) {
     if (it.qty !== undefined) {
       // Z +/- : drop zostaje pod spodem, kontrolki qty w topRow
       const { ctrl } = buildQty(null);
-      // Kalkulator ma specjalny edytor ceny (kwota po prawej jako okienko i edycja kliknięciem).
-      // W DODAJ / NAPRAWA nie używamy tego trybu (powodował "podwójne" okienka).
-      if (inKalkulator()) {
-        priceEl.style.display = 'none';
-        attachEditableTotal(totalEl, it, priceEl, bar, syncBarCircle, updatePriceDisplay, recalcCtx, true);
-      }
 
       // Drop w topRow między nazwą a +/-
       const psel = document.createElement('select');
@@ -3411,8 +3091,7 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx, uiCtx) {
       topRow.appendChild(pselWrap2);
       buildCsel(psel);
       topRow.appendChild(ctrl);
-      if (inKalkulator()) topRow.appendChild(totalEl);
-      else topRow.appendChild(priceEl);
+      topRow.appendChild(priceEl);
       body.appendChild(topRow);
 
     } else {
@@ -3509,15 +3188,7 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx, uiCtx) {
       pselWrap.appendChild(psel);
       topRow.appendChild(pselWrap);
       buildCsel(psel);
-      // W kalkulatorze nie pokazuj pustego inputa ceny (zjada miejsce na "Wybierz")
-      // Zamiast tego pokazujemy prawą kolumnę jako prostą kwotę (totalEl).
-    if (isLocal() && inKalkulator()) {
-        priceEl.style.display = 'none';
-        attachEditableTotal(totalEl, it, priceEl, bar, syncBarCircle, updatePriceDisplay, recalcCtx, false);
-        topRow.appendChild(totalEl);
-      } else {
-        topRow.appendChild(priceEl);
-      }
+      topRow.appendChild(priceEl);
       body.appendChild(topRow);
     }
   }
@@ -3533,13 +3204,7 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx, uiCtx) {
       const { ctrl } = buildQty(null, it.name === 'Końcówki' ? 5 : 1);
       topRow.appendChild(opisWrap);
       topRow.appendChild(ctrl);
-      if (inKalkulator()) {
-        priceEl.style.display = 'none';
-        attachEditableTotal(totalEl, it, priceEl, bar, syncBarCircle, updatePriceDisplay, recalcCtx, true);
-        topRow.appendChild(totalEl);
-      } else {
-        topRow.appendChild(priceEl);
-      }
+      topRow.appendChild(priceEl);
     } else {
       nameEl.style.flex = '0 0 auto';
       const opisWrap = document.createElement('div');
@@ -3549,15 +3214,7 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx, uiCtx) {
       priceEl.style.width = '52px';
       // font set by CSS
       topRow.appendChild(opisWrap);
-      // Tylko w WYCENA/KALKULATOR chowamy input i pokazujemy prawą kolumnę jako "kwotę".
-      // W DO WYDANIA (edycja) i w DODAJ musi być normalne okienko ceny.
-      if (isLocal() && inKalkulator()) {
-        priceEl.style.display = 'none';
-        totalEl.classList.add('visible');
-        topRow.appendChild(totalEl);
-      } else {
-        topRow.appendChild(priceEl);
-      }
+      topRow.appendChild(priceEl);
     }
     body.appendChild(topRow);
   }
@@ -3570,9 +3227,6 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx, uiCtx) {
   card.appendChild(bar);
   card.appendChild(barCircle);
   card.appendChild(body);
-
-  // Kalkulator: każda cena ma być edytowalna
-  bindKalkPriceEditor();
 
   // Ujednolić widok ceny po zbudowaniu karty:
   // dla pozycji z qty w głównym widoku pokazuj w polu kwotę łączną (qty * cena).
@@ -4906,135 +4560,6 @@ function startAktualne() {
 window.startNowe = startNowe;
 window.startAktualne = startAktualne;
 
-let kalkItems = [];
-let kalkSubs  = [];
-let kalkGroupOpen = true;
-
-function startKalkulator() {
-  $('start-overlay').style.display = 'none';
-
-  // Fresh default items
-  kalkItems = DEFAULTS.map((d, i) => ({
-    id: 'k' + i,
-    name: d.name, price: d.price, checked: d.checked,
-    qty: d.qty !== undefined ? d.qty : undefined,
-    options:  d.options  ? d.options.map(x => ({...x}))  : undefined,
-    presets:  d.presets  ? d.presets.map(x => ({...x}))  : undefined,
-    note:     d.note     ? true                           : undefined,
-    selectedPreset: -1, customName: '',
-    noteText: '',
-  }));
-  kalkSubs = [{ id: 'ks0', name: '', price: 0, checked: false }];
-  kalkGroupOpen = true;
-
-  function recalcKalk() {
-    let total = 0;
-    for (const it of kalkItems) {
-      if (!it.checked) continue;
-      total += it.price * (it.qty !== undefined ? (it.qty || 1) : 1);
-    }
-    const subsTotal = kalkSubs
-      .filter(s => s.checked && (parseFloat(s.price) || 0) > 0)
-      .reduce((a, s) => a + (parseFloat(s.price) || 0), 0);
-    total += subsTotal;
-    $('kalk-total').textContent = fmt(total);
-    const sumEl = $('kalk-group-sum');
-    if (sumEl) sumEl.textContent = subsTotal > 0 ? String(Math.round(subsTotal)) : '0';
-  }
-
-  // Render items
-  const list = $('kalk-items-list');
-  list.innerHTML = '';
-
-  function renderKalkItems() {
-    list.innerHTML = '';
-    for (const it of kalkItems) {
-      const card = buildCard(it, kalkItems, renderKalkItems, recalcKalk, 'kalk');
-      card.querySelectorAll('input,button,select').forEach(el => {
-        el.addEventListener('change', recalcKalk);
-        el.addEventListener('click', recalcKalk);
-        el.addEventListener('blur', recalcKalk);
-      });
-      list.appendChild(card);
-    }
-  }
-
-  for (const it of kalkItems) {
-    const card = buildCard(it, kalkItems, renderKalkItems, recalcKalk, 'kalk');
-    card.querySelectorAll('input,button,select').forEach(el => {
-      el.addEventListener('change', recalcKalk);
-      el.addEventListener('click', recalcKalk);
-      el.addEventListener('blur', recalcKalk);
-    });
-    list.appendChild(card);
-  }
-
-  function renderKalkGroup() {
-    const container = $('kalk-group-container');
-    if (!container) return;
-    container.innerHTML = '';
-
-    const wrap = document.createElement('div');
-    wrap.className = 'group-card';
-    wrap.style.margin = '12px 8px 3px';
-
-    const header = document.createElement('div');
-    header.className = 'group-header';
-
-    const title = document.createElement('span');
-    title.className = 'group-title';
-    title.textContent = 'Inne części';
-
-    const sumEl = document.createElement('span');
-    sumEl.className = 'group-sum';
-    sumEl.id = 'kalk-group-sum';
-    const subsTotal = kalkSubs.filter(s => s.checked && s.price > 0).reduce((a, s) => a + (parseFloat(s.price) || 0), 0);
-    sumEl.textContent = subsTotal > 0 ? String(Math.round(subsTotal)) : '0';
-
-    const toggle = document.createElement('span');
-    toggle.className = 'group-toggle' + (kalkGroupOpen ? ' open' : '');
-    toggle.innerHTML = '&#8964;';
-
-    const body = document.createElement('div');
-    body.className = 'group-body' + (kalkGroupOpen ? ' open' : '');
-
-    header.appendChild(title);
-    header.appendChild(sumEl);
-    header.appendChild(toggle);
-    header.addEventListener('click', () => {
-      kalkGroupOpen = !kalkGroupOpen;
-      body.classList.toggle('open', kalkGroupOpen);
-      toggle.classList.toggle('open', kalkGroupOpen);
-    });
-
-    function onAddRow() {
-      kalkGroupOpen = true;
-      renderKalkGroup();
-    }
-    for (const sub of kalkSubs) {
-      body.appendChild(buildSubRow(sub, kalkSubs, onAddRow, recalcKalk));
-    }
-
-    wrap.appendChild(header);
-    wrap.appendChild(body);
-    container.appendChild(wrap);
-  }
-
-  renderKalkGroup();
-  recalcKalk();
-  $('kalkulator-overlay').style.display = 'block';
-  return;
-}
-
-function closeKalkulator() {
-  $('kalkulator-overlay').style.display = 'none';
-  $('start-overlay').style.display = 'flex';
-}
-function closeKalkulatorOutside(e) { /* pełny ekran — brak kliknięcia poza */ }
-window.startKalkulator = startKalkulator;
-window.closeKalkulator = closeKalkulator;
-window.closeKalkulatorOutside = closeKalkulatorOutside;
-
 function startLancuch() {
   $('start-overlay').style.display = 'none';
   $('lancuch-overlay').style.display = 'block';
@@ -5127,46 +4652,6 @@ function closeKalkulatorProsty() {
 window.startKalkulatorProsty = startKalkulatorProsty;
 window.closeKalkulatorProsty = closeKalkulatorProsty;
 window.kpInput = kpInput;
-
-function kalkulatorDoZlecenia() {
-  // Przenieś kalkItems/kalkSubs do głównych items/subs
-  idSeq = 0;
-  items = kalkItems.map(it => ({
-    id: newId(),
-    name: it.name, price: it.price, checked: it.checked,
-    qty: it.qty, selectedPreset: it.selectedPreset, customName: it.customName, customLabel: it.customLabel || undefined, selectedOptions: it.selectedOptions || undefined, noteText: it.noteText || '',
-    options: it.options ? it.options.map(x => ({...x})) : undefined,
-    presets: it.presets ? it.presets.map(x => ({...x})) : undefined,
-  }));
-  subs = kalkSubs.map(s => ({ id: newSubId(), name: s.name, price: s.price, checked: s.checked }));
-  if (!subs.length) subs = [1,2,3].map(() => ({ id: newSubId(), name: '', price: 0, checked: false }));
-  while (subs.length < 3) subs.push({ id: newSubId(), name: '', price: 0, checked: false });
-
-  // Wyczyść dane klienta
-  $('cf-marka').value  = ''; if ($('cf-ebike')) $('cf-ebike').value = '0';
-  $('cf-tel').value    = '';
-  $('cf-model').value  = '';
-  $('cf-kolor').value  = '';
-  $('cf-termin').value = '';
-  photos = [];
-  renderPhotos();
-  // Przenieś notatkę z kalkulatora
-  if ($('notatka-serwisowa') && $('kalk-notatka')) {
-    $('notatka-serwisowa').value = $('kalk-notatka').value;
-  }
-
-  // Zapisz stan i renderuj
-  groupOpen = true;
-  renderItems();
-  renderGroup();
-  recalc();
-  save();
-
-  // Zamknij kalkulator i otwórz dane klienta
-  $('kalkulator-overlay').style.display = 'none';
-  openModal();
-}
-window.kalkulatorDoZlecenia = kalkulatorDoZlecenia;
 
 // ─────────────────────────────────────────
 // TIMER NIEAKTYWNOŚCI — 15 min
