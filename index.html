@@ -164,7 +164,25 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
   background:transparent;
   pointer-events:none;
 }
-
+/* Wycena (kalkulator): fioletowy pasek jak kolor-bar w edycji zlecenia */
+#kalkulator-overlay #kalk-summary-card{
+  position:relative;
+  overflow:hidden;
+  border-left:none !important;
+  border-color:rgba(124,58,237,0.45) !important;
+}
+#kalk-summary-side-bar{
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  width:20px;
+  box-sizing:border-box;
+  border-top-left-radius:var(--radius);
+  border-bottom-left-radius:var(--radius);
+  background:#7c3aed;
+  pointer-events:none;
+}
 #raport-summary-kolor-bar{
   position:absolute;
   left:0;
@@ -556,9 +574,14 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
   margin-top: 12px;
   padding-top: 0;
 }
-/* ── Wspólny styl bannerów części (raport, dodaj) ── */
+#kalkulator-overlay .modal-banner{
+  margin: 12px 8px 0;
+}
+
+/* ── Wspólny styl bannerów części (kalkulator, raport, dodaj) ── */
 .parts-banner,
-#modal-overlay .modal-banner{
+#modal-overlay .modal-banner,
+#kalkulator-overlay .modal-banner{
   background: var(--bg2);
   border: 1px solid var(--border);
   border-radius: 14px;
@@ -628,6 +651,97 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
 /* INNE CZĘŚCI w raporcie: via .flat-group (dodane w HTML) */
 
 /* Kalkulator napraw: via .flat-list .flat-csel (dodane w HTML) */
+#kalkulator-overlay .items-list .item-card:first-child{ padding-top: 2px; }
+#kalkulator-overlay .items-list .item-card:last-child{ border-bottom: none; }
+#kalkulator-overlay .item-card:has(.item-check:checked){
+  background: transparent;
+}
+
+/* Cena w kalkulatorze:
+   - zwykły tekst (bez editable-total) może być "goły"
+   - editable-total MUSI mieć czarne okienko (edytowalne kliknięciem) */
+#kalkulator-overlay .item-price-input{
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  width: auto !important;
+  min-width: 52px;
+}
+#kalkulator-overlay .item-price-total:not(.editable-total){
+  border: none !important;
+  background: transparent !important;
+  padding: 0 !important;
+  width: auto !important;
+  min-width: 52px;
+}
+/* Kalkulator: stałe okienko ceny (3 cyfry, duże) */
+#kalkulator-overlay .item-price-total.editable-total{
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  box-sizing: border-box;
+  width: 70px !important;      /* ~3 cyfry */
+  min-width: 70px !important;
+  height: 32px;
+  border: 1px solid rgba(255,255,255,0.14) !important;
+  background: #000 !important;
+  border-radius: 10px !important;
+  padding: 6px 10px !important;
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* WYBIERZ/OPIS w kalkulatorze: zawsze do samej ceny */
+#kalkulator-overlay .card-row{
+  display: flex;
+  align-items: center;
+}
+#kalkulator-overlay .kalk-csel-cell{
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  display: flex;
+  align-items: center;
+}
+#kalkulator-overlay .kalk-csel-cell .csel-wrap{
+  width: 100% !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
+#kalkulator-overlay .kalk-csel-cell .csel-btn{
+  width: 100% !important;
+}
+/* Kalkulator: gdy edytujemy cenę wewnątrz okienka (input w środku) – bez "2 ramek" */
+#kalkulator-overlay .item-price-total.editable-total{ position: relative; }
+#kalkulator-overlay .item-price-total.editable-total .item-price-input.kalk-price-edit{
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+  padding: 0 10px !important;
+}
+/* Podczas edycji ceny: ma być stała szerokość */
+#kalkulator-overlay .item-price-input.kalk-price-edit{
+  width: 70px !important;
+  min-width: 70px !important;
+  height: 32px;
+  border: 1px solid rgba(255,255,255,0.14) !important;
+  background: #000 !important;
+  border-radius: 10px !important;
+  padding: 6px 10px !important;
+  font-size: 20px;
+  font-weight: 700;
+  text-align: right;
+}
+
+/* Kalkulator: inne części via .flat-group (dodane w HTML) */
+#kalkulator-overlay .group-body .sub-row:last-child{
+  border-bottom: none;
+}
 
 /* ── DODAJ CZĘŚCI (nowe zlecenie): via .flat-list .flat-csel .flat-group ── */
 #group-container .sub-price-input{ color:#fff; }
@@ -661,6 +775,39 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
   line-height: 1.5;
 }
 
+/* WYBIERZ/OPIS: spójny pill jak na screenie */
+#kalkulator-overlay .csel-wrap{
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+}
+#kalkulator-overlay .csel-btn{
+  width: 100%;
+  justify-content: flex-end;
+  background: #000;
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 10px;
+  padding: 6px 10px;
+  min-height: 28px;
+  color: var(--text2);
+  font-weight: 600;
+}
+
+/* Prawa kolumna (cena) nie może "zjadać" miejsca */
+#kalkulator-overlay .item-price-total{
+  min-width: 44px;
+}
+#kalkulator-overlay .item-price-input,
+#kalkulator-overlay .item-price-total.editable-total{
+  min-width: 44px;
+}
+#kalkulator-overlay .csel-btn span{
+  text-align: right;
+}
+#kalkulator-overlay .card-row{ gap: 6px; }
+#kalkulator-overlay .csel-btn svg{
+  display:none;
+}
 .modal-field input:focus { border-color: var(--blue); }
 .modal-field input::placeholder { color: #444470; }
 .btn-data {
@@ -969,15 +1116,15 @@ select.native-sel { display: none !important; }
   </div>
 
   <div id="add-parts-banner" class="parts-banner" style="margin:12px 8px 0;">
-    <div id="notatka-bottom-wrap" class="notatka-bottom-wrap" style="margin-bottom:4px;">
+    <div class="items-list flat-list flat-csel" id="items-list"></div>
+    <div id="group-container" class="flat-group"></div>
+    <div id="notatka-bottom-wrap" class="notatka-bottom-wrap">
       <div class="notatka-bottom-label">Notatka serwisowa</div>
       <textarea id="notatka-serwisowa" placeholder="Wpisz notatkę..." maxlength="500"
         class="notatka-bottom-textarea"
         onfocus="this.style.borderColor='var(--blue)'"
         onblur="this.style.borderColor='var(--border)';save();"></textarea>
     </div>
-    <div class="items-list flat-list flat-csel" id="items-list"></div>
-    <div id="group-container" class="flat-group"></div>
   </div>
 
 <!-- Hidden data fields -->
@@ -1053,11 +1200,7 @@ select.native-sel { display: none !important; }
       <button onclick="closePodglad()" class="btn-close" style="flex-shrink:0;">Zamknij</button>
     </div>
     <div class="podglad-body">
-      <div id="podglad-header" style="font-size:13px;color:var(--text2);margin-bottom:10px;padding-bottom:12px;border-bottom:1px solid var(--border);"></div>
-      <div id="podglad-notatka" style="display:none;margin-bottom:12px;border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:8px;padding:12px 14px;">
-        <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;">Notatka serwisowa</div>
-        <div id="podglad-notatka-txt" style="font-size:13px;color:var(--text);line-height:1.6;white-space:pre-wrap;"></div>
-      </div>
+      <div id="podglad-header" style="font-size:13px;color:var(--text2);margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border);"></div>
       <table id="podglad-table" style="width:100%;border-collapse:collapse;"></table>
       <div style="margin-top:14px;background:#000;border-radius:10px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;">
         <span style="font-size:11px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.6px;">Łączna kwota</span>
@@ -1070,6 +1213,10 @@ select.native-sel { display: none !important; }
       <div id="podglad-kod-odbioru" style="display:none;margin-top:8px;background:#1c1209;border:1px solid #b45309;border-radius:10px;padding:12px 16px;justify-content:space-between;align-items:center;">
         <span style="font-size:11px;font-weight:700;color:#fbbf24;text-transform:uppercase;letter-spacing:.6px;">🔑 Kod odbioru</span>
         <span id="podglad-kod-odbioru-val" style="font-size:28px;font-weight:800;color:#f59e0b;letter-spacing:4px;"></span>
+      </div>
+      <div id="podglad-notatka" style="display:none;margin-top:14px;border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:8px;padding:12px 14px;">
+        <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;">Notatka serwisowa</div>
+        <div id="podglad-notatka-txt" style="font-size:13px;color:var(--text);line-height:1.6;white-space:pre-wrap;"></div>
       </div>
       <div id="podglad-action-bar" style="display:none;margin-top:14px;">
         <button id="podglad-wydaj-btn" class="btn-history-load" style="width:100%;background:#ef4444;border-color:#ef4444;font-size:15px;font-weight:700;letter-spacing:.5px;min-height:66px;" onclick="">WYDAJ</button>
@@ -1099,7 +1246,11 @@ select.native-sel { display: none !important; }
       <span style="flex:1;text-align:center;">PRZEGLĄDAJ</span>
       <span style="flex:0 0 80px;"></span>
     </button>
-
+    <button onclick="startKalkulator()" style="margin-bottom:16px;width:100%;padding:16px 20px;background:linear-gradient(180deg,#8b5cf6 0%,#6d28d9 50%,#521fa3 100%);border:none;border-radius:16px;color:#fff;font-size:22px;font-weight:700;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:0;">
+      <span style="flex:0 0 80px;display:flex;align-items:center;justify-content:center;"><svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M4 2a1 1 0 0 0-1 1v18l3-2 3 2 3-2 3 2 3-2V3a1 1 0 0 0-1-1H4zm2 5h8a1 1 0 0 1 0 2H6a1 1 0 0 1 0-2zm0 4h8a1 1 0 0 1 0 2H6a1 1 0 0 1 0-2zm0 4h5a1 1 0 0 1 0 2H6a1 1 0 0 1 0-2z"/></svg></span>
+      <span style="flex:1;text-align:center;">WYCENA</span>
+      <span style="flex:0 0 80px;"></span>
+    </button>
     <div style="width:100%;height:1px;background:var(--border);margin:2px 0;"></div>
     <button onclick="startLancuch()" style="width:75%;align-self:center;padding:12px;background:none;border:1px solid #0891b2;border-radius:12px;color:#67e8f9;font-size:17px;font-weight:600;cursor:pointer;letter-spacing:.4px;display:flex;align-items:center;justify-content:center;gap:12px;">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
@@ -1543,7 +1694,46 @@ select.native-sel { display: none !important; }
 </div>
 
 <!-- Kalkulator napraw - pełny ekran -->
+<div id="kalkulator-overlay" class="overlay-full">
+  <div class="app">
 
+    <!-- Summary card -->
+    <div class="summary-card" id="kalk-summary-card">
+      <span id="kalk-summary-side-bar" aria-hidden="true"></span>
+      <div class="summary-top" style="margin-bottom:12px;">
+        <div class="summary-left">
+          <div class="summary-total" id="kalk-total">0,00</div>
+        </div>
+      </div>
+      <div class="btn-grid" style="grid-template-columns:1fr 1fr 1fr;">
+        <button onclick="closeKalkulator()" class="btn-data">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          Anuluj
+        </button>
+        <button onclick="kalkulatorDoZlecenia()" class="btn-save" style="grid-column:span 2;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          ZAPISZ
+        </button>
+      </div>
+    </div>
+
+    <!-- Items -->
+    <div class="modal-banner">
+      <div class="items-list flat-list flat-csel" id="kalk-items-list" style="padding:4px 0;"></div>
+      <div id="kalk-group-container" class="flat-group"></div>
+
+      <!-- Notatka serwisowa kalkulator -->
+      <div style="margin:0;">
+        <textarea id="kalk-notatka" placeholder="Notatka..." maxlength="500"
+          style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:12px 12px;color:var(--text);font-size:14px;font-family:inherit;resize:none;outline:none;min-height:72px;line-height:1.5;"
+          onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'"></textarea>
+      </div>
+    </div>
+
+    <div style="padding-bottom:40px;"></div>
+
+  </div>
+</div>
 
 <div id="history-overlay" class="overlay-full">
   <div class="app">
@@ -1609,38 +1799,51 @@ select.native-sel { display: none !important; }
         <div style="display:flex;gap:8px;align-items:stretch;">
           <div style="flex:0 0 auto;min-width:0;width:72%;">
             <select id="modal-marka-sel" class="native-sel" data-title="Wybierz markę" >
-              <option value="ROWER" selected>Rower</option>
-              <option value="INNY">Inne</option>
-              <option value="KROSS">Kross</option>
-              <option value="ROMET">Romet</option>
-              <option value="DZIECIĘCY">Dziecięcy</option>
-              <option value="BIANCHI">Bianchi</option>
+              <option value="ROWER" selected>ROWER</option>
+              <option value="INNY">INNE</option>
+              <option value="KROSS">KROSS</option>
+              <option value="ROMET">ROMET</option>
+              <option value="DZIECIĘCY">DZIECIĘCY</option>
+              <option value="AUTHOR">AUTHOR</option>
+              <option value="BIANCHI">BIANCHI</option>
               <option value="BMX">BMX</option>
-              <option value="BTWIN">Btwin</option>
-              <option value="CANNONDALE">Cannondale</option>
-              <option value="CUBE">Cube</option>
-              <option value="DECATHLON">Decathlon</option>
-              <option value="FOCUS">Focus</option>
-              <option value="FOLTA">Folta</option>
-              <option value="GIANT">Giant</option>
-              <option value="GOETZE">Goetze</option>
-              <option value="GHOST">Ghost</option>
-              <option value="KANDS">Kands</option>
+              <option value="BTWIN">BTWIN</option>
+              <option value="BULLS">BULLS</option>
+              <option value="CANNONDALE">CANNONDALE</option>
+              <option value="CANYON">CANYON</option>
+              <option value="CUBE">CUBE</option>
+              <option value="DECATHLON">DECATHLON</option>
+              <option value="ECOBIKE">ECOBIKE</option>
+              <option value="FELT">FELT</option>
+              <option value="FOCUS">FOCUS</option>
+              <option value="FOLTA">FOLTA</option>
+              <option value="GIANT">GIANT</option>
+              <option value="GIANT LIV">GIANT LIV</option>
+              <option value="GHOST">GHOST</option>
+              <option value="GOETZE">GOETZE</option>
+              <option value="HAIBIKE">HAIBIKE</option>
+              <option value="INDIANA">INDIANA</option>
+              <option value="KANDS">KANDS</option>
+              <option value="KELLYS">KELLYS</option>
               <option value="KTM">KTM</option>
-              <option value="KELLYS">Kellys</option>
-              <option value="LAPIERRE">Lapierre</option>
-              <option value="HAIBIKE">Haibike</option>
-              <option value="MERIDA">Merida</option>
-              <option value="RADON">Radon</option>
-              <option value="RONDO">Rondo</option>
-              <option value="ROCKRIDER">Rockrider</option>
-              <option value="SCOTT">Scott</option>
-              <option value="TREK">Trek</option>
-              <option value="TRIBAN">Triban</option>
-              <option value="UNIBIKE">Unibike</option>
-              <option value="WOOM">Woom</option>
-              <option value="OVERFLY">Overfly</option>
-              <option value="ECOBIKE">Ecobike</option>
+              <option value="LAPIERRE">LAPIERRE</option>
+              <option value="LAZARO">LAZARO</option>
+              <option value="MERIDA">MERIDA</option>
+              <option value="MONGOOSE">MONGOOSE</option>
+              <option value="NS-BIKE">NS-BIKE</option>
+              <option value="NORTHEC">NORTHEC</option>
+              <option value="OVERFLY">OVERFLY</option>
+              <option value="RADON">RADON</option>
+              <option value="ROCKRIDER">ROCKRIDER</option>
+              <option value="RONDO">RONDO</option>
+              <option value="SCOTT">SCOTT</option>
+              <option value="SENSA">SENSA</option>
+              <option value="SPECIALIZED">SPECIALIZED</option>
+              <option value="STORM">STORM</option>
+              <option value="TREK">TREK</option>
+              <option value="TRIBAN">TRIBAN</option>
+              <option value="UNIBIKE">UNIBIKE</option>
+              <option value="WOOM">WOOM</option>
             </select>
           </div>
           <button type="button" id="modal-ebike-btn" onclick="toggleEbikeCheck()" style="flex:1;padding:0 6px;border:2px solid var(--border);border-radius:8px;background:none;color:var(--text3);font-size:11px;font-weight:800;cursor:pointer;transition:all 0.15s;white-space:nowrap;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;letter-spacing:.5px;text-transform:uppercase;align-self:stretch;min-height:44px;">
@@ -1758,7 +1961,7 @@ function unlockBody() { document.body.classList.remove('overlay-open'); }
 // Auto lock/unlock body scroll gdy jakikolwiek overlay jest widoczny
 function updateBodyLock() {
   const overlayIds = ['raport-overlay','podglad-overlay','history-overlay',
-    'modal-overlay','lancuch-overlay',
+    'modal-overlay','kalkulator-overlay','lancuch-overlay',
     'kalkulator-prosty-overlay','kody-rabatowe-overlay','rab-wydane-overlay','rab-assign-overlay','start-overlay'];
   const anyOpen = overlayIds.some(id => { const el = $(id); return el && getComputedStyle(el).display !== 'none'; });
   if (anyOpen) lockBody(); else unlockBody();
@@ -1766,7 +1969,7 @@ function updateBodyLock() {
 
 document.addEventListener('DOMContentLoaded', () => {
   const overlayIds = ['raport-overlay','podglad-overlay','history-overlay',
-    'modal-overlay','lancuch-overlay',
+    'modal-overlay','kalkulator-overlay','lancuch-overlay',
     'kalkulator-prosty-overlay','kody-rabatowe-overlay','rab-wydane-overlay','rab-assign-overlay','start-overlay'];
   overlayIds.forEach(id => {
     const el = document.getElementById(id);
@@ -4703,6 +4906,135 @@ function startAktualne() {
 window.startNowe = startNowe;
 window.startAktualne = startAktualne;
 
+let kalkItems = [];
+let kalkSubs  = [];
+let kalkGroupOpen = true;
+
+function startKalkulator() {
+  $('start-overlay').style.display = 'none';
+
+  // Fresh default items
+  kalkItems = DEFAULTS.map((d, i) => ({
+    id: 'k' + i,
+    name: d.name, price: d.price, checked: d.checked,
+    qty: d.qty !== undefined ? d.qty : undefined,
+    options:  d.options  ? d.options.map(x => ({...x}))  : undefined,
+    presets:  d.presets  ? d.presets.map(x => ({...x}))  : undefined,
+    note:     d.note     ? true                           : undefined,
+    selectedPreset: -1, customName: '',
+    noteText: '',
+  }));
+  kalkSubs = [{ id: 'ks0', name: '', price: 0, checked: false }];
+  kalkGroupOpen = true;
+
+  function recalcKalk() {
+    let total = 0;
+    for (const it of kalkItems) {
+      if (!it.checked) continue;
+      total += it.price * (it.qty !== undefined ? (it.qty || 1) : 1);
+    }
+    const subsTotal = kalkSubs
+      .filter(s => s.checked && (parseFloat(s.price) || 0) > 0)
+      .reduce((a, s) => a + (parseFloat(s.price) || 0), 0);
+    total += subsTotal;
+    $('kalk-total').textContent = fmt(total);
+    const sumEl = $('kalk-group-sum');
+    if (sumEl) sumEl.textContent = subsTotal > 0 ? String(Math.round(subsTotal)) : '0';
+  }
+
+  // Render items
+  const list = $('kalk-items-list');
+  list.innerHTML = '';
+
+  function renderKalkItems() {
+    list.innerHTML = '';
+    for (const it of kalkItems) {
+      const card = buildCard(it, kalkItems, renderKalkItems, recalcKalk, 'kalk');
+      card.querySelectorAll('input,button,select').forEach(el => {
+        el.addEventListener('change', recalcKalk);
+        el.addEventListener('click', recalcKalk);
+        el.addEventListener('blur', recalcKalk);
+      });
+      list.appendChild(card);
+    }
+  }
+
+  for (const it of kalkItems) {
+    const card = buildCard(it, kalkItems, renderKalkItems, recalcKalk, 'kalk');
+    card.querySelectorAll('input,button,select').forEach(el => {
+      el.addEventListener('change', recalcKalk);
+      el.addEventListener('click', recalcKalk);
+      el.addEventListener('blur', recalcKalk);
+    });
+    list.appendChild(card);
+  }
+
+  function renderKalkGroup() {
+    const container = $('kalk-group-container');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const wrap = document.createElement('div');
+    wrap.className = 'group-card';
+    wrap.style.margin = '12px 8px 3px';
+
+    const header = document.createElement('div');
+    header.className = 'group-header';
+
+    const title = document.createElement('span');
+    title.className = 'group-title';
+    title.textContent = 'Inne części';
+
+    const sumEl = document.createElement('span');
+    sumEl.className = 'group-sum';
+    sumEl.id = 'kalk-group-sum';
+    const subsTotal = kalkSubs.filter(s => s.checked && s.price > 0).reduce((a, s) => a + (parseFloat(s.price) || 0), 0);
+    sumEl.textContent = subsTotal > 0 ? String(Math.round(subsTotal)) : '0';
+
+    const toggle = document.createElement('span');
+    toggle.className = 'group-toggle' + (kalkGroupOpen ? ' open' : '');
+    toggle.innerHTML = '&#8964;';
+
+    const body = document.createElement('div');
+    body.className = 'group-body' + (kalkGroupOpen ? ' open' : '');
+
+    header.appendChild(title);
+    header.appendChild(sumEl);
+    header.appendChild(toggle);
+    header.addEventListener('click', () => {
+      kalkGroupOpen = !kalkGroupOpen;
+      body.classList.toggle('open', kalkGroupOpen);
+      toggle.classList.toggle('open', kalkGroupOpen);
+    });
+
+    function onAddRow() {
+      kalkGroupOpen = true;
+      renderKalkGroup();
+    }
+    for (const sub of kalkSubs) {
+      body.appendChild(buildSubRow(sub, kalkSubs, onAddRow, recalcKalk));
+    }
+
+    wrap.appendChild(header);
+    wrap.appendChild(body);
+    container.appendChild(wrap);
+  }
+
+  renderKalkGroup();
+  recalcKalk();
+  $('kalkulator-overlay').style.display = 'block';
+  return;
+}
+
+function closeKalkulator() {
+  $('kalkulator-overlay').style.display = 'none';
+  $('start-overlay').style.display = 'flex';
+}
+function closeKalkulatorOutside(e) { /* pełny ekran — brak kliknięcia poza */ }
+window.startKalkulator = startKalkulator;
+window.closeKalkulator = closeKalkulator;
+window.closeKalkulatorOutside = closeKalkulatorOutside;
+
 function startLancuch() {
   $('start-overlay').style.display = 'none';
   $('lancuch-overlay').style.display = 'block';
@@ -4795,6 +5127,46 @@ function closeKalkulatorProsty() {
 window.startKalkulatorProsty = startKalkulatorProsty;
 window.closeKalkulatorProsty = closeKalkulatorProsty;
 window.kpInput = kpInput;
+
+function kalkulatorDoZlecenia() {
+  // Przenieś kalkItems/kalkSubs do głównych items/subs
+  idSeq = 0;
+  items = kalkItems.map(it => ({
+    id: newId(),
+    name: it.name, price: it.price, checked: it.checked,
+    qty: it.qty, selectedPreset: it.selectedPreset, customName: it.customName, customLabel: it.customLabel || undefined, selectedOptions: it.selectedOptions || undefined, noteText: it.noteText || '',
+    options: it.options ? it.options.map(x => ({...x})) : undefined,
+    presets: it.presets ? it.presets.map(x => ({...x})) : undefined,
+  }));
+  subs = kalkSubs.map(s => ({ id: newSubId(), name: s.name, price: s.price, checked: s.checked }));
+  if (!subs.length) subs = [1,2,3].map(() => ({ id: newSubId(), name: '', price: 0, checked: false }));
+  while (subs.length < 3) subs.push({ id: newSubId(), name: '', price: 0, checked: false });
+
+  // Wyczyść dane klienta
+  $('cf-marka').value  = ''; if ($('cf-ebike')) $('cf-ebike').value = '0';
+  $('cf-tel').value    = '';
+  $('cf-model').value  = '';
+  $('cf-kolor').value  = '';
+  $('cf-termin').value = '';
+  photos = [];
+  renderPhotos();
+  // Przenieś notatkę z kalkulatora
+  if ($('notatka-serwisowa') && $('kalk-notatka')) {
+    $('notatka-serwisowa').value = $('kalk-notatka').value;
+  }
+
+  // Zapisz stan i renderuj
+  groupOpen = true;
+  renderItems();
+  renderGroup();
+  recalc();
+  save();
+
+  // Zamknij kalkulator i otwórz dane klienta
+  $('kalkulator-overlay').style.display = 'none';
+  openModal();
+}
+window.kalkulatorDoZlecenia = kalkulatorDoZlecenia;
 
 // ─────────────────────────────────────────
 // TIMER NIEAKTYWNOŚCI — 15 min
@@ -5110,17 +5482,6 @@ function getHistory() {
 
 // ── Zapis zlecenia do historii ──
 function saveWycena() {
-  // Przed zapisem historii wymuś zakończenie edycji aktywnego pola
-  // i natychmiast zbuduj aktualny stan. Naprawia sytuację, w której
-  // notatka lub ręcznie zmieniona kwota nie zdążyły trafić do localStorage
-  // przez opóźniony zapis save().
-  if (document.activeElement && typeof document.activeElement.blur === 'function') {
-    document.activeElement.blur();
-  }
-  flushSave();
-  const currentStateObj = _buildStateObject();
-  const currentStateJson = JSON.stringify(currentStateObj);
-
   const total = $('total-display').textContent;
   const marka  = $('cf-marka').value.trim();
   const model  = $('cf-model').value.trim();
@@ -5167,7 +5528,7 @@ function saveWycena() {
         tel,
         total,
         label,
-        state: currentStateJson,
+        state: localStorage.getItem('wycena-v2') || '',
         photos: photos.map(p => ({ dataUrl: p.dataUrl, name: p.name })),
       });
       try {
@@ -5191,20 +5552,18 @@ function saveWycena() {
   if (dupIdx >= 0) {
     const existing = hist[dupIdx];
     const existingState = safeParseJSON(existing.state || '{}', {});
-    const currentState  = currentStateObj;
+    const currentState  = safeParseJSON(localStorage.getItem('wycena-v2') || '{}', {});
     const existingItems = JSON.stringify(existingState.items || []);
     const currentItems  = JSON.stringify(currentState.items  || []);
     const existingSubs  = JSON.stringify(existingState.subs  || []);
     const currentSubs   = JSON.stringify(currentState.subs   || []);
-    const existingNote  = existingState.notatka || '';
-    const currentNote   = currentState.notatka || '';
 
-    if (existingItems !== currentItems || existingSubs !== currentSubs || existingNote !== currentNote || existing.total !== total) {
+    if (existingItems !== currentItems || existingSubs !== currentSubs || existing.total !== total) {
       // Coś się zmieniło — nadpisz
       hist[dupIdx] = Object.assign({}, existing, {
         total,
         termin: $('cf-termin').value.trim(),
-        state: currentStateJson,
+        state: localStorage.getItem('wycena-v2') || '',
         photos: photos.map(p => ({ dataUrl: p.dataUrl, name: p.name })),
         label,
       });
@@ -5238,7 +5597,7 @@ function saveWycena() {
     termin: $('cf-termin').value.trim(),
     tel,
     total,
-    state: currentStateJson,
+    state: localStorage.getItem('wycena-v2') || '',
     photos: photos.map(p => ({ dataUrl: p.dataUrl, name: p.name })),
   };
 
@@ -6871,7 +7230,7 @@ function openModal() {
 
   // Fallback tylko dla bardzo starych wpisów: brak model i kolor, cf-marka zawiera wszystko
   if (!model && !kolor && marka && marka.includes(' ')) {
-    const brands = ['ROWER','KROSS','ROMET','DZIECIĘCY','BIANCHI','BMX','BTWIN','CANNONDALE','CUBE','DECATHLON','FOCUS','FOLTA','GIANT','GHOST','KANDS','KELLYS','MERIDA','RADON','ROCKRIDER','SCOTT','TREK','TRIBAN','UNIBIKE','WOOM','OVERFLY','ECOBIKE','E-BIKE'];
+    const brands = ['ROWER','INNY','KROSS','ROMET','DZIECIĘCY','AUTHOR','BIANCHI','BMX','BTWIN','BULLS','CANNONDALE','CANYON','CUBE','DECATHLON','ECOBIKE','FELT','FOCUS','FOLTA','GIANT','GIANT LIV','GHOST','GOETZE','HAIBIKE','INDIANA','KANDS','KELLYS','KTM','LAPIERRE','LAZARO','MERIDA','MONGOOSE','NS-BIKE','NORTHEC','OVERFLY','RADON','ROCKRIDER','RONDO','SCOTT','SENSA','SPECIALIZED','STORM','TREK','TRIBAN','UNIBIKE','WOOM','E-BIKE'];
     const colors  = ['CZARNY','BRĄZOWY','SZARY','BIAŁY','SREBRNY','NIEBIESKI','CZERWONY','ZIELONY','ŻÓŁTY','BIANCHI'];
     const parts = marka.split(' ');
     const brandIdx = brands.findIndex(b => parts[0] && parts[0].toUpperCase() === b);
