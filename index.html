@@ -791,6 +791,90 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
 .history-item-info { flex: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 .history-item-total { font-size: 26px; font-weight: 800; color: #fff; flex-shrink: 0; letter-spacing: -0.5px; }
 .history-item-actions { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.history-tel-group{
+  border:1px solid var(--border);
+  border-radius:10px;
+  margin-bottom:10px;
+  overflow:visible;
+  background:var(--bg);
+  box-shadow:none;
+}
+.history-tel-group-historia{
+  border-color:rgba(239,68,68,0.22);
+  background:rgba(239,68,68,0.03);
+}
+.history-tel-group-wydanie{
+  border-color:rgba(34,197,94,0.22);
+  background:rgba(34,197,94,0.03);
+}
+.history-tel-group-archiwum{
+  border-color:rgba(167,139,250,0.25);
+  background:rgba(167,139,250,0.04);
+}
+.history-tel-group-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  padding:8px 12px 8px 34px;
+  background:transparent;
+  border-bottom:1px solid var(--border);
+}
+.history-tel-group-phone{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-size:16px;
+  font-weight:700;
+  color:#3b7cf4;
+  text-decoration:none;
+}
+.history-tel-group-count{
+  font-size:11px;
+  font-weight:800;
+  color:var(--text3);
+  text-transform:uppercase;
+  letter-spacing:.4px;
+  white-space:nowrap;
+}
+.history-tel-group-body{
+  padding:10px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.history-tel-group-body .history-item{
+  margin-bottom:0;
+}
+.history-tel-group-footer.history-item{
+  flex-direction:row;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding-left:12px;
+  margin-bottom:0;
+}
+.history-tel-group-sum-left{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex:1;
+  min-width:0;
+}
+.history-tel-group-sum-label{
+  font-size:11px;
+  font-weight:800;
+  color:var(--text3);
+  text-transform:uppercase;
+  letter-spacing:.55px;
+  white-space:nowrap;
+}
+.history-tel-group-sum-value{
+  font-size:22px;
+  font-weight:800;
+  color:#22c55e;
+  letter-spacing:-0.5px;
+}
 .btn-history-load {
   background: var(--blue); color: #111827; border: 1px solid var(--blue);
   border-radius: var(--radius-btn); padding: var(--btn-py) var(--btn-px);
@@ -1549,24 +1633,23 @@ select.native-sel { display: none !important; }
       <div class="history-filter-bar" style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0 8px;flex-wrap:wrap;width:100%;">
         <div class="history-search-slot">
           <div id="historia-search-wrap" style="display:none;">
-            <input type="tel" id="historia-search-tel" placeholder="Szukaj: 000-000-000" maxlength="11"
+            <input type="text" id="historia-search-tel" placeholder="Szukaj: tel. / model" maxlength="40"
               style="background:var(--bg);border:1px solid var(--border);color:#fff;outline:none;"
               onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
           </div>
           <div id="wydanie-search-wrap" style="display:none;">
-            <input type="tel" id="wydanie-search-tel" placeholder="Szukaj: tel. / kod" maxlength="20" inputmode="numeric"
+            <input type="text" id="wydanie-search-tel" placeholder="Szukaj: tel. / kod / model" maxlength="40"
               style="background:var(--bg);border:1px solid var(--border);color:#fff;outline:none;"
-              onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'"
-              oninput="this.value=this.value.replace(/[^0-9]/g,'');renderWydanie(this.value)">
+              onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
           </div>
           <div id="archive-search-wrap" style="display:none;">
-            <input type="text" id="archive-search-tel" placeholder="Szukaj: tel. / kod" maxlength="20"
+            <input type="text" id="archive-search-tel" placeholder="Szukaj: tel. / kod / model" maxlength="40"
               style="background:var(--bg);border:1px solid var(--border);color:#fff;outline:none;"
               onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
           </div>
           <div id="kosz-search-wrap" style="display:none;">
             <div style="display:flex;gap:6px;align-items:center;">
-              <input type="tel" id="kosz-search-tel" placeholder="Szukaj: 000-000-000" maxlength="11"
+              <input type="text" id="kosz-search-tel" placeholder="Szukaj: tel. / model" maxlength="40"
                 style="flex:1;min-width:0;background:var(--bg);border:1px solid var(--border);color:#fff;outline:none;"
                 onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
               <button type="button" onclick="wyczyscKosz()" style="flex-shrink:0;background:none;border:1px solid var(--red);border-radius:8px;padding:6px 10px;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;">Wyczyść</button>
@@ -5175,12 +5258,39 @@ function dayOfWeek(dateStr) {
   return ['Niedziela','Poniedziałek','Wtorek','Środa','Czwartek','Piątek','Sobota'][day];
 }
 
-function getPrzyjeteList(filterTel) {
+function entryMatchesSearch(entry, filterStr) {
+  const q = String(filterStr || '').trim();
+  if (!q || q.length < 2) return true;
+  const qLower = q.toLowerCase();
+  const qDigits = q.replace(/\D/g, '');
+  const qUpper = q.replace(/\s/g, '').toUpperCase();
+  const model = String(entry.model || '').toLowerCase();
+  const marka = String(entry.marka || '').toLowerCase();
+  if (model.includes(qLower) || marka.includes(qLower)) return true;
+  if (qDigits.length >= 3 && entry.tel && entry.tel.replace(/\D/g, '').includes(qDigits)) return true;
+  if (entry.kodOdbioru && String(entry.kodOdbioru).replace(/\s/g, '').toUpperCase().includes(qUpper)) return true;
+  return false;
+}
+
+function filterEntriesBySearch(entries, filterStr) {
+  const q = String(filterStr || '').trim();
+  if (!q || q.length < 2) return entries;
+  return entries.filter(e => entryMatchesSearch(e, q));
+}
+
+function sortGroupsSinglesFirst(groups) {
+  const singles = [];
+  const multi = [];
+  groups.forEach(g => {
+    if (g.entries.length > 1 && g.key) multi.push(g);
+    else singles.push(g);
+  });
+  return singles.concat(multi);
+}
+
+function getPrzyjeteList(filterStr) {
   let hist = getHistory().filter(e => !e.raportKoncowy);
-  if (filterTel && filterTel.replace(/\D/g,'').length >= 3) {
-    const clean = filterTel.replace(/\D/g,'');
-    hist = hist.filter(e => e.tel && e.tel.replace(/\D/g,'').includes(clean));
-  }
+  hist = filterEntriesBySearch(hist, filterStr);
   const currentYear = new Date().getFullYear();
   const toDate = t => {
     if (!t) return new Date(9999, 0, 1);
@@ -5193,6 +5303,79 @@ function getPrzyjeteList(filterTel) {
   return hist.slice().sort((a, b) => toDate(a.termin) - toDate(b.termin));
 }
 
+function normalizeTelKey(tel) {
+  if (!tel) return '';
+  const digits = String(tel).replace(/\D/g, '');
+  if (digits.length < 9) return '';
+  return digits.slice(-9);
+}
+
+function groupEntriesByTel(entries) {
+  const groups = [];
+  const map = new Map();
+  entries.forEach(entry => {
+    const key = normalizeTelKey(entry.tel);
+    if (!key) {
+      groups.push({ key: '', tel: '', entries: [entry] });
+      return;
+    }
+    if (map.has(key)) {
+      map.get(key).entries.push(entry);
+    } else {
+      const g = { key, tel: entry.tel, entries: [entry] };
+      map.set(key, g);
+      groups.push(g);
+    }
+  });
+  return groups;
+}
+
+function telGroupCountLabel(n) {
+  if (n === 1) return '1 zlecenie';
+  const mod10 = n % 10;
+  const mod100 = n % 100;
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return n + ' zlecenia';
+  return n + ' zleceń';
+}
+
+function createTelGroupShell(tel, count, theme) {
+  const el = document.createElement('div');
+  el.className = 'history-tel-group history-tel-group-' + theme;
+  el.style.boxShadow = 'none';
+  const telClean = String(tel).replace(/[^0-9+]/g, '');
+  const phoneIco = '<svg width="14" height="14" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>';
+  const header = document.createElement('div');
+  header.className = 'history-tel-group-header';
+  header.innerHTML = '<a href="tel:' + telClean + '" class="history-tel-group-phone">' + phoneIco + escHTML(tel) + '</a>'
+    + '<span class="history-tel-group-count">' + telGroupCountLabel(count) + '</span>';
+  const body = document.createElement('div');
+  body.className = 'history-tel-group-body';
+  el.appendChild(header);
+  el.appendChild(body);
+  return { el, body };
+}
+
+function parseEntryTotal(entry) {
+  return parseFloat(String(entry?.total || '').replace(/\s/g, '').replace(',', '.')) || 0;
+}
+
+function appendWydanieGroupFooter(shell, entries) {
+  const total = entries.reduce((acc, e) => acc + parseEntryTotal(e), 0);
+  const idsArg = entries.map(e => e.id).join(',');
+  const footer = document.createElement('div');
+  footer.className = 'history-item history-tel-group-footer';
+  footer.style.borderColor = 'rgba(34,197,94,0.22)';
+  footer.style.backgroundColor = 'rgba(34,197,94,0.03)';
+  footer.style.boxShadow = 'none';
+  footer.innerHTML =
+    '<div class="history-tel-group-sum-left">'
+    + '<span class="history-tel-group-sum-label">SUMA</span>'
+    + '<span class="history-tel-group-sum-value">' + fmt(total) + ' zł</span>'
+    + '</div>'
+    + '<button type="button" class="btn-history-load" style="background:#ef4444;border-color:#ef4444;font-size:15px;font-weight:700;letter-spacing:.5px;" onclick="openPodsumowanieDoWydaniaGrupa([' + idsArg + '])">WYDAJ</button>';
+  shell.body.appendChild(footer);
+}
+
 function renderHistory(filterTel) {
   const list = $('history-list');
   const sorted = getPrzyjeteList(filterTel);
@@ -5203,7 +5386,7 @@ function renderHistory(filterTel) {
   list.innerHTML = '';
 
   const todayMs = new Date().setHours(0,0,0,0);
-  sorted.forEach(entry => {
+  function buildHistoryItem(entry, hideTel) {
     const item = document.createElement('div');
     item.className = 'history-item';
     item.dataset.orderId = String(entry.id ?? '');
@@ -5290,7 +5473,7 @@ function renderHistory(filterTel) {
           <div style="display:flex;align-items:center;gap:6px;">
             <span style="font-size:17px;font-weight:700;color:#fff;">${escHTML(nameParts || '')}</span>${(entry.ebike || entry.marka === 'E-BIKE') ? '<span style=\'margin-left:5px;font-size:16px;\' title=\'e-Bike\'>⚡</span>' : ''}
           </div>
-          ${entry.tel ? `<a href="tel:${String(entry.tel).replace(/[^0-9+]/g,'')}" style="display:flex;align-items:center;gap:4px;font-size:16px;font-weight:600;color:#3b7cf4;margin-top:2px;text-decoration:none;"><svg width="12" height="12" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19 0 0 1 4.69 12 19.79 19 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>${escHTML(entry.tel)}</a>` : ''}
+          ${!hideTel && entry.tel ? `<a href="tel:${String(entry.tel).replace(/[^0-9+]/g,'')}" style="display:flex;align-items:center;gap:4px;font-size:16px;font-weight:600;color:#3b7cf4;margin-top:2px;text-decoration:none;"><svg width="12" height="12" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19 0 0 1 4.69 12 19.79 19 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>${escHTML(entry.tel)}</a>` : ''}
           ${terminHTML}
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
@@ -5308,7 +5491,17 @@ function renderHistory(filterTel) {
         </div>
       </div>
     `;
-    list.appendChild(item);
+    return item;
+  }
+
+  groupEntriesByTel(sorted).forEach(group => {
+    if (group.entries.length > 1 && group.key) {
+      const shell = createTelGroupShell(group.tel, group.entries.length, 'historia');
+      group.entries.forEach(entry => shell.body.appendChild(buildHistoryItem(entry, true)));
+      list.appendChild(shell.el);
+    } else {
+      list.appendChild(buildHistoryItem(group.entries[0], false));
+    }
   });
 
   const suma = sorted.reduce((acc, e) => {
@@ -5630,17 +5823,10 @@ function markSmsSent(id, el) {
 }
 
 // ── Lista „Do wydania” (opcjonalny filtr jak w polu szukania) ──
-function getDoWydaniaList(filterTel) {
+function getDoWydaniaList(filterStr) {
   const hist = getHistory();
   let doWydania = hist.filter(e => e.raportKoncowy);
-  if (filterTel && filterTel.trim().length >= 2) {
-    const cleanDigits = filterTel.replace(/\D/g,'');
-    const cleanStr    = filterTel.trim().toUpperCase().replace(/\s/g,'');
-    doWydania = doWydania.filter(e =>
-      (cleanDigits.length >= 3 && e.tel && e.tel.replace(/\D/g,'').includes(cleanDigits)) ||
-      (e.kodOdbioru && String(e.kodOdbioru).replace(/\s/g,'').toUpperCase().includes(cleanStr))
-    );
-  }
+  doWydania = filterEntriesBySearch(doWydania, filterStr);
   doWydania.sort((a, b) => {
     const tA = a.raportKoncowy?.savedAt ? new Date(a.raportKoncowy.savedAt).getTime() : 0;
     const tB = b.raportKoncowy?.savedAt ? new Date(b.raportKoncowy.savedAt).getTime() : 0;
@@ -5660,7 +5846,7 @@ function renderWydanie(filterTel) {
   }
   list.innerHTML = '';
 
-  doWydania.forEach(entry => {
+  function buildWydanieItem(entry, hideTel) {
     const item = document.createElement('div');
     item.className = 'history-item';
     item.dataset.orderId = String(entry.id ?? '');
@@ -5692,7 +5878,7 @@ function renderWydanie(filterTel) {
             <span style="font-size:17px;font-weight:700;color:#fff;">${escHTML(nameParts || '')}</span>${(entry.ebike || entry.marka === 'E-BIKE') ? '<span style=\'margin-left:5px;font-size:16px;\' title=\'e-Bike\'>⚡</span>' : ''}
           </div>
           <div style="display:flex;align-items:center;gap:8px;margin-top:2px;flex-wrap:wrap;">
-            ${entry.tel ? `<div style="display:flex;align-items:center;gap:4px;font-size:16px;font-weight:600;color:#3b7cf4;"><svg width="12" height="12" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>${escHTML(entry.tel)}</div>` : ''}
+            ${!hideTel && entry.tel ? `<div style="display:flex;align-items:center;gap:4px;font-size:16px;font-weight:600;color:#3b7cf4;"><svg width="12" height="12" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>${escHTML(entry.tel)}</div>` : ''}
             ${entry.kodOdbioru ? `<div style="font-size:14px;font-weight:800;color:#f59e0b;letter-spacing:2px;">🔑 ${escHTML(entry.kodOdbioru)}</div>` : ''}
           </div>
           ${przyjęcieLine ? `<div style="font-size:13px;color:#ef4444;font-weight:500;margin-top:2px;">${escHTML(przyjęcieLine)}</div>` : ''}
@@ -5712,7 +5898,18 @@ function renderWydanie(filterTel) {
         </div>
       </div>
     `;
-    list.appendChild(item);
+    return item;
+  }
+
+  sortGroupsSinglesFirst(groupEntriesByTel(doWydania)).forEach(group => {
+    if (group.entries.length > 1 && group.key) {
+      const shell = createTelGroupShell(group.tel, group.entries.length, 'wydanie');
+      group.entries.forEach(entry => shell.body.appendChild(buildWydanieItem(entry, true)));
+      appendWydanieGroupFooter(shell, group.entries);
+      list.appendChild(shell.el);
+    } else {
+      list.appendChild(buildWydanieItem(group.entries[0], false));
+    }
   });
 
   const suma = doWydania.reduce((acc, e) => {
@@ -5883,16 +6080,7 @@ window.generujZleceniaPrzyjete = generujZleceniaPrzyjete;
 // ── Renderowanie zakładki 'Wydane' ──
 function renderArchive(filterStr) {
   const list = $('archive-list');
-  let arch = getArchive();
-  // Filtruj po numerze telefonu lub kodzie odbioru
-  if (filterStr && filterStr.trim().length >= 3) {
-    const cleanStr = filterStr.replace(/\D/g,'');
-    const rawStr   = filterStr.replace(/\s/g,'').toUpperCase();
-    arch = arch.filter(e =>
-      (e.tel && cleanStr.length >= 3 && e.tel.replace(/\D/g,'').includes(cleanStr)) ||
-      (e.kodOdbioru && String(e.kodOdbioru).replace(/\s/g,'').toUpperCase().includes(rawStr))
-    );
-  }
+  let arch = filterEntriesBySearch(getArchive(), filterStr);
   if (!arch.length) {
     list.innerHTML = '<div class="history-empty">Brak zarchiwizowanych zleceń</div>';
     return;
@@ -5910,7 +6098,7 @@ function renderArchive(filterStr) {
     return parseDate(b.dataWydania) - parseDate(a.dataWydania);
   });
   list.innerHTML = '';
-  arch.forEach(entry => {
+  function buildArchiveItem(entry, hideTel) {
     const item = document.createElement('div');
     item.className = 'history-item';
     item.dataset.orderId = String(entry.id ?? '');
@@ -5943,7 +6131,7 @@ function renderArchive(filterStr) {
             '<span style="font-size:17px;font-weight:700;color:#fff;">' + escHTML(nameParts || '') + '</span>' + ((entry.ebike || entry.marka === 'E-BIKE') ? '<span style="margin-left:5px;font-size:15px;" title="e-Bike">⚡</span>' : '') +
           '</div>' +
           '<div style="display:flex;align-items:center;gap:8px;margin-top:2px;flex-wrap:wrap;">' +
-            (entry.tel ? '<div style="display:flex;align-items:center;gap:4px;font-size:16px;font-weight:600;color:#3b7cf4;"><svg width="12" height="12" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>' + escHTML(entry.tel) + '</div>' : '') +
+            (!hideTel && entry.tel ? '<div style="display:flex;align-items:center;gap:4px;font-size:16px;font-weight:600;color:#3b7cf4;"><svg width="12" height="12" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>' + escHTML(entry.tel) + '</div>' : '') +
             (entry.kodOdbioru ? '<div style="font-size:14px;font-weight:800;color:#f59e0b;letter-spacing:2px;">🔑 ' + escHTML(entry.kodOdbioru) + '</div>' : '') +
           '</div>' +
           (przyjęcieLine ? '<div style="font-size:13px;color:#ef4444;font-weight:500;margin-top:2px;">' + escHTML(przyjęcieLine) + '</div>' : '') +
@@ -5965,7 +6153,17 @@ function renderArchive(filterStr) {
         '<button class="btn-history-load" style="background:#f59e0b;border-color:#f59e0b;color:#111827;display:inline-flex;align-items:center;justify-content:center;padding:8px 14px;min-height:33px;font-size:13px;" onclick="openRabAssignForArchive(' + entry.id + ')" title="Dodaj kod rabatowy"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#111827" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v7a2 2 0 0 1-2 2H7l-4-4V5a2 2 0 0 1 2-2h7"/><path d="M16 2l6 6"/><path d="M14 8l8-8"/></svg></button>' +
       '</div>';
 
-    list.appendChild(item);
+    return item;
+  }
+
+  groupEntriesByTel(arch).forEach(group => {
+    if (group.entries.length > 1 && group.key) {
+      const shell = createTelGroupShell(group.tel, group.entries.length, 'archiwum');
+      group.entries.forEach(entry => shell.body.appendChild(buildArchiveItem(entry, true)));
+      list.appendChild(shell.el);
+    } else {
+      list.appendChild(buildArchiveItem(group.entries[0], false));
+    }
   });
 }
 
@@ -6084,11 +6282,7 @@ window.wyczyscKosz = wyczyscKosz;
 function renderKosz(filterTel) {
   purgExpiredKosz();
   const list = $('kosz-list');
-  let kosz = getKosz();
-  if (filterTel && filterTel.replace(/\D/g,'').length >= 3) {
-    const clean = filterTel.replace(/\D/g,'');
-    kosz = kosz.filter(e => e.tel && e.tel.replace(/\D/g,'').includes(clean));
-  }
+  let kosz = filterEntriesBySearch(getKosz(), filterTel);
 
   if (!kosz.length) {
     list.innerHTML = '<div class="history-empty">Kosz jest pusty</div>';
@@ -7004,11 +7198,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const histSearchEl = $('historia-search-tel');
   if (histSearchEl) {
     histSearchEl.addEventListener('input', () => {
-      let v = histSearchEl.value.replace(/\D/g, '').slice(0, 9);
-      if (v.length > 6) v = v.slice(0,3)+'-'+v.slice(3,6)+'-'+v.slice(6);
-      else if (v.length > 3) v = v.slice(0,3)+'-'+v.slice(3);
-      histSearchEl.value = v;
-      renderHistory(v);
+      let v = histSearchEl.value;
+      if (/^[\d-\s]*$/.test(v)) {
+        let digits = v.replace(/\D/g, '').slice(0, 9);
+        if (digits.length > 6) v = digits.slice(0, 3) + '-' + digits.slice(3, 6) + '-' + digits.slice(6);
+        else if (digits.length > 3) v = digits.slice(0, 3) + '-' + digits.slice(3);
+        else v = digits;
+        histSearchEl.value = v;
+      }
+      renderHistory(histSearchEl.value);
     });
   }
   // Wydanie search (tel + kod odbioru — nie formatuj, przekaz raw)
@@ -7022,11 +7220,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const koszSearchEl = $('kosz-search-tel');
   if (koszSearchEl) {
     koszSearchEl.addEventListener('input', () => {
-      let v = koszSearchEl.value.replace(/\D/g, '').slice(0, 9);
-      if (v.length > 6) v = v.slice(0,3)+'-'+v.slice(3,6)+'-'+v.slice(6);
-      else if (v.length > 3) v = v.slice(0,3)+'-'+v.slice(3);
-      koszSearchEl.value = v;
-      renderKosz(v);
+      let v = koszSearchEl.value;
+      if (/^[\d-\s]*$/.test(v)) {
+        let digits = v.replace(/\D/g, '').slice(0, 9);
+        if (digits.length > 6) v = digits.slice(0, 3) + '-' + digits.slice(3, 6) + '-' + digits.slice(6);
+        else if (digits.length > 3) v = digits.slice(0, 3) + '-' + digits.slice(3);
+        else v = digits;
+        koszSearchEl.value = v;
+      }
+      renderKosz(koszSearchEl.value);
     });
   }
 });
@@ -7652,47 +7854,7 @@ function openPodsumowanieDoWydania(id) {
     <td style="padding:7px 10px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;text-align:right;">Razem</td>
   </tr></thead>`;
 
-  let html = '';
-  let stItems = [];
-  let zlecTotal = 0;
-  const st = entry.state ? safeParseJSON(entry.state, null) : null;
-  if (st?.items) stItems = st.items.filter(it => it.checked);
-
-  if (stItems.length) {
-    html += `<div style="padding:10px 12px 6px;font-size:13px;font-weight:800;color:#22c55e;text-transform:uppercase;letter-spacing:.8px;background:var(--bg);text-align:center;">Zlecone naprawy</div>`;
-    html += `<table style="width:100%;border-collapse:collapse;">${thead}<tbody>`;
-    stItems.forEach(it => {
-      const qty = it.qty !== undefined ? (it.qty || 1) : 1;
-      const price = parseFloat(it.price) || 0;
-      const total = Math.round(price * qty * 100) / 100;
-      zlecTotal += total;
-      const name = itemLabelWithDetails(it, true);
-      html += `<tr><td ${td}>${escHTML(name)}</td><td ${tdr}>${fmtPLN(price)}</td><td ${tdr}>${qty}</td><td ${tdr}>${fmtPLN(total)}</td></tr>`;
-    });
-    html += `<tr><td colspan="3" style="padding:8px 10px;font-size:12px;font-weight:700;color:var(--text3);">Razem zlecenie</td><td style="padding:8px 10px;font-size:14px;font-weight:800;color:#fff;text-align:right;">${fmtPLN(zlecTotal)} zł</td></tr>`;
-    html += `</tbody></table>`;
-  }
-
-  if (rk) {
-    let rapTotal = 0;
-    html += `<div style="padding:10px 12px 6px;font-size:13px;font-weight:800;color:#22c55e;text-transform:uppercase;letter-spacing:.8px;background:var(--bg);border-top:2px solid var(--border);margin-top:8px;text-align:center;">Wykonane naprawy</div>`;
-    html += `<table style="width:100%;border-collapse:collapse;">${thead}<tbody>`;
-    (rk.items || []).filter(it => it.checked).forEach(it => {
-      const qty = it.qty !== undefined ? (it.qty || 1) : 1;
-      const price = parseFloat(it.price) || 0;
-      const total = Math.round(price * qty * 100) / 100;
-      rapTotal += total;
-      const name = itemLabelWithDetails(it, true);
-      html += `<tr><td ${td}>${escHTML(name)}</td><td ${tdr}>${fmtPLN(price)}</td><td ${tdr}>${qty}</td><td ${tdr}>${fmtPLN(total)}</td></tr>`;
-    });
-    (rk.subs || []).filter(s => s.checked && s.name).forEach(s => {
-      const price = parseFloat(s.price) || 0;
-      rapTotal += price;
-      html += `<tr><td ${td}>${escHTML(s.name)}</td><td ${tdr}>${fmtPLN(price)}</td><td ${tdr}>1</td><td ${tdr}>${fmtPLN(price)}</td></tr>`;
-    });
-    html += `<tr><td colspan="3" style="padding:8px 10px;font-size:12px;font-weight:700;color:var(--text3);">Razem naprawa</td><td style="padding:8px 10px;font-size:14px;font-weight:800;color:#fff;text-align:right;">${fmtPLN(rapTotal)} zł</td></tr>`;
-    html += `</tbody></table>`;
-  }
+  let html = _buildPodsumowanieTablesHTML(entry, fmtPLN, thead, td, tdr);
 
   $('podglad-table').innerHTML = html;
   $('podglad-total').textContent = entry.total || '';
@@ -7707,12 +7869,171 @@ function openPodsumowanieDoWydania(id) {
   const btn = $('podglad-wydaj-btn');
   if (bar && btn) {
     bar.style.display = 'block';
+    btn.textContent = 'WYDAJ';
     btn.onclick = () => wydajBezKwoty(id);
   }
 
   $('podglad-overlay').style.display = 'block';
 }
+
+function _buildPodsumowanieTablesHTML(entry, fmtPLN, thead, td, tdr) {
+  let html = '';
+  let stItems = [];
+  let zlecTotal = 0;
+  const st = entry.state ? safeParseJSON(entry.state, null) : null;
+  if (st?.items) stItems = st.items.filter(it => it.checked);
+
+  if (stItems.length) {
+    html += '<div style="padding:10px 12px 6px;font-size:13px;font-weight:800;color:#22c55e;text-transform:uppercase;letter-spacing:.8px;background:var(--bg);text-align:center;">Zlecone naprawy</div>';
+    html += '<table style="width:100%;border-collapse:collapse;">' + thead + '<tbody>';
+    stItems.forEach(it => {
+      const qty = it.qty !== undefined ? (it.qty || 1) : 1;
+      const price = parseFloat(it.price) || 0;
+      const total = Math.round(price * qty * 100) / 100;
+      zlecTotal += total;
+      const name = itemLabelWithDetails(it, true);
+      html += '<tr><td ' + td + '>' + escHTML(name) + '</td><td ' + tdr + '>' + fmtPLN(price) + '</td><td ' + tdr + '>' + qty + '</td><td ' + tdr + '>' + fmtPLN(total) + '</td></tr>';
+    });
+    html += '<tr><td colspan="3" style="padding:8px 10px;font-size:12px;font-weight:700;color:var(--text3);">Razem zlecenie</td><td style="padding:8px 10px;font-size:14px;font-weight:800;color:#fff;text-align:right;">' + fmtPLN(zlecTotal) + ' zł</td></tr>';
+    html += '</tbody></table>';
+  }
+
+  const rk = entry.raportKoncowy;
+  if (rk) {
+    let rapTotal = 0;
+    html += '<div style="padding:10px 12px 6px;font-size:13px;font-weight:800;color:#22c55e;text-transform:uppercase;letter-spacing:.8px;background:var(--bg);border-top:2px solid var(--border);margin-top:8px;text-align:center;">Wykonane naprawy</div>';
+    html += '<table style="width:100%;border-collapse:collapse;">' + thead + '<tbody>';
+    (rk.items || []).filter(it => it.checked).forEach(it => {
+      const qty = it.qty !== undefined ? (it.qty || 1) : 1;
+      const price = parseFloat(it.price) || 0;
+      const total = Math.round(price * qty * 100) / 100;
+      rapTotal += total;
+      const name = itemLabelWithDetails(it, true);
+      html += '<tr><td ' + td + '>' + escHTML(name) + '</td><td ' + tdr + '>' + fmtPLN(price) + '</td><td ' + tdr + '>' + qty + '</td><td ' + tdr + '>' + fmtPLN(total) + '</td></tr>';
+    });
+    (rk.subs || []).filter(s => s.checked && s.name).forEach(s => {
+      const price = parseFloat(s.price) || 0;
+      rapTotal += price;
+      html += '<tr><td ' + td + '>' + escHTML(s.name) + '</td><td ' + tdr + '>' + fmtPLN(price) + '</td><td ' + tdr + '>1</td><td ' + tdr + '>' + fmtPLN(price) + '</td></tr>';
+    });
+    html += '<tr><td colspan="3" style="padding:8px 10px;font-size:12px;font-weight:700;color:var(--text3);">Razem naprawa</td><td style="padding:8px 10px;font-size:14px;font-weight:800;color:#fff;text-align:right;">' + fmtPLN(rapTotal) + ' zł</td></tr>';
+    html += '</tbody></table>';
+  }
+  return html;
+}
+
+function openPodsumowanieDoWydaniaGrupa(ids) {
+  if (!ids || !ids.length) return;
+  const hist = getHistory();
+  const idSet = new Set(ids.map(id => String(id)));
+  const entries = hist.filter(e => idSet.has(String(e.id)));
+  if (!entries.length) { alert('Brak danych'); return; }
+  if (entries.some(e => !e.raportKoncowy)) { alert('Nie wszystkie zlecenia mają raport końcowy'); return; }
+
+  raportReturnTab = 'wydanie';
+  const fmtPLN = v => Number(v || 0).toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const tel = entries[0].tel || '';
+  const telClean = String(tel).replace(/[^0-9+]/g, '');
+  const sumTotal = entries.reduce((acc, e) => acc + parseEntryTotal(e), 0);
+
+  const leftHTML =
+    '<div style="flex:1;min-width:0;">'
+    + (tel ? '<a href="tel:' + telClean + '" style="display:inline-flex;align-items:center;gap:6px;font-size:16px;font-weight:700;color:#3b7cf4;text-decoration:none;margin-bottom:8px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>' + escHTML(tel) + '</a>' : '')
+    + '<div style="font-size:13px;font-weight:700;color:var(--text3);">' + telGroupCountLabel(entries.length) + '</div>'
+    + '</div>';
+  const rightHTML =
+    '<div style="text-align:right;flex-shrink:0;display:flex;flex-direction:column;gap:3px;justify-content:center;align-self:stretch;">'
+    + '<div style="font-size:11px;color:var(--text3);">Suma napraw</div>'
+    + '<div style="font-size:24px;font-weight:800;color:#22c55e;letter-spacing:-0.5px;">' + fmt(sumTotal) + ' zł</div>'
+    + '</div>';
+
+  $('podglad-title').textContent = 'Podsumowanie grupy';
+  $('podglad-header').innerHTML = '<div style="display:flex;align-items:stretch;gap:12px;">' + leftHTML + rightHTML + '</div>';
+
+  const td = 'style="padding:8px 10px;font-size:13px;color:var(--text);border-bottom:1px solid var(--border);"';
+  const tdr = 'style="padding:8px 10px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border);text-align:right;"';
+  const thead = '<thead><tr style="background:var(--bg);">'
+    + '<td style="padding:7px 10px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;">Usługa / część</td>'
+    + '<td style="padding:7px 10px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;text-align:right;">Cena</td>'
+    + '<td style="padding:7px 10px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;text-align:right;">Szt.</td>'
+    + '<td style="padding:7px 10px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;text-align:right;">Razem</td>'
+    + '</tr></thead>';
+
+  let html = '';
+  entries.forEach((entry, idx) => {
+    const kolorBar = makeKolorBarHTML(entry.kolor || '');
+    const nameParts = [entry.marka, entry.model].filter(Boolean);
+    html += '<div style="margin-top:' + (idx ? '16' : '0') + 'px;border:1px solid var(--border);border-radius:10px;overflow:hidden;">';
+    html += '<div style="position:relative;overflow:hidden;padding:10px 12px 10px 26px;background:var(--bg2);border-bottom:1px solid var(--border);">';
+    html += kolorBar;
+    html += '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;">';
+    html += '<div style="flex:1;min-width:0;">';
+    if (nameParts.length) html += '<div style="font-size:16px;font-weight:700;color:#fff;">' + escHTML(nameParts.join(' ')) + '</div>';
+    if (entry.kodOdbioru) html += '<div style="font-size:13px;font-weight:800;color:#f59e0b;letter-spacing:2px;margin-top:4px;">🔑 ' + escHTML(entry.kodOdbioru) + '</div>';
+    html += '</div>';
+    html += '<div style="font-size:22px;font-weight:800;color:#fff;flex-shrink:0;">' + escHTML(entry.total || '') + '</div>';
+    html += '</div></div>';
+    html += _buildPodsumowanieTablesHTML(entry, fmtPLN, thead, td, tdr);
+    html += '</div>';
+  });
+
+  $('podglad-table').innerHTML = html;
+  $('podglad-total').textContent = fmt(sumTotal) + ' zł';
+
+  const kodEl = $('podglad-kod-odbioru'); if (kodEl) kodEl.style.display = 'none';
+  const kwotaEl = $('podglad-kwota-zaplacona'); if (kwotaEl) kwotaEl.style.display = 'none';
+  const notatkaEl = $('podglad-notatka'); if (notatkaEl) notatkaEl.style.display = 'none';
+  const pdfBarEl = $('podglad-pdf-bar'); if (pdfBarEl) pdfBarEl.style.display = 'none';
+
+  const bar = $('podglad-action-bar');
+  const btn = $('podglad-wydaj-btn');
+  if (bar && btn) {
+    bar.style.display = 'block';
+    btn.textContent = 'WYDAJ';
+    btn.onclick = () => wydajWszystkieGrupa(ids);
+  }
+
+  $('podglad-overlay').style.display = 'block';
+}
+
+function wydajWszystkieGrupa(ids) {
+  if (!ids || !ids.length) return;
+  const idSet = new Set(ids.map(id => String(id)));
+  const hist = getHistory();
+  const toArchive = [];
+  const remaining = [];
+  const dataWydania = new Date().toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+  hist.forEach(entry => {
+    if (!idSet.has(String(entry.id))) {
+      remaining.push(entry);
+      return;
+    }
+    const archived = {
+      ...entry,
+      archivedAt: new Date().toISOString(),
+      kwotaSprzedazy: entry.total || '',
+      dataWydania,
+    };
+    delete archived.unarchivedAt;
+    toArchive.push(archived);
+  });
+
+  if (!toArchive.length) return;
+
+  const arch = getArchive();
+  toArchive.forEach(entry => arch.unshift(entry));
+  localStorage.setItem(ARCHIVE_KEY, JSON.stringify(arch));
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(remaining));
+  highlightZlecenie(toArchive[0].id);
+  closePodglad();
+  openHistory();
+  switchTab('archiwum');
+}
+
 window.openPodsumowanieDoWydania = openPodsumowanieDoWydania;
+window.openPodsumowanieDoWydaniaGrupa = openPodsumowanieDoWydaniaGrupa;
+window.wydajWszystkieGrupa = wydajWszystkieGrupa;
 window.closePodglad = closePodglad;
 window.closePodgladOutside = closePodgladOutside;
 
