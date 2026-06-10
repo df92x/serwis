@@ -629,10 +629,12 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
 /* ── DODAJ CZĘŚCI (nowe zlecenie): via .flat-list .flat-csel .flat-group ── */
 #group-container .sub-price-input{ color:#fff; }
 
-/* Notatka na dole ekranu edycji (pod „Inne części”) */
+/* Notatka na górze ekranu edycji (nad listą pozycji) */
 .notatka-bottom-wrap{
-  margin-top: 18px;
-  padding: 0 4px 20px;
+  margin-top: 12px;
+  padding: 0 4px 14px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 6px;
 }
 .notatka-bottom-label{
   font-size: 11px;
@@ -791,90 +793,6 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
 .history-item-info { flex: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 .history-item-total { font-size: 26px; font-weight: 800; color: #fff; flex-shrink: 0; letter-spacing: -0.5px; }
 .history-item-actions { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
-.history-tel-group{
-  border:1px solid var(--border);
-  border-radius:10px;
-  margin-bottom:10px;
-  overflow:visible;
-  background:var(--bg);
-  box-shadow:none;
-}
-.history-tel-group-historia{
-  border-color:rgba(239,68,68,0.22);
-  background:rgba(239,68,68,0.03);
-}
-.history-tel-group-wydanie{
-  border-color:rgba(34,197,94,0.22);
-  background:rgba(34,197,94,0.03);
-}
-.history-tel-group-archiwum{
-  border-color:rgba(167,139,250,0.25);
-  background:rgba(167,139,250,0.04);
-}
-.history-tel-group-header{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:8px;
-  padding:8px 12px 8px 34px;
-  background:transparent;
-  border-bottom:1px solid var(--border);
-}
-.history-tel-group-phone{
-  display:flex;
-  align-items:center;
-  gap:6px;
-  font-size:16px;
-  font-weight:700;
-  color:#3b7cf4;
-  text-decoration:none;
-}
-.history-tel-group-count{
-  font-size:11px;
-  font-weight:800;
-  color:var(--text3);
-  text-transform:uppercase;
-  letter-spacing:.4px;
-  white-space:nowrap;
-}
-.history-tel-group-body{
-  padding:10px;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-.history-tel-group-body .history-item{
-  margin-bottom:0;
-}
-.history-tel-group-footer.history-item{
-  flex-direction:row;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  padding-left:12px;
-  margin-bottom:0;
-}
-.history-tel-group-sum-left{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  flex:1;
-  min-width:0;
-}
-.history-tel-group-sum-label{
-  font-size:11px;
-  font-weight:800;
-  color:var(--text3);
-  text-transform:uppercase;
-  letter-spacing:.55px;
-  white-space:nowrap;
-}
-.history-tel-group-sum-value{
-  font-size:22px;
-  font-weight:800;
-  color:#22c55e;
-  letter-spacing:-0.5px;
-}
 .btn-history-load {
   background: var(--blue); color: #111827; border: 1px solid var(--blue);
   border-radius: var(--radius-btn); padding: var(--btn-py) var(--btn-px);
@@ -1005,6 +923,18 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
 .csel-btn svg { flex-shrink: 0; color: var(--text3); }
 .csel-btn.has-val { color: #fff; border-color: var(--border); }
 
+/* Inline OPIS — input w miejscu dawnego przycisku */
+input.opis-inline-input {
+  outline: none;
+  text-align: right;
+  font-family: inherit;
+  min-width: 0;
+  cursor: text;
+}
+input.opis-inline-input::placeholder { color: #a0a8c0; opacity: 1; }
+input.opis-inline-input:focus { border-color: var(--blue); color: #fff; }
+input.opis-inline-input.has-val { color: #fff; }
+
 /* hidden native select for form compat */
 select.native-sel { display: none !important; }
 </style>
@@ -1050,15 +980,16 @@ select.native-sel { display: none !important; }
   </div>
 
   <div id="add-parts-banner" class="parts-banner" style="margin:12px 8px 0;">
-    <div class="items-list flat-list flat-csel" id="items-list"></div>
-    <div id="group-container" class="flat-group"></div>
     <div id="notatka-bottom-wrap" class="notatka-bottom-wrap">
       <div class="notatka-bottom-label">Notatka serwisowa</div>
       <textarea id="notatka-serwisowa" placeholder="Wpisz notatkę..." maxlength="500"
         class="notatka-bottom-textarea"
+        oninput="save()"
         onfocus="this.style.borderColor='var(--blue)'"
-        onblur="this.style.borderColor='var(--border)';save();"></textarea>
+        onblur="this.style.borderColor='var(--border)';flushSave();"></textarea>
     </div>
+    <div class="items-list flat-list flat-csel" id="items-list"></div>
+    <div id="group-container" class="flat-group"></div>
   </div>
 
 <!-- Hidden data fields -->
@@ -1107,18 +1038,17 @@ select.native-sel { display: none !important; }
       </div>
     </div>
 
-    <!-- Items list -->
-    <div id="raport-parts-banner" class="parts-banner" style="margin:12px 16px 0;">
-      <div class="items-list flat-list flat-csel" id="raport-items-list" style="padding:8px 0;"></div>
+    <!-- Items list (układ jak przy przyjęciu zlecenia: notatka na górze, potem lista) -->
+    <div id="raport-parts-banner" class="parts-banner" style="margin:12px 8px 0;">
+      <div class="notatka-bottom-wrap">
+        <div class="notatka-bottom-label">Notatka serwisowa</div>
+        <textarea id="raport-notatka" placeholder="Wpisz notatkę do naprawy..." maxlength="500"
+          class="notatka-bottom-textarea"
+          onfocus="this.style.borderColor='var(--blue)'"
+          onblur="this.style.borderColor='var(--border)'"></textarea>
+      </div>
+      <div class="items-list flat-list flat-csel" id="raport-items-list"></div>
       <div id="raport-group-container" class="flat-group"></div>
-    </div>
-
-    <!-- Notatka -->
-    <div style="padding:14px 16px 8px;">
-      <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;">Notatka</div>
-      <textarea id="raport-notatka" placeholder="Wpisz notatkę do naprawy..." maxlength="500"
-        style="width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-size:14px;font-family:inherit;resize:none;outline:none;min-height:72px;line-height:1.5;"
-        onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'"></textarea>
     </div>
 
     <div style="padding-bottom:40px;"></div>
@@ -1633,23 +1563,24 @@ select.native-sel { display: none !important; }
       <div class="history-filter-bar" style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0 8px;flex-wrap:wrap;width:100%;">
         <div class="history-search-slot">
           <div id="historia-search-wrap" style="display:none;">
-            <input type="text" id="historia-search-tel" placeholder="Szukaj: tel. / model" maxlength="40"
+            <input type="tel" id="historia-search-tel" placeholder="Szukaj: 000-000-000" maxlength="11"
               style="background:var(--bg);border:1px solid var(--border);color:#fff;outline:none;"
               onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
           </div>
           <div id="wydanie-search-wrap" style="display:none;">
-            <input type="text" id="wydanie-search-tel" placeholder="Szukaj: tel. / kod / model" maxlength="40"
+            <input type="tel" id="wydanie-search-tel" placeholder="Szukaj: tel. / kod" maxlength="20" inputmode="numeric"
               style="background:var(--bg);border:1px solid var(--border);color:#fff;outline:none;"
-              onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
+              onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'"
+              oninput="this.value=this.value.replace(/[^0-9]/g,'');renderWydanie(this.value)">
           </div>
           <div id="archive-search-wrap" style="display:none;">
-            <input type="text" id="archive-search-tel" placeholder="Szukaj: tel. / kod / model" maxlength="40"
+            <input type="text" id="archive-search-tel" placeholder="Szukaj: tel. / kod" maxlength="20"
               style="background:var(--bg);border:1px solid var(--border);color:#fff;outline:none;"
               onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
           </div>
           <div id="kosz-search-wrap" style="display:none;">
             <div style="display:flex;gap:6px;align-items:center;">
-              <input type="text" id="kosz-search-tel" placeholder="Szukaj: tel. / model" maxlength="40"
+              <input type="tel" id="kosz-search-tel" placeholder="Szukaj: 000-000-000" maxlength="11"
                 style="flex:1;min-width:0;background:var(--bg);border:1px solid var(--border);color:#fff;outline:none;"
                 onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
               <button type="button" onclick="wyczyscKosz()" style="flex-shrink:0;background:none;border:1px solid var(--red);border-radius:8px;padding:6px 10px;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;">Wyczyść</button>
@@ -1698,6 +1629,7 @@ select.native-sel { display: none !important; }
               <option value="CANNONDALE">CANNONDALE</option>
               <option value="CANYON">CANYON</option>
               <option value="CUBE">CUBE</option>
+              <option value="DARTMOOR">DARTMOOR</option>
               <option value="DECATHLON">DECATHLON</option>
               <option value="ECOBIKE">ECOBIKE</option>
               <option value="FELT">FELT</option>
@@ -1718,6 +1650,7 @@ select.native-sel { display: none !important; }
               <option value="MONGOOSE">MONGOOSE</option>
               <option value="NS-BIKE">NS-BIKE</option>
               <option value="NORTHEC">NORTHEC</option>
+              <option value="ORBEA">ORBEA</option>
               <option value="OVERFLY">OVERFLY</option>
               <option value="RADON">RADON</option>
               <option value="ROCKRIDER">ROCKRIDER</option>
@@ -1725,7 +1658,9 @@ select.native-sel { display: none !important; }
               <option value="SCOTT">SCOTT</option>
               <option value="SENSA">SENSA</option>
               <option value="SPECIALIZED">SPECIALIZED</option>
+              <option value="STEVENS">STEVENS</option>
               <option value="STORM">STORM</option>
+              <option value="TABOU">TABOU</option>
               <option value="TREK">TREK</option>
               <option value="TRIBAN">TRIBAN</option>
               <option value="UNIBIKE">UNIBIKE</option>
@@ -1912,6 +1847,7 @@ const DEFAULTS = [
       {label:'8/9',price:99},
       {label:'10/11',price:149}
     ] },
+  { name: 'Hak',        price: 0,   checked: false },
   { name: 'Pedała',     price: 0,   checked: false,
     presets: [{label:'Plastikowe',price:25},{label:'Aluminium',price:39},{label:'Nexelo',price:79},{label:'Zeray',price:119}] },
   { name: 'Tarcza',     price: 0,   checked: false, qty: 0,
@@ -2139,6 +2075,29 @@ function itemLabelWithDetails(it, withPresetFallback) {
   return label;
 }
 
+// ── Migracja starych zleceń: wybory z list (presety / opcje "Naprawa")
+//    zamieniamy na tekstowy OPIS (customName), żeby nie kolidowały z nowym UI ──
+function migrateSelectionToOpis(it) {
+  if (!it) return it;
+  if (!it.customName || !String(it.customName).trim()) {
+    let txt = '';
+    if (it.customLabel && String(it.customLabel).trim()) {
+      txt = String(it.customLabel).trim();
+    } else if (it.selectedOptions && it.selectedOptions.length) {
+      txt = it.selectedOptions.map(o => o.label).filter(Boolean).join(' + ');
+    } else if (it.selectedPreset > 0) {
+      const presets = it.presets || findDefault(it.name)?.presets || [];
+      const p = presets[it.selectedPreset - 1];
+      if (p && p.label) txt = p.label;
+    }
+    if (txt) it.customName = txt;
+  }
+  it.selectedPreset = -1;
+  it.customLabel = '';
+  it.selectedOptions = [];
+  return it;
+}
+
 // ─────────────────────────────────────────
 // RECALC
 // ─────────────────────────────────────────
@@ -2310,6 +2269,9 @@ function load() {
 
     // Remove deprecated items
     items = items.filter(it => it.name !== 'Ochraniacz' && it.name !== 'Diagnostyka eBike' && it.name !== 'Diagnostyka e-Bike');
+
+    // Stare zlecenia: zamień dawne wybory z list na tekstowy opis
+    items.forEach(migrateSelectionToOpis);
 
     // Merge any missing defaults
     for (const def of DEFAULTS) {
@@ -2485,6 +2447,7 @@ const ITEM_ICONS = {
   'Kaseta':               `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="3" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="21"/><line x1="3" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="21" y2="12"/></svg>`,
   'Przerzutka przednia':  `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>`,
   'Przerzutka tylna':     `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>`,
+  'Hak':                  `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v10a4 4 0 0 1-8 0v-1"/><circle cx="12" cy="3" r="1"/></svg>`,
   'Pedała':               `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="10" width="20" height="4" rx="2"/></svg>`,
   'Tarcza':               `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>`,
   'Klocki':               `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="16" rx="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/></svg>`,
@@ -2604,15 +2567,8 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx, uiCtx) {
       if (it.presets && it.presets.length) {
         const cheapest = it.presets.reduce((min, p) => p.price < min.price ? p : min, it.presets[0]);
         it.price = cheapest.price;
-        it.selectedPreset = it.presets.indexOf(cheapest) + 1;
-        const psel = card.querySelector('.native-sel.preset-sel');
-        if (psel) {
-          psel.value = String(cheapest.price);
-          if (typeof psel._cselSync === 'function') psel._cselSync();
-          const btn = psel.closest('.csel-wrap')?.querySelector('.csel-btn span');
-          if (btn) btn.textContent = cheapest.label;
-        }
-      } else if (!it.options) {
+        priceEl.value = it.price;
+      } else {
         setTimeout(() => {
           const te = card.querySelector('.editable-total');
           if (te) { te.click(); return; }
@@ -2796,18 +2752,10 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx, uiCtx) {
       bar.checked = it.checked; syncBarCircle();
       valEl.textContent = it.qty;
       card.classList.remove('qty-zero');
-      if (it.presets && it.presets.length && it.selectedPreset <= 0) {
+      if (it.presets && it.presets.length && !(parseFloat(it.price) > 0)) {
         const cheapest = it.presets.reduce((min, p) => p.price < min.price ? p : min, it.presets[0]);
         it.price = cheapest.price;
         priceEl.value = it.price;
-        it.selectedPreset = it.presets.indexOf(cheapest) + 1;
-        const psel = presetSelRef || card.querySelector('.native-sel.preset-sel');
-        if (psel) {
-          psel.value = String(cheapest.price);
-          if (typeof psel._cselSync === 'function') psel._cselSync();
-          const btn = psel.closest('.csel-wrap')?.querySelector('.csel-btn span');
-          if (btn) btn.textContent = cheapest.label;
-        }
       }
       if (onChange) onChange(valEl);
       updatePriceDisplay();
@@ -2822,18 +2770,10 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx, uiCtx) {
         applySuggestedPriceIfNeeded();
         valEl.textContent = it.qty;
         card.classList.remove('qty-zero'); if (!it.checked) { it.checked = true; card.className = 'item-card'; bar.checked = true; syncBarCircle(); }
-        if (it.presets && it.presets.length && it.selectedPreset <= 0) {
+        if (it.presets && it.presets.length && !(parseFloat(it.price) > 0)) {
           const cheapest = it.presets.reduce((min, p) => p.price < min.price ? p : min, it.presets[0]);
           it.price = cheapest.price;
           priceEl.value = it.price;
-          it.selectedPreset = it.presets.indexOf(cheapest) + 1;
-          const psel = presetSelRef || card.querySelector('.native-sel.preset-sel');
-          if (psel) {
-            psel.value = String(cheapest.price);
-            if (typeof psel._cselSync === 'function') psel._cselSync();
-            const btn = psel.closest('.csel-wrap')?.querySelector('.csel-btn span');
-            if (btn) btn.textContent = cheapest.label;
-          }
         }
         updatePriceDisplay();
         recalcCtx();
@@ -2873,432 +2813,53 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx, uiCtx) {
   }
 
   function buildOpisControl() {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'csel-btn';
-    const span = document.createElement('span');
-    btn.appendChild(span);
-    const sync = () => {
-      span.textContent = it.customName ? it.customName : 'Opis';
-      btn.classList.toggle('has-val', !!(it.customName && it.customName.trim()));
-    };
-    btn.addEventListener('click', async () => {
-      const typed = await openOpisBanner(it.customName || '');
-      if (typed === null) return;
-      it.customName = typed;
-      if (!isLocal()) State.setItemCustomName(it.id, typed);
-      if (typed && !it.checked) { it.checked = true; bar.checked = true; syncBarCircle(); }
-      sync();
+    // Opis wpisywany bezpośrednio w polu (bez dodatkowego okna dialogowego)
+    const inp = document.createElement('input');
+    inp.type = 'text';
+    inp.className = 'csel-btn opis-inline-input';
+    inp.placeholder = 'Opis';
+    inp.maxLength = 80;
+    inp.autocomplete = 'off';
+    inp.value = it.customName || '';
+    inp.classList.toggle('has-val', !!(it.customName && it.customName.trim()));
+    inp.addEventListener('input', () => {
+      it.customName = inp.value;
+      if (!isLocal()) State.setItemCustomName(it.id, inp.value);
+      if (inp.value.trim() && !it.checked) { it.checked = true; bar.checked = true; syncBarCircle(); }
+      inp.classList.toggle('has-val', !!inp.value.trim());
+      save();
+    });
+    inp.addEventListener('blur', () => {
+      it.customName = inp.value.trim();
+      inp.value = it.customName;
+      if (!isLocal()) State.setItemCustomName(it.id, it.customName);
       recalcCtx();
       save();
     });
-    sync();
-    return btn;
+    inp.addEventListener('keydown', e => {
+      if (e.key === 'Enter') { e.preventDefault(); inp.blur(); }
+    });
+    return inp;
   }
 
   // ── Row 1: name | qty | price (all item types) ──
   // priceEl is appended per-branch after qty ctrl
 
-  // ── Options item (Naprawa) — multi-checkbox modal ──
-  if (it.options) {
-
-    // Ensure selectedOptions exists
-    if (!it.selectedOptions) it.selectedOptions = [];
-
-    // NAPRAWA: opcje bez cen. Cena "Naprawa" jest wpisywana ręcznie w polu po prawej
-    // i nie jest wyliczana z listy opcji.
-    function syncNaprawa() {
-      // Build label
-      it.customLabel = it.selectedOptions.map(o => o.label).join(' + ') || '';
-      if (it.selectedOptions.length > 0 && !it.checked) { it.checked = true; card.className = 'item-card'; bar.checked = true; syncBarCircle(); }
-      updateBtnLabel();
-      syncNoteVisibility();
-      recalcCtx();
-    }
-
-    // Button that opens modal - blue arrow MAX LEFT, then text
-    const openBtn = document.createElement('button');
-    openBtn.type = 'button';
-    openBtn.className = 'csel-btn';
-    openBtn.style.cssText = 'flex-direction:row;';
-    function updateBtnLabel() {
-      const lbl = it.selectedOptions.length ? it.selectedOptions.map(o => o.label).join(' + ') : 'Wybierz';
-      const span = document.createElement('span');
-      span.textContent = lbl;
-      openBtn.innerHTML = '';
-      openBtn.appendChild(span);
-      openBtn.classList.toggle('has-val', it.selectedOptions.length > 0);
-    }
-    updateBtnLabel();
-
-    openBtn.addEventListener('click', () => {
-      // Build modal overlay
-      const overlay = document.createElement('div');
-      overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.75);display:flex;align-items:center;justify-content:center;';
-
-      const sheet = document.createElement('div');
-      sheet.style.cssText = 'background:var(--bg2);border:1px solid var(--border);border-radius:14px;width:95vw;max-width:95vw;max-height:85vh;display:flex;flex-direction:column;overflow:hidden;';
-
-      // Header
-      const hdr = document.createElement('div');
-      hdr.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:16px 16px 12px;border-bottom:1px solid var(--border);flex-shrink:0;';
-      hdr.innerHTML = `<span style="flex:1;font-size:16px;font-weight:700;color:#fff;text-align:center;">Naprawa</span>`;
-      const closeBtn = document.createElement('button');
-      closeBtn.style.cssText = 'background:none;border:none;color:#ef4444;font-size:22px;cursor:pointer;line-height:1;padding:0 4px;';
-      closeBtn.innerHTML = '&times;';
-      closeBtn.addEventListener('click', () => overlay.remove());
-      hdr.appendChild(closeBtn);
-
-      // List
-      const list = document.createElement('div');
-      list.style.cssText = 'overflow-y:auto;flex:1;padding:8px 0;';
-
-      // Working copy of selectedOptions
-      let tempSelected = it.selectedOptions.map(o => ({...o}));
-
-      const allOpts = [...it.options, {label:'Inne...', price: 0, custom: true}];
-
-      // Footer total input (editable). Auto-sums only until user overrides.
-      let sumInp = null;
-      let sumDirty = false;
-      function computedSum() {
-        return tempSelected.reduce((s, o) => s + (parseFloat(o.price) || 0), 0);
-      }
-      function syncSumInput(force) {
-        if (!sumInp) return;
-        if (sumDirty && !force) return;
-        const v = Math.round(computedSum() * 100) / 100;
-        sumInp.value = v ? String(v).replace('.', ',') : '';
-      }
-
-      allOpts.forEach(opt => {
-        const existing = tempSelected.find(s => s.label === opt.label);
-
-        const row = document.createElement('div');
-        const isSelected = !!existing;
-        row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 20px;border-bottom:1px solid var(--border);cursor:pointer;';
-
-        // Hidden checkbox for state
-        const cb = document.createElement('input');
-        cb.type = 'checkbox';
-        cb.style.cssText = 'display:none;';
-        cb.checked = isSelected;
-
-        // Blue ✓ circle — left side, acts as toggle indicator
-        const checkCircle = document.createElement('div');
-        checkCircle.style.cssText = 'width:22px;height:22px;border-radius:50%;border:2px solid ' + (isSelected ? 'var(--blue)' : 'var(--border)') + ';background:' + (isSelected ? 'var(--blue)' : 'transparent') + ';display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.15s;';
-        checkCircle.innerHTML = isSelected ? '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' : '';
-
-        // Name label
-        const labelEl = document.createElement('span');
-        labelEl.textContent = opt.label;
-        labelEl.style.cssText = 'flex:1;font-size:15px;font-weight:500;color:' + (isSelected ? 'var(--blue)' : 'var(--text)') + ';';
-
-        // Prawa kolumna: cena tylko dla wybranych opcji (np. przeglądy)
-        const rightSpacer = document.createElement('span');
-        const basePrice = existing ? (parseFloat(existing.price) || 0) : (opt.custom ? 0 : (parseFloat(opt.price) || 0));
-        rightSpacer.style.cssText = 'font-size:12px;font-weight:800;color:var(--text3);flex-shrink:0;min-width:56px;text-align:right;';
-        rightSpacer.textContent = basePrice > 0 ? (basePrice + ' zł') : '';
-
-        // Blue checkmark — shown when selected (legacy; trzymamy wyłączone)
-        const tick = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        tick.setAttribute('width', '14'); tick.setAttribute('height', '14');
-        tick.setAttribute('viewBox', '0 0 24 24'); tick.setAttribute('fill', 'none');
-        tick.setAttribute('stroke', 'var(--blue)'); tick.setAttribute('stroke-width', '3');
-        tick.setAttribute('stroke-linecap', 'round'); tick.setAttribute('stroke-linejoin', 'round');
-        tick.innerHTML = '<polyline points="20 6 9 17 4 12"/>';
-        tick.style.cssText = 'flex-shrink:0;display:' + (isSelected ? 'block' : 'none') + ';';
-
-        function syncRow() {
-          const checked = cb.checked;
-          checkCircle.style.border = '2px solid ' + (checked ? 'var(--blue)' : 'var(--border)');
-          checkCircle.style.background = checked ? 'var(--blue)' : 'transparent';
-          checkCircle.innerHTML = checked ? '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' : '';
-          labelEl.style.color = checked ? 'var(--blue)' : 'var(--text)';
-          tick.style.display = 'none';
-        }
-
-        cb.addEventListener('change', () => {
-          if (cb.checked) {
-            tempSelected.push({ label: opt.label, price: basePrice });
-          } else {
-            tempSelected = tempSelected.filter(s => s.label !== opt.label);
-          }
-          syncRow();
-          syncSumInput(false);
-        });
-
-        row.addEventListener('click', e => {
-          if (e.target.tagName === 'INPUT') return;
-          cb.checked = !cb.checked;
-          cb.dispatchEvent(new Event('change'));
-        });
-
-        row.appendChild(cb);
-        row.appendChild(checkCircle);
-        row.appendChild(labelEl);
-        row.appendChild(rightSpacer);
-        list.appendChild(row);
-      });
-
-      // Footer
-      const footer = document.createElement('div');
-      footer.style.cssText = 'padding:12px 16px;border-top:1px solid var(--border);flex-shrink:0;';
-
-      const sumRow = document.createElement('div');
-      sumRow.style.cssText = 'display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;';
-      const sumLabel = document.createElement('span');
-      sumLabel.style.cssText = 'font-size:13px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;';
-      sumLabel.textContent = 'Suma';
-      const sumInp2 = document.createElement('input');
-      sumInp2.type = 'text';
-      sumInp2.inputMode = 'decimal';
-      sumInp2.placeholder = '0';
-      sumInp2.style.cssText = 'width:120px;font-size:18px;font-weight:900;color:#fff;border:1px solid rgba(255,255,255,0.12);background:var(--bg);border-radius:10px;padding:8px 10px;text-align:right;outline:none;';
-      sumInp2.addEventListener('focus', () => { sumInp2.style.borderColor = 'var(--blue)'; });
-      sumInp2.addEventListener('blur', () => { sumInp2.style.borderColor = 'rgba(255,255,255,0.12)'; });
-      sumInp2.addEventListener('input', () => { sumDirty = true; });
-      sumInp = sumInp2;
-
-      // Prefill: keep existing manual price; otherwise use computed
-      if (parseFloat(it.price) > 0) {
-        sumDirty = true;
-        sumInp2.value = String(it.price).replace('.', ',');
-      } else {
-        syncSumInput(true);
-      }
-
-      sumRow.appendChild(sumLabel);
-      sumRow.appendChild(sumInp2);
-      footer.appendChild(sumRow);
-
-      const confirmBtn = document.createElement('button');
-      confirmBtn.style.cssText = 'width:100%;padding:12px;background:#22c55e;border:none;border-radius:8px;font-size:15px;font-weight:700;color:#000;cursor:pointer;';
-      confirmBtn.textContent = 'Zatwierdź';
-      confirmBtn.addEventListener('click', () => {
-        it.selectedOptions = tempSelected;
-        const raw = String(sumInp && sumInp.value ? sumInp.value : '').replace(/\s/g,'').replace(',','.');
-        const v = parseFloat(raw);
-        it.price = (!isNaN(v) && v >= 0) ? (Math.round(v * 100) / 100) : 0;
-        syncNaprawa();
-        updatePriceDisplay();
-        overlay.remove();
-      });
-      footer.appendChild(confirmBtn);
-
-      sheet.appendChild(hdr);
-      sheet.appendChild(list);
-      sheet.appendChild(footer);
-      overlay.appendChild(sheet);
-      overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
-      document.body.appendChild(overlay);
-    });
-
+  // ── Wszystkie pozycje: OPIS (wolny tekst) zamiast list wyboru ──
+  {
     nameEl.style.flex = '0 0 auto';
-    const btnWrap = document.createElement('div');
-    btnWrap.className = 'kalk-csel-cell';
-    btnWrap.style.cssText = 'flex:1;min-width:0;';
-    btnWrap.appendChild(openBtn);
-    topRow.appendChild(btnWrap);
-    priceEl.style.width = '52px';
-    topRow.appendChild(priceEl);
-    body.appendChild(topRow);
-  }
-
-  // ── Preset item (Korba, Łańcuch etc.) ──
-  else if (it.presets) {
+    const opisWrap = document.createElement('div');
+    opisWrap.className = 'kalk-csel-cell';
+    opisWrap.style.cssText = 'flex:1;min-width:0;';
+    opisWrap.appendChild(buildOpisControl());
+    topRow.appendChild(opisWrap);
     if (it.qty !== undefined) {
-      // Z +/- : drop zostaje pod spodem, kontrolki qty w topRow
-      const { ctrl } = buildQty(null);
-
-      // Drop w topRow między nazwą a +/-
-      const psel = document.createElement('select');
-      psel.className = 'native-sel preset-sel';
-      psel.dataset.title = it.name;
-      const defOpt = document.createElement('option');
-      defOpt.value = ''; defOpt.textContent = 'Wybierz';
-      psel.appendChild(defOpt);
-      for (const p of it.presets) {
-        const o = document.createElement('option');
-        o.value = p.price; o.textContent = `${p.label} (${p.price})`; o.dataset.label = p.label;
-        psel.appendChild(o);
-      }
-      const innaOpt2 = document.createElement('option');
-      innaOpt2.value = '__inna__'; innaOpt2.textContent = 'Inne...';
-      psel.appendChild(innaOpt2);
-      presetSelRef = psel;
-      psel._cselSync = () => {};
-      if (it.selectedPreset > 0 && it.selectedPreset < psel.options.length) psel.selectedIndex = it.selectedPreset;
-      psel.addEventListener('change', async () => {
-        it.selectedPreset = psel.selectedIndex;
-        if (psel.value === '__inna__') {
-          const typed = await openOpisBanner(it.customName || '');
-          if (typed === null || !typed) {
-            it.customName = '';
-            if (!isLocal()) State.setItemCustomName(it.id, '');
-            innaOpt2.textContent = 'Inne...';
-            psel.selectedIndex = 0;
-            it.selectedPreset = 0;
-            if (typeof psel._cselSync === 'function') psel._cselSync();
-            syncNoteVisibility();
-            recalcCtx();
-            return;
-          }
-          it.customName = typed;
-          if (!isLocal()) State.setItemCustomName(it.id, typed);
-          innaOpt2.textContent = 'Inne: ' + typed;
-          card.classList.remove('qty-zero');
-          if (!it.checked) { it.checked = true; card.className = 'item-card'; bar.checked = true; syncBarCircle(); }
-          syncNoteVisibility();
-          if (typeof psel._cselSync === 'function') psel._cselSync();
-          setTimeout(() => { priceEl.focus(); priceEl.select(); }, 50);
-          recalcCtx();
-          return;
-        }
-        it.customName = '';
-        if (!isLocal()) State.setItemCustomName(it.id, '');
-        innaOpt2.textContent = 'Inne...';
-        if (!psel.value) { syncNoteVisibility(); return; }
-        it.price = parseFloat(psel.value);
-        card.classList.remove('qty-zero'); if (!it.checked) { it.checked = true; card.className = 'item-card'; bar.checked = true; syncBarCircle(); }
-        if (it.qty !== undefined && it.qty === 0) { it.qty = 1; const qv = card.querySelector('.qty-val'); if (qv) qv.textContent = 1; }
-        updatePriceDisplay();
-        syncNoteVisibility();
-        recalcCtx();
-      });
-      nameEl.style.flex = '0 0 auto';
-      const pselWrap2 = document.createElement('div');
-      pselWrap2.className = 'kalk-csel-cell';
-      pselWrap2.style.cssText = 'flex:1;min-width:0;';
-      pselWrap2.appendChild(psel);
-      topRow.appendChild(pselWrap2);
-      buildCsel(psel);
-      topRow.appendChild(ctrl);
-      topRow.appendChild(priceEl);
-      body.appendChild(topRow);
-
-    } else {
-      // Bez +/- : drop w topRow między nazwą a kwotą
-      priceEl.style.width = '52px';
-      // font set by CSS
-      nameEl.style.flex = '0 0 auto';
-
-      const psel = document.createElement('select');
-      psel.className = 'native-sel preset-sel';
-      psel.dataset.title = it.name;
-      const defOpt = document.createElement('option');
-      defOpt.value = ''; defOpt.textContent = 'Wybierz';
-      psel.appendChild(defOpt);
-      for (const p of it.presets) {
-        const o = document.createElement('option');
-        o.value = p.price; o.textContent = `${p.label} (${p.price})`; o.dataset.label = p.label;
-        psel.appendChild(o);
-      }
-      const innaOpt = document.createElement('option');
-      innaOpt.value = '__inna__'; innaOpt.textContent = 'Inne...';
-      psel.appendChild(innaOpt);
-      presetSelRef = psel;
-      psel._cselSync = () => {};
-      if (it.selectedPreset > 0 && it.selectedPreset < psel.options.length) psel.selectedIndex = it.selectedPreset;
-
-      psel.addEventListener('change', async () => {
-        it.selectedPreset = psel.selectedIndex;
-        if (psel.value === '__inna__') {
-          const typed = await openOpisBanner(it.customName || '');
-          if (typed === null || !typed) {
-            it.customName = '';
-            if (!isLocal()) State.setItemCustomName(it.id, '');
-            innaOpt.textContent = 'Inne...';
-            psel.selectedIndex = 0;
-            it.selectedPreset = 0;
-            if (typeof psel._cselSync === 'function') psel._cselSync();
-            syncNoteVisibility();
-            recalcCtx();
-            return;
-          }
-          it.customName = typed;
-          if (!isLocal()) State.setItemCustomName(it.id, typed);
-          innaOpt.textContent = 'Inne: ' + typed;
-          card.classList.remove('qty-zero'); if (!it.checked) { it.checked = true; card.className = 'item-card'; bar.checked = true; syncBarCircle(); }
-          syncNoteVisibility();
-          if (typeof psel._cselSync === 'function') psel._cselSync();
-          setTimeout(() => { priceEl.focus(); priceEl.select(); }, 50);
-          recalcCtx();
-          return;
-        }
-        it.customName = '';
-        if (!isLocal()) State.setItemCustomName(it.id, '');
-        innaOpt.textContent = 'Inne...';
-        if (!psel.value) {
-          if (it.name === 'Korba') {
-            ['Support', 'Łańcuch', 'Kaseta'].forEach(name => {
-              const dep = itemsCtx.find(x => x.name === name);
-              if (dep) { dep.selectedPreset = 0; dep.price = 0; dep.checked = false; }
-            });
-            renderCtx();
-            recalcCtx();
-          }
-          syncNoteVisibility();
-          return;
-        }
-        it.price = parseFloat(psel.value);
-        card.classList.remove('qty-zero'); if (!it.checked) { it.checked = true; card.className = 'item-card'; bar.checked = true; syncBarCircle(); }
-        updatePriceDisplay();
-        const label = (psel.options[psel.selectedIndex].dataset.label || '').toLowerCase();
-        if (it.name === 'Korba') {
-          if (label.includes('hollowtech')) {
-            autoSelectCtx(itemsCtx, 'Support', 'hollowtech');
-            ['Łańcuch', 'Kaseta'].forEach(name => {
-              const dep = itemsCtx.find(x => x.name === name);
-              if (dep) { dep.selectedPreset = 0; dep.price = 0; dep.checked = false; }
-            });
-            renderCtx();
-          }
-          if (label.includes('kwadrat')) {
-            autoSelectCtx(itemsCtx, 'Support', 'neco');
-            autoSelectCtx(itemsCtx, 'Łańcuch', 'HG40');
-            autoSelectCtx(itemsCtx, 'Kaseta', '8s Shimano');
-            renderCtx();
-          }
-        }
-        syncNoteVisibility();
-        recalcCtx();
-      });
-
-      const pselWrap = document.createElement('div');
-      pselWrap.className = 'kalk-csel-cell';
-      pselWrap.style.cssText = 'flex:1;min-width:0;';
-      pselWrap.appendChild(psel);
-      topRow.appendChild(pselWrap);
-      buildCsel(psel);
-      topRow.appendChild(priceEl);
-      body.appendChild(topRow);
-    }
-  }
-
-  // ── Plain item (Linka, Pancerz etc.) ──
-  else {
-    if (it.qty !== undefined) {
-      nameEl.style.flex = '0 0 auto';
-      const opisWrap = document.createElement('div');
-      opisWrap.className = 'kalk-csel-cell';
-      opisWrap.style.cssText = 'flex:1;min-width:0;';
-      opisWrap.appendChild(buildOpisControl());
       const { ctrl } = buildQty(null, it.name === 'Końcówki' ? 5 : 1);
-      topRow.appendChild(opisWrap);
       topRow.appendChild(ctrl);
-      topRow.appendChild(priceEl);
     } else {
-      nameEl.style.flex = '0 0 auto';
-      const opisWrap = document.createElement('div');
-      opisWrap.className = 'kalk-csel-cell';
-      opisWrap.style.cssText = 'flex:1;min-width:0;';
-      opisWrap.appendChild(buildOpisControl());
       priceEl.style.width = '52px';
-      // font set by CSS
-      topRow.appendChild(opisWrap);
-      topRow.appendChild(priceEl);
     }
+    topRow.appendChild(priceEl);
     body.appendChild(topRow);
   }
 
@@ -5050,6 +4611,7 @@ function getHistory() {
 
 // ── Zapis zlecenia do historii ──
 function saveWycena() {
+  flushSave(); // zapisz bieżący stan (w tym notatkę) do localStorage przed odczytem
   const total = $('total-display').textContent;
   const marka  = $('cf-marka').value.trim();
   const model  = $('cf-model').value.trim();
@@ -5258,39 +4820,12 @@ function dayOfWeek(dateStr) {
   return ['Niedziela','Poniedziałek','Wtorek','Środa','Czwartek','Piątek','Sobota'][day];
 }
 
-function entryMatchesSearch(entry, filterStr) {
-  const q = String(filterStr || '').trim();
-  if (!q || q.length < 2) return true;
-  const qLower = q.toLowerCase();
-  const qDigits = q.replace(/\D/g, '');
-  const qUpper = q.replace(/\s/g, '').toUpperCase();
-  const model = String(entry.model || '').toLowerCase();
-  const marka = String(entry.marka || '').toLowerCase();
-  if (model.includes(qLower) || marka.includes(qLower)) return true;
-  if (qDigits.length >= 3 && entry.tel && entry.tel.replace(/\D/g, '').includes(qDigits)) return true;
-  if (entry.kodOdbioru && String(entry.kodOdbioru).replace(/\s/g, '').toUpperCase().includes(qUpper)) return true;
-  return false;
-}
-
-function filterEntriesBySearch(entries, filterStr) {
-  const q = String(filterStr || '').trim();
-  if (!q || q.length < 2) return entries;
-  return entries.filter(e => entryMatchesSearch(e, q));
-}
-
-function sortGroupsSinglesFirst(groups) {
-  const singles = [];
-  const multi = [];
-  groups.forEach(g => {
-    if (g.entries.length > 1 && g.key) multi.push(g);
-    else singles.push(g);
-  });
-  return singles.concat(multi);
-}
-
-function getPrzyjeteList(filterStr) {
+function getPrzyjeteList(filterTel) {
   let hist = getHistory().filter(e => !e.raportKoncowy);
-  hist = filterEntriesBySearch(hist, filterStr);
+  if (filterTel && filterTel.replace(/\D/g,'').length >= 3) {
+    const clean = filterTel.replace(/\D/g,'');
+    hist = hist.filter(e => e.tel && e.tel.replace(/\D/g,'').includes(clean));
+  }
   const currentYear = new Date().getFullYear();
   const toDate = t => {
     if (!t) return new Date(9999, 0, 1);
@@ -5303,79 +4838,6 @@ function getPrzyjeteList(filterStr) {
   return hist.slice().sort((a, b) => toDate(a.termin) - toDate(b.termin));
 }
 
-function normalizeTelKey(tel) {
-  if (!tel) return '';
-  const digits = String(tel).replace(/\D/g, '');
-  if (digits.length < 9) return '';
-  return digits.slice(-9);
-}
-
-function groupEntriesByTel(entries) {
-  const groups = [];
-  const map = new Map();
-  entries.forEach(entry => {
-    const key = normalizeTelKey(entry.tel);
-    if (!key) {
-      groups.push({ key: '', tel: '', entries: [entry] });
-      return;
-    }
-    if (map.has(key)) {
-      map.get(key).entries.push(entry);
-    } else {
-      const g = { key, tel: entry.tel, entries: [entry] };
-      map.set(key, g);
-      groups.push(g);
-    }
-  });
-  return groups;
-}
-
-function telGroupCountLabel(n) {
-  if (n === 1) return '1 zlecenie';
-  const mod10 = n % 10;
-  const mod100 = n % 100;
-  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return n + ' zlecenia';
-  return n + ' zleceń';
-}
-
-function createTelGroupShell(tel, count, theme) {
-  const el = document.createElement('div');
-  el.className = 'history-tel-group history-tel-group-' + theme;
-  el.style.boxShadow = 'none';
-  const telClean = String(tel).replace(/[^0-9+]/g, '');
-  const phoneIco = '<svg width="14" height="14" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>';
-  const header = document.createElement('div');
-  header.className = 'history-tel-group-header';
-  header.innerHTML = '<a href="tel:' + telClean + '" class="history-tel-group-phone">' + phoneIco + escHTML(tel) + '</a>'
-    + '<span class="history-tel-group-count">' + telGroupCountLabel(count) + '</span>';
-  const body = document.createElement('div');
-  body.className = 'history-tel-group-body';
-  el.appendChild(header);
-  el.appendChild(body);
-  return { el, body };
-}
-
-function parseEntryTotal(entry) {
-  return parseFloat(String(entry?.total || '').replace(/\s/g, '').replace(',', '.')) || 0;
-}
-
-function appendWydanieGroupFooter(shell, entries) {
-  const total = entries.reduce((acc, e) => acc + parseEntryTotal(e), 0);
-  const idsArg = entries.map(e => e.id).join(',');
-  const footer = document.createElement('div');
-  footer.className = 'history-item history-tel-group-footer';
-  footer.style.borderColor = 'rgba(34,197,94,0.22)';
-  footer.style.backgroundColor = 'rgba(34,197,94,0.03)';
-  footer.style.boxShadow = 'none';
-  footer.innerHTML =
-    '<div class="history-tel-group-sum-left">'
-    + '<span class="history-tel-group-sum-label">SUMA</span>'
-    + '<span class="history-tel-group-sum-value">' + fmt(total) + ' zł</span>'
-    + '</div>'
-    + '<button type="button" class="btn-history-load" style="background:#ef4444;border-color:#ef4444;font-size:15px;font-weight:700;letter-spacing:.5px;" onclick="openPodsumowanieDoWydaniaGrupa([' + idsArg + '])">WYDAJ RAZEM</button>';
-  shell.body.appendChild(footer);
-}
-
 function renderHistory(filterTel) {
   const list = $('history-list');
   const sorted = getPrzyjeteList(filterTel);
@@ -5386,7 +4848,7 @@ function renderHistory(filterTel) {
   list.innerHTML = '';
 
   const todayMs = new Date().setHours(0,0,0,0);
-  function buildHistoryItem(entry, hideTel) {
+  sorted.forEach(entry => {
     const item = document.createElement('div');
     item.className = 'history-item';
     item.dataset.orderId = String(entry.id ?? '');
@@ -5473,7 +4935,7 @@ function renderHistory(filterTel) {
           <div style="display:flex;align-items:center;gap:6px;">
             <span style="font-size:17px;font-weight:700;color:#fff;">${escHTML(nameParts || '')}</span>${(entry.ebike || entry.marka === 'E-BIKE') ? '<span style=\'margin-left:5px;font-size:16px;\' title=\'e-Bike\'>⚡</span>' : ''}
           </div>
-          ${!hideTel && entry.tel ? `<a href="tel:${String(entry.tel).replace(/[^0-9+]/g,'')}" style="display:flex;align-items:center;gap:4px;font-size:16px;font-weight:600;color:#3b7cf4;margin-top:2px;text-decoration:none;"><svg width="12" height="12" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19 0 0 1 4.69 12 19.79 19 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>${escHTML(entry.tel)}</a>` : ''}
+          ${entry.tel ? `<a href="tel:${String(entry.tel).replace(/[^0-9+]/g,'')}" style="display:flex;align-items:center;gap:4px;font-size:16px;font-weight:600;color:#3b7cf4;margin-top:2px;text-decoration:none;"><svg width="12" height="12" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19 0 0 1 4.69 12 19.79 19 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>${escHTML(entry.tel)}</a>` : ''}
           ${terminHTML}
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
@@ -5491,17 +4953,7 @@ function renderHistory(filterTel) {
         </div>
       </div>
     `;
-    return item;
-  }
-
-  groupEntriesByTel(sorted).forEach(group => {
-    if (group.entries.length > 1 && group.key) {
-      const shell = createTelGroupShell(group.tel, group.entries.length, 'historia');
-      group.entries.forEach(entry => shell.body.appendChild(buildHistoryItem(entry, true)));
-      list.appendChild(shell.el);
-    } else {
-      list.appendChild(buildHistoryItem(group.entries[0], false));
-    }
+    list.appendChild(item);
   });
 
   const suma = sorted.reduce((acc, e) => {
@@ -5823,10 +5275,17 @@ function markSmsSent(id, el) {
 }
 
 // ── Lista „Do wydania” (opcjonalny filtr jak w polu szukania) ──
-function getDoWydaniaList(filterStr) {
+function getDoWydaniaList(filterTel) {
   const hist = getHistory();
   let doWydania = hist.filter(e => e.raportKoncowy);
-  doWydania = filterEntriesBySearch(doWydania, filterStr);
+  if (filterTel && filterTel.trim().length >= 2) {
+    const cleanDigits = filterTel.replace(/\D/g,'');
+    const cleanStr    = filterTel.trim().toUpperCase().replace(/\s/g,'');
+    doWydania = doWydania.filter(e =>
+      (cleanDigits.length >= 3 && e.tel && e.tel.replace(/\D/g,'').includes(cleanDigits)) ||
+      (e.kodOdbioru && String(e.kodOdbioru).replace(/\s/g,'').toUpperCase().includes(cleanStr))
+    );
+  }
   doWydania.sort((a, b) => {
     const tA = a.raportKoncowy?.savedAt ? new Date(a.raportKoncowy.savedAt).getTime() : 0;
     const tB = b.raportKoncowy?.savedAt ? new Date(b.raportKoncowy.savedAt).getTime() : 0;
@@ -5846,7 +5305,7 @@ function renderWydanie(filterTel) {
   }
   list.innerHTML = '';
 
-  function buildWydanieItem(entry, hideTel) {
+  doWydania.forEach(entry => {
     const item = document.createElement('div');
     item.className = 'history-item';
     item.dataset.orderId = String(entry.id ?? '');
@@ -5878,7 +5337,7 @@ function renderWydanie(filterTel) {
             <span style="font-size:17px;font-weight:700;color:#fff;">${escHTML(nameParts || '')}</span>${(entry.ebike || entry.marka === 'E-BIKE') ? '<span style=\'margin-left:5px;font-size:16px;\' title=\'e-Bike\'>⚡</span>' : ''}
           </div>
           <div style="display:flex;align-items:center;gap:8px;margin-top:2px;flex-wrap:wrap;">
-            ${!hideTel && entry.tel ? `<div style="display:flex;align-items:center;gap:4px;font-size:16px;font-weight:600;color:#3b7cf4;"><svg width="12" height="12" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>${escHTML(entry.tel)}</div>` : ''}
+            ${entry.tel ? `<div style="display:flex;align-items:center;gap:4px;font-size:16px;font-weight:600;color:#3b7cf4;"><svg width="12" height="12" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>${escHTML(entry.tel)}</div>` : ''}
             ${entry.kodOdbioru ? `<div style="font-size:14px;font-weight:800;color:#f59e0b;letter-spacing:2px;">🔑 ${escHTML(entry.kodOdbioru)}</div>` : ''}
           </div>
           ${przyjęcieLine ? `<div style="font-size:13px;color:#ef4444;font-weight:500;margin-top:2px;">${escHTML(przyjęcieLine)}</div>` : ''}
@@ -5898,18 +5357,7 @@ function renderWydanie(filterTel) {
         </div>
       </div>
     `;
-    return item;
-  }
-
-  sortGroupsSinglesFirst(groupEntriesByTel(doWydania)).forEach(group => {
-    if (group.entries.length > 1 && group.key) {
-      const shell = createTelGroupShell(group.tel, group.entries.length, 'wydanie');
-      group.entries.forEach(entry => shell.body.appendChild(buildWydanieItem(entry, true)));
-      appendWydanieGroupFooter(shell, group.entries);
-      list.appendChild(shell.el);
-    } else {
-      list.appendChild(buildWydanieItem(group.entries[0], false));
-    }
+    list.appendChild(item);
   });
 
   const suma = doWydania.reduce((acc, e) => {
@@ -6080,7 +5528,16 @@ window.generujZleceniaPrzyjete = generujZleceniaPrzyjete;
 // ── Renderowanie zakładki 'Wydane' ──
 function renderArchive(filterStr) {
   const list = $('archive-list');
-  let arch = filterEntriesBySearch(getArchive(), filterStr);
+  let arch = getArchive();
+  // Filtruj po numerze telefonu lub kodzie odbioru
+  if (filterStr && filterStr.trim().length >= 3) {
+    const cleanStr = filterStr.replace(/\D/g,'');
+    const rawStr   = filterStr.replace(/\s/g,'').toUpperCase();
+    arch = arch.filter(e =>
+      (e.tel && cleanStr.length >= 3 && e.tel.replace(/\D/g,'').includes(cleanStr)) ||
+      (e.kodOdbioru && String(e.kodOdbioru).replace(/\s/g,'').toUpperCase().includes(rawStr))
+    );
+  }
   if (!arch.length) {
     list.innerHTML = '<div class="history-empty">Brak zarchiwizowanych zleceń</div>';
     return;
@@ -6098,7 +5555,7 @@ function renderArchive(filterStr) {
     return parseDate(b.dataWydania) - parseDate(a.dataWydania);
   });
   list.innerHTML = '';
-  function buildArchiveItem(entry, hideTel) {
+  arch.forEach(entry => {
     const item = document.createElement('div');
     item.className = 'history-item';
     item.dataset.orderId = String(entry.id ?? '');
@@ -6131,7 +5588,7 @@ function renderArchive(filterStr) {
             '<span style="font-size:17px;font-weight:700;color:#fff;">' + escHTML(nameParts || '') + '</span>' + ((entry.ebike || entry.marka === 'E-BIKE') ? '<span style="margin-left:5px;font-size:15px;" title="e-Bike">⚡</span>' : '') +
           '</div>' +
           '<div style="display:flex;align-items:center;gap:8px;margin-top:2px;flex-wrap:wrap;">' +
-            (!hideTel && entry.tel ? '<div style="display:flex;align-items:center;gap:4px;font-size:16px;font-weight:600;color:#3b7cf4;"><svg width="12" height="12" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>' + escHTML(entry.tel) + '</div>' : '') +
+            (entry.tel ? '<div style="display:flex;align-items:center;gap:4px;font-size:16px;font-weight:600;color:#3b7cf4;"><svg width="12" height="12" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>' + escHTML(entry.tel) + '</div>' : '') +
             (entry.kodOdbioru ? '<div style="font-size:14px;font-weight:800;color:#f59e0b;letter-spacing:2px;">🔑 ' + escHTML(entry.kodOdbioru) + '</div>' : '') +
           '</div>' +
           (przyjęcieLine ? '<div style="font-size:13px;color:#ef4444;font-weight:500;margin-top:2px;">' + escHTML(przyjęcieLine) + '</div>' : '') +
@@ -6153,17 +5610,7 @@ function renderArchive(filterStr) {
         '<button class="btn-history-load" style="background:#f59e0b;border-color:#f59e0b;color:#111827;display:inline-flex;align-items:center;justify-content:center;padding:8px 14px;min-height:33px;font-size:13px;" onclick="openRabAssignForArchive(' + entry.id + ')" title="Dodaj kod rabatowy"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#111827" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v7a2 2 0 0 1-2 2H7l-4-4V5a2 2 0 0 1 2-2h7"/><path d="M16 2l6 6"/><path d="M14 8l8-8"/></svg></button>' +
       '</div>';
 
-    return item;
-  }
-
-  groupEntriesByTel(arch).forEach(group => {
-    if (group.entries.length > 1 && group.key) {
-      const shell = createTelGroupShell(group.tel, group.entries.length, 'archiwum');
-      group.entries.forEach(entry => shell.body.appendChild(buildArchiveItem(entry, true)));
-      list.appendChild(shell.el);
-    } else {
-      list.appendChild(buildArchiveItem(group.entries[0], false));
-    }
+    list.appendChild(item);
   });
 }
 
@@ -6282,7 +5729,11 @@ window.wyczyscKosz = wyczyscKosz;
 function renderKosz(filterTel) {
   purgExpiredKosz();
   const list = $('kosz-list');
-  let kosz = filterEntriesBySearch(getKosz(), filterTel);
+  let kosz = getKosz();
+  if (filterTel && filterTel.replace(/\D/g,'').length >= 3) {
+    const clean = filterTel.replace(/\D/g,'');
+    kosz = kosz.filter(e => e.tel && e.tel.replace(/\D/g,'').includes(clean));
+  }
 
   if (!kosz.length) {
     list.innerHTML = '<div class="history-empty">Kosz jest pusty</div>';
@@ -7025,6 +6476,8 @@ function closeModal() {
   // Wymuś zapis natychmiast — szczególnie przy pierwszym zleceniu dnia,
   // gdy użytkownik szybko przechodzi dalej.
   flushSave();
+  // Ustaw widok od samej góry (notatka nad listą pozycji)
+  requestAnimationFrame(() => { window.scrollTo(0, 0); document.documentElement.scrollTop = 0; document.body.scrollTop = 0; });
 }
 function closeModalOutside(e) {
   if (e.target === $('modal-overlay')) {
@@ -7198,15 +6651,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const histSearchEl = $('historia-search-tel');
   if (histSearchEl) {
     histSearchEl.addEventListener('input', () => {
-      let v = histSearchEl.value;
-      if (/^[\d-\s]*$/.test(v)) {
-        let digits = v.replace(/\D/g, '').slice(0, 9);
-        if (digits.length > 6) v = digits.slice(0, 3) + '-' + digits.slice(3, 6) + '-' + digits.slice(6);
-        else if (digits.length > 3) v = digits.slice(0, 3) + '-' + digits.slice(3);
-        else v = digits;
-        histSearchEl.value = v;
-      }
-      renderHistory(histSearchEl.value);
+      let v = histSearchEl.value.replace(/\D/g, '').slice(0, 9);
+      if (v.length > 6) v = v.slice(0,3)+'-'+v.slice(3,6)+'-'+v.slice(6);
+      else if (v.length > 3) v = v.slice(0,3)+'-'+v.slice(3);
+      histSearchEl.value = v;
+      renderHistory(v);
     });
   }
   // Wydanie search (tel + kod odbioru — nie formatuj, przekaz raw)
@@ -7220,15 +6669,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const koszSearchEl = $('kosz-search-tel');
   if (koszSearchEl) {
     koszSearchEl.addEventListener('input', () => {
-      let v = koszSearchEl.value;
-      if (/^[\d-\s]*$/.test(v)) {
-        let digits = v.replace(/\D/g, '').slice(0, 9);
-        if (digits.length > 6) v = digits.slice(0, 3) + '-' + digits.slice(3, 6) + '-' + digits.slice(6);
-        else if (digits.length > 3) v = digits.slice(0, 3) + '-' + digits.slice(3);
-        else v = digits;
-        koszSearchEl.value = v;
-      }
-      renderKosz(koszSearchEl.value);
+      let v = koszSearchEl.value.replace(/\D/g, '').slice(0, 9);
+      if (v.length > 6) v = v.slice(0,3)+'-'+v.slice(3,6)+'-'+v.slice(6);
+      else if (v.length > 3) v = v.slice(0,3)+'-'+v.slice(3);
+      koszSearchEl.value = v;
+      renderKosz(v);
     });
   }
 });
@@ -7315,11 +6760,29 @@ function buildRaportLocalItems(st, entry, filterEbikeItems) {
     noteText: it.noteText || '',
     options: findDefault(it.name)?.options?.map(x => ({...x})),
     presets: findDefault(it.name)?.presets?.map(x => ({...x})),
+    selectedOptions: it.selectedOptions || [],
   }));
+  // Stare zlecenia: zamień dawne wybory z list na tekstowy opis
+  rItems.forEach(migrateSelectionToOpis);
   if (filterEbikeItems) {
     const isEbike = entry.ebike || entry.marka === 'E-BIKE';
     if (!isEbike) {
       rItems = rItems.filter(it => it.name !== 'Ochraniacz' && it.name !== 'Diagnostyka eBike' && it.name !== 'Diagnostyka e-Bike');
+    }
+  }
+  // Uzupełnij brakujące pozycje domyślne (np. nowo dodane do listy),
+  // żeby edytor naprawy wyglądał tak samo jak przyjęcie zlecenia
+  for (const def of DEFAULTS) {
+    if (!rItems.find(it => it.name === def.name)) {
+      rItems.push({
+        id: 'rdef' + rItems.length,
+        name: def.name, price: 0, checked: false,
+        qty: def.qty, selectedPreset: -1, customName: '',
+        noteText: '',
+        options: def.options?.map(x => ({...x})),
+        presets: def.presets?.map(x => ({...x})),
+        selectedOptions: [],
+      });
     }
   }
   { const _o = DEFAULTS.map(d => d.name); rItems.sort((a,b) => { const ai=_o.indexOf(a.name),bi=_o.indexOf(b.name); return (ai===-1?999:ai)-(bi===-1?999:bi); }); }
@@ -7380,7 +6843,7 @@ function renderRaportEditor(entry, st, cfg) {
   gc.innerHTML = '';
   const wrap = document.createElement('div');
   wrap.className = 'group-card';
-  wrap.style.margin = '4px 8px 3px';
+  wrap.style.margin = '12px 8px 3px';
 
   const hdr = document.createElement('div');
   hdr.className = 'group-header';
@@ -7854,7 +7317,47 @@ function openPodsumowanieDoWydania(id) {
     <td style="padding:7px 10px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;text-align:right;">Razem</td>
   </tr></thead>`;
 
-  let html = _buildPodsumowanieTablesHTML(entry, fmtPLN, thead, td, tdr);
+  let html = '';
+  let stItems = [];
+  let zlecTotal = 0;
+  const st = entry.state ? safeParseJSON(entry.state, null) : null;
+  if (st?.items) stItems = st.items.filter(it => it.checked);
+
+  if (stItems.length) {
+    html += `<div style="padding:10px 12px 6px;font-size:13px;font-weight:800;color:#22c55e;text-transform:uppercase;letter-spacing:.8px;background:var(--bg);text-align:center;">Zlecone naprawy</div>`;
+    html += `<table style="width:100%;border-collapse:collapse;">${thead}<tbody>`;
+    stItems.forEach(it => {
+      const qty = it.qty !== undefined ? (it.qty || 1) : 1;
+      const price = parseFloat(it.price) || 0;
+      const total = Math.round(price * qty * 100) / 100;
+      zlecTotal += total;
+      const name = itemLabelWithDetails(it, true);
+      html += `<tr><td ${td}>${escHTML(name)}</td><td ${tdr}>${fmtPLN(price)}</td><td ${tdr}>${qty}</td><td ${tdr}>${fmtPLN(total)}</td></tr>`;
+    });
+    html += `<tr><td colspan="3" style="padding:8px 10px;font-size:12px;font-weight:700;color:var(--text3);">Razem zlecenie</td><td style="padding:8px 10px;font-size:14px;font-weight:800;color:#fff;text-align:right;">${fmtPLN(zlecTotal)} zł</td></tr>`;
+    html += `</tbody></table>`;
+  }
+
+  if (rk) {
+    let rapTotal = 0;
+    html += `<div style="padding:10px 12px 6px;font-size:13px;font-weight:800;color:#22c55e;text-transform:uppercase;letter-spacing:.8px;background:var(--bg);border-top:2px solid var(--border);margin-top:8px;text-align:center;">Wykonane naprawy</div>`;
+    html += `<table style="width:100%;border-collapse:collapse;">${thead}<tbody>`;
+    (rk.items || []).filter(it => it.checked).forEach(it => {
+      const qty = it.qty !== undefined ? (it.qty || 1) : 1;
+      const price = parseFloat(it.price) || 0;
+      const total = Math.round(price * qty * 100) / 100;
+      rapTotal += total;
+      const name = itemLabelWithDetails(it, true);
+      html += `<tr><td ${td}>${escHTML(name)}</td><td ${tdr}>${fmtPLN(price)}</td><td ${tdr}>${qty}</td><td ${tdr}>${fmtPLN(total)}</td></tr>`;
+    });
+    (rk.subs || []).filter(s => s.checked && s.name).forEach(s => {
+      const price = parseFloat(s.price) || 0;
+      rapTotal += price;
+      html += `<tr><td ${td}>${escHTML(s.name)}</td><td ${tdr}>${fmtPLN(price)}</td><td ${tdr}>1</td><td ${tdr}>${fmtPLN(price)}</td></tr>`;
+    });
+    html += `<tr><td colspan="3" style="padding:8px 10px;font-size:12px;font-weight:700;color:var(--text3);">Razem naprawa</td><td style="padding:8px 10px;font-size:14px;font-weight:800;color:#fff;text-align:right;">${fmtPLN(rapTotal)} zł</td></tr>`;
+    html += `</tbody></table>`;
+  }
 
   $('podglad-table').innerHTML = html;
   $('podglad-total').textContent = entry.total || '';
@@ -7869,171 +7372,12 @@ function openPodsumowanieDoWydania(id) {
   const btn = $('podglad-wydaj-btn');
   if (bar && btn) {
     bar.style.display = 'block';
-    btn.textContent = 'WYDAJ';
     btn.onclick = () => wydajBezKwoty(id);
   }
 
   $('podglad-overlay').style.display = 'block';
 }
-
-function _buildPodsumowanieTablesHTML(entry, fmtPLN, thead, td, tdr) {
-  let html = '';
-  let stItems = [];
-  let zlecTotal = 0;
-  const st = entry.state ? safeParseJSON(entry.state, null) : null;
-  if (st?.items) stItems = st.items.filter(it => it.checked);
-
-  if (stItems.length) {
-    html += '<div style="padding:10px 12px 6px;font-size:13px;font-weight:800;color:#22c55e;text-transform:uppercase;letter-spacing:.8px;background:var(--bg);text-align:center;">Zlecone naprawy</div>';
-    html += '<table style="width:100%;border-collapse:collapse;">' + thead + '<tbody>';
-    stItems.forEach(it => {
-      const qty = it.qty !== undefined ? (it.qty || 1) : 1;
-      const price = parseFloat(it.price) || 0;
-      const total = Math.round(price * qty * 100) / 100;
-      zlecTotal += total;
-      const name = itemLabelWithDetails(it, true);
-      html += '<tr><td ' + td + '>' + escHTML(name) + '</td><td ' + tdr + '>' + fmtPLN(price) + '</td><td ' + tdr + '>' + qty + '</td><td ' + tdr + '>' + fmtPLN(total) + '</td></tr>';
-    });
-    html += '<tr><td colspan="3" style="padding:8px 10px;font-size:12px;font-weight:700;color:var(--text3);">Razem zlecenie</td><td style="padding:8px 10px;font-size:14px;font-weight:800;color:#fff;text-align:right;">' + fmtPLN(zlecTotal) + ' zł</td></tr>';
-    html += '</tbody></table>';
-  }
-
-  const rk = entry.raportKoncowy;
-  if (rk) {
-    let rapTotal = 0;
-    html += '<div style="padding:10px 12px 6px;font-size:13px;font-weight:800;color:#22c55e;text-transform:uppercase;letter-spacing:.8px;background:var(--bg);border-top:2px solid var(--border);margin-top:8px;text-align:center;">Wykonane naprawy</div>';
-    html += '<table style="width:100%;border-collapse:collapse;">' + thead + '<tbody>';
-    (rk.items || []).filter(it => it.checked).forEach(it => {
-      const qty = it.qty !== undefined ? (it.qty || 1) : 1;
-      const price = parseFloat(it.price) || 0;
-      const total = Math.round(price * qty * 100) / 100;
-      rapTotal += total;
-      const name = itemLabelWithDetails(it, true);
-      html += '<tr><td ' + td + '>' + escHTML(name) + '</td><td ' + tdr + '>' + fmtPLN(price) + '</td><td ' + tdr + '>' + qty + '</td><td ' + tdr + '>' + fmtPLN(total) + '</td></tr>';
-    });
-    (rk.subs || []).filter(s => s.checked && s.name).forEach(s => {
-      const price = parseFloat(s.price) || 0;
-      rapTotal += price;
-      html += '<tr><td ' + td + '>' + escHTML(s.name) + '</td><td ' + tdr + '>' + fmtPLN(price) + '</td><td ' + tdr + '>1</td><td ' + tdr + '>' + fmtPLN(price) + '</td></tr>';
-    });
-    html += '<tr><td colspan="3" style="padding:8px 10px;font-size:12px;font-weight:700;color:var(--text3);">Razem naprawa</td><td style="padding:8px 10px;font-size:14px;font-weight:800;color:#fff;text-align:right;">' + fmtPLN(rapTotal) + ' zł</td></tr>';
-    html += '</tbody></table>';
-  }
-  return html;
-}
-
-function openPodsumowanieDoWydaniaGrupa(ids) {
-  if (!ids || !ids.length) return;
-  const hist = getHistory();
-  const idSet = new Set(ids.map(id => String(id)));
-  const entries = hist.filter(e => idSet.has(String(e.id)));
-  if (!entries.length) { alert('Brak danych'); return; }
-  if (entries.some(e => !e.raportKoncowy)) { alert('Nie wszystkie zlecenia mają raport końcowy'); return; }
-
-  raportReturnTab = 'wydanie';
-  const fmtPLN = v => Number(v || 0).toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  const tel = entries[0].tel || '';
-  const telClean = String(tel).replace(/[^0-9+]/g, '');
-  const sumTotal = entries.reduce((acc, e) => acc + parseEntryTotal(e), 0);
-
-  const leftHTML =
-    '<div style="flex:1;min-width:0;">'
-    + (tel ? '<a href="tel:' + telClean + '" style="display:inline-flex;align-items:center;gap:6px;font-size:16px;font-weight:700;color:#3b7cf4;text-decoration:none;margin-bottom:8px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>' + escHTML(tel) + '</a>' : '')
-    + '<div style="font-size:13px;font-weight:700;color:var(--text3);">' + telGroupCountLabel(entries.length) + '</div>'
-    + '</div>';
-  const rightHTML =
-    '<div style="text-align:right;flex-shrink:0;display:flex;flex-direction:column;gap:3px;justify-content:center;align-self:stretch;">'
-    + '<div style="font-size:11px;color:var(--text3);">Suma napraw</div>'
-    + '<div style="font-size:24px;font-weight:800;color:#22c55e;letter-spacing:-0.5px;">' + fmt(sumTotal) + ' zł</div>'
-    + '</div>';
-
-  $('podglad-title').textContent = 'Podsumowanie grupy';
-  $('podglad-header').innerHTML = '<div style="display:flex;align-items:stretch;gap:12px;">' + leftHTML + rightHTML + '</div>';
-
-  const td = 'style="padding:8px 10px;font-size:13px;color:var(--text);border-bottom:1px solid var(--border);"';
-  const tdr = 'style="padding:8px 10px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border);text-align:right;"';
-  const thead = '<thead><tr style="background:var(--bg);">'
-    + '<td style="padding:7px 10px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;">Usługa / część</td>'
-    + '<td style="padding:7px 10px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;text-align:right;">Cena</td>'
-    + '<td style="padding:7px 10px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;text-align:right;">Szt.</td>'
-    + '<td style="padding:7px 10px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;text-align:right;">Razem</td>'
-    + '</tr></thead>';
-
-  let html = '';
-  entries.forEach((entry, idx) => {
-    const kolorBar = makeKolorBarHTML(entry.kolor || '');
-    const nameParts = [entry.marka, entry.model].filter(Boolean);
-    html += '<div style="margin-top:' + (idx ? '16' : '0') + 'px;border:1px solid var(--border);border-radius:10px;overflow:hidden;">';
-    html += '<div style="position:relative;overflow:hidden;padding:10px 12px 10px 26px;background:var(--bg2);border-bottom:1px solid var(--border);">';
-    html += kolorBar;
-    html += '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;">';
-    html += '<div style="flex:1;min-width:0;">';
-    if (nameParts.length) html += '<div style="font-size:16px;font-weight:700;color:#fff;">' + escHTML(nameParts.join(' ')) + '</div>';
-    if (entry.kodOdbioru) html += '<div style="font-size:13px;font-weight:800;color:#f59e0b;letter-spacing:2px;margin-top:4px;">🔑 ' + escHTML(entry.kodOdbioru) + '</div>';
-    html += '</div>';
-    html += '<div style="font-size:22px;font-weight:800;color:#fff;flex-shrink:0;">' + escHTML(entry.total || '') + '</div>';
-    html += '</div></div>';
-    html += _buildPodsumowanieTablesHTML(entry, fmtPLN, thead, td, tdr);
-    html += '</div>';
-  });
-
-  $('podglad-table').innerHTML = html;
-  $('podglad-total').textContent = fmt(sumTotal) + ' zł';
-
-  const kodEl = $('podglad-kod-odbioru'); if (kodEl) kodEl.style.display = 'none';
-  const kwotaEl = $('podglad-kwota-zaplacona'); if (kwotaEl) kwotaEl.style.display = 'none';
-  const notatkaEl = $('podglad-notatka'); if (notatkaEl) notatkaEl.style.display = 'none';
-  const pdfBarEl = $('podglad-pdf-bar'); if (pdfBarEl) pdfBarEl.style.display = 'none';
-
-  const bar = $('podglad-action-bar');
-  const btn = $('podglad-wydaj-btn');
-  if (bar && btn) {
-    bar.style.display = 'block';
-    btn.textContent = 'WYDAJ RAZEM';
-    btn.onclick = () => wydajWszystkieGrupa(ids);
-  }
-
-  $('podglad-overlay').style.display = 'block';
-}
-
-function wydajWszystkieGrupa(ids) {
-  if (!ids || !ids.length) return;
-  const idSet = new Set(ids.map(id => String(id)));
-  const hist = getHistory();
-  const toArchive = [];
-  const remaining = [];
-  const dataWydania = new Date().toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
-
-  hist.forEach(entry => {
-    if (!idSet.has(String(entry.id))) {
-      remaining.push(entry);
-      return;
-    }
-    const archived = {
-      ...entry,
-      archivedAt: new Date().toISOString(),
-      kwotaSprzedazy: entry.total || '',
-      dataWydania,
-    };
-    delete archived.unarchivedAt;
-    toArchive.push(archived);
-  });
-
-  if (!toArchive.length) return;
-
-  const arch = getArchive();
-  toArchive.forEach(entry => arch.unshift(entry));
-  localStorage.setItem(ARCHIVE_KEY, JSON.stringify(arch));
-  localStorage.setItem(HISTORY_KEY, JSON.stringify(remaining));
-  highlightZlecenie(toArchive[0].id);
-  closePodglad();
-  openHistory();
-  switchTab('archiwum');
-}
-
 window.openPodsumowanieDoWydania = openPodsumowanieDoWydania;
-window.openPodsumowanieDoWydaniaGrupa = openPodsumowanieDoWydaniaGrupa;
-window.wydajWszystkieGrupa = wydajWszystkieGrupa;
 window.closePodglad = closePodglad;
 window.closePodgladOutside = closePodgladOutside;
 
