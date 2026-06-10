@@ -1804,7 +1804,8 @@ document.addEventListener('DOMContentLoaded', () => {
 // DATA
 // ─────────────────────────────────────────
 const DEFAULTS = [
-  { name: 'Naprawa',    price: 0, checked: false,
+  // Naprawa domyślnie zaznaczona przy nowym zleceniu; kwota pozostaje pusta
+  { name: 'Naprawa',    price: 0, checked: true,
     options: [
       {label:'Przygotowanie',price:100},
       {label:'Przegląd podstawowy',price:150},
@@ -6762,6 +6763,28 @@ function buildRaportLocalItems(st, entry, filterEbikeItems) {
     presets: findDefault(it.name)?.presets?.map(x => ({...x})),
     selectedOptions: it.selectedOptions || [],
   }));
+  // Naprawa raportów zapisanych ze starym błędem (opis nadpisywał nazwę pozycji):
+  // odzyskaj właściwą nazwę z pierwotnego stanu zlecenia
+  {
+    const origItems = (safeParseJSON(entry.state || '{}', {}) || {}).items || [];
+    rItems.forEach(it => {
+      if (findDefault(it.name) || (it.customName && it.customName.trim())) return;
+      const orig = origItems.find(o => (o.customName || '').trim() === String(it.name).trim() && findDefault(o.name));
+      if (orig) {
+        it.customName = String(it.name);
+        it.name = canonicalName(orig.name);
+        it.options = findDefault(it.name)?.options?.map(x => ({...x}));
+        it.presets = findDefault(it.name)?.presets?.map(x => ({...x}));
+      }
+    });
+  }
+  // Usuń puste duplikaty nazw (pozostałość po błędzie z podwójną pozycją)
+  rItems = rItems.filter((it, idx) => {
+    const hasContent = it.checked || (parseFloat(it.price) > 0) || (it.customName && it.customName.trim()) || (it.noteText && it.noteText.trim());
+    if (hasContent) return true;
+    return !rItems.some((o, j) => j !== idx && o.name === it.name
+      && (o.checked || (parseFloat(o.price) > 0) || (o.customName && o.customName.trim())));
+  });
   // Stare zlecenia: zamień dawne wybory z list na tekstowy opis
   rItems.forEach(migrateSelectionToOpis);
   if (filterEbikeItems) {
@@ -6928,8 +6951,11 @@ function saveRaportKoncowy() {
 
   // Zbierz obecny stan items z raport-items-list
   // Zbierz stan z obiektów (nie z DOM) — pewniejsze po zmianach UI
+  // Uwaga: nazwa pozycji i opis zapisywane OSOBNO — opis nie może nadpisywać
+  // nazwy, bo przy ponownej edycji pozycja nie pasuje do listy domyślnej
   const raportItems = raportRItems.map(it => ({
-    name: it.customName || it.name,
+    name: it.name,
+    customName: it.customName || '',
     checked: it.checked,
     price: parseFloat(it.price) || 0,
     qty: it.qty,
