@@ -5930,37 +5930,41 @@ window.switchTab = switchTab;
 window.unarchiveWycena = unarchiveWycena;
 window.deleteArchive = deleteArchive;
 
+// ── Raport sprzedaży: ostatnie dni ze sprzedażą (max 5) ──
+function _raportDniZeSprzedaza() {
+  const arch = getArchive();
+  const toTime = s => { const p = String(s || '').split('.'); return new Date(+p[2], +p[1] - 1, +p[0]).getTime() || 0; };
+  const days = [...new Set(arch.map(e => e.dataWydania).filter(Boolean))]
+    .sort((a, b) => toTime(b) - toTime(a))
+    .slice(0, 5);
+  return days.map(dataStr => {
+    const entries = arch.filter(e => e.dataWydania === dataStr);
+    const suma = entries.reduce((s, e) => s + (parseFloat(String(e.total || '0').replace(/\s/g, '').replace(',', '.')) || 0), 0);
+    return { dataStr, entries, suma, time: toTime(dataStr) };
+  });
+}
+
 function generujRaportDobowy() {
-  // Ustaw domyślną datę na dzisiaj
-  const today = new Date();
-  const yyyy = today.getFullYear();
-  const mm = String(today.getMonth() + 1).padStart(2, '0');
-  const dd = String(today.getDate()).padStart(2, '0');
-  $('raport-date-input').value = `${yyyy}-${mm}-${dd}`;
+  const dni = _raportDniZeSprzedaza();
+  const list = $('raport-days-list');
+  if (!dni.length) {
+    list.innerHTML = '<div style="font-size:13px;color:var(--text3);text-align:center;padding:14px 0;">Brak wydanych napraw.</div>';
+  } else {
+    list.innerHTML = dni.map(d => `
+      <label style="display:flex;align-items:center;gap:10px;padding:11px 12px;border:1px solid var(--border);border-radius:10px;cursor:pointer;background:var(--bg);">
+        <input type="checkbox" class="raport-day-cb" value="${d.dataStr}" style="width:19px;height:19px;accent-color:#6366f1;flex-shrink:0;cursor:pointer;">
+        <span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:1px;">
+          <span style="font-size:15px;font-weight:700;color:#fff;">${d.dataStr}</span>
+          <span style="font-size:11px;color:var(--text3);">${dayOfWeek(d.dataStr)} • ${d.entries.length} zleceń</span>
+        </span>
+        <span style="font-size:14px;font-weight:800;color:#22c55e;white-space:nowrap;">${d.suma.toFixed(2).replace('.', ',')} zł</span>
+      </label>`).join('');
+  }
   $('raport-date-modal').style.display = 'flex';
 }
 
-function generujRaportZDaty() {
-  $('raport-date-modal').style.display = 'none';
-  const val = $('raport-date-input').value; // YYYY-MM-DD
-  if (!val) return;
-  const [yyyy, mm, dd] = val.split('-');
-  const dataStr = dd + '.' + mm + '.' + yyyy;
-
-  const arch = getArchive();
-  const dzisiaj = arch.filter(e => e.dataWydania === dataStr);
-
-  if (!dzisiaj.length) {
-    showConfirm('Brak wydanych napraw z dnia ' + dataStr + '.', () => {});
-    setTimeout(() => {
-      const yesBtn = $('confirm-yes');
-      const noBtn  = $('confirm-no');
-      if (yesBtn) { yesBtn.textContent = 'OK'; }
-      if (noBtn)  { noBtn.style.display = 'none'; }
-    }, 10);
-    return;
-  }
-
+// Buduje HTML raportu dla jednego dnia (osobna strona w PDF)
+function _buildRaportDobowyHTML(dataStr, dzisiaj) {
   let suma = 0;
   let cards = '';
 
@@ -6114,8 +6118,14 @@ function generujRaportZDaty() {
   </div>
   </body></html>`;
 
-  // Generuj PDF przez iframe → html2canvas → jsPDF
-  function runRaportPDF() {
+  return html;
+}
+
+// Renderuje HTML jednego dnia do canvas (iframe → html2canvas)
+// Zwraca też pozycje "bloków" (karty zleceń, nagłówek, podsumowanie),
+// żeby przy dzieleniu na strony nie przecinać zlecenia w połowie
+function _renderRaportDayCanvas(html) {
+  return new Promise((resolve, reject) => {
     const iframe = document.createElement('iframe');
     iframe.style.cssText = 'position:fixed;left:-9999px;top:0;width:680px;height:1px;border:none;';
     document.body.appendChild(iframe);
@@ -6127,23 +6137,79 @@ function generujRaportZDaty() {
       setTimeout(() => {
         html2canvas(doc.body, { scale: 2, useCORS: true, backgroundColor: '#fff' })
           .then(canvas => {
-            const pdf = new window.jspdf.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-            const pdfW = pdf.internal.pageSize.getWidth();
-            const pdfH = pdf.internal.pageSize.getHeight();
-            const imgData = canvas.toDataURL('image/png');
-            const imgH = (canvas.height * pdfW) / canvas.width;
-            let yPos = 0;
-            while (yPos < imgH) {
-              if (yPos > 0) pdf.addPage();
-              pdf.addImage(imgData, 'PNG', 0, -yPos, pdfW, imgH);
-              yPos += pdfH;
-            }
-            pdf.save('raport-' + dataStr.replace(/\./g, '-') + '.pdf');
+            // Pozycje bloków w px canvasa
+            const baseTop = doc.body.getBoundingClientRect().top;
+            const factor = canvas.height / doc.body.scrollHeight;
+            const blocks = Array.from(doc.querySelectorAll('.page-header, .card, .summary')).map(el => {
+              const r = el.getBoundingClientRect();
+              return { top: (r.top - baseTop) * factor, bottom: (r.bottom - baseTop) * factor };
+            });
             cleanup();
+            resolve({ canvas, blocks });
           })
-          .catch(err => { console.error(err); alert('Błąd generowania PDF'); cleanup(); });
+          .catch(err => { cleanup(); reject(err); });
       }, 300);
     }, 100);
+  });
+}
+
+// Dodaje canvas dnia do PDF, tnąc strony tylko w miejscach,
+// w których żadne zlecenie (karta) nie zostaje przecięte
+function _addDayCanvasToPdf(pdf, canvas, blocks, firstPage) {
+  const pdfW = pdf.internal.pageSize.getWidth();
+  const pdfH = pdf.internal.pageSize.getHeight();
+  const pageHpx = pdfH * (canvas.width / pdfW); // wysokość strony w px canvasa
+  const straddles = c => blocks.some(b => b.top < c - 2 && b.bottom > c + 2);
+
+  let y = 0;
+  while (y < canvas.height - 2) {
+    let cut = Math.min(y + pageHpx, canvas.height);
+    if (cut < canvas.height && straddles(cut)) {
+      // Znajdź najniższe bezpieczne cięcie (koniec bloku) w obrębie strony
+      const candidates = blocks
+        .map(b => Math.ceil(b.bottom) + 2)
+        .filter(c => c > y + 8 && c <= y + pageHpx)
+        .sort((a, b) => b - a);
+      const safe = candidates.find(c => !straddles(c));
+      if (safe) cut = safe;
+      // brak bezpiecznego cięcia (blok wyższy niż strona) → tnij twardo
+    }
+    const sliceH = cut - y;
+    const slice = document.createElement('canvas');
+    slice.width = canvas.width;
+    slice.height = sliceH;
+    slice.getContext('2d').drawImage(canvas, 0, y, canvas.width, sliceH, 0, 0, canvas.width, sliceH);
+    if (!firstPage) pdf.addPage();
+    firstPage = false;
+    pdf.addImage(slice.toDataURL('image/png'), 'PNG', 0, 0, pdfW, (sliceH * pdfW) / canvas.width);
+    y = cut;
+  }
+  return firstPage;
+}
+
+function generujRaportZDaty() {
+  const checked = Array.from(document.querySelectorAll('#raport-days-list .raport-day-cb:checked')).map(cb => cb.value);
+  if (!checked.length) { alert('Zaznacz przynajmniej jeden dzień.'); return; }
+  $('raport-date-modal').style.display = 'none';
+
+  // Wybrane dni chronologicznie (najstarszy pierwszy) — każdy dzień na osobnej stronie
+  const dni = _raportDniZeSprzedaza()
+    .filter(d => checked.includes(d.dataStr))
+    .sort((a, b) => a.time - b.time);
+
+  function runRaportPDF() {
+    (async () => {
+      const pdf = new window.jspdf.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      let firstPage = true;
+      for (const d of dni) {
+        const { canvas, blocks } = await _renderRaportDayCanvas(_buildRaportDobowyHTML(d.dataStr, d.entries));
+        firstPage = _addDayCanvasToPdf(pdf, canvas, blocks, firstPage);
+      }
+      const fname = dni.length === 1
+        ? 'raport-' + dni[0].dataStr.replace(/\./g, '-')
+        : 'raport-' + dni[0].dataStr.replace(/\./g, '-') + '_' + dni[dni.length - 1].dataStr.replace(/\./g, '-');
+      pdf.save(fname + '.pdf');
+    })().catch(err => { console.error(err); alert('Błąd generowania PDF'); });
   }
 
   _loadPdfLibs(runRaportPDF, () => { alert('Brak połączenia z internetem'); });
@@ -8565,21 +8631,17 @@ window.cselSetValue = cselSetValue;
   </div>
 </div>
 
-<!-- Data picker modal dla raportu dobowego -->
+<!-- Wybór dni dla raportu sprzedaży -->
 <div id="raport-date-modal" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;">
   <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:24px 20px;max-width:95vw;width:95vw;margin:0 auto;display:flex;flex-direction:column;gap:16px;">
-    <div style="font-size:15px;font-weight:700;color:#fff;text-align:center;">Raport dobowy</div>
+    <div style="font-size:15px;font-weight:700;color:#fff;text-align:center;">Raport sprzedaży</div>
     <div style="display:flex;flex-direction:column;gap:6px;">
-      <label style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;">Wybierz dzień</label>
-      <input type="date" id="raport-date-input" style="font-size:18px;font-weight:700;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:#fff;outline:none;width:100%;" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
-    </div>
-    <div style="display:flex;gap:8px;margin-top:-4px;">
-      <button onclick="(function(){const d=new Date();d.setDate(d.getDate()-1);$('raport-date-input').value=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');})()" style="flex:1;padding:8px;background:none;border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;">Wczoraj</button>
-      <button onclick="(function(){const d=new Date();$('raport-date-input').value=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');})()" style="flex:1;padding:8px;background:none;border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;">Dziś</button>
+      <label style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;">Wybierz dni (ostatnie ze sprzedażą)</label>
+      <div id="raport-days-list" style="display:flex;flex-direction:column;gap:8px;max-height:50vh;overflow-y:auto;"></div>
     </div>
     <div style="display:flex;gap:10px;">
       <button onclick="$('raport-date-modal').style.display='none'" style="flex:1;padding:12px;background:#c0392b;border:1px solid #c0392b;border-radius:8px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;">Anuluj</button>
-      <button onclick="generujRaportZDaty()" style="flex:1;padding:12px;background:#6366f1;border:1px solid #6366f1;border-radius:8px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;">Generuj</button>
+      <button onclick="generujRaportZDaty()" style="flex:1;padding:12px;background:#6366f1;border:1px solid #6366f1;border-radius:8px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;">Generuj PDF</button>
     </div>
   </div>
 </div>
