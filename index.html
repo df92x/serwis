@@ -1563,24 +1563,23 @@ select.native-sel { display: none !important; }
       <div class="history-filter-bar" style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0 8px;flex-wrap:wrap;width:100%;">
         <div class="history-search-slot">
           <div id="historia-search-wrap" style="display:none;">
-            <input type="tel" id="historia-search-tel" placeholder="Szukaj: 000-000-000" maxlength="11"
+            <input type="text" id="historia-search-tel" placeholder="Szukaj: tel. / rower" maxlength="25"
               style="background:var(--bg);border:1px solid var(--border);color:#fff;outline:none;"
               onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
           </div>
           <div id="wydanie-search-wrap" style="display:none;">
-            <input type="tel" id="wydanie-search-tel" placeholder="Szukaj: tel. / kod" maxlength="20" inputmode="numeric"
+            <input type="text" id="wydanie-search-tel" placeholder="Szukaj: tel. / kod / rower" maxlength="25"
               style="background:var(--bg);border:1px solid var(--border);color:#fff;outline:none;"
-              onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'"
-              oninput="this.value=this.value.replace(/[^0-9]/g,'');renderWydanie(this.value)">
+              onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
           </div>
           <div id="archive-search-wrap" style="display:none;">
-            <input type="text" id="archive-search-tel" placeholder="Szukaj: tel. / kod" maxlength="20"
+            <input type="text" id="archive-search-tel" placeholder="Szukaj: tel. / kod / rower" maxlength="25"
               style="background:var(--bg);border:1px solid var(--border);color:#fff;outline:none;"
               onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
           </div>
           <div id="kosz-search-wrap" style="display:none;">
             <div style="display:flex;gap:6px;align-items:center;">
-              <input type="tel" id="kosz-search-tel" placeholder="Szukaj: 000-000-000" maxlength="11"
+              <input type="text" id="kosz-search-tel" placeholder="Szukaj: tel. / rower" maxlength="25"
                 style="flex:1;min-width:0;background:var(--bg);border:1px solid var(--border);color:#fff;outline:none;"
                 onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
               <button type="button" onclick="wyczyscKosz()" style="flex-shrink:0;background:none;border:1px solid var(--red);border-radius:8px;padding:6px 10px;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;">Wyczyść</button>
@@ -4823,9 +4822,8 @@ function dayOfWeek(dateStr) {
 
 function getPrzyjeteList(filterTel) {
   let hist = getHistory().filter(e => !e.raportKoncowy);
-  if (filterTel && filterTel.replace(/\D/g,'').length >= 3) {
-    const clean = filterTel.replace(/\D/g,'');
-    hist = hist.filter(e => e.tel && e.tel.replace(/\D/g,'').includes(clean));
+  if (filterTel && filterTel.trim().length >= 2) {
+    hist = hist.filter(e => _zlecenieMatch(e, filterTel));
   }
   const currentYear = new Date().getFullYear();
   const toDate = t => {
@@ -4839,6 +4837,55 @@ function getPrzyjeteList(filterTel) {
   return hist.slice().sort((a, b) => toDate(a.termin) - toDate(b.termin));
 }
 
+// ── Grupowanie zleceń po numerze telefonu ──
+function _grupujPoTelefonie(entries) {
+  const groups = [];
+  const byTel = {};
+  entries.forEach(e => {
+    const key = String(e.tel || '').replace(/\D/g, '');
+    if (key && byTel[key]) { byTel[key].list.push(e); }
+    else {
+      const g = { tel: key, telDisplay: e.tel || '', list: [e] };
+      if (key) byTel[key] = g;
+      groups.push(g);
+    }
+  });
+  return groups;
+}
+
+// Okienko grupy — karty zleceń tego samego klienta jedna pod drugą
+function _buildGrupaBox(cards, opts) {
+  const box = document.createElement('div');
+  box.style.cssText = 'border:1px solid ' + opts.borderColor + ';border-radius:14px;padding:10px;margin:0 0 10px;background:' + opts.bg + ';';
+  const col = document.createElement('div');
+  col.style.cssText = 'display:flex;flex-direction:column;gap:10px;';
+  cards.forEach(c => {
+    c.style.marginBottom = '0';
+    col.appendChild(c);
+  });
+  box.appendChild(col);
+  if (opts.footerHTML) {
+    const foot = document.createElement('div');
+    foot.style.cssText = 'margin-top:10px;display:flex;justify-content:flex-end;';
+    foot.innerHTML = opts.footerHTML;
+    box.appendChild(foot);
+  }
+  return box;
+}
+
+// ── Wspólne dopasowanie wyszukiwarki: telefon / kod odbioru / nazwa roweru ──
+function _zlecenieMatch(e, filter) {
+  const f = String(filter || '').trim();
+  if (!f) return true;
+  const digits = f.replace(/\D/g, '');
+  if (digits.length >= 3 && e.tel && String(e.tel).replace(/\D/g, '').includes(digits)) return true;
+  const up = f.toUpperCase();
+  if (e.kodOdbioru && String(e.kodOdbioru).replace(/\s/g, '').toUpperCase().includes(up.replace(/\s/g, ''))) return true;
+  const name = [e.marka, e.model, e.kolor].filter(Boolean).join(' ').toUpperCase();
+  if (name.includes(up)) return true;
+  return false;
+}
+
 function renderHistory(filterTel) {
   const list = $('history-list');
   const sorted = getPrzyjeteList(filterTel);
@@ -4849,7 +4896,7 @@ function renderHistory(filterTel) {
   list.innerHTML = '';
 
   const todayMs = new Date().setHours(0,0,0,0);
-  sorted.forEach(entry => {
+  const buildCard = entry => {
     const item = document.createElement('div');
     item.className = 'history-item';
     item.dataset.orderId = String(entry.id ?? '');
@@ -4954,7 +5001,21 @@ function renderHistory(filterTel) {
         </div>
       </div>
     `;
-    list.appendChild(item);
+    return item;
+  };
+
+  // Grupuj zlecenia tego samego klienta (ten sam numer telefonu)
+  _grupujPoTelefonie(sorted).forEach(g => {
+    if (g.list.length < 2) {
+      list.appendChild(buildCard(g.list[0]));
+    } else {
+      list.appendChild(_buildGrupaBox(g.list.map(buildCard), {
+        telDisplay: g.telDisplay,
+        borderColor: 'rgba(245,158,11,0.55)',
+        bg: 'rgba(245,158,11,0.05)',
+        accent: '#f59e0b',
+      }));
+    }
   });
 
   const suma = sorted.reduce((acc, e) => {
@@ -5280,12 +5341,7 @@ function getDoWydaniaList(filterTel) {
   const hist = getHistory();
   let doWydania = hist.filter(e => e.raportKoncowy);
   if (filterTel && filterTel.trim().length >= 2) {
-    const cleanDigits = filterTel.replace(/\D/g,'');
-    const cleanStr    = filterTel.trim().toUpperCase().replace(/\s/g,'');
-    doWydania = doWydania.filter(e =>
-      (cleanDigits.length >= 3 && e.tel && e.tel.replace(/\D/g,'').includes(cleanDigits)) ||
-      (e.kodOdbioru && String(e.kodOdbioru).replace(/\s/g,'').toUpperCase().includes(cleanStr))
-    );
+    doWydania = doWydania.filter(e => _zlecenieMatch(e, filterTel));
   }
   doWydania.sort((a, b) => {
     const tA = a.raportKoncowy?.savedAt ? new Date(a.raportKoncowy.savedAt).getTime() : 0;
@@ -5306,7 +5362,7 @@ function renderWydanie(filterTel) {
   }
   list.innerHTML = '';
 
-  doWydania.forEach(entry => {
+  const buildCard = entry => {
     const item = document.createElement('div');
     item.className = 'history-item';
     item.dataset.orderId = String(entry.id ?? '');
@@ -5358,7 +5414,25 @@ function renderWydanie(filterTel) {
         </div>
       </div>
     `;
-    list.appendChild(item);
+    return item;
+  };
+
+  // Grupuj zlecenia tego samego klienta + przycisk wydania grupowego
+  _grupujPoTelefonie(doWydania).forEach(g => {
+    if (g.list.length < 2) {
+      list.appendChild(buildCard(g.list[0]));
+    } else {
+      const wydajBtn = '<button type="button" class="btn-history-load" onclick="wydajGrupowo(\'' + g.tel + '\')" '
+        + 'style="background:#ef4444;border-color:#ef4444;font-size:15px;font-weight:700;letter-spacing:.5px;">'
+        + 'WYDAJ WSZYSTKIE (' + g.list.length + ')</button>';
+      list.appendChild(_buildGrupaBox(g.list.map(buildCard), {
+        telDisplay: g.telDisplay,
+        borderColor: 'rgba(34,197,94,0.55)',
+        bg: 'rgba(34,197,94,0.05)',
+        accent: '#22c55e',
+        footerHTML: wydajBtn,
+      }));
+    }
   });
 
   const suma = doWydania.reduce((acc, e) => {
@@ -5530,14 +5604,9 @@ window.generujZleceniaPrzyjete = generujZleceniaPrzyjete;
 function renderArchive(filterStr) {
   const list = $('archive-list');
   let arch = getArchive();
-  // Filtruj po numerze telefonu lub kodzie odbioru
-  if (filterStr && filterStr.trim().length >= 3) {
-    const cleanStr = filterStr.replace(/\D/g,'');
-    const rawStr   = filterStr.replace(/\s/g,'').toUpperCase();
-    arch = arch.filter(e =>
-      (e.tel && cleanStr.length >= 3 && e.tel.replace(/\D/g,'').includes(cleanStr)) ||
-      (e.kodOdbioru && String(e.kodOdbioru).replace(/\s/g,'').toUpperCase().includes(rawStr))
-    );
+  // Filtruj po numerze telefonu, kodzie odbioru lub nazwie roweru
+  if (filterStr && filterStr.trim().length >= 2) {
+    arch = arch.filter(e => _zlecenieMatch(e, filterStr));
   }
   if (!arch.length) {
     list.innerHTML = '<div class="history-empty">Brak zarchiwizowanych zleceń</div>';
@@ -5731,9 +5800,8 @@ function renderKosz(filterTel) {
   purgExpiredKosz();
   const list = $('kosz-list');
   let kosz = getKosz();
-  if (filterTel && filterTel.replace(/\D/g,'').length >= 3) {
-    const clean = filterTel.replace(/\D/g,'');
-    kosz = kosz.filter(e => e.tel && e.tel.replace(/\D/g,'').includes(clean));
+  if (filterTel && filterTel.trim().length >= 2) {
+    kosz = kosz.filter(e => _zlecenieMatch(e, filterTel));
   }
 
   if (!kosz.length) {
@@ -5885,6 +5953,49 @@ function confirmWydaj() {
   openHistory();
   switchTab('wydanie');
 }
+
+// ── Wydanie grupowe — wszystkie zlecenia do wydania z jednego numeru telefonu ──
+function wydajGrupowo(telKey) {
+  const hist = getHistory();
+  const doWyd = hist.filter(e => e.raportKoncowy && String(e.tel || '').replace(/\D/g, '') === String(telKey));
+  if (!doWyd.length) return;
+
+  const suma = doWyd.reduce((a, e) => a + (parseFloat(String(e.total || '0').replace(/\s/g, '').replace(',', '.')) || 0), 0);
+  const lista = doWyd.map(e => {
+    const nazwa = [e.marka, e.model].filter(Boolean).join(' ') || 'Zlecenie';
+    return '• ' + escHTML(nazwa) + ' — ' + escHTML(String(e.total || '0')) + ' zł'
+      + (e.kodOdbioru ? ' <span style="color:#f59e0b;font-weight:800;">🔑 ' + escHTML(String(e.kodOdbioru)) + '</span>' : '');
+  }).join('<br>');
+
+  showConfirm('', () => {
+    const arch = getArchive();
+    const nowIso = new Date().toISOString();
+    const dataW = new Date().toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    doWyd.forEach(e => {
+      const kw = parseFloat(String(e.total || '0').replace(/\s/g, '').replace(',', '.')) || 0;
+      const en = {
+        ...e,
+        archivedAt: nowIso,
+        kwotaSprzedazy: kw.toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+        dataWydania: dataW,
+      };
+      delete en.unarchivedAt;
+      arch.unshift(en);
+    });
+    const ids = new Set(doWyd.map(e => e.id));
+    const rest = hist.filter(e => !ids.has(e.id));
+    localStorage.setItem(ARCHIVE_KEY, JSON.stringify(arch));
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(rest));
+    closeHistory();
+    openHistory();
+    switchTab('wydanie');
+  });
+  // showConfirm ustawia textContent — nadpisz formatowaną treścią
+  $('confirm-msg').innerHTML = '<b>Wydać ' + doWyd.length + ' zlecenia tego klienta?</b><br><br>'
+    + '<div style="text-align:left;line-height:1.8;">' + lista + '</div><br>'
+    + '<b>Razem: ' + fmt(suma) + ' zł</b>';
+}
+window.wydajGrupowo = wydajGrupowo;
 
 window.openWydajModal = openWydajModal;
 window.closeWydajModal = closeWydajModal;
@@ -6790,15 +6901,11 @@ document.addEventListener('DOMContentLoaded', () => {
       renderArchive(archSearchEl.value);
     });
   }
-  // Historia search
+  // Historia search (tel / nazwa roweru)
   const histSearchEl = $('historia-search-tel');
   if (histSearchEl) {
     histSearchEl.addEventListener('input', () => {
-      let v = histSearchEl.value.replace(/\D/g, '').slice(0, 9);
-      if (v.length > 6) v = v.slice(0,3)+'-'+v.slice(3,6)+'-'+v.slice(6);
-      else if (v.length > 3) v = v.slice(0,3)+'-'+v.slice(3);
-      histSearchEl.value = v;
-      renderHistory(v);
+      renderHistory(histSearchEl.value);
     });
   }
   // Wydanie search (tel + kod odbioru — nie formatuj, przekaz raw)
@@ -6808,15 +6915,11 @@ document.addEventListener('DOMContentLoaded', () => {
       renderWydanie(wydSearchEl.value);
     });
   }
-  // Kosz search
+  // Kosz search (tel / nazwa roweru)
   const koszSearchEl = $('kosz-search-tel');
   if (koszSearchEl) {
     koszSearchEl.addEventListener('input', () => {
-      let v = koszSearchEl.value.replace(/\D/g, '').slice(0, 9);
-      if (v.length > 6) v = v.slice(0,3)+'-'+v.slice(3,6)+'-'+v.slice(6);
-      else if (v.length > 3) v = v.slice(0,3)+'-'+v.slice(3);
-      koszSearchEl.value = v;
-      renderKosz(v);
+      renderKosz(koszSearchEl.value);
     });
   }
 });
