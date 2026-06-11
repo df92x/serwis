@@ -5930,19 +5930,88 @@ window.switchTab = switchTab;
 window.unarchiveWycena = unarchiveWycena;
 window.deleteArchive = deleteArchive;
 
-// ── Raport sprzedaży: ostatnie dni ze sprzedażą (max 5) ──
-function _raportDniZeSprzedaza() {
+// ── Raport sprzedaży: dni ze sprzedażą ──
+function _raportCzasDnia(s) {
+  const p = String(s || '').split('.');
+  return new Date(+p[2], +p[1] - 1, +p[0]).getTime() || 0;
+}
+
+// Wszystkie dni ze sprzedażą (posortowane od najnowszego)
+function _raportWszystkieDni() {
   const arch = getArchive();
-  const toTime = s => { const p = String(s || '').split('.'); return new Date(+p[2], +p[1] - 1, +p[0]).getTime() || 0; };
   const days = [...new Set(arch.map(e => e.dataWydania).filter(Boolean))]
-    .sort((a, b) => toTime(b) - toTime(a))
-    .slice(0, 5);
+    .sort((a, b) => _raportCzasDnia(b) - _raportCzasDnia(a));
   return days.map(dataStr => {
     const entries = arch.filter(e => e.dataWydania === dataStr);
     const suma = entries.reduce((s, e) => s + (parseFloat(String(e.total || '0').replace(/\s/g, '').replace(',', '.')) || 0), 0);
-    return { dataStr, entries, suma, time: toTime(dataStr) };
+    return { dataStr, entries, suma, time: _raportCzasDnia(dataStr) };
   });
 }
+
+// Ostatnie 5 dni ze sprzedażą (lista checkboxów)
+function _raportDniZeSprzedaza() {
+  return _raportWszystkieDni().slice(0, 5);
+}
+
+// ── Kalendarz do dodatkowego wyboru dni ──
+let _raportCalMonth = null;        // { y, m }
+let _raportCalSelected = new Set(); // 'DD.MM.RRRR'
+
+function _renderRaportCalendar() {
+  const cont = $('raport-calendar');
+  if (!cont || !_raportCalMonth) return;
+  const salesDays = new Set(_raportWszystkieDni().map(d => d.dataStr));
+  const { y, m } = _raportCalMonth;
+  const monthNames = ['Styczeń','Luty','Marzec','Kwiecień','Maj','Czerwiec','Lipiec','Sierpień','Wrzesień','Październik','Listopad','Grudzień'];
+  const startDow = (new Date(y, m, 1).getDay() + 6) % 7; // Pn = 0
+  const daysInMonth = new Date(y, m + 1, 0).getDate();
+
+  let html = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+      <button type="button" onclick="raportCalPrev()" style="width:34px;height:34px;background:none;border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:16px;font-weight:700;cursor:pointer;">‹</button>
+      <span style="font-size:14px;font-weight:700;color:#fff;">${monthNames[m]} ${y}</span>
+      <button type="button" onclick="raportCalNext()" style="width:34px;height:34px;background:none;border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:16px;font-weight:700;cursor:pointer;">›</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;">`;
+  ['Pn','Wt','Śr','Cz','Pt','So','Nd'].forEach(d => {
+    html += `<div style="text-align:center;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;padding:2px 0;">${d}</div>`;
+  });
+  for (let i = 0; i < startDow; i++) html += '<div></div>';
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dataStr = String(d).padStart(2, '0') + '.' + String(m + 1).padStart(2, '0') + '.' + y;
+    const hasSales = salesDays.has(dataStr);
+    const selected = _raportCalSelected.has(dataStr);
+    if (!hasSales) {
+      // Dzień bez sprzedaży — wyszarzony, nie do wybrania
+      html += `<button type="button" disabled style="aspect-ratio:1;min-height:34px;background:none;border:1px solid transparent;border-radius:8px;color:var(--text3);opacity:0.32;font-size:13px;font-weight:600;cursor:default;">${d}</button>`;
+    } else {
+      html += `<button type="button" onclick="raportCalToggle('${dataStr}')" style="aspect-ratio:1;min-height:34px;border-radius:8px;font-size:13px;font-weight:800;cursor:pointer;${selected
+        ? 'background:#6366f1;border:1px solid #6366f1;color:#fff;'
+        : 'background:none;border:1px solid #6366f1;color:#a5b4fc;'}">${d}</button>`;
+    }
+  }
+  html += '</div>';
+  cont.innerHTML = html;
+}
+
+function raportCalPrev() {
+  _raportCalMonth.m--;
+  if (_raportCalMonth.m < 0) { _raportCalMonth.m = 11; _raportCalMonth.y--; }
+  _renderRaportCalendar();
+}
+function raportCalNext() {
+  _raportCalMonth.m++;
+  if (_raportCalMonth.m > 11) { _raportCalMonth.m = 0; _raportCalMonth.y++; }
+  _renderRaportCalendar();
+}
+function raportCalToggle(dataStr) {
+  if (_raportCalSelected.has(dataStr)) _raportCalSelected.delete(dataStr);
+  else _raportCalSelected.add(dataStr);
+  _renderRaportCalendar();
+}
+window.raportCalPrev = raportCalPrev;
+window.raportCalNext = raportCalNext;
+window.raportCalToggle = raportCalToggle;
 
 function generujRaportDobowy() {
   const dni = _raportDniZeSprzedaza();
@@ -5960,6 +6029,11 @@ function generujRaportDobowy() {
         <span style="font-size:14px;font-weight:800;color:#22c55e;white-space:nowrap;">${d.suma.toFixed(2).replace('.', ',')} zł</span>
       </label>`).join('');
   }
+  // Kalendarz: zacznij od bieżącego miesiąca, bez zaznaczeń
+  const now = new Date();
+  _raportCalMonth = { y: now.getFullYear(), m: now.getMonth() };
+  _raportCalSelected = new Set();
+  _renderRaportCalendar();
   $('raport-date-modal').style.display = 'flex';
 }
 
@@ -6189,12 +6263,14 @@ function _addDayCanvasToPdf(pdf, canvas, blocks, firstPage) {
 
 function generujRaportZDaty() {
   const checked = Array.from(document.querySelectorAll('#raport-days-list .raport-day-cb:checked')).map(cb => cb.value);
-  if (!checked.length) { alert('Zaznacz przynajmniej jeden dzień.'); return; }
+  // Połącz dni z listy i z kalendarza (bez duplikatów)
+  const wybrane = new Set([...checked, ..._raportCalSelected]);
+  if (!wybrane.size) { alert('Zaznacz przynajmniej jeden dzień.'); return; }
   $('raport-date-modal').style.display = 'none';
 
   // Wybrane dni chronologicznie (najstarszy pierwszy) — każdy dzień na osobnej stronie
-  const dni = _raportDniZeSprzedaza()
-    .filter(d => checked.includes(d.dataStr))
+  const dni = _raportWszystkieDni()
+    .filter(d => wybrane.has(d.dataStr))
     .sort((a, b) => a.time - b.time);
 
   function runRaportPDF() {
@@ -8637,7 +8713,11 @@ window.cselSetValue = cselSetValue;
     <div style="font-size:15px;font-weight:700;color:#fff;text-align:center;">Raport sprzedaży</div>
     <div style="display:flex;flex-direction:column;gap:6px;">
       <label style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;">Wybierz dni (ostatnie ze sprzedażą)</label>
-      <div id="raport-days-list" style="display:flex;flex-direction:column;gap:8px;max-height:50vh;overflow-y:auto;"></div>
+      <div id="raport-days-list" style="display:flex;flex-direction:column;gap:8px;max-height:36vh;overflow-y:auto;"></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px;">
+      <label style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;">Lub wybierz z kalendarza (można kilka dni)</label>
+      <div id="raport-calendar" style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:10px;"></div>
     </div>
     <div style="display:flex;gap:10px;">
       <button onclick="$('raport-date-modal').style.display='none'" style="flex:1;padding:12px;background:#c0392b;border:1px solid #c0392b;border-radius:8px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;">Anuluj</button>
