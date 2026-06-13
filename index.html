@@ -5422,7 +5422,7 @@ function renderWydanie(filterTel) {
     if (g.list.length < 2) {
       list.appendChild(buildCard(g.list[0]));
     } else {
-      const wydajBtn = '<button type="button" class="btn-history-load" onclick="wydajGrupowo(\'' + g.tel + '\')" '
+      const wydajBtn = '<button type="button" class="btn-history-load" onclick="openPodsumowanieGrupowe(\'' + g.tel + '\')" '
         + 'style="background:#ef4444;border-color:#ef4444;font-size:15px;font-weight:700;letter-spacing:.5px;">'
         + 'WYDAJ WSZYSTKIE (' + g.list.length + ')</button>';
       list.appendChild(_buildGrupaBox(g.list.map(buildCard), {
@@ -6410,8 +6410,34 @@ function cofnijDoAktualne(id) {
   const hist = getHistory();
   const idx = hist.findIndex(e => e.id === id);
   if (idx < 0) return;
-  delete hist[idx].raportKoncowy;
-  delete hist[idx].totalPrzedRaportem;
+  const entry = hist[idx];
+  const rk = entry.raportKoncowy;
+  // Zachowaj elementy naprawy wprowadzone w raporcie — wpisz je z powrotem do
+  // stanu zlecenia, żeby po cofnięciu do PRZYJĘTE były widoczne przy edycji.
+  if (rk) {
+    const st = safeParseJSON(entry.state, null) || {};
+    if (Array.isArray(rk.items)) {
+      st.items = rk.items.map(it => ({
+        name: it.name,
+        price: it.price,
+        checked: it.checked,
+        qty: it.qty,
+        selectedPreset: it.selectedPreset ?? -1,
+        customName: it.customName || '',
+        customLabel: it.customLabel || undefined,
+        noteText: it.noteText || undefined,
+      }));
+    }
+    if (Array.isArray(rk.subs)) {
+      st.subs = rk.subs.map(s => ({ name: s.name, price: s.price, checked: s.checked }));
+    }
+    if (rk.notatka !== undefined) st.notatka = rk.notatka;
+    entry.state = JSON.stringify(st);
+    // Bieżąca kwota zlecenia = kwota z naprawy (odzwierciedla zachowane pozycje)
+    if (rk.total) entry.total = rk.total;
+  }
+  delete entry.raportKoncowy;
+  delete entry.totalPrzedRaportem;
   localStorage.setItem(HISTORY_KEY, JSON.stringify(hist));
   switchTab('historia');
 }
@@ -7579,6 +7605,31 @@ function openPodsumowanieDoWydania(id) {
   $('podglad-title').textContent = 'Podsumowanie';
   $('podglad-header').innerHTML = `<div style="display:flex;align-items:stretch;gap:12px;">${leftHTML}${rightHTML}</div>`;
 
+  $('podglad-table').innerHTML = _buildPodsumowanieTablesHTML(entry);
+  $('podglad-total').textContent = entry.total || '';
+
+  const kodEl = $('podglad-kod-odbioru'); if (kodEl) kodEl.style.display = 'none';
+  const kwotaEl = $('podglad-kwota-zaplacona'); if (kwotaEl) kwotaEl.style.display = 'none';
+  const notatkaEl = $('podglad-notatka'); if (notatkaEl) notatkaEl.style.display = 'none';
+  const pdfBarEl = $('podglad-pdf-bar'); if (pdfBarEl) pdfBarEl.style.display = 'none';
+
+  // Pokaż WYDAJ na dole (bez PDF)
+  const bar = $('podglad-action-bar');
+  const btn = $('podglad-wydaj-btn');
+  if (bar && btn) {
+    bar.style.display = 'block';
+    btn.textContent = 'WYDAJ';
+    btn.onclick = () => wydajBezKwoty(id);
+  }
+
+  $('podglad-overlay').style.display = 'block';
+}
+window.openPodsumowanieDoWydania = openPodsumowanieDoWydania;
+
+// Buduje tabele podsumowania jednego zlecenia (zlecone + wykonane naprawy)
+function _buildPodsumowanieTablesHTML(entry) {
+  const rk = entry.raportKoncowy;
+  const fmtPLN = v => Number(v||0).toLocaleString('pl-PL', {minimumFractionDigits:2,maximumFractionDigits:2});
   const td  = 'style="padding:8px 10px;font-size:13px;color:var(--text);border-bottom:1px solid var(--border);"';
   const tdr = 'style="padding:8px 10px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border);text-align:right;"';
   const thead = `<thead><tr style="background:var(--bg);">
@@ -7629,26 +7680,79 @@ function openPodsumowanieDoWydania(id) {
     html += `<tr><td colspan="3" style="padding:8px 10px;font-size:12px;font-weight:700;color:var(--text3);">Razem naprawa</td><td style="padding:8px 10px;font-size:14px;font-weight:800;color:#fff;text-align:right;">${fmtPLN(rapTotal)} zł</td></tr>`;
     html += `</tbody></table>`;
   }
+  return html;
+}
 
+// Podsumowanie grupowe — wszystkie zlecenia do wydania jednego klienta
+function openPodsumowanieGrupowe(telKey) {
+  const hist = getHistory();
+  const doWyd = hist.filter(e => e.raportKoncowy && String(e.tel || '').replace(/\D/g, '') === String(telKey));
+  if (!doWyd.length) return;
+  raportReturnTab = 'wydanie';
+
+  const tel = doWyd[0].tel || '';
+  const grandTotal = doWyd.reduce((a, e) => a + (parseFloat(String(e.total || '0').replace(/\s/g, '').replace(',', '.')) || 0), 0);
+
+  $('podglad-title').textContent = 'Wydanie grupowe';
+  $('podglad-header').innerHTML = `<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:4px 2px;">
+      <span style="font-size:16px;font-weight:800;color:#fff;">👥 ${doWyd.length} zlecenia klienta</span>
+      ${tel ? `<a href="tel:${tel.replace(/[^0-9+]/g,'')}" style="display:inline-flex;align-items:center;gap:5px;font-size:16px;font-weight:600;color:#3b7cf4;text-decoration:none;"><svg width="13" height="13" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>${escHTML(tel)}</a>` : ''}
+    </div>`;
+
+  let html = '';
+  doWyd.forEach((entry, i) => {
+    const nazwa = [entry.marka, entry.model].filter(Boolean).join(' ') || 'Zlecenie';
+    html += `<div style="margin-top:${i ? 14 : 4}px;padding:9px 12px;background:#000;border-radius:8px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
+        <span style="font-size:15px;font-weight:700;color:#fff;">${escHTML(nazwa)}</span>
+        <span style="display:flex;align-items:center;gap:10px;">
+          ${entry.kodOdbioru ? `<span style="font-size:13px;font-weight:800;color:#f59e0b;letter-spacing:1px;">🔑 ${escHTML(String(entry.kodOdbioru))}</span>` : ''}
+          <span style="font-size:15px;font-weight:800;color:#22c55e;">${escHTML(String(entry.total || '0'))} zł</span>
+        </span>
+      </div>`;
+    html += _buildPodsumowanieTablesHTML(entry);
+  });
   $('podglad-table').innerHTML = html;
-  $('podglad-total').textContent = entry.total || '';
+  $('podglad-total').textContent = fmt(grandTotal);
 
   const kodEl = $('podglad-kod-odbioru'); if (kodEl) kodEl.style.display = 'none';
   const kwotaEl = $('podglad-kwota-zaplacona'); if (kwotaEl) kwotaEl.style.display = 'none';
   const notatkaEl = $('podglad-notatka'); if (notatkaEl) notatkaEl.style.display = 'none';
   const pdfBarEl = $('podglad-pdf-bar'); if (pdfBarEl) pdfBarEl.style.display = 'none';
 
-  // Pokaż WYDAJ na dole (bez PDF)
   const bar = $('podglad-action-bar');
   const btn = $('podglad-wydaj-btn');
   if (bar && btn) {
     bar.style.display = 'block';
-    btn.onclick = () => wydajBezKwoty(id);
+    btn.textContent = 'WYDAJ WSZYSTKIE (' + doWyd.length + ')';
+    btn.onclick = () => wydajGrupowoBezKwoty(telKey);
   }
 
   $('podglad-overlay').style.display = 'block';
 }
-window.openPodsumowanieDoWydania = openPodsumowanieDoWydania;
+window.openPodsumowanieGrupowe = openPodsumowanieGrupowe;
+
+// Wydanie grupowe bez pytania o kwotę (z ekranu podsumowania grupowego)
+function wydajGrupowoBezKwoty(telKey) {
+  const hist = getHistory();
+  const doWyd = hist.filter(e => e.raportKoncowy && String(e.tel || '').replace(/\D/g, '') === String(telKey));
+  if (!doWyd.length) return;
+  const arch = getArchive();
+  const nowIso = new Date().toISOString();
+  const dataW = new Date().toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  doWyd.forEach(e => {
+    const en = { ...e, archivedAt: nowIso, kwotaSprzedazy: e.total || '', dataWydania: dataW };
+    delete en.unarchivedAt;
+    arch.unshift(en);
+  });
+  const ids = new Set(doWyd.map(e => e.id));
+  const rest = hist.filter(e => !ids.has(e.id));
+  localStorage.setItem(ARCHIVE_KEY, JSON.stringify(arch));
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(rest));
+  closePodglad();
+  openHistory();
+  switchTab('archiwum');
+}
+window.wydajGrupowoBezKwoty = wydajGrupowoBezKwoty;
 window.closePodglad = closePodglad;
 window.closePodgladOutside = closePodgladOutside;
 
