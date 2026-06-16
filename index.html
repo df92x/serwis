@@ -1131,84 +1131,13 @@ select.native-sel { display: none !important; }
 }
 .history-item-urgent {
   position: relative;
-  border-color: rgba(239,68,68,0.4) !important;
-}
-.history-item-urgent::before {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  border-radius: 12px;
-  padding: 2px;
-  background: conic-gradient(
-    from var(--angle, 0deg),
-    transparent 0deg,
-    transparent 260deg,
-    #ef4444 270deg,
-    #ff6b6b 280deg,
-    #ef4444 290deg,
-    transparent 300deg,
-    transparent 360deg
-  );
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  animation: spin-border 7.5s linear infinite;
-  pointer-events: none;
+  border-width: 2px !important;
+  border-color: #ef4444 !important;
 }
 .history-item-urgent-today {
   position: relative;
-  border-color: rgba(239,68,68,0.6) !important;
-}
-.history-item-urgent-today::before {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  border-radius: 12px;
-  padding: 2px;
-  background: conic-gradient(
-    from var(--angle, 0deg),
-    transparent 0deg,
-    transparent 250deg,
-    #ef4444 260deg,
-    #ff6b6b 270deg,
-    #fff 280deg,
-    #ff6b6b 290deg,
-    #ef4444 300deg,
-    transparent 310deg,
-    transparent 360deg
-  );
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  animation: spin-border 7.5s linear infinite;
-  pointer-events: none;
-}
-.history-item-urgent-today::after {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  border-radius: 12px;
-  padding: 2px;
-  background: conic-gradient(
-    from calc(var(--angle, 0deg) + 180deg),
-    transparent 0deg,
-    transparent 250deg,
-    #ef4444 260deg,
-    #ff6b6b 270deg,
-    #fff 280deg,
-    #ff6b6b 290deg,
-    #ef4444 300deg,
-    transparent 310deg,
-    transparent 360deg
-  );
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  animation: spin-border 7.5s linear infinite;
-  pointer-events: none;
+  border-width: 2px !important;
+  border-color: #ef4444 !important;
 }
 @property --angle {
   syntax: '<angle>';
@@ -4886,6 +4815,38 @@ function _zlecenieMatch(e, filter) {
   return false;
 }
 
+// Buduje rozwijane szczegóły zlecenia (wybrane pozycje + notatka)
+function _buildZlecenieDetailsHTML(entry) {
+  const fmtPLN = v => Number(v || 0).toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const st = entry.state ? safeParseJSON(entry.state, null) : null;
+  const td  = 'style="padding:6px 8px;font-size:13px;color:var(--text);border-bottom:1px solid var(--border);"';
+  const tdr = 'style="padding:6px 8px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border);text-align:right;white-space:nowrap;"';
+  let rows = '';
+  let total = 0;
+  if (st && Array.isArray(st.items)) {
+    st.items.filter(it => it.checked).forEach(it => {
+      const qty = it.qty !== undefined ? (it.qty || 1) : 1;
+      const price = parseFloat(it.price) || 0;
+      const tot = Math.round(price * qty * 100) / 100;
+      total += tot;
+      const qtyTxt = qty > 1 ? qty + '× ' + fmtPLN(price) : fmtPLN(price);
+      rows += `<tr><td ${td}>${escHTML(itemLabelWithDetails(it, true))}</td><td ${tdr}>${qtyTxt}</td></tr>`;
+    });
+  }
+  if (st && Array.isArray(st.subs)) {
+    st.subs.filter(s => s.checked && (s.name || parseFloat(s.price) > 0)).forEach(s => {
+      const price = parseFloat(s.price) || 0;
+      total += price;
+      rows += `<tr><td ${td}>${escHTML(s.name || 'Część')}</td><td ${tdr}>${fmtPLN(price)}</td></tr>`;
+    });
+  }
+  if (!rows) rows = `<tr><td colspan="2" style="padding:10px 8px;font-size:12px;font-style:italic;color:var(--text3);text-align:center;">Brak wybranych pozycji</td></tr>`;
+  const notatka = (st && st.notatka)
+    ? `<div style="margin-top:8px;padding:8px 10px;border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:8px;font-size:13px;color:var(--text);line-height:1.5;white-space:pre-wrap;">📝 ${escHTML(st.notatka)}</div>`
+    : '';
+  return `<table style="width:100%;border-collapse:collapse;"><tbody>${rows}</tbody></table>${notatka}`;
+}
+
 function renderHistory(filterTel) {
   const list = $('history-list');
   const sorted = getPrzyjeteList(filterTel);
@@ -5001,6 +4962,21 @@ function renderHistory(filterTel) {
         </div>
       </div>
     `;
+
+    // Rozwijane szczegóły zlecenia (klik w kartę)
+    const details = document.createElement('div');
+    details.className = 'history-item-details';
+    details.style.cssText = 'display:none;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);';
+    details.innerHTML = _buildZlecenieDetailsHTML(entry);
+    item.appendChild(details);
+
+    item.style.cursor = 'pointer';
+    item.addEventListener('click', (e) => {
+      if (e.target.closest('a, button, input, textarea, select')) return;
+      const open = details.style.display !== 'none';
+      details.style.display = open ? 'none' : 'block';
+    });
+
     return item;
   };
 
