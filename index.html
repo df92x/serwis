@@ -937,6 +937,36 @@ input.opis-inline-input.has-val { color: #fff; }
 
 /* hidden native select for form compat */
 select.native-sel { display: none !important; }
+
+/* ── A11y: widoczny focus-ring dla nawigacji klawiaturą ── */
+:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+  border-radius: var(--radius-btn);
+}
+/* Mysz/dotyk nie pokazuje obramowania — tylko klawiatura */
+:focus:not(:focus-visible) { outline: none; }
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 1px;
+}
+/* Szanuj preferencję ograniczenia animacji */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
 </style>
 </head>
 <body>
@@ -961,7 +991,7 @@ select.native-sel { display: none !important; }
     <div id="sync-status" style="display:none;font-size:11px;color:#556;text-align:center;min-height:0;height:0;line-height:1;transition:color 0.3s;"></div>
     <div class="btn-grid" style="grid-template-columns:2fr 3fr 3fr;">
       <div style="display:flex;gap:4px;align-items:stretch;min-width:0;">
-        <button id="btn-usun-zlecenie" type="button" onclick="usunZlecenie()" title="Przenieś do kosza" style="display:none;flex-shrink:0;align-items:center;justify-content:center;background:none;border:1px solid rgba(239,68,68,0.45);border-radius:var(--radius-btn);padding:4px 8px;cursor:pointer;color:#ef4444;">
+        <button id="btn-usun-zlecenie" type="button" onclick="usunZlecenie()" title="Przenieś do kosza" aria-label="Przenieś zlecenie do kosza" style="display:none;flex-shrink:0;align-items:center;justify-content:center;background:none;border:1px solid rgba(239,68,68,0.45);border-radius:var(--radius-btn);padding:4px 8px;cursor:pointer;color:#ef4444;">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
         </button>
         <button id="btn-dane" class="btn-data" onclick="openModal()" style="flex:1;min-width:0;background:#3b7cf4;border-color:#3b7cf4;">
@@ -1269,7 +1299,7 @@ select.native-sel { display: none !important; }
   <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;width:95vw;max-width:95vw;max-height:85vh;display:flex;flex-direction:column;overflow:hidden;min-height:0;">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 16px 12px;border-bottom:1px solid var(--border);flex-shrink:0;">
       <span id="rab-wydane-title" style="flex:1;font-size:16px;font-weight:900;color:#fff;text-align:center;">Wybierz wydane zlecenie</span>
-      <button onclick="closeRabWydane()" style="background:none;border:none;color:#ef4444;font-size:22px;cursor:pointer;line-height:1;padding:0 4px;">&times;</button>
+      <button onclick="closeRabWydane()" aria-label="Zamknij" title="Zamknij" style="background:none;border:none;color:#ef4444;font-size:22px;cursor:pointer;line-height:1;padding:0 4px;">&times;</button>
     </div>
     <div style="padding:10px 16px 6px;font-size:12px;color:var(--text3);line-height:1.35;flex-shrink:0;">Promocja i ważność ustawiasz u góry na stronie <b style="color:var(--text2);">Kody rabatowe</b>.</div>
     <div id="rab-wydane-list" style="overflow-y:auto;padding:8px 0;flex:1;min-height:0;"></div>
@@ -1296,7 +1326,7 @@ select.native-sel { display: none !important; }
   <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;width:95vw;max-width:95vw;max-height:85vh;display:flex;flex-direction:column;overflow:hidden;">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 16px 12px;border-bottom:1px solid var(--border);flex-shrink:0;">
       <span id="rab-assign-title" style="flex:1;font-size:16px;font-weight:900;color:#fff;text-align:center;">Wybierz rabat</span>
-      <button onclick="closeRabAssign()" style="background:none;border:none;color:#ef4444;font-size:22px;cursor:pointer;line-height:1;padding:0 4px;">&times;</button>
+      <button onclick="closeRabAssign()" aria-label="Zamknij" title="Zamknij" style="background:none;border:none;color:#ef4444;font-size:22px;cursor:pointer;line-height:1;padding:0 4px;">&times;</button>
     </div>
     <div id="rab-assign-body" style="overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:12px;">
       <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap;">
@@ -1641,7 +1671,7 @@ select.native-sel { display: none !important; }
         <label>Numer telefonu</label>
         <div style="display:flex;gap:8px;align-items:stretch;">
           <input type="tel" id="modal-tel" placeholder="TELEFON" maxlength="11" style="flex:1;min-width:0;" onkeydown="if(event.key==='Enter'){event.preventDefault();closeModal();}">
-          <button type="button" onclick="copyModalTelToClipboard()" title="Kopiuj numer"
+          <button type="button" onclick="copyModalTelToClipboard()" title="Kopiuj numer" aria-label="Kopiuj numer telefonu"
             style="flex:0 0 auto;width:56px;height:56px;border-radius:10px;background:rgba(59,124,244,0.14);border:1px solid rgba(59,124,244,0.35);color:#3b7cf4;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
@@ -1703,6 +1733,23 @@ function _appVerLabel() {
   var min = String(d.getMinutes()).padStart(2,'0');
   return 'Update: ' + dd + '.' + mm + ' ' + hh + ':' + min;
 }
+
+// ── Haptyka: krótka wibracja na akcjach krytycznych (tylko urządzenia mobilne) ──
+// Wzorce: 'light' (potwierdzenie), 'medium' (akcja), 'heavy'/'error' (usuwanie/ostrzeżenie)
+function haptic(kind) {
+  try {
+    if (typeof navigator === 'undefined' || typeof navigator.vibrate !== 'function') return;
+    var patterns = {
+      light:  15,
+      medium: 30,
+      heavy:  [30, 40, 30],
+      success:[20, 40, 20],
+      error:  [50, 60, 50]
+    };
+    navigator.vibrate(patterns[kind] != null ? patterns[kind] : 30);
+  } catch (e) { /* brak wsparcia — ignoruj */ }
+}
+window.haptic = haptic;
 
 function lockBody()   { document.body.classList.add('overlay-open'); }
 function unlockBody() { document.body.classList.remove('overlay-open'); }
@@ -3002,7 +3049,10 @@ function buildSubRow(sub, subsArr, onAddRow, recalcFn) {
   const delBtn = document.createElement('button');
   delBtn.className = 'sub-del';
   delBtn.innerHTML = '&times;';
+  delBtn.setAttribute('aria-label', 'Usuń pozycję');
+  delBtn.setAttribute('title', 'Usuń pozycję');
   delBtn.addEventListener('click', () => {
+    haptic('light');
     if (isGlobal()) State.removeSub(sub.id);
     else { const idx = subsArr.findIndex(x => x.id === sub.id); if (idx !== -1) subsArr.splice(idx, 1); if (!subsArr.length) subsArr.push({ id: 'rs' + Date.now(), name: '', price: 0, checked: false }); }
     onAddRow();
@@ -3268,7 +3318,9 @@ function renderPhotos() {
     const btn = document.createElement('button');
     btn.className = 'remove-photo';
     btn.innerHTML = '&times;';
-    btn.onclick = () => removePhoto(i);
+    btn.setAttribute('aria-label', 'Usuń zdjęcie');
+    btn.setAttribute('title', 'Usuń zdjęcie');
+    btn.onclick = () => { haptic('light'); removePhoto(i); };
     thumb.appendChild(img);
     thumb.appendChild(btn);
     container.appendChild(thumb);
@@ -4428,7 +4480,7 @@ function updateClientInfoBar() {
           '<div style="display:flex;align-items:center;gap:6px;font-size:15px;font-weight:600;color:#3b7cf4;margin-top:2px;">'
           + '<svg width="11" height="11" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>'
           + '<span style="user-select:text;">' + escHTML(tel) + '</span>'
-          + '<button type="button" onclick="copyTelToClipboard()" title="Kopiuj numer"'
+          + '<button type="button" onclick="copyTelToClipboard()" title="Kopiuj numer" aria-label="Kopiuj numer telefonu"'
           + ' style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:22px;padding:0;border-radius:6px;'
           + ' background:rgba(59,124,244,0.14);border:1px solid rgba(59,124,244,0.35);color:#3b7cf4;cursor:pointer;">'
           + '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">'
@@ -4565,8 +4617,10 @@ function saveWycena() {
     $('confirm-yes').onclick = () => { cleanup(); openModal(); };
     $('confirm-no').onclick = cleanup;
     modal.onclick = e => { if (e.target === modal) cleanup(); };
+    haptic('error');
     return;
   }
+  haptic('success');
   const now    = new Date();
   const label  = now.toLocaleDateString('pl-PL', {day:'2-digit',month:'2-digit',year:'numeric'})
                + ' ' + now.toLocaleTimeString('pl-PL', {hour:'2-digit',minute:'2-digit'});
@@ -5756,7 +5810,7 @@ function showConfirm(msg, onYes) {
   $('confirm-msg').textContent = msg;
   modal.style.display = 'flex';
   const cleanup = () => { modal.style.display = 'none'; };
-  $('confirm-yes').onclick = () => { cleanup(); onYes(); };
+  $('confirm-yes').onclick = () => { haptic('heavy'); cleanup(); onYes(); };
   $('confirm-no').onclick = cleanup;
   modal.onclick = e => { if (e.target === modal) cleanup(); };
 }
@@ -5924,6 +5978,7 @@ function confirmWydaj() {
   localStorage.setItem(HISTORY_KEY, JSON.stringify(hist));
 
   highlightZlecenie(entry.id);
+  haptic('success');
   closeWydajModal();
   closeHistory();
   openHistory();
@@ -6055,9 +6110,9 @@ function _renderRaportCalendar() {
 
   let html = `
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-      <button type="button" onclick="raportCalPrev()" style="width:34px;height:34px;background:none;border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:16px;font-weight:700;cursor:pointer;">‹</button>
+      <button type="button" onclick="raportCalPrev()" aria-label="Poprzedni miesiąc" title="Poprzedni miesiąc" style="width:34px;height:34px;background:none;border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:16px;font-weight:700;cursor:pointer;">‹</button>
       <span style="font-size:14px;font-weight:700;color:#fff;">${monthNames[m]} ${y}</span>
-      <button type="button" onclick="raportCalNext()" style="width:34px;height:34px;background:none;border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:16px;font-weight:700;cursor:pointer;">›</button>
+      <button type="button" onclick="raportCalNext()" aria-label="Następny miesiąc" title="Następny miesiąc" style="width:34px;height:34px;background:none;border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:16px;font-weight:700;cursor:pointer;">›</button>
     </div>
     <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;">`;
   ['Pn','Wt','Śr','Cz','Pt','So','Nd'].forEach(d => {
@@ -7410,6 +7465,7 @@ function wydajBezKwoty(id) {
   hist.splice(idx, 1);
   localStorage.setItem(HISTORY_KEY, JSON.stringify(hist));
   highlightZlecenie(entry.id);
+  haptic('success');
   closePodglad();
   openHistory();
   switchTab('archiwum');
@@ -8621,6 +8677,8 @@ function openOpisBanner(initialValue) {
     const closeBtn = document.createElement('button');
     closeBtn.style.cssText = 'background:none;border:none;color:#ef4444;font-size:22px;cursor:pointer;line-height:1;padding:0 4px;';
     closeBtn.innerHTML = '&times;';
+    closeBtn.setAttribute('aria-label', 'Zamknij');
+    closeBtn.setAttribute('title', 'Zamknij');
     hdr.appendChild(title);
     hdr.appendChild(closeBtn);
 
@@ -8707,6 +8765,8 @@ function buildCsel(sel, extraClass) {
     const closeBtn = document.createElement('button');
     closeBtn.style.cssText = 'background:none;border:none;color:#ef4444;font-size:22px;cursor:pointer;line-height:1;padding:0 4px;';
     closeBtn.innerHTML = '&times;';
+    closeBtn.setAttribute('aria-label', 'Zamknij');
+    closeBtn.setAttribute('title', 'Zamknij');
     closeBtn.addEventListener('click', () => overlay.remove());
     hdr.appendChild(title); hdr.appendChild(closeBtn);
 
