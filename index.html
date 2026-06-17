@@ -1208,14 +1208,6 @@ html.day-mode .history-list-pdf-btn {
 #history-list .history-item.history-item--termin-soon:hover {
   border-color: var(--solid-tab-historia-border) !important;
 }
-#wydanie-list .history-item.history-item--termin-soon,
-#wydanie-list .history-item.history-item--termin-soon:hover {
-  border-color: var(--solid-tab-wydanie-border) !important;
-}
-#archive-list .history-item.history-item--termin-soon,
-#archive-list .history-item.history-item--termin-soon:hover {
-  border-color: var(--solid-tab-archiwum-border) !important;
-}
 .history-color-bar{
   position:absolute;
   left:0; top:0; bottom:0;
@@ -1355,6 +1347,70 @@ html.day-mode .history-list-pdf-btn {
 /* Podgląd: treść pod paskiem zamknięcia */
 #podglad-overlay .app > div.podglad-body{
   padding:0 16px 40px !important;
+}
+.podsumowanie-section{
+  margin-bottom:4px;
+}
+.podsumowanie-section-toggle{
+  width:100%;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 12px;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:10px;
+  cursor:pointer;
+  font-family:inherit;
+  text-align:left;
+  box-sizing:border-box;
+}
+.podsumowanie-section-title{
+  font-size:13px;
+  font-weight:800;
+  color:#22c55e;
+  text-transform:uppercase;
+  letter-spacing:.8px;
+  flex:1;
+  min-width:0;
+}
+.podsumowanie-section-meta{
+  font-size:12px;
+  font-weight:700;
+  color:var(--text3);
+  white-space:nowrap;
+}
+.podsumowanie-section-chevron{
+  font-size:14px;
+  color:var(--text3);
+  line-height:1;
+  transition:transform 0.15s;
+  flex-shrink:0;
+}
+.podsumowanie-section.is-open .podsumowanie-section-chevron{
+  transform:rotate(180deg);
+}
+.podsumowanie-section-body{
+  display:none;
+  margin-top:6px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  overflow:hidden;
+  background:var(--bg);
+}
+.podsumowanie-section.is-open .podsumowanie-section-body{
+  display:block;
+}
+.podsumowanie-zlecone-block + .podsumowanie-zlecone-block{
+  border-top:1px solid var(--border);
+}
+.podsumowanie-zlecone-bike{
+  padding:8px 12px;
+  font-size:12px;
+  font-weight:800;
+  color:var(--text2);
+  background:var(--bg2);
+  border-bottom:1px solid var(--border);
 }
 
 /* Wspólny układ: NAPRAWA + Dodaj części — solidne szare panele (bez glass) */
@@ -1778,14 +1834,6 @@ button.btn-history-sms-sent {
 #history-list .history-item.history-item--termin-soon:hover {
   border-color: var(--solid-tab-historia-border) !important;
 }
-#wydanie-list .history-item.history-item--termin-soon,
-#wydanie-list .history-item.history-item--termin-soon:hover {
-  border-color: var(--solid-tab-wydanie-border) !important;
-}
-#archive-list .history-item.history-item--termin-soon,
-#archive-list .history-item.history-item--termin-soon:hover {
-  border-color: var(--solid-tab-archiwum-border) !important;
-}
 .history-item.hl-red,
 .history-item.hl-green,
 .history-item.hl-purple { border-color: var(--border-panel) !important; background: var(--bg-panel) !important; box-shadow: 0 0 0 1px var(--text3) !important; }
@@ -1976,7 +2024,7 @@ html.day-mode #tab-archiwum.order-tab.active { color: #7c3aed !important; }
     </div>
     <div class="podglad-body">
       <div id="podglad-header" style="font-size:13px;color:var(--text2);margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border);"></div>
-      <table id="podglad-table" style="width:100%;border-collapse:collapse;"></table>
+      <div id="podglad-table" style="width:100%;"></div>
       <div class="stat-box ui-tile ui-tile--wydanie stat-box--success">
         <span class="stat-box-label">Łączna kwota</span>
         <span id="podglad-total" class="stat-box-value"></span>
@@ -6874,18 +6922,12 @@ function renderWydanie(filterTel) {
     const item = document.createElement('div');
     item.className = 'history-item';
     item.dataset.orderId = String(entry.id ?? '');
-    const isHL = _zlecHighlightId && String(entry.id ?? '') === String(_zlecHighlightId) && Date.now() < (_zlecHighlightUntil || 0);
-    if (isHL) item.classList.add('hl-green');
-    if (_terminIsTodayOrTomorrow(entry.termin)) item.classList.add('history-item--termin-soon');
 
     const kolorBar = makeKolorBarHTML(entry.kolor || '');
     const terminLine   = entry.termin ? 'Data naprawy: ' + entry.termin + ' ' + dayOfWeek(entry.termin) : '';
     const przyjęcieLine = entry.label ? 'Przyjęto: ' + entry.label.split(' ')[0].split('.').slice(0,2).join('.') + ' ' + dayOfWeek(entry.label.split(' ')[0]) : '';
     const dataZakLine = entry.raportKoncowy?.dataZakonczenia ? 'Zakończono: ' + entry.raportKoncowy.dataZakonczenia.split('.').slice(0,2).join('.') + ' ' + dayOfWeek(entry.raportKoncowy.dataZakonczenia) : '';
     const nameParts = [(entry.marka || null), entry.model].filter(Boolean).join(' ');
-    const _prev = parseFloat(String(entry.totalZlecenia || entry.totalPrzedRaportem || '').replace(/\s/g,'').replace(',','.')) || 0;
-    const _curr = parseFloat(String(entry.total || '').replace(/\s/g,'').replace(',','.')) || 0;
-    const naprawaColor = _prev > 0 ? (_curr <= _prev ? '#22c55e' : '#ef4444') : '#f59e0b';
 
     item.innerHTML = `
       ${kolorBar}
@@ -6903,7 +6945,7 @@ function renderWydanie(filterTel) {
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
           ${entry.totalZlecenia || entry.totalPrzedRaportem ? `<div class="history-item-total" style="font-size:19px;color:#6b7280;">${escHTML(entry.totalZlecenia || entry.totalPrzedRaportem)}</div>` : ''}
-          ${`<div class="history-item-total" style="color:${naprawaColor};">${escHTML(entry.total)}</div>`}
+          <div class="history-item-total">${escHTML(entry.total)}</div>
         </div>
       </div>
       <div class="history-item-actions">
@@ -7128,9 +7170,6 @@ function renderArchive(filterStr) {
     const item = document.createElement('div');
     item.className = 'history-item';
     item.dataset.orderId = String(entry.id ?? '');
-    const isHL = _zlecHighlightId && String(entry.id ?? '') === String(_zlecHighlightId) && Date.now() < (_zlecHighlightUntil || 0);
-    if (isHL) item.classList.add('hl-purple');
-    if (_terminIsTodayOrTomorrow(entry.termin)) item.classList.add('history-item--termin-soon');
     const terminLine   = entry.termin ? 'Planowana data naprawy: ' + entry.termin : '';
     const przyjęcieLine = entry.label ? 'Przyjęto na serwis: ' + entry.label.split(' ')[0].split('.').slice(0,2).join('.') : '';
     const stripYear = s => s ? s.split('.').slice(0,2).join('.') : '';
@@ -7143,8 +7182,6 @@ function renderArchive(filterStr) {
     const kolorBar = makeKolorBarHTML(entry.kolor || '');
     const nameParts = [(entry.marka || null), entry.model].filter(Boolean).join(' ');
     const _archPrev = parseFloat(String(entry.totalZlecenia || entry.totalPrzedRaportem || '').replace(/\s/g,'').replace(',','.')) || 0;
-    const _archCurr = parseFloat(String(entry.total || '').replace(/\s/g,'').replace(',','.')) || 0;
-    const naprawaColor = _archPrev > 0 ? (_archCurr <= _archPrev ? '#22c55e' : '#ef4444') : '#fff';
 
     item.innerHTML =
       kolorBar +
@@ -7164,7 +7201,7 @@ function renderArchive(filterStr) {
         '</div>' +
         '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">' +
           (_archPrev > 0 ? '<div class="history-item-total" style="font-size:19px;color:#6b7280;">' + escHTML(entry.totalZlecenia || entry.totalPrzedRaportem) + '</div>' : '') +
-          '<div class="history-item-total" style="color:' + naprawaColor + ';">' + escHTML(entry.total) + '</div>' +
+          '<div class="history-item-total">' + escHTML(entry.total) + '</div>' +
         '</div>' +
       '</div>' +
       '<div class="history-item-actions">' +
@@ -7173,9 +7210,10 @@ function renderArchive(filterStr) {
         (entry.raportKoncowy ? '<button class="btn-action ui-tile ui-tile--sm ui-tile--wydanie btn-action--success" onclick="downloadRaportPDF(' + entry.id + ')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Naprawa</button>' : '') +
 
         '<button class="btn-action ui-tile ui-tile--sm ui-tile--accent btn-action--archive" onclick="openPodsumowanieWydane(' + entry.id + ')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> PDF</button>' +
-        '<button class="btn-action ui-tile ui-tile--sm ui-tile--warning btn-action--warning" onclick="openRabAssignForArchive(' + entry.id + ')" title="Dodaj kod rabatowy"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#111827" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v7a2 2 0 0 1-2 2H7l-4-4V5a2 2 0 0 1 2-2h7"/><path d="M16 2l6 6"/><path d="M14 8l8-8"/></svg></button>' +
+        '<button class="btn-action ui-tile ui-tile--sm ui-tile--warning btn-action--warning" onclick="openRabAssignForArchive(' + entry.id + ')" title="Dodaj kod rabatowy" aria-label="Dodaj kod rabatowy"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v7a2 2 0 0 1-2 2H7l-4-4V5a2 2 0 0 1 2-2h7"/><path d="M16 2l6 6"/><path d="M14 8l8-8"/></svg></button>' +
       '</div>';
 
+    _attachHistoryItemDetails(item, entry, { showTelInDetails: false });
     list.appendChild(item);
   });
 }
@@ -9121,7 +9159,7 @@ function openPodsumowanieDoWydania(id) {
   $('podglad-title').textContent = 'Podsumowanie';
   $('podglad-header').innerHTML = `<div style="display:flex;align-items:stretch;gap:12px;">${leftHTML}${rightHTML}</div>`;
 
-  $('podglad-table').innerHTML = _buildPodsumowanieTablesHTML(entry);
+  $('podglad-table').innerHTML = _buildPodsumowanieTablesHTML(entry, { collapseZlecone: true });
   $('podglad-total').textContent = entry.total || '';
 
   const kodEl = $('podglad-kod-odbioru'); if (kodEl) kodEl.style.display = 'none';
@@ -9143,9 +9181,14 @@ function openPodsumowanieDoWydania(id) {
 window.openPodsumowanieDoWydania = openPodsumowanieDoWydania;
 
 // Buduje tabele podsumowania jednego zlecenia (zlecone + wykonane naprawy)
-function _buildPodsumowanieTablesHTML(entry) {
-  const rk = entry.raportKoncowy;
-  const fmtPLN = v => Number(v||0).toLocaleString('pl-PL', {minimumFractionDigits:2,maximumFractionDigits:2});
+function togglePodsumowanieSection(btn) {
+  const sec = btn && btn.closest ? btn.closest('.podsumowanie-section') : null;
+  if (!sec) return;
+  sec.classList.toggle('is-open');
+}
+window.togglePodsumowanieSection = togglePodsumowanieSection;
+
+function _podsumowanieTableParts() {
   const td  = 'style="padding:8px 10px;font-size:13px;color:var(--text);border-bottom:1px solid var(--border);"';
   const tdr = 'style="padding:8px 10px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border);text-align:right;"';
   const thead = `<thead><tr style="background:var(--bg);">
@@ -9154,26 +9197,87 @@ function _buildPodsumowanieTablesHTML(entry) {
     <td style="padding:7px 10px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;text-align:right;">Szt.</td>
     <td style="padding:7px 10px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;text-align:right;">Razem</td>
   </tr></thead>`;
+  return { td, tdr, thead };
+}
+
+function _getEntryZleconeItems(entry) {
+  const st = entry.state ? safeParseJSON(entry.state, null) : null;
+  if (!st?.items) return [];
+  return st.items.filter(it => it.checked);
+}
+
+function _buildZleconeTableHTML(stItems, parts) {
+  const fmtPLN = v => Number(v || 0).toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const { td, tdr, thead } = parts;
+  let zlecTotal = 0;
+  let table = `<table style="width:100%;border-collapse:collapse;">${thead}<tbody>`;
+  stItems.forEach(it => {
+    const qty = it.qty !== undefined ? (it.qty || 1) : 1;
+    const price = parseFloat(it.price) || 0;
+    const total = Math.round(price * qty * 100) / 100;
+    zlecTotal += total;
+    const name = itemLabelWithDetails(it, true);
+    table += `<tr><td ${td}>${escHTML(name)}</td><td ${tdr}>${fmtPLN(price)}</td><td ${tdr}>${qty}</td><td ${tdr}>${fmtPLN(total)}</td></tr>`;
+  });
+  table += `<tr><td colspan="3" style="padding:8px 10px;font-size:12px;font-weight:700;color:var(--text3);">Razem zlecenie</td><td style="padding:8px 10px;font-size:14px;font-weight:800;color:#fff;text-align:right;">${fmtPLN(zlecTotal)} zł</td></tr>`;
+  table += `</tbody></table>`;
+  return { table, zlecTotal, count: stItems.length };
+}
+
+function _wrapZleconeCollapsible(innerHtml, itemCount, zlecTotal) {
+  const fmtPLN = v => Number(v || 0).toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return `<div class="podsumowanie-section">
+    <button type="button" class="podsumowanie-section-toggle" onclick="togglePodsumowanieSection(this)">
+      <span class="podsumowanie-section-title">Zlecone naprawy</span>
+      <span class="podsumowanie-section-meta">${itemCount} poz. · ${fmtPLN(zlecTotal)} zł</span>
+      <span class="podsumowanie-section-chevron">▾</span>
+    </button>
+    <div class="podsumowanie-section-body">${innerHtml}</div>
+  </div>`;
+}
+
+function _buildAllZleconeCollapsibleHTML(entries) {
+  const parts = _podsumowanieTableParts();
+  let inner = '';
+  let totalCount = 0;
+  let totalSum = 0;
+  const withItems = entries.filter(e => _getEntryZleconeItems(e).length);
+  if (!withItems.length) return '';
+
+  withItems.forEach((entry, i) => {
+    const stItems = _getEntryZleconeItems(entry);
+    const { table, zlecTotal, count } = _buildZleconeTableHTML(stItems, parts);
+    totalCount += count;
+    totalSum += zlecTotal;
+    if (withItems.length > 1) {
+      const nazwa = [entry.marka, entry.model].filter(Boolean).join(' ') || ('Zlecenie ' + (i + 1));
+      inner += `<div class="podsumowanie-zlecone-block"><div class="podsumowanie-zlecone-bike">${escHTML(nazwa)}</div>${table}</div>`;
+    } else {
+      inner += table;
+    }
+  });
+
+  return _wrapZleconeCollapsible(inner, totalCount, totalSum);
+}
+
+function _buildPodsumowanieTablesHTML(entry, opts) {
+  opts = opts || {};
+  const rk = entry.raportKoncowy;
+  const fmtPLN = v => Number(v||0).toLocaleString('pl-PL', {minimumFractionDigits:2,maximumFractionDigits:2});
+  const { td, tdr, thead } = _podsumowanieTableParts();
 
   let html = '';
-  let stItems = [];
-  let zlecTotal = 0;
-  const st = entry.state ? safeParseJSON(entry.state, null) : null;
-  if (st?.items) stItems = st.items.filter(it => it.checked);
+  const stItems = _getEntryZleconeItems(entry);
 
-  if (stItems.length) {
-    html += `<div style="padding:10px 12px 6px;font-size:13px;font-weight:800;color:#22c55e;text-transform:uppercase;letter-spacing:.8px;background:var(--bg);text-align:center;">Zlecone naprawy</div>`;
-    html += `<table style="width:100%;border-collapse:collapse;">${thead}<tbody>`;
-    stItems.forEach(it => {
-      const qty = it.qty !== undefined ? (it.qty || 1) : 1;
-      const price = parseFloat(it.price) || 0;
-      const total = Math.round(price * qty * 100) / 100;
-      zlecTotal += total;
-      const name = itemLabelWithDetails(it, true);
-      html += `<tr><td ${td}>${escHTML(name)}</td><td ${tdr}>${fmtPLN(price)}</td><td ${tdr}>${qty}</td><td ${tdr}>${fmtPLN(total)}</td></tr>`;
-    });
-    html += `<tr><td colspan="3" style="padding:8px 10px;font-size:12px;font-weight:700;color:var(--text3);">Razem zlecenie</td><td style="padding:8px 10px;font-size:14px;font-weight:800;color:#fff;text-align:right;">${fmtPLN(zlecTotal)} zł</td></tr>`;
-    html += `</tbody></table>`;
+  if (stItems.length && !opts.skipZlecone) {
+    const { table: zlecTable, zlecTotal } = _buildZleconeTableHTML(stItems, { td, tdr, thead });
+
+    if (opts.collapseZlecone) {
+      html += _wrapZleconeCollapsible(zlecTable, stItems.length, zlecTotal);
+    } else {
+      html += `<div style="padding:10px 12px 6px;font-size:13px;font-weight:800;color:#22c55e;text-transform:uppercase;letter-spacing:.8px;background:var(--bg);text-align:center;">Zlecone naprawy</div>`;
+      html += zlecTable;
+    }
   }
 
   if (rk) {
@@ -9215,17 +9319,17 @@ function openPodsumowanieGrupowe(telKey) {
       ${tel ? `<a href="tel:${tel.replace(/[^0-9+]/g,'')}" style="display:inline-flex;align-items:center;gap:5px;font-size:16px;font-weight:600;color:#3b7cf4;text-decoration:none;"><svg width="13" height="13" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>${escHTML(tel)}</a>` : ''}
     </div>`;
 
-  let html = '';
+  let html = _buildAllZleconeCollapsibleHTML(doWyd);
   doWyd.forEach((entry, i) => {
     const nazwa = [entry.marka, entry.model].filter(Boolean).join(' ') || 'Zlecenie';
-    html += `<div style="margin-top:${i ? 14 : 4}px;padding:9px 12px;background:#000;border-radius:8px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
+    html += `<div style="margin-top:${i ? 14 : (html ? 14 : 4)}px;padding:9px 12px;background:#000;border-radius:8px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
         <span style="font-size:15px;font-weight:700;color:#fff;">${escHTML(nazwa)}</span>
         <span style="display:flex;align-items:center;gap:10px;">
           ${entry.kodOdbioru ? `<span style="font-size:13px;font-weight:800;color:#f59e0b;letter-spacing:1px;">🔑 ${escHTML(String(entry.kodOdbioru))}</span>` : ''}
           <span style="font-size:15px;font-weight:800;color:#22c55e;">${escHTML(String(entry.total || '0'))} zł</span>
         </span>
       </div>`;
-    html += _buildPodsumowanieTablesHTML(entry);
+    html += _buildPodsumowanieTablesHTML(entry, { skipZlecone: true });
   });
   $('podglad-table').innerHTML = html;
   $('podglad-total').textContent = fmt(grandTotal);
