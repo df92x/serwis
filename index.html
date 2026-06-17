@@ -108,6 +108,107 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
 #tab-wydanie.order-tab.active{ background:#22c55e; border-color:#22c55e; }
 #tab-archiwum.order-tab.active{ background:#a78bfa; border-color:#a78bfa; }
 
+/* Licznik zleceń przy nazwie zakładki */
+.tab-count{
+  display:none;
+  margin-left:6px;
+  padding:1px 6px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:900;
+  line-height:1.5;
+  vertical-align:middle;
+  background:rgba(255,255,255,0.10);
+  color:inherit;
+}
+.tab-count.show{ display:inline-block; }
+.order-tab:not(.active) .tab-count{ background:rgba(255,255,255,0.07); color:var(--text2); }
+.order-tab.active .tab-count{ background:rgba(0,0,0,0.18); color:#111827; }
+
+/* ── Tryb jasny (dzienny) ── */
+html.day-mode{
+  --bg:#eef1f6;
+  --bg2:#ffffff;
+  --bg3:#e4e9f1;
+  --border:#d3d9e3;
+  --border2:#b7c5df;
+  --blue-dim:rgba(59,124,244,0.12);
+  --text:#13161d;
+  --text2:#3a4150;
+  --text3:#6a7280;
+  color-scheme: light;
+}
+html.day-mode body{ background:var(--bg); color:var(--text); }
+/* Białe teksty (inline + klasy) → ciemne, by były czytelne na jasnym tle */
+html.day-mode [style*="color:#fff"],
+html.day-mode [style*="color:#ffffff"],
+html.day-mode [style*="color: #fff"]{ color:#13161d !important; }
+html.day-mode .history-item-total,
+html.day-mode header h1{ color:#13161d !important; }
+/* Ciemne tła paneli/boxów → jasne (żeby ciemny tekst był czytelny) */
+html.day-mode [style*="background:#0d0d14"],
+html.day-mode [style*="background:#111118"]{ background:var(--bg3) !important; }
+/* Przyciski akcji z bardzo ciemnym tłem (kopia/admin/login) → jasna karta */
+html.day-mode [style*="background:#0d1a0f"],
+html.day-mode [style*="background:#0d1020"],
+html.day-mode [style*="background:#1a0d0d"],
+html.day-mode [style*="background:#0f0d1a"],
+html.day-mode [style*="background:#0a160d"],
+html.day-mode [style*="background:#0d1622"],
+html.day-mode [style*="background:#1a2a1a"]{ background:var(--bg2) !important; }
+/* Status bar przeglądarki w trybie jasnym */
+html.day-mode .summary-total{ color:#13161d !important; }
+
+/* ── Skeleton (animacja ładowania) ── */
+@keyframes skeleton-shimmer { 0%{background-position:-300px 0;} 100%{background-position:300px 0;} }
+.skeleton-card{
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:12px;
+  margin-bottom:10px;
+  background:var(--bg);
+}
+.sk-line{
+  height:12px;
+  border-radius:6px;
+  background:linear-gradient(90deg, rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.12) 80px, rgba(255,255,255,0.04) 160px);
+  background-size:300px 100%;
+  animation:skeleton-shimmer 1.1s ease-in-out infinite;
+  margin-bottom:8px;
+}
+.sk-line.wide{ width:70%; height:16px; }
+.sk-line.mid{ width:45%; }
+.sk-line.short{ width:30%; }
+.sk-row{ display:flex; gap:8px; margin-top:10px; }
+.sk-pill{
+  height:28px; width:60px; border-radius:8px;
+  background:linear-gradient(90deg, rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.10) 80px, rgba(255,255,255,0.04) 160px);
+  background-size:300px 100%;
+  animation:skeleton-shimmer 1.1s ease-in-out infinite;
+}
+
+/* ── Spójny stan pustej listy / brak wyników ── */
+.empty-state{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  text-align:center;
+  padding:38px 16px;
+  color:var(--text3);
+}
+.empty-state .es-icon{
+  width:52px; height:52px;
+  display:flex; align-items:center; justify-content:center;
+  border-radius:50%;
+  background:var(--bg2);
+  border:1px solid var(--border);
+}
+.empty-state .es-title{ font-size:15px; font-weight:700; color:var(--text2); }
+.empty-state .es-sub{ font-size:13px; color:var(--text3); max-width:280px; line-height:1.5; }
+.empty-state .es-q{ color:#fff; font-weight:700; }
+
 /* Przeglądaj: ikona kosza obok Zamknij */
 #history-overlay .btn-kosz-header{
   display:inline-flex;
@@ -529,27 +630,6 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
   background: transparent !important;
   border: none !important;
   padding: 0 !important;
-}
-#modal-kolor-preview{
-  position: relative;
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: var(--bg);
-  padding: 0 10px 0 16px;
-  overflow: hidden;
-}
-#modal-kolor-preview .history-color-bar{
-  width: 10px !important;
-}
-#modal-kolor-preview .mkp-text{
-  font-size: 20px;
-  font-weight: 500;
-  color: #fff;
-  letter-spacing: normal;
-  font-family: inherit;
 }
 #modal-kolor-swatches{
   margin-top: 12px;
@@ -1098,6 +1178,20 @@ select.native-sel { display: none !important; }
         <span style="font-size:36px;font-weight:900;color:#c0392b;letter-spacing:2px;">SERWIS</span>
       </div>
       <div id="main-sync-panel" style="width:75%;background:#0d0d14;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-top:4px;"></div>
+      <div id="backup-reminder" style="display:none;width:75%;margin-top:8px;background:rgba(245,158,11,0.10);border:1px solid #f59e0b;border-radius:10px;padding:10px 12px;">
+        <div style="display:flex;align-items:flex-start;gap:8px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:13px;font-weight:800;color:#fbbf24;">Czas na kopię danych</div>
+            <div id="backup-reminder-sub" style="font-size:12px;color:var(--text2);margin-top:2px;line-height:1.45;"></div>
+          </div>
+          <button onclick="dismissBackupReminder()" title="Ukryj" style="flex-shrink:0;background:none;border:none;color:var(--text3);cursor:pointer;padding:0 2px;font-size:18px;line-height:1;">×</button>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:10px;">
+          <button onclick="manualSync()" style="flex:1;background:#f59e0b;border:none;border-radius:8px;padding:9px;color:#111827;font-size:13px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Synchronizuj</button>
+          <button onclick="kopiaZapasowa()" style="flex:1;background:none;border:1px solid #f59e0b;border-radius:8px;padding:9px;color:#fbbf24;font-size:13px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Kopia</button>
+        </div>
+      </div>
     </div>
 
     <button onclick="startNowe()" style="margin-bottom:16px;width:100%;padding:16px 20px;background:linear-gradient(180deg,#1db954 0%,#16a34a 50%,#0f7a38 100%);border:none;border-radius:16px;color:#fff;font-size:22px;font-weight:700;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:0;">
@@ -1118,6 +1212,12 @@ select.native-sel { display: none !important; }
     <button onclick="startKalkulatorProsty()" style="width:75%;align-self:center;padding:12px;background:none;border:1px solid #0891b2;border-radius:12px;color:#67e8f9;font-size:17px;font-weight:600;cursor:pointer;letter-spacing:.4px;display:flex;align-items:center;justify-content:center;gap:12px;">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" stroke="#0891b2" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><rect x="7" y="7" width="4" height="2" rx="0.5" fill="#0e7490"/><rect x="13" y="7" width="4" height="2" rx="0.5" fill="#0e7490"/><rect x="7" y="11" width="4" height="2" rx="0.5" fill="#0e7490"/><rect x="13" y="11" width="4" height="2" rx="0.5" fill="#0e7490"/><rect x="7" y="15" width="4" height="2" rx="0.5" fill="#0e7490"/><rect x="13" y="15" width="4" height="4" rx="0.5" fill="#0e7490"/></svg>
       Kalkulator
+    </button>
+    <button id="day-mode-btn" onclick="toggleDayMode()" style="width:75%;align-self:center;padding:12px;background:none;border:1px solid #f59e0b;border-radius:12px;color:#fbbf24;font-size:17px;font-weight:600;cursor:pointer;letter-spacing:.4px;display:flex;align-items:center;justify-content:center;gap:12px;">
+      <span id="day-mode-icon" style="display:flex;align-items:center;justify-content:center;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      </span>
+      <span id="day-mode-label">Tryb dzienny</span>
     </button>
 
     <div style="width:100%;height:1px;background:var(--border);margin:2px 0;"></div>
@@ -1485,9 +1585,9 @@ select.native-sel { display: none !important; }
   <div class="app">
     <div style="padding:0 16px 0;">
       <div class="order-tabs">
-        <button id="tab-historia" class="order-tab active" onclick="switchTab('historia')">Przyjęte</button>
-        <button id="tab-wydanie" class="order-tab" onclick="switchTab('wydanie')">Do wydania</button>
-        <button id="tab-archiwum" class="order-tab" onclick="switchTab('archiwum')">Wydane</button>
+        <button id="tab-historia" class="order-tab active" onclick="switchTab('historia')">Przyjęte<span class="tab-count" id="count-historia"></span></button>
+        <button id="tab-wydanie" class="order-tab" onclick="switchTab('wydanie')">Do wydania<span class="tab-count" id="count-wydanie"></span></button>
+        <button id="tab-archiwum" class="order-tab" onclick="switchTab('archiwum')">Wydane<span class="tab-count" id="count-archiwum"></span></button>
       </div>
       <div class="history-filter-bar" style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0 8px;flex-wrap:wrap;width:100%;">
         <div class="history-search-slot">
@@ -1608,32 +1708,13 @@ select.native-sel { display: none !important; }
       <div class="modal-field">
         <label>Kolor</label>
         <input type="hidden" id="modal-kolor" value="">
-        <div id="modal-kolor-preview">
-          <span class="mkp-text">MARKA MODEL</span>
+        <div id="kolor-picker" style="margin-top:0;">
+          <div id="kolor-track" style="position:relative;height:34px;border-radius:17px;border:1px solid var(--border);cursor:pointer;touch-action:none;background:linear-gradient(90deg,#000 0%,#ff0000 6%,#ff8c00 16%,#ffeb00 26%,#00be28 38%,#00c8c8 50%,#1450ff 62%,#9600ff 74%,#969696 86%,#000 100%);">
+            <div id="kolor-handle-0" class="kolor-handle" data-idx="0" style="position:absolute;top:50%;left:0;width:30px;height:30px;border-radius:50%;border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,0.5);transform:translate(-50%,-50%);background:#000;cursor:grab;touch-action:none;"></div>
+            <div id="kolor-handle-1" class="kolor-handle" data-idx="1" style="position:absolute;top:50%;left:100%;width:30px;height:30px;border-radius:50%;border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,0.5);transform:translate(-50%,-50%);background:#000;cursor:grab;touch-action:none;"></div>
+          </div>
         </div>
-        <div id="modal-kolor-swatches" style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));grid-template-rows:repeat(2,auto);grid-auto-flow:row;gap:8px;padding:0 0 4px;width:100%;box-sizing:border-box;">
-          <button type="button" class="kolor-swatch" data-val="CZARNY" title="Czarny"
-            style="width:100%;min-height:48px;height:100%;border-radius:10px;background:#111;border:1px solid #444;cursor:pointer;"></button>
-          <button type="button" class="kolor-swatch" data-val="BRĄZOWY" title="Brązowy"
-            style="width:100%;min-height:48px;height:100%;border-radius:10px;background:#6b4423;border:1px solid #4a2f1a;cursor:pointer;"></button>
-          <button type="button" class="kolor-swatch" data-val="SZARY" title="Szary"
-            style="width:100%;min-height:48px;height:100%;border-radius:10px;background:#9ca3af;border:1px solid #6b7280;cursor:pointer;"></button>
-          <button type="button" class="kolor-swatch" data-val="BIAŁY" title="Biały"
-            style="width:100%;min-height:48px;height:100%;border-radius:10px;background:#f0f0f0;border:1px solid #aaa;cursor:pointer;"></button>
-          <button type="button" class="kolor-swatch" data-val="CZERWONY" title="Czerwony"
-            style="width:100%;min-height:48px;height:100%;border-radius:10px;background:#dc2626;border:1px solid #b91c1c;cursor:pointer;"></button>
-          <button type="button" class="kolor-swatch" data-val="NIEBIESKI" title="Niebieski"
-            style="width:100%;min-height:48px;height:100%;border-radius:10px;background:#2563eb;border:1px solid #1d4ed8;cursor:pointer;"></button>
-          <button type="button" class="kolor-swatch" data-val="FIOLETOWY" title="Fioletowy"
-            style="width:100%;min-height:48px;height:100%;border-radius:10px;background:#9333ea;border:1px solid #7e22ce;cursor:pointer;"></button>
-          <button type="button" class="kolor-swatch" data-val="ZIELONY" title="Zielony"
-            style="width:100%;min-height:48px;height:100%;border-radius:10px;background:#16a34a;border:1px solid #15803d;cursor:pointer;"></button>
-          <button type="button" class="kolor-swatch" data-val="ZŁOTY" title="Złoty"
-            style="width:100%;min-height:48px;height:100%;border-radius:10px;background:#d97706;border:1px solid #b45309;cursor:pointer;"></button>
-          <button type="button" class="kolor-swatch" data-val="INNY" title="Inny..."
-            style="width:100%;min-height:48px;height:100%;border-radius:10px;background:#1e1e30;border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:var(--text3);">✕</button>
-        </div>
-        <input type="text" id="modal-kolor-inny" placeholder="Wpisz kolor..." maxlength="30" style="display:none;margin-top:6px;">
+        <input type="hidden" id="modal-kolor-inny" value="">
       </div>
       </div>
       <div class="modal-banner">
@@ -1652,15 +1733,8 @@ select.native-sel { display: none !important; }
       </div>
       <div class="modal-field">
         <label>Termin naprawy</label>
-        <div style="display:flex;gap:8px;align-items:stretch;height:56px;">
-          <input type="text" id="modal-termin" placeholder="DD.MM" maxlength="5" style="width:100px;font-size:22px;font-weight:700;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:#fff;outline:none;flex-shrink:0;box-sizing:border-box;" oninput="formatTermin(this);clearTerminBtns();">
-          <div style="display:flex;gap:6px;flex:1;">
-            <button type="button" class="btn-termin" data-days="1" style="background:#16a34a;color:#fff;flex:1;font-size:22px;font-weight:700;padding:0;border:none;border-radius:8px;" onclick="setTerminQuick(this)">--</button>
-            <button type="button" class="btn-termin" data-days="2" style="background:#f59e0b;color:#fff;flex:1;font-size:22px;font-weight:700;padding:0;border:none;border-radius:8px;" onclick="setTerminQuick(this)">--</button>
-            <button type="button" class="btn-termin" data-days="3" style="background:#ef4444;color:#fff;flex:1;font-size:22px;font-weight:700;padding:0;border:none;border-radius:8px;" onclick="setTerminQuick(this)">--</button>
-            <button type="button" class="btn-termin" data-days="7" style="background:#7f1d1d;color:#fff;flex:1;font-size:22px;font-weight:700;padding:0;border:none;border-radius:8px;" onclick="setTerminQuick(this)">--</button>
-          </div>
-        </div>
+        <input type="hidden" id="modal-termin" value="">
+        <div id="modal-termin-calendar" style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:10px;"></div>
       </div>
       </div>
       <div class="modal-banner">
@@ -1711,7 +1785,8 @@ function unlockBody() { document.body.classList.remove('overlay-open'); }
 function updateBodyLock() {
   const overlayIds = ['raport-overlay','podglad-overlay','history-overlay',
     'modal-overlay','lancuch-overlay',
-    'kalkulator-prosty-overlay','kody-rabatowe-overlay','rab-wydane-overlay','rab-assign-overlay','start-overlay'];
+    'kalkulator-prosty-overlay','kody-rabatowe-overlay','rab-wydane-overlay','rab-assign-overlay','start-overlay',
+    'global-search-modal','klient-historia-modal'];
   const anyOpen = overlayIds.some(id => { const el = $(id); return el && getComputedStyle(el).display !== 'none'; });
   if (anyOpen) lockBody(); else unlockBody();
 }
@@ -1719,7 +1794,8 @@ function updateBodyLock() {
 document.addEventListener('DOMContentLoaded', () => {
   const overlayIds = ['raport-overlay','podglad-overlay','history-overlay',
     'modal-overlay','lancuch-overlay',
-    'kalkulator-prosty-overlay','kody-rabatowe-overlay','rab-wydane-overlay','rab-assign-overlay','start-overlay'];
+    'kalkulator-prosty-overlay','kody-rabatowe-overlay','rab-wydane-overlay','rab-assign-overlay','start-overlay',
+    'global-search-modal','klient-historia-modal'];
   overlayIds.forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
@@ -1846,6 +1922,14 @@ const $ = id => document.getElementById(id);
 
 const COLOR_MAP = {'CZARNY':'#111','BRĄZOWY':'#6b4423','SZARY':'#9ca3af','BIAŁY':'#f0f0f0','CZERWONY':'#dc2626','NIEBIESKI':'#2563eb','FIOLETOWY':'#9333ea','ZIELONY':'#16a34a','ZŁOTY':'#d97706'};
 
+// Zwraca CSS koloru dla tokenu: nazwa z COLOR_MAP albo wartość HEX (#rrggbb)
+function _kolorCss(token) {
+  if (!token) return null;
+  const t = String(token).trim();
+  if (/^#?[0-9a-fA-F]{6}$/.test(t)) return t[0] === '#' ? t : ('#' + t);
+  return COLOR_MAP[t.toUpperCase()] || null;
+}
+
 
 // Pomocnicza: nazwa roweru do SMS
 function _smsRower(marka, model) {
@@ -1864,14 +1948,14 @@ function makeKolorDot(kolor, size) {
   if (k.includes('/')) {
     const parts = k.split('/').map(s => s.trim()).filter(Boolean);
     if (parts.length >= 2) {
-      const c1 = COLOR_MAP[parts[0]];
-      const c2 = COLOR_MAP[parts[1]];
+      const c1 = _kolorCss(parts[0]);
+      const c2 = _kolorCss(parts[1]);
       if (c1 && c2) {
         return '<span style="display:inline-block;width:' + size + 'px;height:' + size + 'px;border-radius:4px;overflow:hidden;box-sizing:border-box;border:1px solid #fff;background:linear-gradient(90deg,' + c1 + ' 0,' + c1 + ' 50%,' + c2 + ' 50%,' + c2 + ' 100%);flex-shrink:0;"></span>';
       }
     }
   }
-  const css = COLOR_MAP[k];
+  const css = _kolorCss(k);
   if (css) {
     return '<span style="display:inline-block;width:' + size + 'px;height:' + size + 'px;border-radius:4px;overflow:hidden;box-sizing:border-box;border:1px solid #fff;background:' + css + ';flex-shrink:0;"></span>';
   }
@@ -1888,10 +1972,10 @@ function makeKolorBarHTML(kolor) {
   const k = String(kolor).toUpperCase().trim();
   if (k.includes('/')) {
     const parts = k.split('/').map(s => s.trim()).filter(Boolean);
-    const c1 = COLOR_MAP[parts[0]]; const c2 = COLOR_MAP[parts[1]];
+    const c1 = _kolorCss(parts[0]); const c2 = _kolorCss(parts[1]);
     if (c1 && c2) return '<div class="history-color-bar" style="background:linear-gradient(180deg,' + c1 + ' 0,' + c1 + ' 50%,' + c2 + ' 50%,' + c2 + ' 100%);"></div>';
   }
-  const css = COLOR_MAP[k];
+  const css = _kolorCss(k);
   if (css) return '<div class="history-color-bar" style="background:' + css + ';"></div>';
   // Nieznany kolor (np. wpisany ręcznie) — dyskretne paski
   return '<div class="history-color-bar" style="background:repeating-linear-gradient(45deg,#6b7280 0 4px,#111827 4px 8px);"></div>';
@@ -1904,13 +1988,13 @@ function makeKolorSideBarHTML(kolor, h) {
   const k = String(kolor).toUpperCase().trim();
   if (k.includes('/')) {
     const parts = k.split('/').map(s => s.trim()).filter(Boolean);
-    const c1 = COLOR_MAP[parts[0]];
-    const c2 = COLOR_MAP[parts[1]];
+    const c1 = _kolorCss(parts[0]);
+    const c2 = _kolorCss(parts[1]);
     if (c1 && c2) {
       return '<span style="display:inline-block;width:8px;height:' + height + 'px;border-radius:4px;border:1px solid rgba(255,255,255,.22);background:linear-gradient(180deg,' + c1 + ' 0,' + c1 + ' 50%,' + c2 + ' 50%,' + c2 + ' 100%);flex-shrink:0;"></span>';
     }
   }
-  const css = COLOR_MAP[k];
+  const css = _kolorCss(k);
   if (css) {
     return '<span style="display:inline-block;width:8px;height:' + height + 'px;border-radius:4px;border:1px solid rgba(255,255,255,.22);background:' + css + ';flex-shrink:0;"></span>';
   }
@@ -4248,6 +4332,13 @@ function resetInactivityTimer() {
 
 resetInactivityTimer();
 
+function _normalizeTerminStr(val) {
+  return String(val || '').trim().replace(',', '.');
+}
+function _parseTerminParts(val) {
+  return _normalizeTerminStr(val).split('.');
+}
+
 function showTerminSundayWarn() {
   let el = $('termin-sunday-warn');
   if (!el) {
@@ -4255,8 +4346,8 @@ function showTerminSundayWarn() {
     el.id = 'termin-sunday-warn';
     el.style.cssText = 'color:#ef4444;font-size:13px;font-weight:700;margin-top:6px;text-align:center;';
     el.textContent = '⛔ NIEDZIELA – wybierz inną datę';
-    const mt = $('modal-termin');
-    if (mt && mt.parentNode) mt.parentNode.parentNode.insertBefore(el, mt.parentNode.nextSibling);
+    const cal = $('modal-termin-calendar');
+    if (cal && cal.parentNode) cal.parentNode.insertBefore(el, cal.nextSibling);
   }
   el.style.display = 'block';
 }
@@ -4265,17 +4356,19 @@ function hideTerminSundayWarn() {
   if (el) el.style.display = 'none';
 }
 function checkTerminSunday(val) {
-  if (!val || val.length < 5) { hideTerminSundayWarn(); return false; }
-  const parts = val.split('.');
+  const norm = _normalizeTerminStr(val);
+  if (!norm || norm.length < 5) { hideTerminSundayWarn(); return false; }
+  const parts = _parseTerminParts(norm);
   if (parts.length < 2) { hideTerminSundayWarn(); return false; }
-  const d2 = parseInt(parts[0]), m2 = parseInt(parts[1]) - 1;
-  const y2 = parts.length >= 3 ? parseInt(parts[2]) : new Date().getFullYear();
+  const d2 = parseInt(parts[0], 10), m2 = parseInt(parts[1], 10) - 1;
+  const y2 = parts.length >= 3 ? parseInt(parts[2], 10) : new Date().getFullYear();
   const dt = new Date(y2, m2, d2);
   if (dt.getDay() === 0) { showTerminSundayWarn(); return true; }
   hideTerminSundayWarn(); return false;
 }
 function formatTermin(el) {
-  let v = el.value.replace(/[^0-9.]/g, '');
+  if (!el) return;
+  let v = el.value.replace(/,/g, '.').replace(/[^0-9.]/g, '');
   const digits = v.replace(/\./g, '').slice(0,4);
 
   let dd = digits.slice(0,2);
@@ -4372,6 +4465,122 @@ function setTerminQuick(btn) {
   document.querySelectorAll('.btn-termin').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
 }
+
+// ── Kalendarz terminu naprawy ──
+let _terminCalMonth = null;
+// Liczba zleceń PRZYJĘTYCH (nie zrobionych) na dany dzień: klucz "D.M"
+function _terminCounts() {
+  const map = {};
+  try {
+    getPrzyjeteList().forEach(e => {
+      if (!e.termin) return;
+      const p = _parseTerminParts(e.termin);
+      if (p.length < 2) return;
+      const d = parseInt(p[0], 10), m = parseInt(p[1], 10);
+      if (!d || !m) return;
+      const key = d + '.' + m;
+      map[key] = (map[key] || 0) + 1;
+    });
+  } catch (e) {}
+  return map;
+}
+function initTerminCalendar() {
+  const saved = _parseTerminParts($('modal-termin').value || '');
+  const now = new Date();
+  let y = now.getFullYear(), m = now.getMonth();
+  if (saved.length >= 2 && parseInt(saved[1], 10)) {
+    m = parseInt(saved[1], 10) - 1;
+    if (saved.length >= 3 && parseInt(saved[2], 10)) y = parseInt(saved[2], 10);
+  }
+  _terminCalMonth = { y, m };
+  _renderTerminCalendar();
+}
+function _renderTerminCalendar() {
+  const cont = $('modal-termin-calendar');
+  if (!cont || !_terminCalMonth) return;
+  const { y, m } = _terminCalMonth;
+  const counts = _terminCounts();
+  const monthNames = ['Styczeń','Luty','Marzec','Kwiecień','Maj','Czerwiec','Lipiec','Sierpień','Wrzesień','Październik','Listopad','Grudzień'];
+  const startDow = (new Date(y, m, 1).getDay() + 6) % 7;
+  const daysInMonth = new Date(y, m + 1, 0).getDate();
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const sel = _parseTerminParts($('modal-termin').value || '');
+  const selD = parseInt(sel[0], 10) || 0;
+  const selM = parseInt(sel[1], 10) || 0;
+  const selVal = _normalizeTerminStr($('modal-termin').value);
+
+  let html = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+      <button type="button" onclick="terminCalPrev()" style="width:34px;height:34px;background:none;border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:16px;font-weight:700;cursor:pointer;">‹</button>
+      <span style="font-size:14px;font-weight:700;color:#fff;">${monthNames[m]} ${y}</span>
+      <button type="button" onclick="terminCalNext()" style="width:34px;height:34px;background:none;border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:16px;font-weight:700;cursor:pointer;">›</button>
+    </div>`;
+  if (selVal) {
+    html += `<div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:8px;padding:8px 10px;background:rgba(22,163,74,0.12);border:1px solid rgba(22,163,74,0.35);border-radius:8px;">
+      <span style="font-size:14px;font-weight:800;color:#16a34a;">Termin: ${escHTML(selVal)}</span>
+      <button type="button" onclick="clearTermin()" title="Wyczyść termin" style="background:none;border:1px solid var(--border);border-radius:6px;padding:2px 8px;color:var(--text3);font-size:14px;cursor:pointer;line-height:1.2;">✕</button>
+    </div>`;
+  }
+  html += `<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;">`;
+  ['Pn','Wt','Śr','Cz','Pt','So','Nd'].forEach(d => {
+    html += `<div style="text-align:center;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;padding:2px 0;">${d}</div>`;
+  });
+  for (let i = 0; i < startDow; i++) html += '<div></div>';
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateObj = new Date(y, m, d); dateObj.setHours(0, 0, 0, 0);
+    const dow = dateObj.getDay();
+    const isSunday = dow === 0;
+    const isPast = dateObj < today;
+    const cnt = counts[d + '.' + (m + 1)] || 0;
+    const isSel = (selD === d && selM === (m + 1));
+    const badge = cnt > 0
+      ? `<span style="position:absolute;top:2px;right:2px;min-width:15px;height:15px;padding:0 3px;border-radius:8px;background:#f59e0b;color:#111827;font-size:9px;font-weight:900;line-height:15px;text-align:center;">${cnt}</span>`
+      : '';
+    if (isSunday || isPast) {
+      html += `<div style="position:relative;aspect-ratio:1;min-height:38px;display:flex;align-items:center;justify-content:center;border:1px solid transparent;border-radius:8px;color:var(--text3);opacity:0.3;font-size:14px;font-weight:600;">${d}${badge}</div>`;
+    } else {
+      const ddmm = String(d).padStart(2, '0') + '.' + String(m + 1).padStart(2, '0');
+      html += `<button type="button" onclick="terminPick('${ddmm}')" style="position:relative;aspect-ratio:1;min-height:38px;border-radius:8px;font-size:14px;font-weight:800;cursor:pointer;${isSel
+        ? 'background:#16a34a;border:1px solid #16a34a;color:#fff;'
+        : 'background:none;border:1px solid var(--border);color:var(--text);'}">${d}${badge}</button>`;
+    }
+  }
+  html += '</div>';
+  cont.innerHTML = html;
+}
+function terminCalPrev() {
+  _terminCalMonth.m--;
+  if (_terminCalMonth.m < 0) { _terminCalMonth.m = 11; _terminCalMonth.y--; }
+  _renderTerminCalendar();
+}
+function terminCalNext() {
+  _terminCalMonth.m++;
+  if (_terminCalMonth.m > 11) { _terminCalMonth.m = 0; _terminCalMonth.y++; }
+  _renderTerminCalendar();
+}
+function terminPick(ddmm) {
+  $('modal-termin').value = ddmm;
+  hideTerminSundayWarn();
+  _renderTerminCalendar();
+}
+function syncTerminCalendar() {
+  const sel = _parseTerminParts($('modal-termin').value || '');
+  if (_terminCalMonth && sel.length >= 2 && parseInt(sel[1], 10)) {
+    _terminCalMonth.m = parseInt(sel[1], 10) - 1;
+  }
+  _renderTerminCalendar();
+}
+function clearTermin() {
+  $('modal-termin').value = '';
+  hideTerminSundayWarn();
+  _renderTerminCalendar();
+}
+window.initTerminCalendar = initTerminCalendar;
+window.terminCalPrev = terminCalPrev;
+window.terminCalNext = terminCalNext;
+window.terminPick = terminPick;
+window.syncTerminCalendar = syncTerminCalendar;
+window.clearTermin = clearTermin;
 window.formatTermin = formatTermin;
 window.clearTerminBtns = clearTerminBtns;
 window.setTerminDays = setTerminDays;
@@ -4734,6 +4943,371 @@ function openHistory() {
   updateKoszBadge();
   switchTab('historia');
 }
+
+// ── Liczniki zleceń na zakładkach ──
+function _isTodayDateStr(s) {
+  if (!s) return false;
+  const p = String(s).split(' ')[0].split('.');
+  if (p.length < 2) return false;
+  const d = parseInt(p[0], 10), m = parseInt(p[1], 10);
+  const now = new Date();
+  if (d !== now.getDate() || m !== (now.getMonth() + 1)) return false;
+  if (p.length >= 3) {
+    const y = parseInt(p[2], 10);
+    if (y !== now.getFullYear()) return false;
+  }
+  return true;
+}
+function updateTabCounts() {
+  try {
+    const counts = {
+      historia: getPrzyjeteList().length,
+      wydanie:  getDoWydaniaList().length,
+      // "Wydane" pokazuje tylko liczbę wydanych DZISIAJ
+      archiwum: getArchive().filter(e => _isTodayDateStr(e.dataWydania)).length,
+    };
+    Object.keys(counts).forEach(k => {
+      const el = $('count-' + k);
+      if (!el) return;
+      const n = counts[k];
+      el.textContent = n;
+      el.classList.toggle('show', n > 0);
+    });
+  } catch (e) {}
+}
+window.updateTabCounts = updateTabCounts;
+
+// ── Spójny stan pustej listy / brak wyników wyszukiwania ──
+function emptyStateHTML(opts) {
+  const o = opts || {};
+  const isSearch = !!(o.query && String(o.query).trim().length >= 2);
+  const searchIcon = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7a82a0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>';
+  const boxIcon = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7a82a0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>';
+  const icon = isSearch ? searchIcon : boxIcon;
+  const title = isSearch ? 'Brak wyników' : (o.emptyTitle || 'Brak zleceń');
+  const sub = isSearch
+    ? ('Nic nie pasuje do <span class="es-q">' + escHTML(String(o.query).trim()) + '</span>')
+    : (o.emptySub || '');
+  return '<div class="empty-state">'
+    + '<div class="es-icon">' + icon + '</div>'
+    + '<div class="es-title">' + title + '</div>'
+    + (sub ? '<div class="es-sub">' + sub + '</div>' : '')
+    + '</div>';
+}
+window.emptyStateHTML = emptyStateHTML;
+
+// ── Skeleton ładowania (podczas synchronizacji) ──
+function listSkeletonHTML(count) {
+  const n = count || 3;
+  let one = '<div class="skeleton-card">'
+    + '<div class="sk-line wide"></div>'
+    + '<div class="sk-line mid"></div>'
+    + '<div class="sk-line short"></div>'
+    + '<div class="sk-row"><div class="sk-pill"></div><div class="sk-pill"></div><div class="sk-pill" style="margin-left:auto;width:80px;"></div></div>'
+    + '</div>';
+  let out = '';
+  for (let i = 0; i < n; i++) out += one;
+  return out;
+}
+function _currentHistoryTab() {
+  if ($('history-list') && $('history-list').style.display !== 'none') return 'historia';
+  if ($('wydanie-list') && $('wydanie-list').style.display !== 'none') return 'wydanie';
+  if ($('kosz-list') && $('kosz-list').style.display !== 'none') return 'kosz';
+  return 'archiwum';
+}
+function showSyncSkeleton() {
+  const overlay = $('history-overlay');
+  if (!overlay || overlay.style.display === 'none' || overlay.style.display === '') return;
+  const map = { historia:'history-list', wydanie:'wydanie-list', archiwum:'archive-list', kosz:'kosz-list' };
+  const el = $(map[_currentHistoryTab()]);
+  if (el) el.innerHTML = listSkeletonHTML(3);
+}
+function rerenderCurrentHistoryTab() {
+  const overlay = $('history-overlay');
+  if (!overlay || overlay.style.display === 'none' || overlay.style.display === '') return;
+  const tab = _currentHistoryTab();
+  try {
+    if (tab === 'historia')      renderHistory($('historia-search-tel')?.value || '');
+    else if (tab === 'wydanie')  renderWydanie($('wydanie-search-tel')?.value || '');
+    else if (tab === 'kosz')     renderKosz($('kosz-search-tel')?.value || '');
+    else                         renderArchive($('archive-search-tel')?.value || '');
+  } catch (e) {}
+}
+window.showSyncSkeleton = showSyncSkeleton;
+window.rerenderCurrentHistoryTab = rerenderCurrentHistoryTab;
+
+// ── Tryb dzienny (jasność / kontrast) ──
+const DAY_MODE_KEY = 'serwis-day-mode';
+function applyDayMode() {
+  const on = localStorage.getItem(DAY_MODE_KEY) === '1';
+  document.documentElement.classList.toggle('day-mode', on);
+  const btn = $('day-mode-btn');
+  const label = $('day-mode-label');
+  if (label) label.textContent = on ? 'Tryb dzienny: WŁ' : 'Tryb dzienny';
+  if (btn) {
+    btn.style.background = on ? 'rgba(245,158,11,0.18)' : 'none';
+    btn.style.color = on ? '#fbbf24' : '#fbbf24';
+  }
+}
+function toggleDayMode() {
+  const on = localStorage.getItem(DAY_MODE_KEY) === '1';
+  localStorage.setItem(DAY_MODE_KEY, on ? '0' : '1');
+  applyDayMode();
+}
+window.toggleDayMode = toggleDayMode;
+window.applyDayMode = applyDayMode;
+
+// ── Historia klienta po numerze telefonu (zakładka Wydane) ──
+function _klientParseDate(s) {
+  if (!s) return 0;
+  const p = String(s).split(' ')[0].split('.');
+  if (p.length < 2) return 0;
+  const d = parseInt(p[0]), m = parseInt(p[1]) - 1;
+  const y = p.length >= 3 ? parseInt(p[2]) : new Date().getFullYear();
+  const t = new Date(y, m, d).getTime();
+  return isNaN(t) ? 0 : t;
+}
+function _klientEntryDate(e) {
+  return _klientParseDate(e.dataWydania)
+    || _klientParseDate(e.raportKoncowy && e.raportKoncowy.dataZakonczenia)
+    || _klientParseDate(e.label)
+    || 0;
+}
+function openKlientHistoria(tel) {
+  const digits = String(tel || '').replace(/\D/g, '');
+  if (!digits) return;
+  const all = [];
+  getHistory().forEach(e => {
+    all.push(Object.assign({}, e, { _status: e.raportKoncowy ? 'wydanie' : 'historia' }));
+  });
+  getArchive().forEach(e => {
+    all.push(Object.assign({}, e, { _status: 'archiwum' }));
+  });
+  const matched = all.filter(e => String(e.tel || '').replace(/\D/g, '') === digits);
+  matched.sort((a, b) => _klientEntryDate(b) - _klientEntryDate(a));
+
+  $('klient-historia-tel').textContent = tel ? String(tel) : digits;
+
+  const list = $('klient-historia-list');
+  const summary = $('klient-historia-summary');
+
+  if (!matched.length) {
+    summary.innerHTML = '';
+    list.innerHTML = emptyStateHTML({ emptyTitle: 'Brak historii', emptySub: 'Nie znaleziono innych zleceń tego numeru.' });
+    $('klient-historia-modal').style.display = 'flex';
+    return;
+  }
+
+  const sumNum = matched.reduce((acc, e) => acc + (parseFloat(String(e.total || '').replace(/\s/g, '').replace(',', '.')) || 0), 0);
+  summary.innerHTML =
+    '<span><b style="color:var(--text);font-weight:800;">' + matched.length + '</b> ' + (matched.length === 1 ? 'naprawa' : (matched.length < 5 ? 'naprawy' : 'napraw')) + '</span>'
+    + '<span>Łącznie: <b style="color:#f59e0b;font-weight:800;">' + fmt(sumNum) + ' zł</b></span>';
+
+  const badge = (st) => {
+    if (st === 'archiwum') return '<span style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;padding:2px 8px;border-radius:999px;background:rgba(167,139,250,0.18);color:#a78bfa;">Wydane</span>';
+    if (st === 'wydanie')  return '<span style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;padding:2px 8px;border-radius:999px;background:rgba(34,197,94,0.18);color:#22c55e;">Do wydania</span>';
+    return '<span style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;padding:2px 8px;border-radius:999px;background:rgba(239,68,68,0.18);color:#ef4444;">Przyjęte</span>';
+  };
+  const stripYear = s => s ? String(s).split(' ')[0].split('.').slice(0, 2).join('.') : '';
+
+  list.innerHTML = matched.map(e => {
+    const nameParts = [(e.marka || null), e.model].filter(Boolean).join(' ') || 'Rower';
+    const dates = [];
+    if (e.label) dates.push('Przyjęto: ' + stripYear(e.label));
+    if (e.raportKoncowy && e.raportKoncowy.dataZakonczenia) dates.push('Naprawa: ' + stripYear(e.raportKoncowy.dataZakonczenia));
+    if (e.dataWydania) dates.push('Wydano: ' + stripYear(e.dataWydania));
+    const kolorBar = (typeof makeKolorBarHTML === 'function') ? makeKolorBarHTML(e.kolor || '') : '';
+    return '<div class="history-item" onclick="openKlientHistoriaDetail(\'' + e._status + '\',' + (e.id ?? 'null') + ')" style="position:relative;border-color:var(--border);background:var(--bg);margin-bottom:0;cursor:pointer;">'
+      + kolorBar
+      + '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">'
+        + '<div style="min-width:0;display:flex;flex-direction:column;gap:3px;">'
+          + '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">'
+            + '<span style="font-size:15px;font-weight:700;color:#fff;">' + escHTML(nameParts) + '</span>'
+            + ((e.ebike || e.marka === 'E-BIKE') ? '<span style="font-size:14px;">⚡</span>' : '')
+            + badge(e._status)
+          + '</div>'
+          + (e.kolor ? '<div style="font-size:12px;color:var(--text3);">Kolor: ' + escHTML(e.kolor) + '</div>' : '')
+          + (dates.length ? '<div style="font-size:12px;color:var(--text2);">' + dates.map(escHTML).join(' · ') + '</div>' : '')
+          + (e.kodOdbioru ? '<div style="font-size:12px;font-weight:700;color:#f59e0b;letter-spacing:1px;">🔑 ' + escHTML(e.kodOdbioru) + '</div>' : '')
+        + '</div>'
+        + '<div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">'
+          + '<span style="text-align:right;font-size:18px;font-weight:800;color:#fff;">' + escHTML(e.total || '') + '</span>'
+          + '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>'
+        + '</div>'
+      + '</div>'
+      + '</div>';
+  }).join('');
+
+  $('klient-historia-modal').style.display = 'flex';
+}
+window.openKlientHistoria = openKlientHistoria;
+
+// Klik w zlecenie w historii klienta → otwórz szczegóły danego zlecenia
+function openKlientHistoriaDetail(status, id) {
+  if (id === null || id === undefined) return;
+  $('klient-historia-modal').style.display = 'none';
+  try {
+    if (status === 'archiwum')      openPodsumowanieWydane(id);
+    else if (status === 'wydanie')  openPodsumowanieDoWydania(id);
+    else                            openPodgladZlecenia(id);
+  } catch (e) {}
+}
+window.openKlientHistoriaDetail = openKlientHistoriaDetail;
+
+// ── Przypomnienie o kopii, gdy ostatnia synchronizacja > 24h ──
+const BACKUP_REMINDER_DISMISS_KEY = 'serwis-backup-reminder-dismissed';
+function checkBackupReminder() {
+  const el = $('backup-reminder');
+  if (!el) return;
+  // Nie pokazuj, jeśli użytkownik ukrył w ciągu ostatnich 6h.
+  const dismissedAt = parseInt(localStorage.getItem(BACKUP_REMINDER_DISMISS_KEY) || '0', 10);
+  if (dismissedAt && (Date.now() - dismissedAt) < 6 * 60 * 60 * 1000) {
+    el.style.display = 'none';
+    return;
+  }
+  const toMs = v => { const t = v ? new Date(v).getTime() : 0; return isNaN(t) ? 0 : t; };
+  const lastSyncMs   = toMs(localStorage.getItem('gdrive-last-sync'));
+  const lastLocalMs  = toMs(localStorage.getItem('last-backup-local'));
+  const lastGdriveMs = toMs(localStorage.getItem('last-backup-gdrive'));
+  const lastBackupMs = Math.max(lastSyncMs, lastLocalMs, lastGdriveMs);
+  const DAY = 24 * 60 * 60 * 1000;
+  const ageMs = lastBackupMs ? (Date.now() - lastBackupMs) : Infinity;
+  if (ageMs <= DAY) { el.style.display = 'none'; return; }
+
+  let sub;
+  if (!lastBackupMs) {
+    sub = 'Nie wykryto żadnej kopii. Zabezpiecz dane — wykonaj synchronizację lub kopię.';
+  } else {
+    const days = Math.floor(ageMs / DAY);
+    const when = days >= 1 ? (days === 1 ? '1 dzień' : days + ' dni') : 'ponad dobę';
+    sub = 'Ostatnia kopia ' + when + ' temu. Warto zabezpieczyć dane.';
+  }
+  $('backup-reminder-sub').textContent = sub;
+  el.style.display = 'block';
+}
+function dismissBackupReminder() {
+  localStorage.setItem(BACKUP_REMINDER_DISMISS_KEY, String(Date.now()));
+  const el = $('backup-reminder');
+  if (el) el.style.display = 'none';
+}
+window.checkBackupReminder = checkBackupReminder;
+window.dismissBackupReminder = dismissBackupReminder;
+document.addEventListener('DOMContentLoaded', () => { setTimeout(checkBackupReminder, 300); });
+
+// ── Wyszukiwarka globalna (Administracja) ──
+function openGlobalSearch() {
+  $('global-search-modal').style.display = 'block';
+  setTimeout(() => { const q = $('gs-query'); if (q) q.focus(); }, 60);
+  runGlobalSearch();
+}
+function closeGlobalSearch() {
+  $('global-search-modal').style.display = 'none';
+  $('start-overlay').style.display = 'flex';
+}
+function resetGlobalSearch() {
+  ['gs-query','gs-date-from','gs-date-to','gs-marka','gs-min','gs-max'].forEach(id => { const el = $(id); if (el) el.value = ''; });
+  ['gs-src-historia','gs-src-wydanie','gs-src-archiwum'].forEach(id => { const el = $(id); if (el) el.checked = true; });
+  const k = $('gs-src-kosz'); if (k) k.checked = false;
+  runGlobalSearch();
+}
+window.openGlobalSearch = openGlobalSearch;
+window.closeGlobalSearch = closeGlobalSearch;
+window.resetGlobalSearch = resetGlobalSearch;
+
+function _gsStatusMeta(st) {
+  if (st === 'archiwum') return { label: 'Wydane',      color: '#a78bfa', bg: 'rgba(167,139,250,0.18)' };
+  if (st === 'wydanie')  return { label: 'Do wydania',  color: '#22c55e', bg: 'rgba(34,197,94,0.18)' };
+  if (st === 'kosz')     return { label: 'Kosz',        color: '#9ca3af', bg: 'rgba(156,163,175,0.18)' };
+  return { label: 'Przyjęte', color: '#ef4444', bg: 'rgba(239,68,68,0.18)' };
+}
+function runGlobalSearch() {
+  const resultsEl = $('gs-results');
+  const summaryEl = $('gs-summary');
+  if (!resultsEl) return;
+
+  const q       = ($('gs-query').value || '').trim();
+  const markaF  = ($('gs-marka').value || '').trim().toUpperCase();
+  const minV    = parseFloat(($('gs-min').value || '').replace(',', '.'));
+  const maxV    = parseFloat(($('gs-max').value || '').replace(',', '.'));
+  const fromMs  = $('gs-date-from').value ? new Date($('gs-date-from').value + 'T00:00:00').getTime() : null;
+  const toMs    = $('gs-date-to').value ? new Date($('gs-date-to').value + 'T23:59:59').getTime() : null;
+
+  const pool = [];
+  if ($('gs-src-historia').checked || $('gs-src-wydanie').checked) {
+    getHistory().forEach(e => {
+      const st = e.raportKoncowy ? 'wydanie' : 'historia';
+      if (st === 'wydanie' && !$('gs-src-wydanie').checked) return;
+      if (st === 'historia' && !$('gs-src-historia').checked) return;
+      pool.push(Object.assign({}, e, { _status: st }));
+    });
+  }
+  if ($('gs-src-archiwum').checked) getArchive().forEach(e => pool.push(Object.assign({}, e, { _status: 'archiwum' })));
+  if ($('gs-src-kosz').checked && typeof getKosz === 'function') getKosz().forEach(e => pool.push(Object.assign({}, e, { _status: 'kosz' })));
+
+  const totalToNum = e => parseFloat(String(e.total || '').replace(/\s/g, '').replace(',', '.')) || 0;
+
+  let matched = pool.filter(e => {
+    if (q && !_zlecenieMatch(e, q)) return false;
+    if (markaF) {
+      const name = [e.marka, e.model, e.kolor].filter(Boolean).join(' ').toUpperCase();
+      if (!name.includes(markaF)) return false;
+    }
+    if (!isNaN(minV) || !isNaN(maxV)) {
+      const v = totalToNum(e);
+      if (!isNaN(minV) && v < minV) return false;
+      if (!isNaN(maxV) && v > maxV) return false;
+    }
+    if (fromMs !== null || toMs !== null) {
+      const d = _klientEntryDate(e);
+      if (!d) return false;
+      if (fromMs !== null && d < fromMs) return false;
+      if (toMs !== null && d > toMs) return false;
+    }
+    return true;
+  });
+
+  matched.sort((a, b) => _klientEntryDate(b) - _klientEntryDate(a));
+
+  const sumNum = matched.reduce((acc, e) => acc + totalToNum(e), 0);
+  summaryEl.innerHTML = matched.length
+    ? ('Znaleziono: <b style="color:var(--text);font-weight:800;">' + matched.length + '</b> · Suma: <b style="color:#f59e0b;font-weight:800;">' + fmt(sumNum) + ' zł</b>')
+    : '';
+
+  if (!matched.length) {
+    resultsEl.innerHTML = emptyStateHTML({ query: q || markaF, emptyTitle: 'Brak wyników', emptySub: 'Zmień zapytanie lub filtry.' });
+    return;
+  }
+
+  const stripYear = s => s ? String(s).split(' ')[0].split('.').slice(0, 2).join('.') : '';
+  resultsEl.innerHTML = matched.map(e => {
+    const meta = _gsStatusMeta(e._status);
+    const nameParts = [(e.marka || null), e.model].filter(Boolean).join(' ') || 'Rower';
+    const dates = [];
+    if (e.label) dates.push('Przyjęto: ' + stripYear(e.label));
+    if (e.dataWydania) dates.push('Wydano: ' + stripYear(e.dataWydania));
+    const kolorBar = (typeof makeKolorBarHTML === 'function') ? makeKolorBarHTML(e.kolor || '') : '';
+    return '<div class="history-item" style="position:relative;border-color:var(--border);background:var(--bg);margin-bottom:0;cursor:default;">'
+      + kolorBar
+      + '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">'
+        + '<div style="min-width:0;display:flex;flex-direction:column;gap:3px;">'
+          + '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">'
+            + '<span style="font-size:15px;font-weight:700;color:#fff;">' + escHTML(nameParts) + '</span>'
+            + ((e.ebike || e.marka === 'E-BIKE') ? '<span style="font-size:14px;">⚡</span>' : '')
+            + '<span style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;padding:2px 8px;border-radius:999px;background:' + meta.bg + ';color:' + meta.color + ';">' + meta.label + '</span>'
+          + '</div>'
+          + (e.tel ? '<div style="font-size:13px;font-weight:600;color:#3b7cf4;">' + escHTML(e.tel) + '</div>' : '')
+          + (dates.length ? '<div style="font-size:12px;color:var(--text2);">' + dates.map(escHTML).join(' · ') + '</div>' : '')
+          + (e.kodOdbioru ? '<div style="font-size:12px;font-weight:700;color:#f59e0b;letter-spacing:1px;">🔑 ' + escHTML(e.kodOdbioru) + '</div>' : '')
+        + '</div>'
+        + '<div style="text-align:right;flex-shrink:0;font-size:18px;font-weight:800;color:#fff;">' + escHTML(e.total || '') + '</div>'
+      + '</div>'
+      + '</div>';
+  }).join('');
+}
+window.runGlobalSearch = runGlobalSearch;
+document.addEventListener('DOMContentLoaded', applyDayMode);
+// Zastosuj jak najwcześniej (przed pełnym załadowaniem), by uniknąć migotania.
+try { if (localStorage.getItem(DAY_MODE_KEY) === '1') document.documentElement.classList.add('day-mode'); } catch (e) {}
 function closeHistory() { $('history-overlay').style.display = 'none'; }
 function closeHistoryToMenu() { closeHistory(); $('start-overlay').style.display = 'flex'; }
 function closeHistoryOutside(e) { /* pełny ekran — nieaktywne */ }
@@ -4741,7 +5315,7 @@ function closeHistoryOutside(e) { /* pełny ekran — nieaktywne */ }
 // Helper: parsuje DD.MM lub DD.MM.YYYY i zwraca skrót dnia tygodnia
 function dayOfWeek(dateStr) {
   if (!dateStr) return '';
-  const parts = dateStr.split('.');
+  const parts = _parseTerminParts(dateStr);
   if (parts.length < 2) return '';
   const d = parseInt(parts[0]), m = parseInt(parts[1]) - 1;
   const y = parts.length >= 3 ? parseInt(parts[2]) : new Date().getFullYear();
@@ -4757,7 +5331,7 @@ function getPrzyjeteList(filterTel) {
   const currentYear = new Date().getFullYear();
   const toDate = t => {
     if (!t) return new Date(9999, 0, 1);
-    const parts = t.split('.');
+    const parts = _parseTerminParts(t);
     if (parts.length < 2) return new Date(9999, 0, 1);
     const d = parseInt(parts[0]), m = parseInt(parts[1]) - 1;
     const y = parts.length >= 3 ? parseInt(parts[2]) : currentYear;
@@ -4849,9 +5423,10 @@ function _buildZlecenieDetailsHTML(entry) {
 
 function renderHistory(filterTel) {
   const list = $('history-list');
+  if (typeof updateTabCounts === 'function') updateTabCounts();
   const sorted = getPrzyjeteList(filterTel);
   if (!sorted.length) {
-    list.innerHTML = '<div class="history-empty">Brak zapisanych wycen</div>';
+    list.innerHTML = emptyStateHTML({ query: filterTel, emptyTitle: 'Brak przyjętych zleceń', emptySub: 'Nowe zlecenia dodasz przyciskiem DODAJ.' });
     return;
   }
   list.innerHTML = '';
@@ -4958,7 +5533,7 @@ function renderHistory(filterTel) {
         <button class="btn-history-load" style="background:#3b7cf4;border-color:#3b7cf4;" onclick="loadWycena(${entry.id})" title="Edytuj"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
         <div style="margin-left:auto;display:flex;gap:6px;">
           <button class="btn-history-load btn-history-icon btn-history-icon-orange-fill" onclick="openPodgladZlecenia(${entry.id})" title="Info">i</button>
-          <button class="btn-history-load" style="background:#ef4444;border-color:#ef4444;font-size:15px;font-weight:700;letter-spacing:.5px;" onclick="openRaport(${entry.id})">NAPRAWA</button>
+          <button class="btn-history-load" style="background:#ef4444;border-color:#ef4444;font-weight:700;letter-spacing:.5px;" onclick="openRaport(${entry.id})"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg> NAPRAWA</button>
         </div>
       </div>
     `;
@@ -5104,6 +5679,7 @@ function kopiaZapasowalokalnie() {
 
   localStorage.setItem('last-backup-local', now.toISOString());
   _updateKopiaLabels();
+  if (typeof checkBackupReminder === 'function') checkBackupReminder();
 }
 
 
@@ -5181,6 +5757,7 @@ async function kopiaGoogleDrive() {
     // Zapisz datę kopii
     localStorage.setItem('last-backup-gdrive', now.toISOString());
     _updateKopiaLabels();
+    if (typeof checkBackupReminder === 'function') checkBackupReminder();
 
   } catch(e) {
     console.error('[kopia gdrive]', e);
@@ -5296,6 +5873,7 @@ function switchTab(tab) {
   }
 
   if (tabKosz) tabKosz.style.display = (tab === 'archiwum') ? '' : 'none';
+  updateTabCounts();
 }
 
 function markSmsSent(id, el) {
@@ -5330,10 +5908,11 @@ function getDoWydaniaList(filterTel) {
 // ── Renderowanie zakładki 'Do wydania' ──
 function renderWydanie(filterTel) {
   const list = $('wydanie-list');
+  if (typeof updateTabCounts === 'function') updateTabCounts();
   const doWydania = getDoWydaniaList(filterTel);
 
   if (!doWydania.length) {
-    list.innerHTML = '<div class="history-empty">Brak zleceń do wydania</div>';
+    list.innerHTML = emptyStateHTML({ query: filterTel, emptyTitle: 'Brak zleceń do wydania', emptySub: 'Zlecenia po naprawie pojawią się tutaj.' });
     return;
   }
   list.innerHTML = '';
@@ -5386,7 +5965,7 @@ function renderWydanie(filterTel) {
         <button class="btn-history-load" style="background:#6b7280;border-color:#6b7280;display:inline-flex;align-items:center;justify-content:center;" onclick="cofnijDoAktualne(${entry.id})" title="Cofnij do przyjętych"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg></button>
         <button class="btn-history-load" style="background:#3b7cf4;border-color:#3b7cf4;" onclick="openRaportEdycja(${entry.id})" title="Edytuj"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
         <div style="margin-left:auto;display:flex;gap:6px;">
-          <button class="btn-history-load" style="background:#ef4444;border-color:#ef4444;font-size:15px;font-weight:700;letter-spacing:.5px;" onclick="openPodsumowanieDoWydania(${entry.id})">WYDAJ</button>
+          <button class="btn-history-load" style="background:#ef4444;border-color:#ef4444;font-weight:700;letter-spacing:.5px;" onclick="openPodsumowanieDoWydania(${entry.id})"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg> WYDAJ</button>
         </div>
       </div>
     `;
@@ -5399,8 +5978,8 @@ function renderWydanie(filterTel) {
       list.appendChild(buildCard(g.list[0]));
     } else {
       const wydajBtn = '<button type="button" class="btn-history-load" onclick="openPodsumowanieGrupowe(\'' + g.tel + '\')" '
-        + 'style="background:#ef4444;border-color:#ef4444;font-size:15px;font-weight:700;letter-spacing:.5px;">'
-        + 'WYDAJ WSZYSTKIE (' + g.list.length + ')</button>';
+        + 'style="background:#ef4444;border-color:#ef4444;font-weight:700;letter-spacing:.5px;">'
+        + '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg> WYDAJ WSZYSTKIE (' + g.list.length + ')</button>';
       list.appendChild(_buildGrupaBox(g.list.map(buildCard), {
         telDisplay: g.telDisplay,
         borderColor: 'rgba(34,197,94,0.55)',
@@ -5579,13 +6158,14 @@ window.generujZleceniaPrzyjete = generujZleceniaPrzyjete;
 // ── Renderowanie zakładki 'Wydane' ──
 function renderArchive(filterStr) {
   const list = $('archive-list');
+  if (typeof updateTabCounts === 'function') updateTabCounts();
   let arch = getArchive();
   // Filtruj po numerze telefonu, kodzie odbioru lub nazwie roweru
   if (filterStr && filterStr.trim().length >= 2) {
     arch = arch.filter(e => _zlecenieMatch(e, filterStr));
   }
   if (!arch.length) {
-    list.innerHTML = '<div class="history-empty">Brak zarchiwizowanych zleceń</div>';
+    list.innerHTML = emptyStateHTML({ query: filterStr, emptyTitle: 'Brak wydanych zleceń', emptySub: 'Wydane zlecenia trafiają do tego archiwum.' });
     return;
   }
   // Sortuj po dacie wydania — od najnowszych
@@ -5634,7 +6214,7 @@ function renderArchive(filterStr) {
             '<span style="font-size:17px;font-weight:700;color:#fff;">' + escHTML(nameParts || '') + '</span>' + ((entry.ebike || entry.marka === 'E-BIKE') ? '<span style="margin-left:5px;font-size:15px;" title="e-Bike">⚡</span>' : '') +
           '</div>' +
           '<div style="display:flex;align-items:center;gap:8px;margin-top:2px;flex-wrap:wrap;">' +
-            (entry.tel ? '<div style="display:flex;align-items:center;gap:4px;font-size:16px;font-weight:600;color:#3b7cf4;"><svg width="12" height="12" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>' + escHTML(entry.tel) + '</div>' : '') +
+            (entry.tel ? '<div onclick="event.stopPropagation();openKlientHistoria(\'' + String(entry.tel).replace(/[^0-9+]/g,'') + '\')" title="Historia klienta — wszystkie naprawy" style="display:flex;align-items:center;gap:4px;font-size:16px;font-weight:600;color:#3b7cf4;cursor:pointer;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>' + escHTML(entry.tel) + '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:1px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>' : '') +
             (entry.kodOdbioru ? '<div style="font-size:14px;font-weight:800;color:#f59e0b;letter-spacing:2px;">🔑 ' + escHTML(entry.kodOdbioru) + '</div>' : '') +
           '</div>' +
           (przyjęcieLine ? '<div style="font-size:13px;color:#ef4444;font-weight:500;margin-top:2px;">' + escHTML(przyjęcieLine) + '</div>' : '') +
@@ -5781,7 +6361,7 @@ function renderKosz(filterTel) {
   }
 
   if (!kosz.length) {
-    list.innerHTML = '<div class="history-empty">Kosz jest pusty</div>';
+    list.innerHTML = emptyStateHTML({ query: filterTel, emptyTitle: 'Kosz jest pusty', emptySub: 'Usunięte zlecenia możesz tu przywrócić.' });
     return;
   }
   list.innerHTML = '';
@@ -6647,35 +7227,18 @@ function openModal() {
     ebikeBtn.style.color = active ? '#22c55e' : 'var(--text3)';
   }
 
-  const kolorInnyEl = $('modal-kolor-inny');
   $('modal-kolor').value = kolor;
-  // Highlight active swatch
-  document.querySelectorAll('.kolor-swatch').forEach(btn => {
-    const k = String(kolor || '').toUpperCase();
-    const parts = k.includes('/') ? k.split('/').map(x => x.trim()) : [k];
-    const isSelected = parts.includes(btn.dataset.val) || (kolor && !document.querySelector('.kolor-swatch[data-val="'+kolor+'"]') && btn.dataset.val === 'INNY');
-    btn.style.outline = isSelected ? '3px solid #fff' : 'none';
-    btn.style.outlineOffset = '2px';
-  });
-  if (kolor && !document.querySelector('.kolor-swatch[data-val="' + kolor + '"]') && !String(kolor).includes('/')) {
-    kolorInnyEl.value = kolor;
-    kolorInnyEl.style.display = 'block';
-  } else {
-    kolorInnyEl.value = '';
-    kolorInnyEl.style.display = 'none';
-  }
-  updateModalKolorPreview();
+  setKolorPickerFromValue(kolor);
 
   $('modal-tel').value = savedTel;
   // Wczytaj termin
-  const savedTermin = $('cf-termin').value.trim();
+  const savedTermin = _normalizeTerminStr($('cf-termin').value.trim());
   if (savedTermin) {
     $('modal-termin').value = savedTermin;
   } else {
     $('modal-termin').value = '';
   }
-  document.querySelectorAll('.btn-termin').forEach(b => b.classList.remove('active'));
-  initTerminQuickBtns();
+  initTerminCalendar();
   $('modal-overlay').style.display = 'block';
   setTimeout(() => $('modal-marka-sel')?.focus(), 100);
 }
@@ -6701,7 +7264,7 @@ function closeModal() {
     return;
   }
   // Blokada niedzieli
-  const terminCheck = $('modal-termin').value.trim();
+  const terminCheck = _normalizeTerminStr($('modal-termin').value);
   if (checkTerminSunday(terminCheck)) {
     errorEl.innerHTML = '⛔ NIEDZIELA – wybierz inną datę';
     errorEl.style.display = 'block';
@@ -6712,10 +7275,8 @@ function closeModal() {
   $('modal-marka').style.borderColor = '';
   $('modal-tel').style.borderColor = '';
 
-  const kolorSel = $('modal-kolor').value;
-  const kolorInny = $('modal-kolor-inny').value.trim();
-  const kolor = kolorSel === 'INNY' ? kolorInny : kolorSel;
-  const terminVal = $('modal-termin').value.trim();
+  const kolor = $('modal-kolor').value;
+  const terminVal = _normalizeTerminStr($('modal-termin').value);
   $('cf-marka').value  = marka;
   $('cf-ebike').value = ($('modal-ebike-btn') && $('modal-ebike-btn').dataset.active === '1') ? '1' : '0';
   $('cf-model').value  = model;
@@ -6772,9 +7333,7 @@ function cancelModal() {
 
   $('modal-marka').value = '';
   $('modal-kolor').value = '';
-  $('modal-kolor-inny').value = '';
-  $('modal-kolor-inny').style.display = 'none';
-  document.querySelectorAll('.kolor-swatch').forEach(b => b.style.outline = 'none');
+  if (typeof setKolorPickerFromValue === 'function') setKolorPickerFromValue('');
   $('modal-tel').value = '';
   $('modal-termin').value = '';
   $('modal-error').style.display = 'none';
@@ -6791,23 +7350,109 @@ function cancelModal() {
 window.cancelModal = cancelModal;
 window.openModal = openModal;
 
-function updateModalKolorPreview() {
-  const box = $('modal-kolor-preview');
-  if (!box) return;
-  const kolorSel = ($('modal-kolor') || { value:'' }).value || '';
-  const kolorInny = ($('modal-kolor-inny') || { value:'' }).value.trim();
-  const finalKolor = kolorSel === 'INNY' ? kolorInny : kolorSel;
-  const bar = makeKolorBarHTML(finalKolor || '');
-  const sel = $('modal-marka-sel');
-  const opt = sel && sel.selectedOptions && sel.selectedOptions[0];
-  const markaPart = opt ? String(opt.textContent || '').trim() : '';
-  const modelVal = (($('modal-marka') || {}).value || '').trim().toUpperCase();
-  const parts = [];
-  if (markaPart) parts.push(escHTML(markaPart));
-  if (modelVal) parts.push(escHTML(modelVal));
-  const label = parts.length ? parts.join(' ') : 'MARKA MODEL';
-  box.innerHTML = (bar || '') + '<span class="mkp-text">' + label + '</span>';
+// ── Picker kolorów: 2 przesuwane „kółka" na skali RGB ──
+const KOLOR_SCALE = [
+  [0.00, [0, 0, 0]], [0.06, [255, 0, 0]], [0.16, [255, 140, 0]], [0.26, [255, 235, 0]],
+  [0.38, [0, 190, 40]], [0.50, [0, 200, 200]], [0.62, [20, 80, 255]], [0.74, [150, 0, 255]],
+  [0.86, [150, 150, 150]], [0.94, [60, 60, 60]], [1.00, [0, 0, 0]]
+];
+function _hex2(n) { return Math.max(0, Math.min(255, n)).toString(16).padStart(2, '0'); }
+function kolorAtFraction(f) {
+  f = Math.max(0, Math.min(1, f));
+  for (let i = 1; i < KOLOR_SCALE.length; i++) {
+    const a = KOLOR_SCALE[i - 1], b = KOLOR_SCALE[i];
+    if (f <= b[0]) {
+      const t = (f - a[0]) / ((b[0] - a[0]) || 1);
+      const r = Math.round(a[1][0] + (b[1][0] - a[1][0]) * t);
+      const g = Math.round(a[1][1] + (b[1][1] - a[1][1]) * t);
+      const bl = Math.round(a[1][2] + (b[1][2] - a[1][2]) * t);
+      return '#' + _hex2(r) + _hex2(g) + _hex2(bl);
+    }
+  }
+  return '#000000';
 }
+function _isBlackCss(css) {
+  const c = String(css || '').toLowerCase();
+  return c === '#000000' || c === '#111' || c === '#111111';
+}
+function _fractionForColor(hex, preferEnd) {
+  const css = String(hex || '').toLowerCase();
+  if (_isBlackCss(css)) return preferEnd ? 1 : 0;
+  const h = String(hex || '').replace('#', '');
+  if (h.length !== 6) return 0;
+  const tr = parseInt(h.slice(0, 2), 16), tg = parseInt(h.slice(2, 4), 16), tb = parseInt(h.slice(4, 6), 16);
+  let best = 0, bestD = Infinity;
+  for (let f = 0; f <= 1.0001; f += 0.004) {
+    const c = kolorAtFraction(f).replace('#', '');
+    const dr = parseInt(c.slice(0, 2), 16) - tr, dg = parseInt(c.slice(2, 4), 16) - tg, db = parseInt(c.slice(4, 6), 16) - tb;
+    const d = dr * dr + dg * dg + db * db;
+    if (d < bestD) { bestD = d; best = f; }
+  }
+  return best;
+}
+let _kolorFrac = [0, 1];
+function _updateKolorPickerUI() {
+  [0, 1].forEach(i => {
+    const col = kolorAtFraction(_kolorFrac[i]);
+    const handle = $('kolor-handle-' + i);
+    if (handle) { handle.style.left = 'clamp(15px, ' + (_kolorFrac[i] * 100) + '%, calc(100% - 15px))'; handle.style.background = col; }
+  });
+  const c0 = kolorAtFraction(_kolorFrac[0]);
+  const c1 = kolorAtFraction(_kolorFrac[1]);
+  const val = (c0.toLowerCase() === c1.toLowerCase()) ? c0 : (c0 + '/' + c1);
+  const hid = $('modal-kolor');
+  if (hid) hid.value = val;
+}
+function setKolorPickerFromValue(value) {
+  const v = String(value || '').trim();
+  let a = '', b = '';
+  if (v.includes('/')) { const p = v.split('/'); a = (p[0] || '').trim(); b = (p[1] || '').trim(); }
+  else { a = v; b = ''; }
+  const toFrac = (tok, preferEnd) => {
+    if (!tok) return preferEnd ? 1 : 0;
+    const css = _kolorCss(tok);
+    return css ? _fractionForColor(css, preferEnd) : (preferEnd ? 1 : 0);
+  };
+  _kolorFrac[0] = a ? toFrac(a, false) : 0;
+  _kolorFrac[1] = b ? toFrac(b, true) : 1;
+  _updateKolorPickerUI();
+}
+function _kolorPickerInit() {
+  const track = $('kolor-track');
+  if (!track || track.dataset.bound) return;
+  track.dataset.bound = '1';
+  let dragIdx = null;
+  const fracFromX = clientX => {
+    const r = track.getBoundingClientRect();
+    return Math.max(0, Math.min(1, (clientX - r.left) / (r.width || 1)));
+  };
+  [0, 1].forEach(i => {
+    const h = $('kolor-handle-' + i);
+    if (!h) return;
+    h.addEventListener('pointerdown', e => {
+      e.preventDefault(); e.stopPropagation();
+      dragIdx = i;
+      try { h.setPointerCapture(e.pointerId); } catch (_) {}
+    });
+  });
+  track.addEventListener('pointerdown', e => {
+    const f = fracFromX(e.clientX);
+    dragIdx = Math.abs(_kolorFrac[0] - f) <= Math.abs(_kolorFrac[1] - f) ? 0 : 1;
+    _kolorFrac[dragIdx] = f;
+    _updateKolorPickerUI();
+  });
+  window.addEventListener('pointermove', e => {
+    if (dragIdx === null) return;
+    _kolorFrac[dragIdx] = fracFromX(e.clientX);
+    _updateKolorPickerUI();
+  });
+  window.addEventListener('pointerup', () => { dragIdx = null; });
+  _updateKolorPickerUI();
+}
+window.setKolorPickerFromValue = setKolorPickerFromValue;
+window._kolorPickerInit = _kolorPickerInit;
+
+function updateModalKolorPreview() { /* podgląd marki/modelu usunięty */ }
 
 function openNotatkaModal() {
   const ta = $('notatka-serwisowa');
@@ -6827,62 +7472,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const markaSel = $('modal-marka-sel');
   if (markaSel) {
     buildCsel(markaSel, 'full left');
-    markaSel.addEventListener('change', updateModalKolorPreview);
   }
-  const modalModelInp = $('modal-marka');
-  if (modalModelInp) modalModelInp.addEventListener('input', updateModalKolorPreview);
 
-  const kolorInny = $('modal-kolor-inny');
-  const isDualColor = v => String(v || '').includes('/');
-  const parseDual = v => String(v || '').toUpperCase().split('/').map(x => x.trim()).filter(Boolean).slice(0, 2);
-  const setModalKolorValue = (a, b) => {
-    const val = b ? (a + '/' + b) : a;
-    $('modal-kolor').value = val;
-    document.querySelectorAll('.kolor-swatch').forEach(x => { x.style.outline = 'none'; });
-    [a, b].filter(Boolean).forEach(k => {
-      const el = document.querySelector('.kolor-swatch[data-val="' + k + '"]');
-      if (el) { el.style.outline = '3px solid #fff'; el.style.outlineOffset = '2px'; }
-    });
-    updateModalKolorPreview();
-  };
-  // Kolor swatches
-  document.querySelectorAll('.kolor-swatch').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const val = btn.dataset.val;
-      if (val === 'INNY') {
-        $('modal-kolor').value = 'INNY';
-        document.querySelectorAll('.kolor-swatch').forEach(b => { b.style.outline = 'none'; });
-        btn.style.outline = '3px solid #fff';
-        btn.style.outlineOffset = '2px';
-        kolorInny.style.display = 'block';
-        kolorInny.focus();
-        updateModalKolorPreview();
-      } else {
-        kolorInny.style.display = 'none';
-        kolorInny.value = '';
-        const cur = $('modal-kolor').value;
-        const parts = isDualColor(cur) ? parseDual(cur) : [String(cur || '').toUpperCase()].filter(Boolean);
-        const a = parts[0] || '';
-        const b = parts[1] || '';
-        // toggle / pick 2 colors
-        if (!a || a === 'INNY') {
-          setModalKolorValue(val, '');
-        } else if (a === val) {
-          setModalKolorValue(b || '', '');
-        } else if (!b) {
-          setModalKolorValue(a, val);
-        } else if (b === val) {
-          setModalKolorValue(a, '');
-        } else {
-          // replace second
-          setModalKolorValue(a, val);
-        }
-      }
-    });
-  });
-  if (kolorInny) {
-    kolorInny.addEventListener('input', updateModalKolorPreview);
-  }
+  // Inicjalizacja pickera kolorów (2 suwaki RGB)
+  _kolorPickerInit();
   // Tel live format
   const telEl = $('modal-tel');
   if (telEl) {
@@ -8091,6 +8684,15 @@ function setSyncDot(state) {
   } finally {
     _syncUiLock = false;
   }
+  // Skeleton podczas synchronizacji / odświeżenie listy po zakończeniu.
+  try {
+    if (state === 'busy') {
+      if (typeof showSyncSkeleton === 'function') showSyncSkeleton();
+    } else {
+      if (typeof rerenderCurrentHistoryTab === 'function') rerenderCurrentHistoryTab();
+      if (state === 'ok' && typeof checkBackupReminder === 'function') checkBackupReminder();
+    }
+  } catch (e) {}
 }
 
 function updateAdminSyncRow() {
@@ -8860,6 +9462,12 @@ window.cselSetValue = cselSetValue;
       <button onclick="$('admin-modal').style.display='none'" style="background:#ef4444;border:1px solid #ef4444;border-radius:8px;padding:6px 14px;cursor:pointer;color:#fff;font-size:13px;font-weight:700;text-transform:uppercase;">Zamknij</button>
     </div>
 
+    <button onclick="$('admin-modal').style.display='none';openGlobalSearch()" class="admin-act-btn" style="background:#0d1622;border:1px solid #3b7cf4;border-radius:12px;padding:16px 18px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;">
+      <span class="aab-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </span>
+      <span class="aab-text">Szukaj globalnie</span>
+    </button>
     <button onclick="otworzRaportZGlownego()" class="admin-act-btn" style="background:#0f0d1a;border:1px solid #4f46e5;border-radius:12px;padding:16px 18px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;">
       <span class="aab-icon">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
@@ -8887,6 +9495,75 @@ window.cselSetValue = cselSetValue;
       <button id="confirm-no" style="flex:1;padding:12px;background:none;border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:14px;font-weight:700;cursor:pointer;">Anuluj</button>
       <button id="confirm-yes" style="flex:1;padding:12px;background:var(--red);border:1px solid var(--red);border-radius:8px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;">Potwierdź</button>
     </div>
+  </div>
+</div>
+
+<!-- Historia klienta po numerze telefonu -->
+<div id="klient-historia-modal" onclick="if(event.target===this)this.style.display='none'" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.78);align-items:center;justify-content:center;padding:12px;">
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:0;max-width:560px;width:100%;max-height:88vh;display:flex;flex-direction:column;overflow:hidden;">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 18px;border-bottom:1px solid var(--border);">
+      <div style="display:flex;flex-direction:column;gap:2px;min-width:0;">
+        <span style="font-size:16px;font-weight:800;color:#fff;">Historia klienta</span>
+        <span id="klient-historia-tel" style="font-size:13px;font-weight:600;color:#3b7cf4;"></span>
+      </div>
+      <button onclick="$('klient-historia-modal').style.display='none'" style="flex-shrink:0;background:#ef4444;border:1px solid #ef4444;border-radius:8px;padding:6px 14px;cursor:pointer;color:#fff;font-size:13px;font-weight:700;text-transform:uppercase;">Zamknij</button>
+    </div>
+    <div id="klient-historia-summary" style="padding:10px 18px;border-bottom:1px solid var(--border);display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--text3);"></div>
+    <div id="klient-historia-list" style="padding:12px 14px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;"></div>
+  </div>
+</div>
+
+<!-- Wyszukiwarka globalna (Administracja) -->
+<div id="global-search-modal" style="display:none;position:fixed;inset:0;z-index:1000;background:var(--bg);overflow-y:auto;">
+  <div class="app" style="padding:14px 14px 40px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;">
+      <span style="font-size:18px;font-weight:800;color:#fff;">Wyszukiwarka globalna</span>
+      <button onclick="closeGlobalSearch()" class="btn-close" style="margin-left:0;">Zamknij</button>
+    </div>
+
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:12px;">
+      <input type="text" id="gs-query" placeholder="Szukaj: telefon / rower / kod odbioru" maxlength="40"
+        style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:11px 12px;color:#fff;font-size:15px;outline:none;"
+        oninput="runGlobalSearch()" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:130px;display:flex;flex-direction:column;gap:4px;">
+          <label style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;">Data od</label>
+          <input type="date" id="gs-date-from" oninput="runGlobalSearch()" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:9px 10px;color:var(--text);font-size:14px;outline:none;">
+        </div>
+        <div style="flex:1;min-width:130px;display:flex;flex-direction:column;gap:4px;">
+          <label style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;">Data do</label>
+          <input type="date" id="gs-date-to" oninput="runGlobalSearch()" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:9px 10px;color:var(--text);font-size:14px;outline:none;">
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:130px;display:flex;flex-direction:column;gap:4px;">
+          <label style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;">Marka / model</label>
+          <input type="text" id="gs-marka" placeholder="np. KROSS" maxlength="20" oninput="runGlobalSearch()" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:9px 10px;color:#fff;font-size:14px;outline:none;text-transform:uppercase;">
+        </div>
+        <div style="flex:1;min-width:90px;display:flex;flex-direction:column;gap:4px;">
+          <label style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;">Kwota od</label>
+          <input type="number" id="gs-min" placeholder="0" inputmode="decimal" oninput="runGlobalSearch()" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:9px 10px;color:#fff;font-size:14px;outline:none;">
+        </div>
+        <div style="flex:1;min-width:90px;display:flex;flex-direction:column;gap:4px;">
+          <label style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;">Kwota do</label>
+          <input type="number" id="gs-max" placeholder="∞" inputmode="decimal" oninput="runGlobalSearch()" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:9px 10px;color:#fff;font-size:14px;outline:none;">
+        </div>
+      </div>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+        <span style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;">Zakres:</span>
+        <label style="display:inline-flex;align-items:center;gap:5px;font-size:13px;color:var(--text2);cursor:pointer;"><input type="checkbox" id="gs-src-historia" checked onchange="runGlobalSearch()"> Przyjęte</label>
+        <label style="display:inline-flex;align-items:center;gap:5px;font-size:13px;color:var(--text2);cursor:pointer;"><input type="checkbox" id="gs-src-wydanie" checked onchange="runGlobalSearch()"> Do wydania</label>
+        <label style="display:inline-flex;align-items:center;gap:5px;font-size:13px;color:var(--text2);cursor:pointer;"><input type="checkbox" id="gs-src-archiwum" checked onchange="runGlobalSearch()"> Wydane</label>
+        <label style="display:inline-flex;align-items:center;gap:5px;font-size:13px;color:var(--text2);cursor:pointer;"><input type="checkbox" id="gs-src-kosz" onchange="runGlobalSearch()"> Kosz</label>
+        <button onclick="resetGlobalSearch()" style="margin-left:auto;background:none;border:1px solid var(--border);border-radius:8px;padding:7px 12px;color:var(--text2);font-size:12px;font-weight:700;cursor:pointer;">Wyczyść</button>
+      </div>
+    </div>
+
+    <div id="gs-summary" style="padding:12px 4px 6px;font-size:13px;color:var(--text3);"></div>
+    <div id="gs-results" style="display:flex;flex-direction:column;gap:10px;"></div>
   </div>
 </div>
 
