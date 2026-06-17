@@ -5,7 +5,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SERWIS</title>
+<title>SERWIS [UI tile v4]</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <meta name="theme-color" content="#0a0a0f">
 <meta name="mobile-web-app-capable" content="yes">
@@ -17,27 +17,309 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
+  /* ── Design system v2 (test) — baza: index — główna.html ── */
   --bg: #000000;
-  --bg2: #111118;
-  --bg3: #0d0d14;
-  --border: #1e1e30;
-  --border2: #1a2a4a;
+  --bg2: #141414;
+  --bg3: #101010;
+  --border: #2a2a2a;
+  --border2: #353535;
   --blue: #3b7cf4;
-  --blue-dim: rgba(59,124,244,0.09);
-  --red: #c0392b;
+  --blue-dim: #151c28;
+  --red: #ef4444;
   --text: #e0e5f2;
   --text2: #b8c0d8;
   --text3: #7a82a0;
   --green: #22c55e;
-  --radius: 10px;
-  --radius-btn: 8px;
+  /* Semantyczne kolory */
+  --color-przyjete: #ef4444;
+  --color-naprawa: #3b7cf4;
+  --color-wydanie: #22c55e;
+  --color-archiwum: #a78bfa;
+  --color-danger: #ef4444;
+  --color-success: #16a34a;
+  --color-warning: #f59e0b;
+  --color-neutral: #6b7280;
+  --color-info: #0891b2;
+  --color-accent: #7c3aed;
+  --color-link: #3b7cf4;
+  /* Solidne tła (bez efektu glass) */
+  --bg-panel: #141414;
+  --border-panel: #282828;
+  --bg-elevated: #1a1a1a;
+  --border-subtle: #333333;
+  --solid-danger-bg: #221515;
+  --solid-danger-border: #5c3030;
+  --solid-naprawa-bg: #151c28;
+  --solid-naprawa-border: #2a4568;
+  --solid-wydanie-bg: #152218;
+  --solid-wydanie-border: #2a5538;
+  --solid-warning-bg: #221c12;
+  --solid-warning-border: #5c4828;
+  --solid-info-bg: #121f22;
+  --solid-info-border: #284858;
+  --solid-archiwum-bg: #1a1528;
+  --solid-archiwum-border: #443068;
+  --solid-accent-bg: #1a1528;
+  --solid-accent-border: #403080;
+  --solid-tab-historia-bg: #281818;
+  --solid-tab-historia-border: #6c3838;
+  --solid-tab-wydanie-bg: #182818;
+  --solid-tab-wydanie-border: #386838;
+  --solid-tab-archiwum-bg: #221828;
+  --solid-tab-archiwum-border: #584088;
+  --cal-load-low-bg: #152218;
+  --cal-load-low-border: #386838;
+  --cal-load-low-badge: #16a34a;
+  --cal-load-mid-bg: #2a1f10;
+  --cal-load-mid-border: #b45309;
+  --cal-load-mid-badge: #f59e0b;
+  --cal-load-high-bg: #281818;
+  --cal-load-high-border: #6c3838;
+  --cal-load-high-badge: #ef4444;
+  --solid-day-bg: #221c12;
+  --solid-day-border: #5c4828;
+  /* Promienie */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius: var(--radius-md);
+  --radius-btn: var(--radius-sm);
+  /* Odstępy (siatka 4px) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  /* Typografia */
+  --text-xs: 11px;
+  --text-sm: 13px;
+  --text-md: 15px;
+  --text-lg: 20px;
+  --text-xl: 32px;
   --btn-py: 8px;
   --btn-px: 14px;
-  --btn-font: 13px;
+  --btn-font: var(--text-sm);
   --btn-weight: 700;
   --typo-weight: 600;
   --typo-tracking: 0.01em;
+  --color-bar-w: 20px;
 }
+/* ═══ Design system v2 — komponenty wspólne ═══ */
+.text-primary { color: var(--text) !important; }
+.text-muted { color: var(--text2) !important; }
+.text-subtle { color: var(--text3) !important; }
+.text-inverse { color: #111827 !important; }
+
+.surface {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+.surface-elevated {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+.panel {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+}
+
+/* Ikony */
+.icon { width: 20px; height: 20px; flex-shrink: 0; display: block; }
+.icon-sm { width: 16px; height: 16px; flex-shrink: 0; display: block; }
+.icon-lg { width: 24px; height: 24px; flex-shrink: 0; display: block; }
+.icon-xl { width: 36px; height: 36px; flex-shrink: 0; display: block; }
+
+/* Przyciski — 3 poziomy */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  border-radius: var(--radius-sm);
+  padding: var(--btn-py) var(--btn-px);
+  font-size: var(--btn-font);
+  font-weight: var(--btn-weight);
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background 0.15s, border-color 0.15s, opacity 0.15s, transform 0.1s;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.btn:active { transform: scale(0.97); }
+.btn:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+/* btn-primary → ui-tile v4 */
+
+.btn-secondary {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--text2);
+}
+.btn-secondary:hover {
+  background: var(--bg-elevated);
+  border-color: var(--border-subtle);
+  color: var(--text);
+}
+
+.btn-ghost {
+  background: var(--bg-panel);
+  border-color: var(--border-panel);
+  color: var(--text2);
+}
+.btn-ghost:hover {
+  background: var(--bg-elevated);
+  border-color: var(--border-subtle);
+}
+
+.btn-block { width: 100%; display: flex; }
+.btn-lg {
+  padding: var(--space-4) var(--space-4);
+  font-size: var(--text-md);
+  border-radius: var(--radius-md);
+  min-height: 56px;
+}
+
+/* Akcje na kartach zleceń */
+.btn-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 33px;
+  padding: var(--btn-py) var(--btn-px);
+  border-radius: var(--radius-sm);
+  font-size: var(--btn-font);
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  flex-shrink: 0;
+  transition: opacity 0.15s, transform 0.1s;
+  line-height: 1;
+}
+.btn-action:active { transform: scale(0.97); }
+/* btn-action → ui-tile v4 */
+
+/* Menu główne CTA */
+.start-cta {
+  margin-bottom: var(--space-4);
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+}
+/* start-cta → ui-tile v4 */
+.start-cta-slot { flex: 0 0 80px; display: flex; align-items: center; justify-content: center; }
+.start-cta-label { flex: 1; text-align: center; }
+
+html.day-mode .text-primary,
+html.day-mode .bike-name,
+html.day-mode .history-item-total,
+html.day-mode header h1,
+html.day-mode .summary-total { color: var(--text) !important; }
+html.day-mode .start-icon-btn { background: var(--bg2); }
+/* ── Design system v3: layout, dialogi, karty ── */
+.link-tel { color: var(--color-link) !important; font-weight: 600; text-decoration: none; }
+.link-tel:hover { opacity: 0.88; }
+.text-termin { color: var(--color-warning) !important; }
+.label-caps { font-size: var(--text-xs); font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.05em; }
+
+.summary-kolor-bar,
+#summary-kolor-bar,
+#raport-summary-kolor-bar {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: var(--color-bar-w); box-sizing: border-box;
+  border-top-left-radius: var(--radius-md);
+  border-bottom-left-radius: var(--radius-md);
+  border: none; background: transparent; pointer-events: none;
+}
+.summary-card {
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4) var(--space-3) calc(var(--color-bar-w) + var(--space-3));
+  gap: var(--space-2);
+  overflow: hidden;
+}
+.summary-card--naprawa { border-color: var(--border-panel) !important; }
+.summary-body { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-3); width: 100%; min-width: 0; }
+.summary-body-left { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.summary-body-right { flex: 0 0 auto; text-align: right; min-width: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+.summary-actions-split { display: flex; gap: var(--space-2); width: 100%; flex-shrink: 0; margin-top: var(--space-1); }
+.summary-actions-split .btn-secondary { flex: 1; min-width: 0; padding: var(--space-3) 0; }
+.summary-actions-split .btn-primary { flex: 3; min-width: 0; padding: var(--space-3); }
+
+.overlay-header {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
+  padding: var(--space-2) var(--space-4) 0;
+}
+.overlay-header-title { font-size: var(--text-md); font-weight: 700; color: var(--text); min-width: 0; }
+.overlay-backdrop {
+  position: fixed; inset: 0; z-index: 999;
+  background: rgba(0,0,0,0.75);
+  display: none; align-items: center; justify-content: center;
+  padding: var(--space-3);
+}
+.overlay-backdrop.open { display: flex; }
+.dialog {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius-md); padding: var(--space-4) var(--space-4);
+  max-width: 560px; width: 100%; max-height: 88vh;
+  display: flex; flex-direction: column; gap: var(--space-3);
+  overflow: hidden;
+}
+.dialog-header { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.dialog-title { font-size: var(--text-md); font-weight: 800; color: var(--text); }
+.dialog-body { font-size: var(--text-md); font-weight: 600; color: var(--text); line-height: 1.5; text-align: center; }
+.dialog-actions { display: flex; gap: var(--space-2); }
+.dialog-actions .btn { flex: 1; padding: var(--space-3); }
+
+.stat-box {
+  margin-top: var(--space-3); border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  display: flex; justify-content: space-between; align-items: center;
+  background: var(--bg3); border: 1px solid var(--border);
+}
+.stat-box--success .stat-box-value { color: var(--color-wydanie); }
+.stat-box--accent { background: var(--solid-accent-bg); border-color: var(--solid-accent-border); }
+.stat-box--accent .stat-box-label { color: #ddd8fe; }
+.stat-box--warning { background: var(--solid-warning-bg); border-color: var(--solid-warning-border); }
+.stat-box--warning .stat-box-label { color: var(--color-warning); }
+.stat-box--warning .stat-box-value { color: var(--color-warning); font-size: var(--text-xl); letter-spacing: 4px; }
+.stat-box-label { font-size: var(--text-xs); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text); }
+.stat-box-value { font-size: var(--text-lg); font-weight: 800; color: var(--text); }
+
+.alert { border-radius: var(--radius-md); padding: var(--space-2) var(--space-3); }
+.alert--warning { background: var(--solid-warning-bg); border: 1px solid var(--solid-warning-border); }
+
+.admin-act-btn {
+  width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 14px;
+  padding: var(--space-4) var(--space-4); border-radius: var(--radius-md);
+  font-size: var(--text-md); font-weight: 700; cursor: pointer; color: var(--text);
+  background: var(--bg-panel); border: 1px solid var(--border-panel);
+  transition: background 0.15s, border-color 0.15s, transform 0.1s;
+}
+.admin-act-btn:active { transform: scale(0.99); }
+.admin-act-btn--search { border-color: var(--solid-naprawa-border); }
+.admin-act-btn--report { border-color: var(--solid-accent-border); }
+.admin-act-btn--backup { border-color: var(--solid-danger-border); }
+.admin-act-btn--update { border-color: var(--solid-wydanie-border); }
+
+.history-item-actions { display: flex; gap: var(--space-2); flex-wrap: wrap; align-items: center; }
+.history-actions-primary { margin-left: auto; display: flex; gap: var(--space-2); }
+
+/* dup btn-action v3 removed */
+
+.brand-logo { color: var(--color-danger); }
+.brand-logo-icon { fill: var(--color-danger); stroke: var(--color-danger); }
+
+#btn-usun-zlecenie.btn-action--danger-ghost { display: none; }
+
+
 
 body {
   font-family: 'Inter';
@@ -71,7 +353,7 @@ header {
   align-items: center;
   gap: 10px;
 }
-header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3px; }
+header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); letter-spacing: -0.3px; }
 
 /* ── Tabs (zlecenia) ── */
 .order-tabs{
@@ -100,13 +382,8 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
   white-space: nowrap; /* bez łamania linii */
   min-width: 0;
 }
-.order-tab.active{
-  color:#111827;
-  box-shadow: 0 0 0 2px rgba(255,255,255,0.04) inset;
-}
-#tab-historia.order-tab.active{ background:#ef4444; border-color:#ef4444; }
-#tab-wydanie.order-tab.active{ background:#22c55e; border-color:#22c55e; }
-#tab-archiwum.order-tab.active{ background:#a78bfa; border-color:#a78bfa; }
+.order-tab.active{ box-shadow: none; }
+/* tabs active → ui-tile v4 */
 
 /* Licznik zleceń przy nazwie zakładki */
 .tab-count{
@@ -118,12 +395,12 @@ header h1 { font-size: 17px; font-weight: 700; color: #fff; letter-spacing: -0.3
   font-weight:900;
   line-height:1.5;
   vertical-align:middle;
-  background:rgba(255,255,255,0.10);
+  background:var(--bg-elevated);
   color:inherit;
 }
 .tab-count.show{ display:inline-block; }
-.order-tab:not(.active) .tab-count{ background:rgba(255,255,255,0.07); color:var(--text2); }
-.order-tab.active .tab-count{ background:rgba(0,0,0,0.18); color:#111827; }
+.order-tab:not(.active) .tab-count{ background:var(--bg3); color:var(--text2); }
+.order-tab.active .tab-count{ background:var(--bg3); color:inherit; }
 
 /* ── Tryb jasny (dzienny) ── */
 html.day-mode{
@@ -132,7 +409,7 @@ html.day-mode{
   --bg3:#e4e9f1;
   --border:#d3d9e3;
   --border2:#b7c5df;
-  --blue-dim:rgba(59,124,244,0.12);
+  --blue-dim:#151c28;
   --text:#13161d;
   --text2:#3a4150;
   --text3:#6a7280;
@@ -171,7 +448,7 @@ html.day-mode .summary-total{ color:#13161d !important; }
 .sk-line{
   height:12px;
   border-radius:6px;
-  background:linear-gradient(90deg, rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.12) 80px, rgba(255,255,255,0.04) 160px);
+  background:linear-gradient(90deg, var(--bg3) 0px, var(--bg-elevated) 80px, var(--bg3) 160px);
   background-size:300px 100%;
   animation:skeleton-shimmer 1.1s ease-in-out infinite;
   margin-bottom:8px;
@@ -182,7 +459,7 @@ html.day-mode .summary-total{ color:#13161d !important; }
 .sk-row{ display:flex; gap:8px; margin-top:10px; }
 .sk-pill{
   height:28px; width:60px; border-radius:8px;
-  background:linear-gradient(90deg, rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.10) 80px, rgba(255,255,255,0.04) 160px);
+  background:linear-gradient(90deg, var(--bg3) 0px, var(--border-panel) 80px, var(--bg3) 160px);
   background-size:300px 100%;
   animation:skeleton-shimmer 1.1s ease-in-out infinite;
 }
@@ -235,7 +512,7 @@ html.day-mode .summary-total{ color:#13161d !important; }
 /* ── Summary card ── */
 .summary-card {
   background: var(--bg2);
-  border: 1px solid rgba(192,57,43,0.4);
+  border: 1px solid var(--border);
   border-left: none; /* kolor obsługuje pełny pasek #summary-kolor-bar */
   border-radius: var(--radius);
   /* Lewy padding ≥ szerokość paska (20px) + odstęp od treści */
@@ -247,40 +524,15 @@ html.day-mode .summary-total{ color:#13161d !important; }
   position: sticky;
   top: 0;
   z-index: 10;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  box-shadow: none;
 }
 #summary-card-main{
-  border-color:#c0392b !important; /* wyraźna czerwona ramka w EDYCJI */
+  border-color:var(--border) !important;
 }
-#summary-kolor-bar{
-  position:absolute;
-  left:0;
-  top:0;
-  bottom:0;
-  width:20px;
-  box-sizing:border-box;
-  border-top-left-radius:var(--radius);
-  border-bottom-left-radius:var(--radius);
-  border:none;
-  background:transparent;
-  pointer-events:none;
-}
-#raport-summary-kolor-bar{
-  position:absolute;
-  left:0;
-  top:0;
-  bottom:0;
-  width:20px;
-  box-sizing:border-box;
-  border-top-left-radius:12px;
-  border-bottom-left-radius:12px;
-  border:none;
-  background:transparent;
-  pointer-events:none;
-}
+/* summary-kolor-bar → reguły w v3 */
 .summary-top { display: flex; flex-direction: column; align-items: center; gap: 2px; }
 .summary-left { display: flex; flex-direction: column; align-items: center; gap: 2px; }
-.summary-total { font-size: 40px; font-weight: 800; color: #fff; letter-spacing: -1.5px; line-height: 1.05; transition: color 0.4s; text-align: center; }
+.summary-total { font-size: var(--text-xl); font-weight: 800; color: var(--text); letter-spacing: -1.5px; line-height: 1.05; transition: color 0.4s; text-align: center; }
 #summary-card-main .summary-total { text-align: right; }
 .summary-total.flash-up { color: #22c55e; }
 .summary-total.flash-down { color: #ef4444; }
@@ -296,7 +548,7 @@ html.day-mode .summary-total{ color:#13161d !important; }
 }
 
 .item-card {
-  border-radius: var(--radius);
+  border-radius: var(--radius-md);
   display: flex;
   flex-direction: row;
   transition: background 0.15s, border-color 0.15s, opacity 0.2s, transform 0.2s;
@@ -306,8 +558,8 @@ html.day-mode .summary-total{ color:#13161d !important; }
   margin: 0 8px;
 }
 .item-card:has(.item-check:checked) {
-  border-color: rgba(59,124,244,0.3);
-  background: #0f1020;
+  border-color: var(--solid-naprawa-border);
+  background: var(--solid-naprawa-bg);
 }
 .item-card.unchecked { background: var(--bg2); }
 .item-card.qty-zero { border-color: var(--border) !important; background: var(--bg2) !important; }
@@ -372,20 +624,20 @@ html.day-mode .summary-total{ color:#13161d !important; }
 .flat-item {
   margin: 0; border: none; background: transparent;
   border-radius: 0; overflow: visible; padding: 10px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid var(--border-panel);
 }
 .flat-list .item-card:has(.item-check:checked),
 .flat-list .item-card.unchecked { background: transparent; }
 .flat-list .item-card.qty-zero {
   background: transparent !important;
   border-color: transparent !important;
-  border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+  border-bottom: 1px solid var(--border-panel) !important;
 }
 .flat-list .card-row { gap: 6px; }
 .flat-csel .csel-wrap { flex:1; min-width:0; width:100%; }
 .flat-csel .csel-btn {
   width:100%; justify-content:flex-end; background:#000;
-  border:1px solid rgba(255,255,255,0.10); border-radius:10px;
+  border:1px solid var(--border-subtle); border-radius:10px;
   padding:6px 10px; min-height:28px; color:var(--text2); font-weight:600;
 }
 .flat-csel .csel-btn span { text-align:right; }
@@ -397,7 +649,7 @@ html.day-mode .summary-total{ color:#13161d !important; }
 .flat-group .group-body { background:transparent; padding:0; gap:10px; }
 .flat-group .sub-row {
   background:transparent; border:none; border-radius:0;
-  padding:10px 0; margin:0; border-bottom:1px solid rgba(255,255,255,0.06);
+  padding:10px 0; margin:0; border-bottom:1px solid var(--border-panel);
 }
 .flat-group .sub-row.is-checked { background:transparent; border-color:transparent; }
 .flat-group .sub-name-input { color:#fff; }
@@ -535,7 +787,7 @@ html.day-mode .summary-total{ color:#13161d !important; }
   user-select: none;
   transition: background 0.15s;
 }
-.group-header:hover { background: rgba(255,255,255,0.03); }
+.group-header:hover { background: var(--bg-elevated); }
 .group-title { flex: 1; font-size: 14px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; }
 .group-sum { font-size: 15px; font-weight: 700; color: #fff; min-width: 40px; text-align: right; }
 .group-toggle { font-size: 15px; color: var(--text3); transition: transform 0.2s; line-height: 1; margin-left: 4px; }
@@ -552,7 +804,7 @@ html.day-mode .summary-total{ color:#13161d !important; }
   background: var(--bg3);
   transition: background 0.15s;
 }
-.sub-row.is-checked { background: #0d0d1e; border-color: rgba(59,124,244,0.25); }
+.sub-row.is-checked { background: var(--solid-naprawa-bg); border-color: var(--solid-naprawa-border); }
 .sub-name-input {
   flex: 1;
   font-size: 17px;
@@ -640,7 +892,7 @@ html.day-mode .summary-total{ color:#13161d !important; }
 #modal-overlay .modal-banner{
   background: var(--bg2);
   border: 1px solid var(--border);
-  border-radius: 14px;
+  border-radius: var(--radius-md);
   padding: 12px 4px 12px 6px;
   display: flex;
   flex-direction: column;
@@ -648,6 +900,28 @@ html.day-mode .summary-total{ color:#13161d !important; }
 }
 #modal-overlay .modal-banner{
   padding: 12px 12px;
+}
+.modal-rower-kolor-wrap{
+  display:flex;
+  gap:10px;
+  align-items:stretch;
+}
+.modal-rower-fields{
+  flex:1;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+.modal-kolor-preview{
+  width:var(--color-bar-w);
+  flex-shrink:0;
+  border-radius:10px;
+  border:1px solid var(--border);
+  background:transparent;
+  align-self:stretch;
+  min-height:88px;
+  box-sizing:border-box;
 }
 
 /* Raport: flat layout via .flat-list .flat-csel (dodane w HTML) */
@@ -662,7 +936,7 @@ html.day-mode .summary-total{ color:#13161d !important; }
   height: 32px !important;
   flex: 0 0 70px !important;
   flex-shrink: 0 !important;
-  border: 1px solid rgba(255,255,255,0.14) !important;
+  border: 1px solid var(--border-panel) !important;
   background: #000 !important;
   border-radius: 10px !important;
   padding: 6px 10px !important;
@@ -680,7 +954,7 @@ html.day-mode .summary-total{ color:#13161d !important; }
   height: 32px !important;
   flex: 0 0 70px !important;
   flex-shrink: 0 !important;
-  border: 1px solid rgba(255,255,255,0.14) !important;
+  border: 1px solid var(--border-panel) !important;
   background: #000 !important;
   border-radius: 10px !important;
   padding: 6px 10px !important;
@@ -744,14 +1018,14 @@ html.day-mode .summary-total{ color:#13161d !important; }
 .modal-field input::placeholder { color: #444470; }
 .btn-data {
   display: flex; align-items: center; justify-content: center; gap: 5px;
-  background: #c0392b; color: #fff;
-  border: 1px solid #c0392b; border-radius: var(--radius-btn);
+  border-radius: var(--radius-sm);
   padding: var(--btn-py) var(--btn-px); font-size: var(--btn-font); font-weight: var(--btn-weight);
-  cursor: pointer; transition: background 0.15s;
+  cursor: pointer; transition: background 0.15s, transform 0.1s;
 }
-.btn-data:hover { background: #a93226; }
+.btn-data:active { transform: scale(0.97); }
+.btn-data:hover { filter: brightness(1.08); }
 
-/* PRZYJĘTE → EDYTUJ: przycisk DANE/COFNIJ ma być mniejszy + bez kropki */
+/* PRZYJĘTE → EDYTUJ: przycisk DANE mniejszy */
 #btn-dane{
   padding: 4px 8px !important;
   min-height: 30px !important;
@@ -825,16 +1099,16 @@ html.day-mode .summary-total{ color:#13161d !important; }
 /* ── Historia wycen ── */
 .btn-save {
   display: flex; align-items: center; justify-content: center; gap: 5px;
-  background: #16a34a; color: #fff;
-  border: 1px solid #16a34a; border-radius: var(--radius-btn);
+  border-radius: var(--radius-sm);
   padding: var(--btn-py) var(--btn-px); font-size: var(--btn-font); font-weight: var(--btn-weight);
-  cursor: pointer; transition: background 0.15s;
+  cursor: pointer; transition: background 0.15s, transform 0.1s;
 }
-.btn-save:hover { background: #15803d; }
+.btn-save:active { transform: scale(0.97); }
+.btn-save:hover { filter: brightness(1.08); }
 .history-item {
-  background: var(--bg);
+  background: var(--bg2);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   padding: 10px 12px;
   display: flex; flex-direction: column; gap: 8px;
   transition: border-color 0.15s;
@@ -843,41 +1117,132 @@ html.day-mode .summary-total{ color:#13161d !important; }
   overflow: hidden;
   padding-left: 34px;
 }
-.history-item.hl-red{
-  border-color: rgba(239,68,68,0.72) !important;
-  background-color: rgba(239,68,68,0.10) !important;
-  box-shadow: 0 0 0 2px rgba(239,68,68,0.14), 0 0 18px rgba(239,68,68,0.14) !important;
-}
-.history-item.hl-green{
-  border-color: rgba(34,197,94,0.90) !important;
-  background-color: rgba(34,197,94,0.14) !important;
-  box-shadow: 0 0 0 2px rgba(34,197,94,0.14), 0 0 18px rgba(34,197,94,0.14) !important;
-}
+.history-item.hl-red,
+.history-item.hl-green,
 .history-item.hl-purple{
-  border-color: rgba(167,139,250,0.82) !important;
-  background-color: rgba(167,139,250,0.12) !important;
-  box-shadow: 0 0 0 2px rgba(167,139,250,0.14), 0 0 18px rgba(167,139,250,0.14) !important;
+  border-color: var(--border-panel) !important;
+  background-color: var(--bg-panel) !important;
+  box-shadow: 0 0 0 1px var(--text3) !important;
 }
-.history-item.history-item-urgent,
-.history-item.history-item-urgent-today{
-  overflow: visible;
+.zlecenie-grupa {
+  border-radius: 14px;
+  padding: 10px;
+  margin: 0 0 10px;
+  border: 1px solid var(--border-panel);
+  background: transparent;
+}
+.zlecenie-grupa--przyjete,
+.zlecenie-grupa--wydanie,
+.zlecenie-grupa--archiwum {
+  border-color: var(--border-panel);
+  background: transparent;
+}
+.zlecenie-grupa-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.zlecenie-grupa-footer {
+  margin-top: 14px;
+  padding-top: 4px;
+  display: flex;
+  justify-content: center;
+}
+.history-list-footer {
+  margin: 10px 0 4px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
+}
+.history-list-pdf-btn {
+  flex: 0 0 25%;
+  width: 25%;
+  max-width: 25%;
+  min-width: 0;
+  min-height: 48px;
+  box-sizing: border-box;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: .2px;
+  gap: 6px;
+  color: var(--text2) !important;
+  background: var(--bg-panel) !important;
+  border: 1px solid var(--border-panel) !important;
+}
+.history-list-pdf-btn:hover { filter: brightness(1.08); }
+.history-list-pdf-btn:active { transform: scale(0.97); }
+html.day-mode .history-list-pdf-btn {
+  color: #64748b !important;
+  background: var(--bg2) !important;
+  border-color: var(--border) !important;
+}
+.history-list-sum-box {
+  flex: 1;
+  min-width: 0;
+  min-height: 48px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  background: #000;
+  border-radius: 10px;
+  box-sizing: border-box;
+}
+.history-item-date {
+  font-size: 13px;
+  color: var(--text2);
+  font-weight: 500;
+}
+.history-item-date--sm {
+  font-size: 11px;
+  font-weight: 600;
+}
+.history-item-date--right {
+  text-align: right;
+}
+#history-list .history-item.history-item--termin-soon,
+#history-list .history-item.history-item--termin-soon:hover {
+  border-color: var(--solid-tab-historia-border) !important;
+}
+#wydanie-list .history-item.history-item--termin-soon,
+#wydanie-list .history-item.history-item--termin-soon:hover {
+  border-color: var(--solid-tab-wydanie-border) !important;
+}
+#archive-list .history-item.history-item--termin-soon,
+#archive-list .history-item.history-item--termin-soon:hover {
+  border-color: var(--solid-tab-archiwum-border) !important;
 }
 .history-color-bar{
   position:absolute;
   left:0; top:0; bottom:0;
-  width:20px;
-  border-radius:10px 0 0 10px;
+  width:var(--color-bar-w);
+  border-radius:var(--radius-md) 0 0 var(--radius-md);
 }
-.history-item:hover { border-color: rgba(59,124,244,0.25); }
+.history-item:hover { background: var(--bg-elevated); }
+.history-item-details-tel{
+  display:flex;
+  justify-content:center;
+  margin-bottom:10px;
+}
+.history-item-details-tel .link-tel{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-size:var(--text-md);
+  font-weight:600;
+}
 .history-item-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
 .history-item-info { flex: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-.history-item-total { font-size: 26px; font-weight: 800; color: #fff; flex-shrink: 0; letter-spacing: -0.5px; }
+.history-item-total { font-size: var(--text-lg); font-weight: 800; color: var(--text); flex-shrink: 0; letter-spacing: -0.5px; }
 .history-item-actions { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
 .btn-history-load {
-  background: var(--blue); color: #111827; border: 1px solid var(--blue);
-  border-radius: var(--radius-btn); padding: var(--btn-py) var(--btn-px);
+  border-radius: var(--radius-sm); padding: var(--btn-py) var(--btn-px);
   font-size: var(--btn-font); font-weight: 600; cursor: pointer;
-  flex-shrink: 0; transition: background 0.1s;
+  flex-shrink: 0; transition: opacity 0.15s, transform 0.1s;
   min-height: 33px;
   display: inline-flex;
   align-items: center;
@@ -885,7 +1250,8 @@ html.day-mode .summary-total{ color:#13161d !important; }
   gap: 6px;
   line-height: 1;
 }
-.btn-history-load:hover { opacity: 0.85; }
+.btn-history-load:active { transform: scale(0.97); }
+.btn-history-load:hover { opacity: 0.88; }
 .btn-history-icon{
   width:33px;
   min-width:33px;
@@ -904,17 +1270,30 @@ html.day-mode .summary-total{ color:#13161d !important; }
   font-size:16px;
   font-weight:900;
 }
-.btn-history-sms {
-  background: #16a34a; color: #111827; border: 1px solid #16a34a;
-  border-radius: var(--radius-btn); padding: var(--btn-py) var(--btn-px);
-  font-size: var(--btn-font); font-weight: 600; cursor: pointer;
-  flex-shrink: 0; text-decoration: none;
-  display: inline-flex; align-items: center; gap: 4px;
+.btn-history-sms:not(.btn-history-sms-sent) {
+  background: var(--solid-naprawa-bg) !important;
+  border: 1px solid var(--solid-naprawa-border) !important;
+  color: #93c5fd !important;
+  border-radius: var(--radius-btn);
+  padding: var(--btn-py) var(--btn-px);
+  font-size: var(--btn-font);
+  font-weight: 600;
+  cursor: pointer;
+  flex-shrink: 0;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   min-height: 33px;
   line-height: 1;
 }
-.btn-history-sms:hover { opacity: 0.85; }
-.btn-history-sms-sent { background: #3a3a3a; color: #9ca3af; border: 1px solid #3a3a3a; }
+.btn-history-sms:not(.btn-history-sms-sent):hover { filter: brightness(1.08); }
+.btn-history-sms-sent {
+  background: var(--bg3) !important;
+  color: var(--text3) !important;
+  border: 1px solid var(--border) !important;
+  opacity: 0.85;
+}
 .btn-history-sms-sent:hover { opacity: 0.85; }
 .btn-history-del {
   background: none; border: 1px solid var(--red);
@@ -936,7 +1315,9 @@ html.day-mode .summary-total{ color:#13161d !important; }
 #start-overlay::-webkit-scrollbar { display:none; }
 .overlay-full::-webkit-scrollbar { display:none; }
 .overlay-full { scrollbar-width:none; }
-.btn-close { margin-left:auto;background:#ef4444;border:1px solid #ef4444;border-radius:var(--radius-btn);padding:6px var(--btn-px);cursor:pointer;color:#fff;font-size:var(--btn-font);font-weight:var(--btn-weight);text-transform:uppercase; }
+.btn-close { margin-left:auto;border-radius:var(--radius-sm);padding:6px var(--btn-px);cursor:pointer;font-size:var(--btn-font);font-weight:var(--btn-weight);text-transform:uppercase;transition:transform 0.1s,filter 0.15s; }
+.btn-close:active{ transform:scale(0.97); }
+.btn-close:hover{ filter:brightness(1.08); }
 
 /* Historia: zakładki + wiersz wyszukiwania, lista */
 #history-overlay .app > div:nth-of-type(1){
@@ -976,16 +1357,328 @@ html.day-mode .summary-total{ color:#13161d !important; }
   padding:0 16px 40px !important;
 }
 
-/* Raport/Naprawa: spójny layout i "karty" jak w rabatach */
-#raport-overlay .app > div:first-child{
-  margin:16px 16px 0 !important;
-  border-radius:14px !important;
+/* Wspólny układ: NAPRAWA + Dodaj części — solidne szare panele (bez glass) */
+#raport-overlay .app,
+body > .app{
+  padding:16px 0 32px;
+  box-sizing:border-box;
 }
+#summary-card-main,
+#raport-summary-card{
+  position:sticky !important;
+  top:16px !important;
+  z-index:10;
+  margin:0 8px 0 !important;
+  border-radius:12px !important;
+  border:1px solid var(--border-panel) !important;
+  border-left:none !important;
+  width:auto;
+  max-width:none;
+  box-sizing:border-box;
+  background:var(--bg-panel) !important;
+  box-shadow:none !important;
+  overflow:hidden;
+}
+#summary-kolor-bar,
+#raport-summary-kolor-bar{
+  border-top-left-radius:12px !important;
+  border-bottom-left-radius:12px !important;
+}
+#add-parts-banner.parts-banner,
+#raport-parts-banner.parts-banner{
+  background:var(--bg-panel) !important;
+  border:1px solid var(--border-panel) !important;
+  border-radius:12px !important;
+  margin:16px 8px 0 !important;
+  padding:12px 10px 16px;
+  box-sizing:border-box;
+}
+#items-list,
 #raport-items-list{
-  padding:8px 4px 8px 6px !important; /* lewo 6, prawo 4 */
+  padding:8px 4px 8px 6px !important;
 }
+#group-container,
 #raport-group-container{
-  padding:0 4px 0 6px; /* lewo 6, prawo 4 */
+  padding:0;
+}
+#raport-overlay .flat-list .item-card,
+#raport-overlay .flat-list .item-card:has(.item-check:checked),
+#raport-overlay .flat-list .item-card.unchecked,
+#raport-overlay .flat-list .item-card.qty-zero,
+body > .app .flat-list .item-card,
+body > .app .flat-list .item-card:has(.item-check:checked),
+body > .app .flat-list .item-card.unchecked,
+body > .app .flat-list .item-card.qty-zero{
+  border:none !important;
+  background:transparent !important;
+  margin:0 !important;
+  border-radius:0 !important;
+  border-bottom:1px solid var(--border-panel) !important;
+}
+#raport-overlay #raport-group-container .group-card,
+body > .app #group-container .group-card{
+  margin:0 !important;
+  border:none !important;
+  background:transparent !important;
+}
+#raport-overlay #raport-group-container .group-header,
+body > .app #group-container .group-header{
+  border:none;
+  background:transparent;
+  padding:8px 0;
+}
+#raport-overlay #raport-group-container .group-body,
+body > .app #group-container .group-body{
+  border-top:none;
+  padding:0;
+  background:transparent;
+  gap:0;
+}
+#raport-overlay .card-row,
+body > .app .card-row{ gap:6px; }
+
+/* NAPRAWA: bez niebieskich akcentów tła i tekstu */
+#raport-overlay .link-tel{ color:var(--text2) !important; }
+#raport-overlay .flat-check.checked{
+  border-color:#555 !important;
+  background:#444 !important;
+}
+#raport-overlay .flat-list .item-card:has(.item-check:checked){
+  background:transparent !important;
+  border:none !important;
+  border-bottom:1px solid var(--border-panel) !important;
+}
+#raport-overlay .flat-group .sub-row.is-checked{
+  background:transparent !important;
+  border-color:transparent !important;
+}
+#raport-overlay .flat-group .sub-check-circle.checked{
+  border-color:#555 !important;
+  background:#444 !important;
+}
+html.day-mode #summary-card-main,
+html.day-mode #add-parts-banner.parts-banner,
+html.day-mode #raport-summary-card,
+html.day-mode #raport-parts-banner.parts-banner{
+  background:var(--bg2) !important;
+  border-color:var(--border) !important;
+}
+
+/* Kalendarz zleceń — wspólny układ (menu główne + modal terminu) */
+#start-menu-calendar-wrap{
+  width:100%;
+  margin-top:4px;
+  touch-action:pan-y;
+  user-select:none;
+}
+#start-menu-calendar,
+#modal-termin-calendar{
+  width:100%;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:10px;
+  box-sizing:border-box;
+}
+
+.order-cal-nav{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:8px;
+  gap:8px;
+}
+.order-cal-nav-btn{
+  width:34px;
+  height:34px;
+  background:none;
+  border:1px solid var(--border);
+  border-radius:8px;
+  color:var(--text2);
+  font-size:16px;
+  font-weight:700;
+  cursor:pointer;
+  flex-shrink:0;
+}
+.order-cal-title{
+  font-size:14px;
+  font-weight:700;
+  color:var(--text);
+  text-align:center;
+}
+
+.order-cal-sel-bar{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  margin-bottom:8px;
+  padding:8px 10px;
+  background:var(--cal-load-low-bg);
+  border:1px solid var(--cal-load-low-border);
+  border-radius:8px;
+}
+.order-cal-sel-label{
+  font-size:14px;
+  font-weight:800;
+  color:var(--cal-load-low-badge);
+}
+.order-cal-sel-clear{
+  background:none;
+  border:1px solid var(--border);
+  border-radius:6px;
+  padding:2px 8px;
+  color:var(--text3);
+  font-size:14px;
+  cursor:pointer;
+  line-height:1.2;
+}
+.order-cal-grid{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:4px;
+}
+.order-cal-dow{
+  text-align:center;
+  font-size:10px;
+  font-weight:700;
+  color:var(--text3);
+  text-transform:uppercase;
+  padding:2px 0;
+}
+.order-cal-day{
+  position:relative;
+  aspect-ratio:1;
+  min-height:44px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:2px;
+  border-radius:8px;
+  font-size:14px;
+  font-weight:600;
+  color:var(--text2);
+  border:1px solid var(--border);
+  background:none;
+  box-sizing:border-box;
+  padding:3px 2px;
+}
+.order-cal-day-num{
+  font-size:14px;
+  font-weight:800;
+  line-height:1;
+}
+.order-cal-count{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:20px;
+  height:18px;
+  padding:0 5px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:900;
+  line-height:1;
+  letter-spacing:-0.2px;
+}
+button.order-cal-day{
+  cursor:pointer;
+  font-family:inherit;
+}
+.order-cal-day--load-low{
+  font-weight:800;
+  color:var(--text);
+  background:var(--cal-load-low-bg);
+  border-color:var(--cal-load-low-border);
+}
+.order-cal-day--load-mid{
+  font-weight:800;
+  color:var(--text);
+  background:var(--cal-load-mid-bg);
+  border-color:var(--cal-load-mid-border);
+}
+.order-cal-day--load-high{
+  font-weight:800;
+  color:var(--text);
+  background:var(--cal-load-high-bg);
+  border-color:var(--cal-load-high-border);
+}
+.order-cal-day.is-today{
+  box-shadow:0 0 0 2px var(--blue);
+}
+.order-cal-day--selected{
+  color:#fff !important;
+  box-shadow:0 0 0 2px #fff;
+  filter:brightness(1.12);
+}
+.order-cal-day--selected.order-cal-day--load-low{
+  background:var(--cal-load-low-badge);
+  border-color:var(--cal-load-low-badge);
+}
+.order-cal-day--selected.order-cal-day--load-mid{
+  background:var(--cal-load-mid-badge);
+  border-color:var(--cal-load-mid-badge);
+}
+.order-cal-day--selected.order-cal-day--load-high{
+  background:var(--cal-load-high-badge);
+  border-color:var(--cal-load-high-badge);
+}
+.order-cal-day--disabled{
+  opacity:0.35;
+  cursor:default;
+  pointer-events:none;
+}
+.order-cal-day--load-low .order-cal-count{ background:var(--cal-load-low-badge); color:#fff; }
+.order-cal-day--load-mid .order-cal-count{ background:var(--cal-load-mid-badge); color:#111827; }
+.order-cal-day--load-high .order-cal-count{ background:var(--cal-load-high-badge); color:#fff; }
+.order-cal-day--selected .order-cal-count{
+  background:rgba(0,0,0,0.28);
+  color:#fff;
+}
+
+/* Wspólny układ: Łańcuch, Kody rabatowe, Administracja */
+.tool-page-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 16px 0;
+}
+.tool-page-title{
+  flex:1;
+  font-size:18px;
+  font-weight:800;
+  color:var(--text);
+  min-width:0;
+}
+.tool-page-body{
+  padding:16px 16px 40px;
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+}
+.tool-card{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:16px;
+}
+.tool-card-label{
+  font-size:11px;
+  font-weight:700;
+  color:var(--text3);
+  text-transform:uppercase;
+  letter-spacing:.8px;
+}
+#admin-modal .tool-page-body{
+  gap:12px;
+}
+#admin-modal .admin-act-btn{
+  width:100%;
+  justify-content:flex-start;
+  min-height:56px;
+  padding:14px 16px !important;
 }
 
 /* ── Custom dropdown ── */
@@ -1017,49 +1710,187 @@ input.opis-inline-input.has-val { color: #fff; }
 
 /* hidden native select for form compat */
 select.native-sel { display: none !important; }
+
+/* ═══ Design system v4: UI Tile — solidne tła (bez glass) ═══ */
+.ui-tile {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+  background: var(--bg-panel); border: 1px solid var(--border-panel);
+  border-radius: var(--radius-md); color: var(--text2); cursor: pointer;
+  transition: transform 0.1s, background 0.15s, border-color 0.15s, opacity 0.15s;
+  text-decoration: none; line-height: 1.2; box-sizing: border-box;
+}
+.ui-tile:active { transform: scale(0.97); }
+.ui-tile--block { width: 100%; display: flex; }
+.ui-tile--sm { min-height: 33px; padding: var(--btn-py) 10px; font-size: var(--btn-font); font-weight: 600; border-radius: var(--radius-sm); }
+.ui-tile--md { min-height: 48px; padding: 10px 8px; }
+.ui-tile--lg { min-height: 56px; padding: var(--space-4); font-size: var(--text-md); font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase; border-radius: var(--radius-lg); }
+.ui-tile--danger   { color: #f87171; border-color: var(--solid-danger-border);  background: var(--solid-danger-bg); }
+.ui-tile--naprawa  { color: #93c5fd; border-color: var(--solid-naprawa-border); background: var(--solid-naprawa-bg); }
+.ui-tile--wydanie  { color: #86efac; border-color: var(--solid-wydanie-border);  background: var(--solid-wydanie-bg); }
+.ui-tile--warning  { color: #fbbf24; border-color: var(--solid-warning-border); background: var(--solid-warning-bg); }
+.ui-tile--info     { color: #67e8f9; border-color: var(--solid-info-border); background: var(--solid-info-bg); }
+.ui-tile--archiwum { color: #c4b5fd; border-color: var(--solid-archiwum-border); background: var(--solid-archiwum-bg); }
+.ui-tile--przyjete { color: #f87171; border-color: var(--solid-danger-border);  background: var(--solid-danger-bg); }
+.ui-tile--accent   { color: #c4b5fd; border-color: var(--solid-accent-border); background: var(--solid-accent-bg); }
+.ui-tile--neutral  { color: var(--text2); border-color: var(--border-panel); background: var(--bg-panel); }
+.start-icon-day.ui-tile--active, .start-icon-day.active { color: #fde68a; border-color: var(--solid-day-border); background: var(--solid-day-bg); }
+
+.btn-primary { background: var(--solid-wydanie-bg) !important; border: 1px solid var(--solid-wydanie-border) !important; color: #86efac !important; }
+.btn-primary--blue { background: var(--solid-naprawa-bg) !important; border-color: var(--solid-naprawa-border) !important; color: #93c5fd !important; }
+.btn-primary--danger { background: var(--solid-danger-bg) !important; border-color: var(--solid-danger-border) !important; color: #f87171 !important; }
+.btn-secondary { background: var(--bg-panel) !important; border: 1px solid var(--border-panel) !important; color: var(--text2) !important; }
+.btn-action--repair, .btn-action--edit { background: var(--solid-naprawa-bg) !important; border: 1px solid var(--solid-naprawa-border) !important; color: #93c5fd !important; font-weight: 700; }
+.btn-action--release, .btn-action--success, .btn-save { background: var(--solid-wydanie-bg) !important; border: 1px solid var(--solid-wydanie-border) !important; color: #86efac !important; font-weight: 700; }
+.btn-action--archive { background: var(--solid-archiwum-bg) !important; border: 1px solid var(--solid-archiwum-border) !important; color: #c4b5fd !important; }
+.btn-action--warning { background: var(--solid-warning-bg) !important; border: 1px solid var(--solid-warning-border) !important; color: #fbbf24 !important; }
+.btn-action--ghost { background: var(--bg-panel) !important; border: 1px solid var(--border-panel) !important; color: var(--text2) !important; min-height: 33px; text-decoration: none; }
+a.btn-history-sms:not(.btn-history-sms-sent),
+button.btn-history-sms:not(.btn-history-sms-sent) {
+  background: var(--solid-naprawa-bg) !important;
+  border: 1px solid var(--solid-naprawa-border) !important;
+  color: #93c5fd !important;
+  min-height: 33px;
+  text-decoration: none;
+}
+.btn-action--danger-ghost, .btn-data, .btn-close, .btn-cancel { background: var(--solid-danger-bg) !important; border: 1px solid var(--solid-danger-border) !important; color: #f87171 !important; }
+.btn-history-sms-sent,
+a.btn-history-sms-sent,
+button.btn-history-sms-sent {
+  background: var(--bg3) !important;
+  color: var(--text3) !important;
+  border-color: var(--border) !important;
+  opacity: 0.85;
+  pointer-events: auto;
+}
+.start-cta.start-cta--add { background: var(--solid-wydanie-bg) !important; border: 1px solid var(--solid-wydanie-border) !important; color: #86efac !important; }
+.start-cta.start-cta--browse { background: var(--solid-naprawa-bg) !important; border: 1px solid var(--solid-naprawa-border) !important; color: #93c5fd !important; }
+
+.order-tabs { background: transparent !important; border: none !important; padding: 0 !important; gap: var(--space-2) !important; }
+.order-tab { background: var(--bg-panel) !important; border: 1px solid var(--border-panel) !important; border-radius: var(--radius-md) !important; color: var(--text3) !important; }
+#tab-historia.order-tab.active { background: var(--solid-tab-historia-bg) !important; border-color: var(--solid-tab-historia-border) !important; color: #fca5a5 !important; }
+#tab-wydanie.order-tab.active { background: var(--solid-tab-wydanie-bg) !important; border-color: var(--solid-tab-wydanie-border) !important; color: #bbf7d0 !important; }
+#tab-archiwum.order-tab.active { background: var(--solid-tab-archiwum-bg) !important; border-color: var(--solid-tab-archiwum-border) !important; color: #ddd6fe !important; }
+.order-tab.active .tab-count { background: var(--bg3) !important; color: inherit !important; }
+
+.history-item { background: var(--bg-panel) !important; border: 1px solid var(--border-panel) !important; border-radius: var(--radius-md) !important; }
+.history-item:hover { border-color: var(--border-panel) !important; background: var(--bg-elevated) !important; }
+#history-list .history-item.history-item--termin-soon,
+#history-list .history-item.history-item--termin-soon:hover {
+  border-color: var(--solid-tab-historia-border) !important;
+}
+#wydanie-list .history-item.history-item--termin-soon,
+#wydanie-list .history-item.history-item--termin-soon:hover {
+  border-color: var(--solid-tab-wydanie-border) !important;
+}
+#archive-list .history-item.history-item--termin-soon,
+#archive-list .history-item.history-item--termin-soon:hover {
+  border-color: var(--solid-tab-archiwum-border) !important;
+}
+.history-item.hl-red,
+.history-item.hl-green,
+.history-item.hl-purple { border-color: var(--border-panel) !important; background: var(--bg-panel) !important; box-shadow: 0 0 0 1px var(--text3) !important; }
+
+#summary-card-main,
+#raport-summary-card {
+  background: var(--bg-panel) !important;
+  border-color: var(--border-panel) !important;
+  box-shadow: none !important;
+}
+.summary-card--naprawa { border-color: var(--border-panel) !important; background: var(--bg-panel) !important; }
+.summary-card { background: var(--bg-panel); border: 1px solid var(--border-panel); }
+
+.item-card { background: var(--bg-panel) !important; border: 1px solid var(--border-panel) !important; }
+.item-card:has(.item-check:checked) { border-color: var(--solid-naprawa-border) !important; background: var(--solid-naprawa-bg) !important; }
+#raport-overlay .flat-list .item-card,
+#raport-overlay .flat-list .item-card:has(.item-check:checked),
+#raport-overlay .flat-list .item-card.unchecked,
+#raport-overlay .flat-list .item-card.qty-zero,
+body > .app .flat-list .item-card,
+body > .app .flat-list .item-card:has(.item-check:checked),
+body > .app .flat-list .item-card.unchecked,
+body > .app .flat-list .item-card.qty-zero{
+  border:none !important;
+  background:transparent !important;
+  border-bottom:1px solid var(--border-panel) !important;
+}
+
+.parts-banner, #modal-overlay .modal-banner, .dialog, .alert--warning {
+  background: var(--bg-panel) !important; border: 1px solid var(--border-panel) !important;
+}
+#add-parts-banner.parts-banner,
+#raport-parts-banner.parts-banner{
+  background:var(--bg-panel) !important;
+  border:1px solid var(--border-panel) !important;
+  border-radius:12px !important;
+}
+html.day-mode #summary-card-main,
+html.day-mode #add-parts-banner.parts-banner,
+html.day-mode #raport-summary-card,
+html.day-mode #raport-parts-banner.parts-banner{
+  background:var(--bg2) !important;
+  border-color:var(--border) !important;
+}
+.stat-box { background: var(--bg-panel) !important; border: 1px solid var(--border-panel) !important; }
+.stat-box--success { border-color: var(--solid-wydanie-border) !important; background: var(--solid-wydanie-bg) !important; }
+.stat-box--accent { border-color: var(--solid-accent-border) !important; background: var(--solid-accent-bg) !important; }
+.stat-box--warning { border-color: var(--solid-warning-border) !important; background: var(--solid-warning-bg) !important; }
+.stat-box--success .stat-box-value { color: #86efac !important; }
+
+.admin-act-btn { background: var(--bg-panel) !important; border: 1px solid var(--border-panel) !important; }
+.admin-act-btn--search { color: #93c5fd !important; border-color: var(--solid-naprawa-border) !important; background: var(--solid-naprawa-bg) !important; }
+.admin-act-btn--report { color: #a5b4fc !important; border-color: var(--solid-accent-border) !important; background: var(--solid-accent-bg) !important; }
+.admin-act-btn--backup { color: #f87171 !important; border-color: var(--solid-danger-border) !important; background: var(--solid-danger-bg) !important; }
+.admin-act-btn--update { color: #86efac !important; border-color: var(--solid-wydanie-border) !important; background: var(--solid-wydanie-bg) !important; }
+
+html.day-mode .ui-tile--danger, html.day-mode .btn-data, html.day-mode .btn-close, html.day-mode .btn-cancel { color: #dc2626 !important; }
+html.day-mode .ui-tile--naprawa, html.day-mode .btn-action--repair { color: #2563eb !important; }
+html.day-mode .ui-tile--wydanie, html.day-mode .btn-save { color: #16a34a !important; }
+html.day-mode #tab-historia.order-tab.active { color: #dc2626 !important; }
+html.day-mode #tab-wydanie.order-tab.active { color: #16a34a !important; }
+.btn-history-load { background: var(--solid-naprawa-bg) !important; border: 1px solid var(--solid-naprawa-border) !important; color: #93c5fd !important; }
+html.day-mode #tab-archiwum.order-tab.active { color: #7c3aed !important; }
 </style>
 </head>
 <body>
 <div class="app">
 
   <div class="summary-card" id="summary-card-main">
-    <span id="summary-kolor-bar"></span>
-    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:4px;">
-      <!-- Lewa: marka/model, telefon, termin -->
-      <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;">
+    <span id="summary-kolor-bar" class="summary-kolor-bar"></span>
+    <div class="summary-body">
+      <div class="summary-body-left">
         <div id="bike-info-bar" style="display:none;align-items:center;gap:5px;">
-          <span id="bike-name" style="font-size:16px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></span>
+          <span id="bike-name" class="text-primary" style="font-size:var(--text-md);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></span>
         </div>
-        <div id="client-info-bar" style="display:none;font-size:11px;color:var(--text2);"></div>
-        <div id="termin-info-bar" style="display:none;font-size:11px;color:#f59e0b;"></div>
+        <div id="client-info-bar" style="display:none;font-size:var(--text-xs);color:var(--text2);"></div>
+        <div id="termin-info-bar" class="text-termin" style="display:none;font-size:var(--text-xs);"></div>
       </div>
-      <!-- Prawa: kwota -->
-      <div style="flex:0 0 auto;text-align:right;min-width:0;padding-top:1px;">
+      <div class="summary-body-right">
+        <div class="label-caps">Aktualna cena</div>
         <div class="summary-total" id="total-display">0,00</div>
       </div>
     </div>
     <div id="sync-status" style="display:none;font-size:11px;color:#556;text-align:center;min-height:0;height:0;line-height:1;transition:color 0.3s;"></div>
     <div class="btn-grid" style="grid-template-columns:2fr 3fr 3fr;">
       <div style="display:flex;gap:4px;align-items:stretch;min-width:0;">
-        <button id="btn-usun-zlecenie" type="button" onclick="usunZlecenie()" title="Przenieś do kosza" style="display:none;flex-shrink:0;align-items:center;justify-content:center;background:none;border:1px solid rgba(239,68,68,0.45);border-radius:var(--radius-btn);padding:4px 8px;cursor:pointer;color:#ef4444;">
+        <button id="btn-usun-zlecenie" type="button" onclick="usunZlecenie()" title="Przenieś do kosza" class="btn-action ui-tile ui-tile--sm ui-tile--danger btn-action--danger-ghost" style="display:none;flex-shrink:0;">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
         </button>
-        <button id="btn-dane" class="btn-data" onclick="openModal()" style="flex:1;min-width:0;background:#3b7cf4;border-color:#3b7cf4;">
+        <button id="btn-dane" class="btn ui-tile ui-tile--sm ui-tile--naprawa" onclick="openModal()" style="flex:1;min-width:0;padding:4px 8px;min-height:30px;font-size:var(--text-sm);">
         Dane
       </button>
       </div>
-      <button id="btn-lista-cofnij" onclick="showConfirm('Anulować zlecenie i wrócić do menu?', () => { anulujWycene(); })" class="btn-data">
+      <button id="btn-lista-cofnij" onclick="showConfirm('Anulować zlecenie i wrócić do menu?', () => { anulujWycene(); })" class="btn-data ui-tile ui-tile--sm ui-tile--danger">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         ANULUJ
       </button>
-      <button class="btn-save" onclick="saveWycena()">
+      <button class="btn-save ui-tile ui-tile--sm ui-tile--wydanie" onclick="saveWycena()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
         ZAPISZ
       </button>
     </div>
   </div>
 
-  <div id="add-parts-banner" class="parts-banner" style="margin:12px 8px 0;">
+  <div id="add-parts-banner" class="parts-banner">
     <div id="notatka-bottom-wrap" class="notatka-bottom-wrap">
       <div class="notatka-bottom-label">Notatka serwisowa</div>
       <textarea id="notatka-serwisowa" placeholder="Wpisz notatkę..." maxlength="500"
@@ -1071,6 +1902,8 @@ select.native-sel { display: none !important; }
     <div class="items-list flat-list flat-csel" id="items-list"></div>
     <div id="group-container" class="flat-group"></div>
   </div>
+
+  <div style="padding-bottom:40px;"></div>
 
 <!-- Hidden data fields -->
 <input type="hidden" id="cf-marka">
@@ -1086,40 +1919,38 @@ select.native-sel { display: none !important; }
   <div class="app">
 
     <!-- Sticky header -->
-    <div id="raport-summary-card" style="position:sticky;top:0;z-index:10;background:var(--bg2);border:1px solid var(--red);border-left:none;border-radius:12px;padding:12px 16px 16px 28px;margin:12px 8px 0;display:flex;flex-direction:column;gap:14px;overflow:hidden;">
-      <span id="raport-summary-kolor-bar"></span>
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;width:100%;min-width:0;">
-        <div style="flex:1;min-width:0;">
-          <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">
-            <span id="raport-title" style="font-size:17px;font-weight:700;color:#fff;"></span>
-          </div>
+    <div id="raport-summary-card" class="summary-card">
+      <span id="raport-summary-kolor-bar" class="summary-kolor-bar"></span>
+      <div class="summary-body">
+        <div class="summary-body-left">
+          <span id="raport-title" class="text-primary" style="font-size:var(--text-md);font-weight:700;"></span>
           <div id="raport-tel-kod-line" style="display:none;align-items:center;gap:8px;flex-wrap:wrap;margin-top:2px;">
-            <div id="raport-tel-line" style="display:flex;align-items:center;gap:4px;font-size:13px;font-weight:600;color:#3b7cf4;">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <div id="raport-tel-line" class="link-tel" style="display:flex;align-items:center;gap:4px;font-size:var(--text-sm);">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
               <span id="raport-tel-val"></span>
             </div>
-            <div id="raport-kod-line" style="display:none;font-size:13px;font-weight:800;color:#f59e0b;letter-spacing:2px;">🔑 <span id="raport-kod-val"></span></div>
+            <div id="raport-kod-line" class="text-termin" style="display:none;font-size:var(--text-sm);font-weight:800;letter-spacing:2px;">🔑 <span id="raport-kod-val"></span></div>
           </div>
-          <div id="raport-wstepna" style="display:none;margin-top:6px;padding-bottom:2px;font-size:13px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;line-height:1.35;">
-            Zlecenie - <span id="raport-wstepna-val" style="color:var(--text2);font-weight:800;font-size:14px;letter-spacing:0;text-transform:none;"></span>
+          <div id="raport-wstepna" class="label-caps" style="display:none;margin-top:6px;line-height:1.35;">
+            Zlecenie - <span id="raport-wstepna-val" style="color:var(--text2);font-weight:800;font-size:var(--text-sm);letter-spacing:0;text-transform:none;"></span>
           </div>
         </div>
-        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0;">
-          <div style="font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;">Aktualna cena</div>
-          <div id="raport-total-display" style="font-size:32px;font-weight:800;color:#fff;letter-spacing:-1px;line-height:1.1;"></div>
+        <div class="summary-body-right">
+          <div class="label-caps">Aktualna cena</div>
+          <div id="raport-total-display" class="summary-total"></div>
         </div>
       </div>
-      <div style="display:flex;gap:8px;width:100%;flex-shrink:0;margin-top:2px;">
-        <button onclick="closeRaport();" style="width:25%;padding:12px 0;background:none;border:1px solid #7f1d1d;border-radius:8px;cursor:pointer;color:#ef4444;font-size:13px;font-weight:700;">Anuluj</button>
-        <button id="btn-save-raport" onclick="saveRaportKoncowy()" style="width:75%;padding:12px;background:#16a34a;border:1px solid #16a34a;border-radius:8px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      <div class="summary-actions-split">
+        <button type="button" onclick="closeRaport();" class="btn btn-close btn-cancel ui-tile ui-tile--sm ui-tile--danger">Anuluj</button>
+        <button type="button" id="btn-save-raport" onclick="saveRaportKoncowy()" class="btn ui-tile ui-tile--sm ui-tile--wydanie">
+          <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
           ZAKOŃCZ
         </button>
       </div>
     </div>
 
     <!-- Items list (układ jak przy przyjęciu zlecenia: notatka na górze, potem lista) -->
-    <div id="raport-parts-banner" class="parts-banner" style="margin:12px 8px 0;">
+    <div id="raport-parts-banner" class="parts-banner">
       <div class="notatka-bottom-wrap">
         <div class="notatka-bottom-label">Notatka serwisowa</div>
         <textarea id="raport-notatka" placeholder="Wpisz notatkę do naprawy..." maxlength="500"
@@ -1139,31 +1970,31 @@ select.native-sel { display: none !important; }
 <!-- Podgląd naprawy (read-only) -->
 <div id="podglad-overlay" class="overlay-full" style="z-index:55;">
   <div class="app">
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 16px 0;">
-      <span id="podglad-title" style="font-size:15px;font-weight:700;color:var(--text2);min-width:0;"></span>
-      <button onclick="closePodglad()" class="btn-close" style="flex-shrink:0;">Zamknij</button>
+    <div class="overlay-header">
+      <span id="podglad-title" class="overlay-header-title text-muted"></span>
+      <button type="button" onclick="closePodglad()" class="btn-close ui-tile ui-tile--sm ui-tile--danger" style="flex-shrink:0;margin-left:0;">Zamknij</button>
     </div>
     <div class="podglad-body">
       <div id="podglad-header" style="font-size:13px;color:var(--text2);margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border);"></div>
       <table id="podglad-table" style="width:100%;border-collapse:collapse;"></table>
-      <div style="margin-top:14px;background:#000;border-radius:10px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;">
-        <span style="font-size:11px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.6px;">Łączna kwota</span>
-        <span id="podglad-total" style="font-size:26px;font-weight:800;color:#22c55e;"></span>
+      <div class="stat-box ui-tile ui-tile--wydanie stat-box--success">
+        <span class="stat-box-label">Łączna kwota</span>
+        <span id="podglad-total" class="stat-box-value"></span>
       </div>
-      <div id="podglad-kwota-zaplacona" style="display:none;margin-top:8px;background:#4c1d95;border-radius:10px;padding:12px 16px;justify-content:space-between;align-items:center;">
-        <span style="font-size:11px;font-weight:700;color:#ddd8fe;text-transform:uppercase;letter-spacing:.6px;">Kwota zapłacona</span>
-        <span id="podglad-kwota-zaplacona-val" style="font-size:22px;font-weight:800;color:#fff;"></span>
+      <div id="podglad-kwota-zaplacona" class="stat-box ui-tile ui-tile--accent stat-box--accent" style="display:none;">
+        <span class="stat-box-label">Kwota zapłacona</span>
+        <span id="podglad-kwota-zaplacona-val" class="stat-box-value"></span>
       </div>
-      <div id="podglad-kod-odbioru" style="display:none;margin-top:8px;background:#1c1209;border:1px solid #b45309;border-radius:10px;padding:12px 16px;justify-content:space-between;align-items:center;">
-        <span style="font-size:11px;font-weight:700;color:#fbbf24;text-transform:uppercase;letter-spacing:.6px;">🔑 Kod odbioru</span>
-        <span id="podglad-kod-odbioru-val" style="font-size:28px;font-weight:800;color:#f59e0b;letter-spacing:4px;"></span>
+      <div id="podglad-kod-odbioru" class="stat-box ui-tile ui-tile--warning stat-box--warning" style="display:none;">
+        <span class="stat-box-label">🔑 Kod odbioru</span>
+        <span id="podglad-kod-odbioru-val" class="stat-box-value"></span>
       </div>
       <div id="podglad-notatka" style="display:none;margin-top:14px;border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:8px;padding:12px 14px;">
         <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;">Notatka serwisowa</div>
         <div id="podglad-notatka-txt" style="font-size:13px;color:var(--text);line-height:1.6;white-space:pre-wrap;"></div>
       </div>
       <div id="podglad-action-bar" style="display:none;margin-top:14px;">
-        <button id="podglad-wydaj-btn" class="btn-history-load" style="width:100%;background:#ef4444;border-color:#ef4444;font-size:15px;font-weight:700;letter-spacing:.5px;min-height:66px;" onclick="">WYDAJ</button>
+        <button id="podglad-wydaj-btn" class="btn-action btn-action--release btn-block btn-lg" style="width:100%;min-height:66px;" onclick="">WYDAJ</button>
       </div>
     </div>
   </div>
@@ -1174,11 +2005,11 @@ select.native-sel { display: none !important; }
 
     <div style="display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:10px;">
       <div style="display:flex;align-items:center;gap:10px;">
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="#c0392b" stroke="#c0392b" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-        <span style="font-size:36px;font-weight:900;color:#c0392b;letter-spacing:2px;">SERWIS</span>
+        <svg width="40" height="40" viewBox="0 0 24 24" class="brand-logo-icon" fill="currentColor" stroke="currentColor" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+        <span class="brand-logo" style="font-size:36px;font-weight:900;letter-spacing:2px;">SERWIS</span>
       </div>
       <div id="main-sync-panel" style="width:75%;background:#0d0d14;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-top:4px;"></div>
-      <div id="backup-reminder" style="display:none;width:75%;margin-top:8px;background:rgba(245,158,11,0.10);border:1px solid #f59e0b;border-radius:10px;padding:10px 12px;">
+      <div id="backup-reminder" class="alert alert--warning" style="display:none;width:75%;margin-top:8px;">
         <div style="display:flex;align-items:flex-start;gap:8px;">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
           <div style="flex:1;min-width:0;">
@@ -1194,31 +2025,31 @@ select.native-sel { display: none !important; }
       </div>
     </div>
 
-    <button onclick="startNowe()" style="margin-bottom:16px;width:100%;padding:16px 20px;background:linear-gradient(180deg,#1db954 0%,#16a34a 50%,#0f7a38 100%);border:none;border-radius:16px;color:#fff;font-size:22px;font-weight:700;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:0;">
-      <span style="flex:0 0 80px;display:flex;align-items:center;justify-content:center;"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
-      <span style="flex:1;text-align:center;">DODAJ</span>
-      <span style="flex:0 0 80px;"></span>
+    <button type="button" onclick="startNowe()" class="start-cta start-cta--add ui-tile ui-tile--lg ui-tile--wydanie ui-tile--block">
+      <span class="start-cta-slot"><svg class="icon-xl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+      <span class="start-cta-label">DODAJ</span>
+      <span class="start-cta-slot"></span>
     </button>
-    <button onclick="startAktualne()" style="margin-bottom:16px;width:100%;padding:16px 20px;background:linear-gradient(180deg,#3b82f6 0%,#2563eb 50%,#1a4fc4 100%);border:none;border-radius:16px;color:#fff;font-size:22px;font-weight:700;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:0;">
-      <span style="flex:0 0 80px;display:flex;align-items:center;justify-content:center;"><svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>
-      <span style="flex:1;text-align:center;">PRZEGLĄDAJ</span>
-      <span style="flex:0 0 80px;"></span>
+    <button type="button" onclick="startAktualne()" class="start-cta start-cta--browse ui-tile ui-tile--lg ui-tile--naprawa ui-tile--block">
+      <span class="start-cta-slot"><svg class="icon-xl" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>
+      <span class="start-cta-label">PRZEGLĄDAJ</span>
+      <span class="start-cta-slot"></span>
     </button>
-    <div id="start-menu-calendar-wrap" style="width:100%;margin-top:4px;">
-      <div id="start-menu-calendar" style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:10px;"></div>
+    <div id="start-menu-calendar-wrap">
+      <div id="start-menu-calendar"></div>
     </div>
 
     <div class="start-icon-grid">
-      <button type="button" onclick="openAdminModal()" class="start-icon-btn start-icon-admin" title="Administracja" aria-label="Administracja">
+      <button type="button" onclick="openAdminModal()" class="start-icon-btn ui-tile ui-tile--md ui-tile--danger" title="Administracja" aria-label="Administracja">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.26.604.852.997 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       </button>
-      <button type="button" onclick="openKodyRabatowe()" class="start-icon-btn start-icon-rabaty" title="Kody rabatowe" aria-label="Kody rabatowe">
+      <button type="button" onclick="openKodyRabatowe()" class="start-icon-btn ui-tile ui-tile--md ui-tile--warning" title="Kody rabatowe" aria-label="Kody rabatowe">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h7"/><path d="M18 2l4 4-10 10H8v-4z"/></svg>
       </button>
-      <button type="button" onclick="startLancuch()" class="start-icon-btn start-icon-lancuch" title="Łańcuch" aria-label="Łańcuch">
+      <button type="button" onclick="startLancuch()" class="start-icon-btn ui-tile ui-tile--md ui-tile--info" title="Łańcuch" aria-label="Łańcuch">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
       </button>
-      <button type="button" id="day-mode-btn" onclick="toggleDayMode()" class="start-icon-btn start-icon-day" title="Tryb kolorystyczny" aria-label="Tryb kolorystyczny">
+      <button type="button" id="day-mode-btn" onclick="toggleDayMode()" class="start-icon-btn ui-tile ui-tile--md ui-tile--warning" title="Tryb kolorystyczny" aria-label="Tryb kolorystyczny">
         <span id="day-mode-icon" style="display:flex;align-items:center;justify-content:center;">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
         </span>
@@ -1231,16 +2062,6 @@ select.native-sel { display: none !important; }
 @keyframes border-rotate {
   0%   { background-position: 0% 50%; }
   100% { background-position: 400% 50%; }
-}
-.history-item-urgent {
-  position: relative;
-  border-width: 2px !important;
-  border-color: #ef4444 !important;
-}
-.history-item-urgent-today {
-  position: relative;
-  border-width: 2px !important;
-  border-color: #ef4444 !important;
 }
 @property --angle {
   syntax: '<angle>';
@@ -1277,30 +2098,30 @@ select.native-sel { display: none !important; }
       .start-icon-rabaty,
       .start-icon-lancuch,
       .start-icon-day{
-        background:rgba(255,255,255,0.04);
-        border-color:rgba(255,255,255,0.14);
+        background:var(--bg-panel);
+        border-color:var(--border-panel);
         color:var(--text2);
       }
-      .start-icon-admin{ color:#f87171; border-color:rgba(248,113,113,0.35); background:rgba(248,113,113,0.1); }
-      .start-icon-rabaty{ color:#fbbf24; border-color:rgba(251,191,36,0.35); background:rgba(251,191,36,0.1); }
-      .start-icon-lancuch{ color:#67e8f9; border-color:rgba(103,232,249,0.35); background:rgba(103,232,249,0.1); }
-      .start-icon-day{ color:#fbbf24; border-color:rgba(251,191,36,0.35); background:rgba(251,191,36,0.1); }
+      .start-icon-admin{ color:var(--color-danger); border-color:var(--solid-danger-border); background:var(--solid-danger-bg); }
+      .start-icon-rabaty{ color:#fbbf24; border-color:var(--solid-warning-border); background:var(--solid-warning-bg); }
+      .start-icon-lancuch{ color:#67e8f9; border-color:var(--solid-info-border); background:var(--solid-info-bg); }
+      .start-icon-day{ color:#fbbf24; border-color:var(--solid-warning-border); background:var(--solid-warning-bg); }
       .start-icon-day.active{
         color:#fde68a;
-        border-color:rgba(253,230,138,0.55);
-        background:rgba(253,230,138,0.18);
+        border-color:var(--solid-day-border);
+        background:var(--solid-day-bg);
       }
       html.day-mode .start-icon-btn{
         background:var(--bg2);
       }
-      html.day-mode .start-icon-admin{ color:#dc2626; border-color:rgba(220,38,38,0.35); background:rgba(220,38,38,0.08); }
-      html.day-mode .start-icon-rabaty{ color:#d97706; border-color:rgba(217,119,6,0.35); background:rgba(217,119,6,0.08); }
-      html.day-mode .start-icon-lancuch{ color:#0891b2; border-color:rgba(8,145,178,0.35); background:rgba(8,145,178,0.08); }
-      html.day-mode .start-icon-day{ color:#d97706; border-color:rgba(217,119,6,0.35); background:rgba(217,119,6,0.08); }
+      html.day-mode .start-icon-admin{ color:#dc2626; border-color:#fca5a5; background:#fef2f2; }
+      html.day-mode .start-icon-rabaty{ color:#d97706; border-color:#fcd34d; background:#fffbeb; }
+      html.day-mode .start-icon-lancuch{ color:#0891b2; border-color:#67e8f9; background:#ecfeff; }
+      html.day-mode .start-icon-day{ color:#d97706; border-color:#fcd34d; background:#fffbeb; }
       html.day-mode .start-icon-day.active{
         color:#b45309;
-        border-color:rgba(180,83,9,0.5);
-        background:rgba(180,83,9,0.14);
+        border-color:#f59e0b;
+        background:#fef3c7;
       }
 
       /* Administracja modal: równe ikony jak w menu */
@@ -1330,35 +2151,33 @@ select.native-sel { display: none !important; }
 <!-- Kody rabatowe -->
 <div id="kody-rabatowe-overlay" class="overlay-full" style="z-index:60;display:none;">
   <div class="app">
-    <div style="display:flex;justify-content:flex-end;padding:8px 16px 0;">
-      <button onclick="closeKodyRabatowe()" class="btn-close">Zamknij</button>
+    <div class="tool-page-header">
+      <span class="tool-page-title">Kody rabatowe</span>
+      <button onclick="closeKodyRabatowe()" class="btn-close ui-tile ui-tile--sm ui-tile--danger">Zamknij</button>
     </div>
 
-    <div style="padding:16px 16px 40px;display:flex;flex-direction:column;gap:14px;">
-      <!-- Szukaj kodów -->
-      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:12px 12px;">
+    <div class="tool-page-body">
+      <div class="tool-card">
         <input id="rab-search" type="text" placeholder="Szukaj po numerze telefonu (xxx-xxx-xxx) lub kodzie (8 cyfr)"
-          style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:12px 12px;color:#fff;font-size:14px;font-weight:800;outline:none;">
+          style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:12px 12px;color:var(--text);font-size:14px;font-weight:800;outline:none;">
       </div>
 
-      <!-- Jedna promocja + generowanie (cała logika tutaj, nie w overlay) -->
-      <div id="rab-main-promo-card" style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:12px 12px;display:flex;flex-direction:column;gap:10px;">
-        <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;">Promocja — wybierz</div>
+      <div id="rab-main-promo-card" class="tool-card" style="display:flex;flex-direction:column;gap:10px;">
+        <div class="tool-card-label">Promocja — wybierz</div>
         <select id="rab-main-template-sel" class="modal-select" style="font-size:15px;padding:10px 12px;"></select>
         <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap;align-items:center;">
           <span style="font-size:12px;color:var(--text3);align-self:center;">Ważność:</span>
-          <button type="button" id="rab-main-valid-1" onclick="setRabValidity(1)" style="padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:#fff;font-weight:900;cursor:pointer;">1 mies.</button>
-          <button type="button" id="rab-main-valid-3" onclick="setRabValidity(3)" style="padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:#fff;font-weight:900;cursor:pointer;">3 mies.</button>
-          <button type="button" id="rab-main-valid-6" onclick="setRabValidity(6)" style="padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:#fff;font-weight:900;cursor:pointer;">6 mies.</button>
-          <button type="button" id="rab-main-valid-12" onclick="setRabValidity(12)" style="padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:#fff;font-weight:900;cursor:pointer;">12 mies.</button>
-          <button type="button" id="rab-main-valid-fix2026" onclick="setRabValidity('fix2026')" style="padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:#fff;font-weight:900;cursor:pointer;">do 31.12.26</button>
+          <button type="button" id="rab-main-valid-1" onclick="setRabValidity(1)" class="ui-tile ui-tile--sm ui-tile--neutral">1 mies.</button>
+          <button type="button" id="rab-main-valid-3" onclick="setRabValidity(3)" class="ui-tile ui-tile--sm ui-tile--neutral">3 mies.</button>
+          <button type="button" id="rab-main-valid-6" onclick="setRabValidity(6)" class="ui-tile ui-tile--sm ui-tile--neutral">6 mies.</button>
+          <button type="button" id="rab-main-valid-12" onclick="setRabValidity(12)" class="ui-tile ui-tile--sm ui-tile--neutral">12 mies.</button>
+          <button type="button" id="rab-main-valid-fix2026" onclick="setRabValidity('fix2026')" class="ui-tile ui-tile--sm ui-tile--neutral">do 31.12.26</button>
         </div>
-        <button type="button" onclick="generateRabCodePromoOnly()" style="width:100%;padding:12px;background:#22c55e;border:1px solid #22c55e;border-radius:10px;color:#111827;font-size:14px;font-weight:900;cursor:pointer;">Generuj kod (bez zlecenia)</button>
-        <button type="button" onclick="openRabWydane()" style="width:100%;padding:12px;background:#f59e0b;border:1px solid #f59e0b;border-radius:10px;color:#111827;font-size:14px;font-weight:900;cursor:pointer;">Przypisz do wydanego zlecenia</button>
+        <button type="button" onclick="generateRabCodePromoOnly()" class="ui-tile ui-tile--md ui-tile--wydanie ui-tile--block">Generuj kod (bez zlecenia)</button>
+        <button type="button" onclick="openRabWydane()" class="ui-tile ui-tile--md ui-tile--warning ui-tile--block">Przypisz do wydanego zlecenia</button>
       </div>
 
-      <!-- Aktywne kody -->
-      <button onclick="toggleRabatyAktywne()" style="width:100%;padding:12px;background:#052e1a;border:1px solid #22c55e;border-radius:12px;color:#22c55e;font-size:14px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+      <button onclick="toggleRabatyAktywne()" class="ui-tile ui-tile--md ui-tile--wydanie ui-tile--block">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h7"/><path d="M18 2l4 4-10 10H8v-4z"/></svg>
         Aktywne kody
       </button>
@@ -1366,8 +2185,7 @@ select.native-sel { display: none !important; }
         <div id="rab-active-list" style="display:flex;flex-direction:column;gap:10px;"></div>
       </div>
 
-      <!-- Wykorzystane kody -->
-      <button onclick="toggleRabatyWykorzystane()" style="width:100%;padding:12px;background:#2a0f0f;border:1px solid #ef4444;border-radius:12px;color:#ef4444;font-size:14px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+      <button onclick="toggleRabatyWykorzystane()" class="ui-tile ui-tile--md ui-tile--danger ui-tile--block">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h7"/><path d="M18 2l4 4-10 10H8v-4z"/></svg>
         Wykorzystane kody
       </button>
@@ -1430,7 +2248,7 @@ select.native-sel { display: none !important; }
 <div id="kalkulator-prosty-overlay" class="overlay-full">
   <div class="app">
     <div style="display:flex;justify-content:flex-end;padding:8px 16px 0;">
-      <button onclick="closeKalkulatorProsty()" class="btn-close">Zamknij</button>
+      <button onclick="closeKalkulatorProsty()" class="btn-close ui-tile ui-tile--sm ui-tile--danger">Zamknij</button>
     </div>
     <div style="padding:16px;">
       <!-- Wyświetlacz -->
@@ -1532,56 +2350,54 @@ select.native-sel { display: none !important; }
 <!-- Łańcuch - pełny ekran -->
 <div id="lancuch-overlay" class="overlay-full">
   <div class="app">
-    <div style="display:flex;justify-content:flex-end;padding:8px 16px 0;">
-      <button onclick="closeLancuch()" class="btn-close">Zamknij</button>
+    <div class="tool-page-header">
+      <span class="tool-page-title">Łańcuch</span>
+      <button onclick="closeLancuch()" class="btn-close ui-tile ui-tile--sm ui-tile--danger">Zamknij</button>
     </div>
 
-    <div style="padding:16px 16px 40px;display:flex;flex-direction:column;gap:16px;">
+    <div class="tool-page-body">
 
-      <!-- Inputs -->
-      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:14px;">
+      <div class="tool-card" style="display:flex;flex-direction:column;gap:14px;">
 
         <div style="display:flex;flex-direction:column;gap:6px;">
-          <label style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;">Największa tarcza z przodu (zęby)</label>
+          <label class="tool-card-label">Największa tarcza z przodu (zęby)</label>
           <input id="lanc-tarcza" type="number" min="20" max="60" value="50" placeholder="np. 50"
             style="font-size:22px;font-weight:700;border:1px solid var(--border);border-radius:8px;padding:10px 14px;background:var(--bg);color:#67e8f9;outline:none;width:100%;"
             oninput="calcLancuch()" onfocus="this.style.borderColor='#0891b2'" onblur="this.style.borderColor='var(--border)'">
         </div>
 
         <div style="display:flex;flex-direction:column;gap:6px;">
-          <label style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;">Największa zębatka kasety z tyłu (zęby)</label>
+          <label class="tool-card-label">Największa zębatka kasety z tyłu (zęby)</label>
           <input id="lanc-kaseta" type="number" min="10" max="52" value="34" placeholder="np. 34"
             style="font-size:22px;font-weight:700;border:1px solid var(--border);border-radius:8px;padding:10px 14px;background:var(--bg);color:#67e8f9;outline:none;width:100%;"
             oninput="calcLancuch()" onfocus="this.style.borderColor='#0891b2'" onblur="this.style.borderColor='var(--border)'">
         </div>
 
         <div style="display:flex;flex-direction:column;gap:6px;">
-          <label style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;">Rozstaw osi suport – tylna piasta (cm)</label>
+          <label class="tool-card-label">Rozstaw osi suport – tylna piasta (cm)</label>
           <input id="lanc-rozstaw" type="number" min="30" max="60" value="42" step="0.1" placeholder="np. 42"
             style="font-size:22px;font-weight:700;border:1px solid var(--border);border-radius:8px;padding:10px 14px;background:var(--bg);color:#67e8f9;outline:none;width:100%;"
             oninput="calcLancuch()" onfocus="this.style.borderColor='#0891b2'" onblur="this.style.borderColor='var(--border)'">
         </div>
       </div>
 
-      <!-- Wynik -->
-      <div id="lanc-wynik" style="background:var(--bg2);border:1px solid #0891b2;border-left:3px solid #0891b2;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px;">
+      <div id="lanc-wynik" class="tool-card" style="border-color:#284858;border-left:3px solid #0891b2;display:flex;flex-direction:column;gap:12px;">
         <div style="display:flex;justify-content:space-between;align-items:center;">
-          <span style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;">Liczba ogniw</span>
-          <span id="lanc-ogniwa" style="font-size:36px;font-weight:800;color:#fff;letter-spacing:-1px;">–</span>
+          <span class="tool-card-label">Liczba ogniw</span>
+          <span id="lanc-ogniwa" style="font-size:36px;font-weight:800;color:var(--text);letter-spacing:-1px;">–</span>
         </div>
         <div style="display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid var(--border);">
-          <span style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;">Łańcuch</span>
+          <span class="tool-card-label">Łańcuch</span>
           <span id="lanc-dlugosc" style="font-size:24px;font-weight:700;color:#67e8f9;">–</span>
         </div>
         <div style="display:flex;justify-content:space-between;align-items:center;">
-          <span style="font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;">Rozstaw w calach</span>
+          <span class="tool-card-label">Rozstaw w calach</span>
           <span id="lanc-cale" style="font-size:13px;font-weight:600;color:var(--text3);">–</span>
         </div>
       </div>
 
-      <!-- Wzór -->
-      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 16px;">
-        <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;">Wzór</div>
+      <div class="tool-card" style="background:var(--bg3);">
+        <div class="tool-card-label" style="margin-bottom:8px;">Wzór</div>
         <div style="font-size:13px;color:var(--text2);line-height:1.8;">
           <span style="color:#67e8f9;font-weight:700;">L = 2C + F/4 + R/4 + 1</span><br>
           C – rozstaw osi w calach &nbsp;·&nbsp; F – tarcza &nbsp;·&nbsp; R – kaseta<br>
@@ -1633,7 +2449,7 @@ select.native-sel { display: none !important; }
         <button id="tab-kosz" type="button" class="btn-kosz-header" onclick="switchTab('kosz')" title="Kosz" style="display:none;">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
         </button>
-        <button type="button" onclick="closeHistoryToMenu()" class="btn-close" style="margin-left:0;">Zamknij</button>
+        <button type="button" onclick="closeHistoryToMenu()" class="btn-close ui-tile ui-tile--sm ui-tile--danger" style="margin-left:0;">Zamknij</button>
         </div>
       </div>
     </div>
@@ -1653,6 +2469,9 @@ select.native-sel { display: none !important; }
   <div class="app">
     <div style="padding:16px 16px 40px;display:flex;flex-direction:column;gap:14px;">
       <div class="modal-banner">
+      <div class="modal-rower-kolor-wrap">
+        <div id="modal-kolor-preview" class="modal-kolor-preview" title="Wybrany kolor"></div>
+        <div class="modal-rower-fields">
       <div class="modal-field">
         <label style="display:none;">Marka</label>
         <div style="display:flex;gap:8px;align-items:stretch;">
@@ -1719,6 +2538,8 @@ select.native-sel { display: none !important; }
         <label>Model</label>
         <input type="text" id="modal-marka" placeholder="MODEL" maxlength="12" style="text-transform:uppercase;" oninput="this.value=this.value.toUpperCase()">
       </div>
+        </div>
+      </div>
       <div class="modal-field">
         <label>Kolor</label>
         <input type="hidden" id="modal-kolor" value="">
@@ -1737,7 +2558,7 @@ select.native-sel { display: none !important; }
         <div style="display:flex;gap:8px;align-items:stretch;">
           <input type="tel" id="modal-tel" placeholder="TELEFON" maxlength="11" style="flex:1;min-width:0;" onkeydown="if(event.key==='Enter'){event.preventDefault();closeModal();}">
           <button type="button" onclick="copyModalTelToClipboard()" title="Kopiuj numer"
-            style="flex:0 0 auto;width:56px;height:56px;border-radius:10px;background:rgba(59,124,244,0.14);border:1px solid rgba(59,124,244,0.35);color:#3b7cf4;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;">
+            style="flex:0 0 auto;width:56px;height:56px;border-radius:10px;background:#151c28;border:1px solid #2a4568;color:#3b7cf4;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
               <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -1748,7 +2569,7 @@ select.native-sel { display: none !important; }
       <div class="modal-field">
         <label>Termin naprawy</label>
         <input type="hidden" id="modal-termin" value="">
-        <div id="modal-termin-calendar" style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:10px;"></div>
+        <div id="modal-termin-calendar"></div>
       </div>
       </div>
       <div class="modal-banner">
@@ -1764,10 +2585,10 @@ select.native-sel { display: none !important; }
         <div class="photo-previews" id="photo-previews" style="margin-top:8px;"></div>
       </div>
       </div>
-      <div id="modal-error" style="display:none;font-size:14px;font-weight:600;color:#ef4444;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:6px;padding:10px 14px;"></div>
+      <div id="modal-error" style="display:none;font-size:14px;font-weight:600;color:#ef4444;background:#221515;border:1px solid #5c3030;border-radius:6px;padding:10px 14px;"></div>
       <div style="display:flex;gap:8px;">
-        <button type="button" onclick="confirmCancelModal()" style="flex:1;padding:16px 0;background:#c0392b;border:1px solid #c0392b;border-radius:10px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;">Anuluj</button>
-        <button type="button" onclick="closeModal()" style="flex:3;padding:16px;background:#16a34a;border:1px solid #16a34a;border-radius:10px;color:#fff;font-size:17px;font-weight:700;cursor:pointer;letter-spacing:.3px;display:flex;align-items:center;justify-content:center;gap:10px;">
+        <button type="button" onclick="confirmCancelModal()" class="btn btn-close btn-cancel ui-tile ui-tile--lg ui-tile--danger" style="flex:1;margin-left:0;">Anuluj</button>
+        <button type="button" onclick="closeModal()" class="btn ui-tile ui-tile--lg ui-tile--wydanie" style="flex:3;">
           Przejdź do części
         </button>
       </div>
@@ -1944,6 +2765,32 @@ function _kolorCss(token) {
   return COLOR_MAP[t.toUpperCase()] || null;
 }
 
+function _kolorBackgroundStyle(kolor) {
+  if (!kolor) return 'transparent';
+  const k = String(kolor).trim();
+  if (k.includes('/')) {
+    const parts = k.split('/').map(s => s.trim()).filter(Boolean);
+    if (parts.length >= 2) {
+      const c1 = _kolorCss(parts[0]);
+      const c2 = _kolorCss(parts[1]);
+      if (c1 && c2) return 'linear-gradient(180deg,' + c1 + ' 0,' + c1 + ' 50%,' + c2 + ' 50%,' + c2 + ' 100%)';
+    }
+  }
+  const css = _kolorCss(k);
+  if (css) return css;
+  return 'repeating-linear-gradient(45deg,#6b7280 0 4px,#111827 4px 8px)';
+}
+
+function _applyKolorPreviewEl(el, kolor) {
+  if (!el) return;
+  if (!kolor) {
+    el.style.background = 'transparent';
+    el.style.display = 'none';
+    return;
+  }
+  el.style.display = '';
+  el.style.background = _kolorBackgroundStyle(kolor);
+}
 
 // Pomocnicza: nazwa roweru do SMS
 function _smsRower(marka, model) {
@@ -1983,16 +2830,9 @@ function makeKolorDot(kolor, size) {
 
 function makeKolorBarHTML(kolor) {
   if (!kolor) return '';
-  const k = String(kolor).toUpperCase().trim();
-  if (k.includes('/')) {
-    const parts = k.split('/').map(s => s.trim()).filter(Boolean);
-    const c1 = _kolorCss(parts[0]); const c2 = _kolorCss(parts[1]);
-    if (c1 && c2) return '<div class="history-color-bar" style="background:linear-gradient(180deg,' + c1 + ' 0,' + c1 + ' 50%,' + c2 + ' 50%,' + c2 + ' 100%);"></div>';
-  }
-  const css = _kolorCss(k);
-  if (css) return '<div class="history-color-bar" style="background:' + css + ';"></div>';
-  // Nieznany kolor (np. wpisany ręcznie) — dyskretne paski
-  return '<div class="history-color-bar" style="background:repeating-linear-gradient(45deg,#6b7280 0 4px,#111827 4px 8px);"></div>';
+  const bg = _kolorBackgroundStyle(kolor);
+  if (bg === 'transparent') return '';
+  return '<div class="history-color-bar" style="background:' + bg + ';"></div>';
 }
 
 // Mały boczny pasek koloru (np. w górnym pasku edycji)
@@ -3465,12 +4305,17 @@ function toggleEbikeCheck() {
 window.toggleEbikeCheck = toggleEbikeCheck;
 
 function openAdminModal() {
-  $('admin-modal').style.display = 'flex';
-  // updateAdminSyncRow renderuje panel; setSyncDot('off') wywołałoby ją ponownie —
-  // wystarczy jedno wywołanie.
+  $('start-overlay').style.display = 'none';
+  $('admin-modal').style.display = 'block';
   updateAdminSyncRow();
 }
+function closeAdminModal() {
+  $('admin-modal').style.display = 'none';
+  $('start-overlay').style.display = 'flex';
+  refreshStartMenu();
+}
 window.openAdminModal = openAdminModal;
+window.closeAdminModal = closeAdminModal;
 
 // ─────────────────────────────────────────
 // KODY RABATOWE
@@ -3776,7 +4621,7 @@ function renderRabatyActive() {
   list.forEach((r, idx) => {
     const row = document.createElement('div');
     const highlight = _rabHighlightCode && (String(r.code||'') === String(_rabHighlightCode)) && Date.now() < (_rabHighlightUntil || 0);
-    row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:12px 12px;background:' + (highlight ? 'rgba(245,158,11,0.14)' : 'var(--bg2)') + ';border:1px solid ' + (highlight ? 'rgba(245,158,11,0.65)' : 'var(--border)') + ';border-radius:12px;';
+    row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:12px 12px;background:' + (highlight ? '#221c12' : 'var(--bg2)') + ';border:1px solid ' + (highlight ? '#5c4828' : 'var(--border)') + ';border-radius:12px;';
     row.dataset.code = String(r.code || '');
 
     const left = document.createElement('div');
@@ -3816,15 +4661,20 @@ function renderRabatyActive() {
 
     const smsBtn = document.createElement('button');
     const smsSent = !!r.smsSent;
-    smsBtn.className = 'btn-history-sms' + (smsSent ? ' btn-history-sms-sent' : '');
+    smsBtn.className = 'btn-action ui-tile ui-tile--sm btn-history-sms' + (smsSent ? ' btn-history-sms-sent' : ' ui-tile--naprawa');
     smsBtn.style.cssText = 'font-weight:900;gap:6px;';
     smsBtn.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> SMS';
     smsBtn.title = smsSent ? 'SMS wysłany' : 'Wyślij SMS z kodem';
-    smsBtn.disabled = smsSent;
-    smsBtn.onclick = () => {
+    if (smsSent) smsBtn.disabled = true;
+    smsBtn.onclick = (ev) => {
+      ev.stopPropagation();
+      if (smsSent) return;
       const tel = String(r.tel || '').trim();
       if (!tel) { alert('Brak numeru telefonu.'); return; }
       markRabSmsSent(r.code);
+      smsBtn.classList.remove('ui-tile--naprawa');
+      smsBtn.classList.add('btn-history-sms-sent');
+      smsBtn.disabled = true;
       const body = _smsRabatyBody(r);
       window.location.href = 'sms:' + tel.replace(/[^0-9+]/g,'') + '?body=' + encodeURIComponent(body);
     };
@@ -3875,7 +4725,7 @@ function renderRabatyUsed() {
   list.forEach((r, idx) => {
     const row = document.createElement('div');
     const highlight = _rabHighlightCode && (String(r.code||'') === String(_rabHighlightCode)) && Date.now() < (_rabHighlightUntil || 0);
-    row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:12px 12px;background:' + (highlight ? 'rgba(245,158,11,0.14)' : 'var(--bg2)') + ';border:1px solid ' + (highlight ? 'rgba(245,158,11,0.65)' : 'var(--border)') + ';border-radius:12px;opacity:0.92;';
+    row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:12px 12px;background:' + (highlight ? '#221c12' : 'var(--bg2)') + ';border:1px solid ' + (highlight ? '#5c4828' : 'var(--border)') + ';border-radius:12px;opacity:0.92;';
     row.dataset.code = String(r.code || '');
 
     const left = document.createElement('div');
@@ -4501,6 +5351,80 @@ function _terminCounts() {
   } catch (e) {}
   return map;
 }
+function _calLoadTier(cnt) {
+  const n = cnt || 0;
+  if (n <= 2) return 'low';
+  if (n <= 4) return 'mid';
+  return 'high';
+}
+const _ORDER_CAL_MONTHS = ['Styczeń','Luty','Marzec','Kwiecień','Maj','Czerwiec','Lipiec','Sierpień','Wrzesień','Październik','Listopad','Grudzień'];
+function _buildOrderCalGrid(y, m, opts) {
+  opts = opts || {};
+  const counts = _terminCounts();
+  const startDow = (new Date(y, m, 1).getDay() + 6) % 7;
+  const daysInMonth = new Date(y, m + 1, 0).getDate();
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const selD = opts.selD || 0;
+  const selM = opts.selM || 0;
+  const pickable = !!opts.pickable;
+
+  let html = '<div class="order-cal-grid">';
+  ['Pn','Wt','Śr','Cz','Pt','So','Nd'].forEach(d => {
+    html += `<div class="order-cal-dow">${d}</div>`;
+  });
+  for (let i = 0; i < startDow; i++) html += '<div></div>';
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateObj = new Date(y, m, d);
+    dateObj.setHours(0, 0, 0, 0);
+    const dow = dateObj.getDay();
+    const isSunday = dow === 0;
+    const isPast = dateObj < today;
+    const isToday = dateObj.getTime() === today.getTime();
+    const cnt = counts[d + '.' + (m + 1)] || 0;
+    const tier = _calLoadTier(cnt);
+    const isSel = selD === d && selM === (m + 1);
+    const disabled = isSunday || isPast;
+    const cls = ['order-cal-day', 'order-cal-day--load-' + tier];
+    if (isToday) cls.push('is-today');
+    if (isSel) cls.push('order-cal-day--selected');
+    if (disabled) cls.push('order-cal-day--disabled');
+    const badge = cnt > 0
+      ? `<span class="order-cal-count">${cnt}</span>`
+      : '';
+    const dayContent = `<span class="order-cal-day-num">${d}</span>${badge}`;
+    if (pickable && !disabled) {
+      const ddmm = String(d).padStart(2, '0') + '.' + String(m + 1).padStart(2, '0');
+      html += `<button type="button" class="${cls.join(' ')}" onclick="terminPick('${ddmm}')">${dayContent}</button>`;
+    } else {
+      html += `<div class="${cls.join(' ')}">${dayContent}</div>`;
+    }
+  }
+  html += '</div>';
+  return html;
+}
+function _buildOrderCalNavHtml(y, m, prevFn, nextFn) {
+  return `
+    <div class="order-cal-nav">
+      <button type="button" class="order-cal-nav-btn" onclick="${prevFn}()">‹</button>
+      <span class="order-cal-title">${_ORDER_CAL_MONTHS[m]} ${y}</span>
+      <button type="button" class="order-cal-nav-btn" onclick="${nextFn}()">›</button>
+    </div>`;
+}
+function _buildOrderCalHtml(y, m, opts) {
+  opts = opts || {};
+  const prevFn = opts.prevFn || 'terminCalPrev';
+  const nextFn = opts.nextFn || 'terminCalNext';
+  let html = _buildOrderCalNavHtml(y, m, prevFn, nextFn);
+  if (opts.selVal) {
+    html += `<div class="order-cal-sel-bar">
+      <span class="order-cal-sel-label">Termin: ${escHTML(opts.selVal)}</span>
+      <button type="button" class="order-cal-sel-clear" onclick="clearTermin()" title="Wyczyść termin">✕</button>
+    </div>`;
+  }
+  html += _buildOrderCalGrid(y, m, opts);
+  return html;
+}
 function initTerminCalendar() {
   const saved = _parseTerminParts($('modal-termin').value || '');
   const now = new Date();
@@ -4516,54 +5440,11 @@ function _renderTerminCalendar() {
   const cont = $('modal-termin-calendar');
   if (!cont || !_terminCalMonth) return;
   const { y, m } = _terminCalMonth;
-  const counts = _terminCounts();
-  const monthNames = ['Styczeń','Luty','Marzec','Kwiecień','Maj','Czerwiec','Lipiec','Sierpień','Wrzesień','Październik','Listopad','Grudzień'];
-  const startDow = (new Date(y, m, 1).getDay() + 6) % 7;
-  const daysInMonth = new Date(y, m + 1, 0).getDate();
-  const today = new Date(); today.setHours(0, 0, 0, 0);
   const sel = _parseTerminParts($('modal-termin').value || '');
   const selD = parseInt(sel[0], 10) || 0;
   const selM = parseInt(sel[1], 10) || 0;
   const selVal = _normalizeTerminStr($('modal-termin').value);
-
-  let html = `
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-      <button type="button" onclick="terminCalPrev()" style="width:34px;height:34px;background:none;border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:16px;font-weight:700;cursor:pointer;">‹</button>
-      <span style="font-size:14px;font-weight:700;color:#fff;">${monthNames[m]} ${y}</span>
-      <button type="button" onclick="terminCalNext()" style="width:34px;height:34px;background:none;border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:16px;font-weight:700;cursor:pointer;">›</button>
-    </div>`;
-  if (selVal) {
-    html += `<div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:8px;padding:8px 10px;background:rgba(22,163,74,0.12);border:1px solid rgba(22,163,74,0.35);border-radius:8px;">
-      <span style="font-size:14px;font-weight:800;color:#16a34a;">Termin: ${escHTML(selVal)}</span>
-      <button type="button" onclick="clearTermin()" title="Wyczyść termin" style="background:none;border:1px solid var(--border);border-radius:6px;padding:2px 8px;color:var(--text3);font-size:14px;cursor:pointer;line-height:1.2;">✕</button>
-    </div>`;
-  }
-  html += `<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;">`;
-  ['Pn','Wt','Śr','Cz','Pt','So','Nd'].forEach(d => {
-    html += `<div style="text-align:center;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;padding:2px 0;">${d}</div>`;
-  });
-  for (let i = 0; i < startDow; i++) html += '<div></div>';
-  for (let d = 1; d <= daysInMonth; d++) {
-    const dateObj = new Date(y, m, d); dateObj.setHours(0, 0, 0, 0);
-    const dow = dateObj.getDay();
-    const isSunday = dow === 0;
-    const isPast = dateObj < today;
-    const cnt = counts[d + '.' + (m + 1)] || 0;
-    const isSel = (selD === d && selM === (m + 1));
-    const badge = cnt > 0
-      ? `<span style="position:absolute;top:2px;right:2px;min-width:15px;height:15px;padding:0 3px;border-radius:8px;background:#f59e0b;color:#111827;font-size:9px;font-weight:900;line-height:15px;text-align:center;">${cnt}</span>`
-      : '';
-    if (isSunday || isPast) {
-      html += `<div style="position:relative;aspect-ratio:1;min-height:38px;display:flex;align-items:center;justify-content:center;border:1px solid transparent;border-radius:8px;color:var(--text3);opacity:0.3;font-size:14px;font-weight:600;">${d}${badge}</div>`;
-    } else {
-      const ddmm = String(d).padStart(2, '0') + '.' + String(m + 1).padStart(2, '0');
-      html += `<button type="button" onclick="terminPick('${ddmm}')" style="position:relative;aspect-ratio:1;min-height:38px;border-radius:8px;font-size:14px;font-weight:800;cursor:pointer;${isSel
-        ? 'background:#16a34a;border:1px solid #16a34a;color:#fff;'
-        : 'background:none;border:1px solid var(--border);color:var(--text);'}">${d}${badge}</button>`;
-    }
-  }
-  html += '</div>';
-  cont.innerHTML = html;
+  cont.innerHTML = _buildOrderCalHtml(y, m, { pickable: true, selD, selM, selVal });
 }
 function terminCalPrev() {
   _terminCalMonth.m--;
@@ -4601,6 +5482,39 @@ window.clearTermin = clearTermin;
 
 // ── Kalendarz zleceń przyjętych (menu główne) ──
 let _startCalMonth = null;
+let _startCalSwipeX = 0;
+let _startCalSwipeY = 0;
+let _startCalSwipeBound = false;
+
+function _buildStartCalMonthHtml(y, m) {
+  return _buildOrderCalHtml(y, m, { pickable: false, prevFn: 'startCalPrev', nextFn: 'startCalNext' });
+}
+
+function _bindStartCalSwipe() {
+  if (_startCalSwipeBound) return;
+  const wrap = $('start-menu-calendar-wrap');
+  if (!wrap) return;
+  _startCalSwipeBound = true;
+  const onStart = (x, y) => { _startCalSwipeX = x; _startCalSwipeY = y; };
+  const onEnd = (x, y) => {
+    const dx = x - _startCalSwipeX;
+    const dy = y - _startCalSwipeY;
+    if (Math.abs(dx) < 48 || Math.abs(dx) < Math.abs(dy)) return;
+    if (dx > 0) startCalPrev();
+    else startCalNext();
+  };
+  wrap.addEventListener('touchstart', e => {
+    if (!e.touches[0]) return;
+    onStart(e.touches[0].clientX, e.touches[0].clientY);
+  }, { passive: true });
+  wrap.addEventListener('touchend', e => {
+    if (!e.changedTouches[0]) return;
+    onEnd(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+  }, { passive: true });
+  wrap.addEventListener('mousedown', e => { onStart(e.clientX, e.clientY); });
+  wrap.addEventListener('mouseup', e => { onEnd(e.clientX, e.clientY); });
+}
+
 function renderStartMenuCalendar() {
   const cont = $('start-menu-calendar');
   if (!cont) return;
@@ -4609,48 +5523,8 @@ function renderStartMenuCalendar() {
     _startCalMonth = { y: now.getFullYear(), m: now.getMonth() };
   }
   const { y, m } = _startCalMonth;
-  const counts = _terminCounts();
-  const monthNames = ['Styczeń','Luty','Marzec','Kwiecień','Maj','Czerwiec','Lipiec','Sierpień','Wrzesień','Październik','Listopad','Grudzień'];
-  const startDow = (new Date(y, m, 1).getDay() + 6) % 7;
-  const daysInMonth = new Date(y, m + 1, 0).getDate();
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const totalMonth = Object.keys(counts).reduce((acc, k) => {
-    const p = k.split('.');
-    if (parseInt(p[1], 10) === m + 1) return acc + counts[k];
-    return acc;
-  }, 0);
-
-  let html = `
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-      <button type="button" onclick="startCalPrev()" style="width:34px;height:34px;background:none;border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:16px;font-weight:700;cursor:pointer;">‹</button>
-      <div style="text-align:center;">
-        <div style="font-size:14px;font-weight:700;color:#fff;">${monthNames[m]} ${y}</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:2px;">${totalMonth} ${totalMonth === 1 ? 'zlecenie' : (totalMonth < 5 ? 'zlecenia' : 'zleceń')}</div>
-      </div>
-      <button type="button" onclick="startCalNext()" style="width:34px;height:34px;background:none;border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:16px;font-weight:700;cursor:pointer;">›</button>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;">`;
-  ['Pn','Wt','Śr','Cz','Pt','So','Nd'].forEach(d => {
-    html += `<div style="text-align:center;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;padding:2px 0;">${d}</div>`;
-  });
-  for (let i = 0; i < startDow; i++) html += '<div></div>';
-  for (let d = 1; d <= daysInMonth; d++) {
-    const dateObj = new Date(y, m, d);
-    dateObj.setHours(0, 0, 0, 0);
-    const isToday = dateObj.getTime() === today.getTime();
-    const cnt = counts[d + '.' + (m + 1)] || 0;
-    const badge = cnt > 0
-      ? `<span style="position:absolute;top:1px;right:1px;min-width:16px;height:16px;padding:0 3px;border-radius:8px;background:#ef4444;color:#fff;font-size:9px;font-weight:900;line-height:16px;text-align:center;">${cnt}</span>`
-      : '';
-    const bg = cnt > 0
-      ? 'background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.35);'
-      : 'background:none;border:1px solid transparent;';
-    const todayRing = isToday ? 'box-shadow:0 0 0 2px #3b7cf4;' : '';
-    html += `<div style="position:relative;aspect-ratio:1;min-height:34px;display:flex;align-items:center;justify-content:center;border-radius:8px;font-size:13px;font-weight:${cnt > 0 ? '800' : '600'};color:${cnt > 0 ? '#fff' : 'var(--text2)'};${bg}${todayRing}">${d}${badge}</div>`;
-  }
-  html += '</div>';
-  cont.innerHTML = html;
+  cont.innerHTML = _buildStartCalMonthHtml(y, m);
+  _bindStartCalSwipe();
 }
 function startCalPrev() {
   if (!_startCalMonth) return;
@@ -4705,19 +5579,7 @@ function updateClientInfoBar() {
     // Pasek koloru na CAŁY lewy bok bannera (ekran edycji)
     const summaryBar = $('summary-kolor-bar');
     if (summaryBar) {
-      const k = String(kolor || '').toUpperCase().trim();
-      if (!k) {
-        summaryBar.style.background = 'transparent';
-      } else if (k.includes('/')) {
-        const parts = k.split('/').map(s => s.trim()).filter(Boolean);
-        const c1 = COLOR_MAP[parts[0]];
-        const c2 = COLOR_MAP[parts[1]];
-        summaryBar.style.background = (c1 && c2)
-          ? ('linear-gradient(180deg,' + c1 + ' 0,' + c1 + ' 50%,' + c2 + ' 50%,' + c2 + ' 100%)')
-          : 'repeating-linear-gradient(45deg,#6b7280 0 3px,#111827 3px 6px)';
-      } else {
-        summaryBar.style.background = COLOR_MAP[k] || 'repeating-linear-gradient(45deg,#6b7280 0 3px,#111827 3px 6px)';
-      }
+      summaryBar.style.background = kolor ? _kolorBackgroundStyle(kolor) : 'transparent';
     }
 
     // Telefon
@@ -4725,12 +5587,11 @@ function updateClientInfoBar() {
     if (el) {
       if (tel) {
         el.innerHTML =
-          '<div style="display:flex;align-items:center;gap:6px;font-size:15px;font-weight:600;color:#3b7cf4;margin-top:2px;">'
-          + '<svg width="11" height="11" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>'
+          '<div class="link-tel" style="display:flex;align-items:center;gap:6px;font-size:var(--text-md);margin-top:2px;">'
+          + '<svg class="icon-sm" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>'
           + '<span style="user-select:text;">' + escHTML(tel) + '</span>'
-          + '<button type="button" onclick="copyTelToClipboard()" title="Kopiuj numer"'
-          + ' style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:22px;padding:0;border-radius:6px;'
-          + ' background:rgba(59,124,244,0.14);border:1px solid rgba(59,124,244,0.35);color:#3b7cf4;cursor:pointer;">'
+          + '<button type="button" onclick="copyTelToClipboard()" title="Kopiuj numer" class="btn-action ui-tile ui-tile--sm ui-tile--neutral btn-action--ghost"'
+          + ' style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:22px;padding:0;min-height:22px;">'
           + '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">'
           + '<rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>'
           + '<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>'
@@ -5009,11 +5870,10 @@ function pokazBannerZlecenia(entry) {
       <div class="history-item-top">
         <div class="history-item-info">
           <div style="display:flex;align-items:center;gap:6px;">
-            <span style="font-size:17px;font-weight:700;color:#fff;">${escHTML(nameParts || '')}</span>${(entry.ebike || entry.marka === 'E-BIKE') ? '<span style=\'margin-left:5px;font-size:16px;\' title=\'e-Bike\'>⚡</span>' : ''}
+            <span class="text-primary" style="font-size:var(--text-md);font-weight:700;">${escHTML(nameParts || '')}</span>${(entry.ebike || entry.marka === 'E-BIKE') ? '<span style=\'margin-left:5px;font-size:16px;\' title=\'e-Bike\'>⚡</span>' : ''}
           </div>
-          ${entry.tel ? `<div style="display:flex;align-items:center;gap:4px;font-size:16px;font-weight:600;color:#3b7cf4;margin-top:2px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>${escHTML(entry.tel)}</div>` : ''}
-          ${przyjęcieLine ? `<div style="font-size:11px;color:#22c55e;font-weight:500;margin-top:2px;">${escHTML(przyjęcieLine)}</div>` : ''}
-          ${terminLine ? `<div style="font-size:11px;color:#f59e0b;font-weight:600;">${escHTML(terminLine)}</div>` : ''}
+          ${przyjęcieLine ? `<div class="history-item-date history-item-date--sm" style="margin-top:2px;">${escHTML(przyjęcieLine)}</div>` : ''}
+          ${terminLine ? `<div class="history-item-date history-item-date--sm">${escHTML(terminLine)}</div>` : ''}
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
           <div class="history-item-total">${escHTML(entry.total)}</div>
@@ -5133,7 +5993,7 @@ function applyDayMode() {
   const on = localStorage.getItem(DAY_MODE_KEY) === '1';
   document.documentElement.classList.toggle('day-mode', on);
   const btn = $('day-mode-btn');
-  if (btn) btn.classList.toggle('active', on);
+  if (btn) { btn.classList.toggle('active', on); btn.classList.toggle('ui-tile--active', on); }
 }
 function toggleDayMode() {
   const on = localStorage.getItem(DAY_MODE_KEY) === '1';
@@ -5190,9 +6050,9 @@ function openKlientHistoria(tel) {
     + '<span>Łącznie: <b style="color:#f59e0b;font-weight:800;">' + fmt(sumNum) + ' zł</b></span>';
 
   const badge = (st) => {
-    if (st === 'archiwum') return '<span style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;padding:2px 8px;border-radius:999px;background:rgba(167,139,250,0.18);color:#a78bfa;">Wydane</span>';
-    if (st === 'wydanie')  return '<span style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;padding:2px 8px;border-radius:999px;background:rgba(34,197,94,0.18);color:#22c55e;">Do wydania</span>';
-    return '<span style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;padding:2px 8px;border-radius:999px;background:rgba(239,68,68,0.18);color:#ef4444;">Przyjęte</span>';
+    if (st === 'archiwum') return '<span style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;padding:2px 8px;border-radius:999px;background:#221828;color:#a78bfa;">Wydane</span>';
+    if (st === 'wydanie')  return '<span style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;padding:2px 8px;border-radius:999px;background:#182818;color:#22c55e;">Do wydania</span>';
+    return '<span style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;padding:2px 8px;border-radius:999px;background:#281818;color:#ef4444;">Przyjęte</span>';
   };
   const stripYear = s => s ? String(s).split(' ')[0].split('.').slice(0, 2).join('.') : '';
 
@@ -5304,10 +6164,10 @@ window.closeGlobalSearch = closeGlobalSearch;
 window.resetGlobalSearch = resetGlobalSearch;
 
 function _gsStatusMeta(st) {
-  if (st === 'archiwum') return { label: 'Wydane',      color: '#a78bfa', bg: 'rgba(167,139,250,0.18)' };
-  if (st === 'wydanie')  return { label: 'Do wydania',  color: '#22c55e', bg: 'rgba(34,197,94,0.18)' };
-  if (st === 'kosz')     return { label: 'Kosz',        color: '#9ca3af', bg: 'rgba(156,163,175,0.18)' };
-  return { label: 'Przyjęte', color: '#ef4444', bg: 'rgba(239,68,68,0.18)' };
+  if (st === 'archiwum') return { label: 'Wydane',      color: '#a78bfa', bg: '#221828' };
+  if (st === 'wydanie')  return { label: 'Do wydania',  color: '#22c55e', bg: '#182818' };
+  if (st === 'kosz')     return { label: 'Kosz',        color: '#9ca3af', bg: '#1a1a1a' };
+  return { label: 'Przyjęte', color: '#ef4444', bg: '#281818' };
 }
 function runGlobalSearch() {
   const resultsEl = $('gs-results');
@@ -5412,6 +6272,35 @@ function dayOfWeek(dateStr) {
   return ['Niedziela','Poniedziałek','Wtorek','Środa','Czwartek','Piątek','Sobota'][day];
 }
 
+function _terminIsTodayOrTomorrow(termin) {
+  if (!termin) return false;
+  const parts = _parseTerminParts(termin);
+  if (parts.length < 2) return false;
+  const todayMs = new Date().setHours(0, 0, 0, 0);
+  const tDate = new Date(
+    parts.length >= 3 ? parseInt(parts[2], 10) : new Date().getFullYear(),
+    parseInt(parts[1], 10) - 1,
+    parseInt(parts[0], 10)
+  ).setHours(0, 0, 0, 0);
+  const diff = Math.round((tDate - todayMs) / (24 * 60 * 60 * 1000));
+  return diff === 0 || diff === 1;
+}
+
+function _formatDataNaprawyLine(termin) {
+  if (!termin) return '';
+  const parts = _parseTerminParts(termin);
+  if (parts.length < 2) return escHTML('Data naprawy: ' + termin);
+  const todayMs = new Date().setHours(0, 0, 0, 0);
+  const tDate = new Date(
+    parts.length >= 3 ? parseInt(parts[2], 10) : new Date().getFullYear(),
+    parseInt(parts[1], 10) - 1,
+    parseInt(parts[0], 10)
+  ).setHours(0, 0, 0, 0);
+  const diff = Math.round((tDate - todayMs) / (24 * 60 * 60 * 1000));
+  if (diff < 7) return escHTML('Data naprawy: ' + termin + ' ' + dayOfWeek(termin));
+  return escHTML('Data naprawy: ' + termin);
+}
+
 function getPrzyjeteList(filterTel) {
   let hist = getHistory().filter(e => !e.raportKoncowy);
   if (filterTel && filterTel.trim().length >= 2) {
@@ -5445,12 +6334,12 @@ function _grupujPoTelefonie(entries) {
   return groups;
 }
 
-// Okienko grupy — karty zleceń tego samego klienta jedna pod drugą
+// Okienko grupy — karty zleceń tego samego klienta jedna pod drugą (kolor jak aktywna zakładka)
 function _buildGrupaBox(cards, opts) {
   const box = document.createElement('div');
-  box.style.cssText = 'border:1px solid ' + opts.borderColor + ';border-radius:14px;padding:10px;margin:0 0 10px;background:' + opts.bg + ';';
+  box.className = 'zlecenie-grupa' + (opts.variant ? ' zlecenie-grupa--' + opts.variant : '');
   const col = document.createElement('div');
-  col.style.cssText = 'display:flex;flex-direction:column;gap:10px;';
+  col.className = 'zlecenie-grupa-inner';
   cards.forEach(c => {
     c.style.marginBottom = '0';
     col.appendChild(c);
@@ -5458,7 +6347,7 @@ function _buildGrupaBox(cards, opts) {
   box.appendChild(col);
   if (opts.footerHTML) {
     const foot = document.createElement('div');
-    foot.style.cssText = 'margin-top:10px;display:flex;justify-content:flex-end;';
+    foot.className = 'zlecenie-grupa-footer';
     foot.innerHTML = opts.footerHTML;
     box.appendChild(foot);
   }
@@ -5478,36 +6367,75 @@ function _zlecenieMatch(e, filter) {
   return false;
 }
 
-// Buduje rozwijane szczegóły zlecenia (wybrane pozycje + notatka)
-function _buildZlecenieDetailsHTML(entry) {
+// Telefon na górze rozwijanych szczegółów (wyśrodkowany)
+function _buildHistoryItemTelHTML(entry) {
+  if (!entry || !entry.tel) return '';
+  const telClean = String(entry.tel).replace(/[^0-9+]/g, '');
+  return `<div class="history-item-details-tel">`
+    + `<a href="tel:${telClean}" class="link-tel" onclick="event.stopPropagation()">`
+    + `<svg width="12" height="12" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`
+    + `${escHTML(entry.tel)}</a></div>`;
+}
+
+function _attachHistoryItemDetails(item, entry, opts) {
+  opts = opts || {};
+  const details = document.createElement('div');
+  details.className = 'history-item-details';
+  details.style.cssText = 'display:none;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);';
+  details.innerHTML = _buildZlecenieDetailsHTML(entry, opts);
+  item.appendChild(details);
+  item.style.cursor = 'pointer';
+  item.addEventListener('click', (e) => {
+    if (e.target.closest('a, button, input, textarea, select')) return;
+    const open = details.style.display !== 'none';
+    details.style.display = open ? 'none' : 'block';
+  });
+}
+
+// Buduje rozwijane szczegóły zlecenia (telefon + pozycje + notatka)
+function _buildZlecenieDetailsHTML(entry, opts) {
+  opts = opts || {};
   const fmtPLN = v => Number(v || 0).toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  const st = entry.state ? safeParseJSON(entry.state, null) : null;
   const td  = 'style="padding:6px 8px;font-size:13px;color:var(--text);border-bottom:1px solid var(--border);"';
   const tdr = 'style="padding:6px 8px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border);text-align:right;white-space:nowrap;"';
   let rows = '';
-  let total = 0;
-  if (st && Array.isArray(st.items)) {
-    st.items.filter(it => it.checked).forEach(it => {
+  const rk = entry.raportKoncowy;
+  if (rk && Array.isArray(rk.items)) {
+    rk.items.filter(it => it.checked).forEach(it => {
       const qty = it.qty !== undefined ? (it.qty || 1) : 1;
       const price = parseFloat(it.price) || 0;
-      const tot = Math.round(price * qty * 100) / 100;
-      total += tot;
       const qtyTxt = qty > 1 ? qty + '× ' + fmtPLN(price) : fmtPLN(price);
       rows += `<tr><td ${td}>${escHTML(itemLabelWithDetails(it, true))}</td><td ${tdr}>${qtyTxt}</td></tr>`;
     });
   }
-  if (st && Array.isArray(st.subs)) {
-    st.subs.filter(s => s.checked && (s.name || parseFloat(s.price) > 0)).forEach(s => {
-      const price = parseFloat(s.price) || 0;
-      total += price;
-      rows += `<tr><td ${td}>${escHTML(s.name || 'Część')}</td><td ${tdr}>${fmtPLN(price)}</td></tr>`;
+  if (rk && Array.isArray(rk.subs)) {
+    rk.subs.filter(s => s.checked && (s.name || parseFloat(s.price) > 0)).forEach(s => {
+      rows += `<tr><td ${td}>${escHTML(s.name || 'Część')}</td><td ${tdr}>${fmtPLN(s.price)}</td></tr>`;
     });
   }
+  if (!rows) {
+    const st = entry.state ? safeParseJSON(entry.state, null) : null;
+    if (st && Array.isArray(st.items)) {
+      st.items.filter(it => it.checked).forEach(it => {
+        const qty = it.qty !== undefined ? (it.qty || 1) : 1;
+        const price = parseFloat(it.price) || 0;
+        const qtyTxt = qty > 1 ? qty + '× ' + fmtPLN(price) : fmtPLN(price);
+        rows += `<tr><td ${td}>${escHTML(itemLabelWithDetails(it, true))}</td><td ${tdr}>${qtyTxt}</td></tr>`;
+      });
+    }
+    if (st && Array.isArray(st.subs)) {
+      st.subs.filter(s => s.checked && (s.name || parseFloat(s.price) > 0)).forEach(s => {
+        rows += `<tr><td ${td}>${escHTML(s.name || 'Część')}</td><td ${tdr}>${fmtPLN(s.price)}</td></tr>`;
+      });
+    }
+  }
   if (!rows) rows = `<tr><td colspan="2" style="padding:10px 8px;font-size:12px;font-style:italic;color:var(--text3);text-align:center;">Brak wybranych pozycji</td></tr>`;
-  const notatka = (st && st.notatka)
-    ? `<div style="margin-top:8px;padding:8px 10px;border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:8px;font-size:13px;color:var(--text);line-height:1.5;white-space:pre-wrap;">📝 ${escHTML(st.notatka)}</div>`
+  const notatkaText = (rk && rk.notatka) || (entry.state ? (safeParseJSON(entry.state, null) || {}).notatka : '');
+  const notatka = notatkaText
+    ? `<div style="margin-top:8px;padding:8px 10px;border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:8px;font-size:13px;color:var(--text);line-height:1.5;white-space:pre-wrap;">📝 ${escHTML(notatkaText)}</div>`
     : '';
-  return `<table style="width:100%;border-collapse:collapse;"><tbody>${rows}</tbody></table>${notatka}`;
+  const telBlock = opts.showTelInDetails === false ? '' : _buildHistoryItemTelHTML(entry);
+  return telBlock + `<table style="width:100%;border-collapse:collapse;"><tbody>${rows}</tbody></table>${notatka}`;
 }
 
 function renderHistory(filterTel) {
@@ -5520,85 +6448,28 @@ function renderHistory(filterTel) {
   }
   list.innerHTML = '';
 
-  const todayMs = new Date().setHours(0,0,0,0);
   const buildCard = entry => {
     const item = document.createElement('div');
     item.className = 'history-item';
     item.dataset.orderId = String(entry.id ?? '');
 
-    // Sprawdź czy termin jest bliższy niż 2 dni
-    let urgent = false;
-    if (entry.termin) {
-      const tp = entry.termin.split('.');
-      if (tp.length >= 2) {
-        const tDate = new Date(
-          tp.length >= 3 ? parseInt(tp[2]) : new Date().getFullYear(),
-          parseInt(tp[1]) - 1, parseInt(tp[0])
-        ).setHours(0,0,0,0);
-        urgent = (tDate - todayMs) <= 1 * 24 * 60 * 60 * 1000;
-      }
-    }
-
-    // Pomarańczowa ramka dla wszystkich zleceń w Przyjęte
+    // Bazowa ramka dla wszystkich zleceń w Przyjęte
     const isHL = _zlecHighlightId && String(entry.id ?? '') === String(_zlecHighlightId) && Date.now() < (_zlecHighlightUntil || 0);
-    // Bazowe kolory (czerwone) przygaszone ~70%; podświetlenie w tym samym kolorze, mocniejsze.
-    item.style.borderColor = 'rgba(239,68,68,0.22)';
-    item.style.backgroundColor = 'rgba(239,68,68,0.03)';
-    item.style.boxShadow = 'none';
     if (isHL) item.classList.add('hl-red');
+    if (_terminIsTodayOrTomorrow(entry.termin)) item.classList.add('history-item--termin-soon');
 
     // Nowe wpisy mają osobne pola model/kolor, stare mają wszystko w marka
     const hasNewFields = entry.model || entry.kolor;
     const titleLine = hasNewFields
       ? [(entry.marka || null), entry.model, entry.kolor].filter(Boolean).join(' - ')
       : (entry.marka && entry.marka || entry.model || '');
-    let terminSpecial = null;
-    let terminLine = '';
-    if (entry.termin) {
-      const tp2 = entry.termin.split('.');
-      if (tp2.length >= 2) {
-        const tDate2 = new Date(
-          tp2.length >= 3 ? parseInt(tp2[2]) : new Date().getFullYear(),
-          parseInt(tp2[1]) - 1, parseInt(tp2[0])
-        ).setHours(0,0,0,0);
-        const diff2 = Math.round((tDate2 - todayMs) / (24*60*60*1000));
-        if (diff2 === 0) terminSpecial = 'today';
-        else if (diff2 === 1) terminSpecial = 'tomorrow';
-      }
-      terminLine = 'Data naprawy: ' + entry.termin + ' ' + dayOfWeek(entry.termin);
-    }
 
-    if (urgent) {
-      if (terminSpecial === 'today') {
-        item.classList.add('history-item-urgent-today');
-      } else {
-        item.classList.add('history-item-urgent');
-      }
-    }
     const przyjęcieLine = entry.label ? 'Przyjęto: ' + entry.label.split(' ')[0].split('.').slice(0,2).join('.') + ' ' + dayOfWeek(entry.label.split(' ')[0]) : '';
 
     const kolorBar = makeKolorBarHTML(entry.kolor || '');
     const nameParts = [(entry.marka || null), entry.model].filter(Boolean).join(' ');
-    const terminColor = urgent ? '#ef4444' : '#f59e0b';
-    const terminDisplay = terminLine
-      ? (terminSpecial === 'today'
-          ? 'Data naprawy: DZISIAJ'
-          : terminSpecial === 'tomorrow'
-          ? 'Data naprawy: JUTRO'
-          : (() => {
-              const tp3 = entry.termin.split('.');
-              const tDate3 = new Date(
-                tp3.length >= 3 ? parseInt(tp3[2]) : new Date().getFullYear(),
-                parseInt(tp3[1]) - 1, parseInt(tp3[0])
-              ).setHours(0,0,0,0);
-              const diff3 = Math.round((tDate3 - todayMs) / (24*60*60*1000));
-              return diff3 < 7
-                ? escHTML('Data naprawy: ' + entry.termin + ' ' + dayOfWeek(entry.termin))
-                : escHTML('Data naprawy: ' + entry.termin);
-            })())
-      : '';
-    const terminHTML = terminDisplay
-      ? `<div style="font-size:13px;color:${terminColor};font-weight:600;">${terminDisplay}</div>`
+    const terminHTML = entry.termin
+      ? `<div class="history-item-date">${_formatDataNaprawyLine(entry.termin)}</div>`
       : '';
 
     item.innerHTML = `
@@ -5606,41 +6477,27 @@ function renderHistory(filterTel) {
       <div class="history-item-top">
         <div class="history-item-info">
           <div style="display:flex;align-items:center;gap:6px;">
-            <span style="font-size:17px;font-weight:700;color:#fff;">${escHTML(nameParts || '')}</span>${(entry.ebike || entry.marka === 'E-BIKE') ? '<span style=\'margin-left:5px;font-size:16px;\' title=\'e-Bike\'>⚡</span>' : ''}
+            <span class="text-primary" style="font-size:var(--text-md);font-weight:700;">${escHTML(nameParts || '')}</span>${(entry.ebike || entry.marka === 'E-BIKE') ? '<span style=\'margin-left:5px;font-size:16px;\' title=\'e-Bike\'>⚡</span>' : ''}
           </div>
-          ${entry.tel ? `<a href="tel:${String(entry.tel).replace(/[^0-9+]/g,'')}" style="display:flex;align-items:center;gap:4px;font-size:16px;font-weight:600;color:#3b7cf4;margin-top:2px;text-decoration:none;"><svg width="12" height="12" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19 0 0 1 4.69 12 19.79 19 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>${escHTML(entry.tel)}</a>` : ''}
           ${terminHTML}
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
-          ${entry.label ? `<div style="font-size:13px;font-weight:500;color:#fff;text-align:right;">Przyjęte: ${entry.label.split(' ')[0].split('.').slice(0,2).join('.')} </div>` : ''}
+          ${entry.label ? `<div class="history-item-date history-item-date--right">Przyjęte: ${entry.label.split(' ')[0].split('.').slice(0,2).join('.')} </div>` : ''}
           ${entry.totalPrzedRaportem ? `<div style="font-size:11px;color:var(--text3);text-decoration:line-through;">${escHTML(entry.totalPrzedRaportem)}</div>` : ''}
           <div class="history-item-total">${escHTML(entry.total)}</div>
         </div>
       </div>
       <div class="history-item-actions">
-        ${entry.tel ? `<a class="btn-history-sms${entry.smsSent ? ' btn-history-sms-sent' : ''}" onclick="markSmsSent(${entry.id}, this)" href="sms:${entry.tel.replace(/[^0-9+]/g,'')}?body=${encodeURIComponent((_smsRower(entry.marka, entry.model) || '') + ' - przyjęto na serwis.' + (entry.termin ? '\nWstępna data naprawy: ' + entry.termin : '') + '\nPo zakończeniu naprawy otrzymasz SMS z kodem odbioru. Serwis')}"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> SMS</a>` : ''}
-        <button class="btn-history-load" style="background:#3b7cf4;border-color:#3b7cf4;" onclick="loadWycena(${entry.id})" title="Edytuj"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
-        <div style="margin-left:auto;display:flex;gap:6px;">
-          <button class="btn-history-load btn-history-icon btn-history-icon-orange-fill" onclick="openPodgladZlecenia(${entry.id})" title="Info">i</button>
-          <button class="btn-history-load" style="background:#ef4444;border-color:#ef4444;font-weight:700;letter-spacing:.5px;" onclick="openRaport(${entry.id})"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg> NAPRAWA</button>
+        ${entry.tel ? `<a class="btn-action ui-tile ui-tile--sm btn-history-sms${entry.smsSent ? ' btn-history-sms-sent' : ' ui-tile--naprawa'}" onclick="openOrderSms(${entry.id}, this, event)" href="sms:${entry.tel.replace(/[^0-9+]/g,'')}?body=${encodeURIComponent((_smsRower(entry.marka, entry.model) || '') + ' - przyjęto na serwis.' + (entry.termin ? '\nWstępna data naprawy: ' + entry.termin : '') + '\nPo zakończeniu naprawy otrzymasz SMS z kodem odbioru. Serwis')}"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> SMS</a>` : ''}
+        <button class="btn-action ui-tile ui-tile--sm ui-tile--neutral btn-action--ghost" onclick="loadWycena(${entry.id})" title="Edytuj"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
+        <div class="history-actions-primary">
+          <button class="btn-action ui-tile ui-tile--sm ui-tile--neutral btn-action--ghost" onclick="openPodgladZlecenia(${entry.id})" title="Info">i</button>
+          <button class="btn-action ui-tile ui-tile--sm ui-tile--naprawa btn-action--repair" onclick="openRaport(${entry.id})"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg> NAPRAWA</button>
         </div>
       </div>
     `;
 
-    // Rozwijane szczegóły zlecenia (klik w kartę)
-    const details = document.createElement('div');
-    details.className = 'history-item-details';
-    details.style.cssText = 'display:none;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);';
-    details.innerHTML = _buildZlecenieDetailsHTML(entry);
-    item.appendChild(details);
-
-    item.style.cursor = 'pointer';
-    item.addEventListener('click', (e) => {
-      if (e.target.closest('a, button, input, textarea, select')) return;
-      const open = details.style.display !== 'none';
-      details.style.display = open ? 'none' : 'block';
-    });
-
+    _attachHistoryItemDetails(item, entry);
     return item;
   };
 
@@ -5650,10 +6507,7 @@ function renderHistory(filterTel) {
       list.appendChild(buildCard(g.list[0]));
     } else {
       list.appendChild(_buildGrupaBox(g.list.map(buildCard), {
-        telDisplay: g.telDisplay,
-        borderColor: 'rgba(245,158,11,0.55)',
-        bg: 'rgba(245,158,11,0.05)',
-        accent: '#f59e0b',
+        variant: 'przyjete',
       }));
     }
   });
@@ -5663,11 +6517,11 @@ function renderHistory(filterTel) {
   }, 0);
   const pdfIco = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
   const footH = document.createElement('div');
-  footH.style.cssText = 'margin:10px 0 4px;display:flex;flex-direction:row;align-items:center;gap:10px;width:100%;box-sizing:border-box;';
+  footH.className = 'history-list-footer';
   footH.innerHTML = '<button type="button" onclick="generujZleceniaPrzyjete()" title="Generuj zlecenia — PDF" '
-    + 'style="flex:0 0 25%;width:25%;max-width:25%;min-width:0;min-height:48px;box-sizing:border-box;padding:10px 6px;background:#ef4444;border:1px solid #b91c1c;border-radius:10px;color:#fff;font-size:13px;font-weight:800;letter-spacing:.2px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;">'
+    + 'class="history-list-pdf-btn ui-tile ui-tile--sm ui-tile--neutral">'
     + pdfIco + '<span>PDF</span></button>'
-    + '<div style="flex:1;min-width:0;min-height:48px;display:flex;justify-content:flex-end;align-items:center;gap:10px;padding:0 14px;background:#000;border-radius:10px;box-sizing:border-box;">'
+    + '<div class="history-list-sum-box">'
     + '<span style="font-size:11px;font-weight:800;color:var(--text3);letter-spacing:.55px;">WARTOŚĆ</span>'
     + '<span style="font-size:22px;font-weight:800;color:#22c55e;letter-spacing:-0.5px;">' + fmt(suma) + ' zł</span></div>';
   list.appendChild(footH);
@@ -5971,13 +6825,23 @@ function markSmsSent(id, el) {
   if (idx === -1) return;
   hist[idx].smsSent = true;
   localStorage.setItem(HISTORY_KEY, JSON.stringify(hist));
-  const card = el.closest('.history-item');
-  if (card && !card.closest('#history-list')) {
-    card.style.borderColor = 'rgba(34,197,94,0.6)';
-  }
-  // Szary przycisk SMS po wysłaniu
+  el.classList.remove('ui-tile--naprawa');
   el.classList.add('btn-history-sms-sent');
 }
+
+function openOrderSms(id, el, ev) {
+  if (ev) {
+    ev.stopPropagation();
+    ev.preventDefault();
+  }
+  const href = el.getAttribute('href');
+  if (!href) return false;
+  markSmsSent(id, el);
+  window.location.href = href;
+  return false;
+}
+window.markSmsSent = markSmsSent;
+window.openOrderSms = openOrderSms;
 
 // ── Lista „Do wydania” (opcjonalny filtr jak w polu szukania) ──
 function getDoWydaniaList(filterTel) {
@@ -6011,15 +6875,8 @@ function renderWydanie(filterTel) {
     item.className = 'history-item';
     item.dataset.orderId = String(entry.id ?? '');
     const isHL = _zlecHighlightId && String(entry.id ?? '') === String(_zlecHighlightId) && Date.now() < (_zlecHighlightUntil || 0);
-    if (entry.smsSent) {
-      item.style.borderColor = 'rgba(34,197,94,0.27)';
-      item.style.backgroundColor = 'rgba(34,197,94,0.04)';
-    } else {
-      item.style.borderColor = 'rgba(34,197,94,0.22)';
-      item.style.backgroundColor = 'rgba(34,197,94,0.03)';
-    }
-    item.style.boxShadow = 'none';
     if (isHL) item.classList.add('hl-green');
+    if (_terminIsTodayOrTomorrow(entry.termin)) item.classList.add('history-item--termin-soon');
 
     const kolorBar = makeKolorBarHTML(entry.kolor || '');
     const terminLine   = entry.termin ? 'Data naprawy: ' + entry.termin + ' ' + dayOfWeek(entry.termin) : '';
@@ -6035,14 +6892,14 @@ function renderWydanie(filterTel) {
       <div class="history-item-top">
         <div class="history-item-info">
           <div style="display:flex;align-items:center;gap:6px;">
-            <span style="font-size:17px;font-weight:700;color:#fff;">${escHTML(nameParts || '')}</span>${(entry.ebike || entry.marka === 'E-BIKE') ? '<span style=\'margin-left:5px;font-size:16px;\' title=\'e-Bike\'>⚡</span>' : ''}
+            <span class="text-primary" style="font-size:var(--text-md);font-weight:700;">${escHTML(nameParts || '')}</span>${(entry.ebike || entry.marka === 'E-BIKE') ? '<span style=\'margin-left:5px;font-size:16px;\' title=\'e-Bike\'>⚡</span>' : ''}
           </div>
           <div style="display:flex;align-items:center;gap:8px;margin-top:2px;flex-wrap:wrap;">
-            ${entry.tel ? `<div style="display:flex;align-items:center;gap:4px;font-size:16px;font-weight:600;color:#3b7cf4;"><svg width="12" height="12" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>${escHTML(entry.tel)}</div>` : ''}
+            ${entry.tel ? `<div class="link-tel" style="display:flex;align-items:center;gap:4px;font-size:var(--text-md);"><svg width="12" height="12" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>${escHTML(entry.tel)}</div>` : ''}
             ${entry.kodOdbioru ? `<div style="font-size:14px;font-weight:800;color:#f59e0b;letter-spacing:2px;">🔑 ${escHTML(entry.kodOdbioru)}</div>` : ''}
           </div>
-          ${przyjęcieLine ? `<div style="font-size:13px;color:#ef4444;font-weight:500;margin-top:2px;">${escHTML(przyjęcieLine)}</div>` : ''}
-          ${dataZakLine ? `<div style="font-size:13px;color:#22c55e;font-weight:600;">${escHTML(dataZakLine)}</div>` : ''}
+          ${przyjęcieLine ? `<div class="history-item-date" style="margin-top:2px;">${escHTML(przyjęcieLine)}</div>` : ''}
+          ${dataZakLine ? `<div class="history-item-date">${escHTML(dataZakLine)}</div>` : ''}
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
           ${entry.totalZlecenia || entry.totalPrzedRaportem ? `<div class="history-item-total" style="font-size:19px;color:#6b7280;">${escHTML(entry.totalZlecenia || entry.totalPrzedRaportem)}</div>` : ''}
@@ -6050,14 +6907,15 @@ function renderWydanie(filterTel) {
         </div>
       </div>
       <div class="history-item-actions">
-        ${entry.tel ? '<a class="btn-history-sms' + (entry.smsSent ? ' btn-history-sms-sent' : '') + '" href="sms:' + entry.tel.replace(/[^0-9+]/g,'') + '?body=' + encodeURIComponent((_smsRower(entry.marka, entry.model) || '') + ' - przygotowany do odbioru\n\nGodziny otwarcia\nPn-pt 10:00-18:00\nSobota 9:00-14:00\n\nKwota do zapłaty - ' + entry.total + ' zł\nPłatność gotówka/karta/BLIK\n\nKod odbioru: ' + (entry.kodOdbioru || '–')) + '" onclick="markSmsSent(' + entry.id + ', this)"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> SMS</a>' : ''}
-        <button class="btn-history-load" style="background:#6b7280;border-color:#6b7280;display:inline-flex;align-items:center;justify-content:center;" onclick="cofnijDoAktualne(${entry.id})" title="Cofnij do przyjętych"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg></button>
-        <button class="btn-history-load" style="background:#3b7cf4;border-color:#3b7cf4;" onclick="openRaportEdycja(${entry.id})" title="Edytuj"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
-        <div style="margin-left:auto;display:flex;gap:6px;">
-          <button class="btn-history-load" style="background:#ef4444;border-color:#ef4444;font-weight:700;letter-spacing:.5px;" onclick="openPodsumowanieDoWydania(${entry.id})"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg> WYDAJ</button>
+        ${entry.tel ? '<a class="btn-action ui-tile ui-tile--sm btn-history-sms' + (entry.smsSent ? ' btn-history-sms-sent' : ' ui-tile--naprawa') + '" href="sms:' + entry.tel.replace(/[^0-9+]/g,'') + '?body=' + encodeURIComponent((_smsRower(entry.marka, entry.model) || '') + ' - przygotowany do odbioru\n\nGodziny otwarcia\nPn-pt 10:00-18:00\nSobota 9:00-14:00\n\nKwota do zapłaty - ' + entry.total + ' zł\nPłatność gotówka/karta/BLIK\n\nKod odbioru: ' + (entry.kodOdbioru || '–')) + '" onclick="openOrderSms(' + entry.id + ', this, event)"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> SMS</a>' : ''}
+        <button class="btn-action ui-tile ui-tile--sm ui-tile--neutral btn-action--ghost" onclick="cofnijDoAktualne(${entry.id})" title="Cofnij do przyjętych"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg></button>
+        <button class="btn-action ui-tile ui-tile--sm ui-tile--neutral btn-action--ghost" onclick="openRaportEdycja(${entry.id})" title="Edytuj"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
+        <div class="history-actions-primary">
+          <button class="btn-action ui-tile ui-tile--sm ui-tile--wydanie btn-action--release" onclick="openPodsumowanieDoWydania(${entry.id})"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg> WYDAJ</button>
         </div>
       </div>
     `;
+    _attachHistoryItemDetails(item, entry, { showTelInDetails: false });
     return item;
   };
 
@@ -6066,14 +6924,10 @@ function renderWydanie(filterTel) {
     if (g.list.length < 2) {
       list.appendChild(buildCard(g.list[0]));
     } else {
-      const wydajBtn = '<button type="button" class="btn-history-load" onclick="openPodsumowanieGrupowe(\'' + g.tel + '\')" '
-        + 'style="background:#ef4444;border-color:#ef4444;font-weight:700;letter-spacing:.5px;">'
+      const wydajBtn = '<button type="button" class="btn-action ui-tile ui-tile--sm ui-tile--wydanie btn-action--release" onclick="openPodsumowanieGrupowe(\'' + g.tel + '\')">'
         + '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg> WYDAJ WSZYSTKIE (' + g.list.length + ')</button>';
       list.appendChild(_buildGrupaBox(g.list.map(buildCard), {
-        telDisplay: g.telDisplay,
-        borderColor: 'rgba(34,197,94,0.55)',
-        bg: 'rgba(34,197,94,0.05)',
-        accent: '#22c55e',
+        variant: 'wydanie',
         footerHTML: wydajBtn,
       }));
     }
@@ -6084,11 +6938,11 @@ function renderWydanie(filterTel) {
   }, 0);
   const pdfIcoW = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
   const footW = document.createElement('div');
-  footW.style.cssText = 'margin:10px 0 4px;display:flex;flex-direction:row;align-items:center;gap:10px;width:100%;box-sizing:border-box;';
+  footW.className = 'history-list-footer';
   footW.innerHTML = '<button type="button" onclick="generujPotwierdzeniaDoWydania()" title="Generuj potwierdzenia — PDF" '
-    + 'style="flex:0 0 25%;width:25%;max-width:25%;min-width:0;min-height:48px;box-sizing:border-box;padding:10px 6px;background:#16a34a;border:1px solid #15803d;border-radius:10px;color:#fff;font-size:13px;font-weight:800;letter-spacing:.2px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;">'
+    + 'class="history-list-pdf-btn ui-tile ui-tile--sm ui-tile--neutral">'
     + pdfIcoW + '<span>PDF</span></button>'
-    + '<div style="flex:1;min-width:0;min-height:48px;display:flex;justify-content:flex-end;align-items:center;gap:10px;padding:0 14px;background:#000;border-radius:10px;box-sizing:border-box;">'
+    + '<div class="history-list-sum-box">'
     + '<span style="font-size:11px;font-weight:800;color:var(--text3);letter-spacing:.55px;">WARTOŚĆ</span>'
     + '<span style="font-size:22px;font-weight:800;color:#f59e0b;letter-spacing:-0.5px;">' + fmt(suma) + ' zł</span></div>';
   list.appendChild(footW);
@@ -6275,18 +7129,15 @@ function renderArchive(filterStr) {
     item.className = 'history-item';
     item.dataset.orderId = String(entry.id ?? '');
     const isHL = _zlecHighlightId && String(entry.id ?? '') === String(_zlecHighlightId) && Date.now() < (_zlecHighlightUntil || 0);
-    // Bazowe kolory (fioletowe) przygaszone ~70%
-    item.style.borderColor = 'rgba(167,139,250,0.25)';
-    item.style.backgroundColor = 'rgba(167,139,250,0.04)';
-    item.style.boxShadow = 'none';
     if (isHL) item.classList.add('hl-purple');
+    if (_terminIsTodayOrTomorrow(entry.termin)) item.classList.add('history-item--termin-soon');
     const terminLine   = entry.termin ? 'Planowana data naprawy: ' + entry.termin : '';
     const przyjęcieLine = entry.label ? 'Przyjęto na serwis: ' + entry.label.split(' ')[0].split('.').slice(0,2).join('.') : '';
     const stripYear = s => s ? s.split('.').slice(0,2).join('.') : '';
     const dataZakLine = entry.raportKoncowy?.dataZakonczenia ? 'Zakończono naprawę: ' + stripYear(entry.raportKoncowy.dataZakonczenia) : '';
     const dataWydLine = entry.dataWydania ? 'Wydano z serwisu: ' + stripYear(entry.dataWydania) : '';
     const smsHTML = entry.tel
-      ? '<a class="btn-history-sms" href="sms:' + entry.tel.replace(/[^0-9+]/g,'') + '?body=' + encodeURIComponent((_smsRower(entry.marka, entry.model) || '') + ' - przygotowany do odbioru\n\nGodziny otwarcia\nPn-pt 10:00-18:00\nSobota 9:00-14:00\n\nKwota do zapłaty - ' + entry.total + ' zł\nPłatność gotówka/karta/BLIK\n\nKod odbioru: ' + (entry.kodOdbioru || '–')) + '"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d=\"M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z\"/></svg> SMS</a>'
+      ? '<a class="btn-action ui-tile ui-tile--sm btn-history-sms' + (entry.smsSent ? ' btn-history-sms-sent' : ' ui-tile--naprawa') + '" href="sms:' + entry.tel.replace(/[^0-9+]/g,'') + '?body=' + encodeURIComponent((_smsRower(entry.marka, entry.model) || '') + ' - przygotowany do odbioru\n\nGodziny otwarcia\nPn-pt 10:00-18:00\nSobota 9:00-14:00\n\nKwota do zapłaty - ' + entry.total + ' zł\nPłatność gotówka/karta/BLIK\n\nKod odbioru: ' + (entry.kodOdbioru || '–')) + '" onclick="openOrderSms(' + entry.id + ', this, event)"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> SMS</a>'
       : '';
 
     const kolorBar = makeKolorBarHTML(entry.kolor || '');
@@ -6300,16 +7151,16 @@ function renderArchive(filterStr) {
       '<div class="history-item-top">' +
         '<div class="history-item-info">' +
           '<div style="display:flex;align-items:center;gap:6px;">' +
-            '<span style="font-size:17px;font-weight:700;color:#fff;">' + escHTML(nameParts || '') + '</span>' + ((entry.ebike || entry.marka === 'E-BIKE') ? '<span style="margin-left:5px;font-size:15px;" title="e-Bike">⚡</span>' : '') +
+            '<span class="text-primary" style="font-size:var(--text-md);font-weight:700;">' + escHTML(nameParts || '') + '</span>' + ((entry.ebike || entry.marka === 'E-BIKE') ? '<span style="margin-left:5px;font-size:15px;" title="e-Bike">⚡</span>' : '') +
           '</div>' +
           '<div style="display:flex;align-items:center;gap:8px;margin-top:2px;flex-wrap:wrap;">' +
-            (entry.tel ? '<div onclick="event.stopPropagation();openKlientHistoria(\'' + String(entry.tel).replace(/[^0-9+]/g,'') + '\')" title="Historia klienta — wszystkie naprawy" style="display:flex;align-items:center;gap:4px;font-size:16px;font-weight:600;color:#3b7cf4;cursor:pointer;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>' + escHTML(entry.tel) + '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:1px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>' : '') +
+            (entry.tel ? '<div onclick="event.stopPropagation();openKlientHistoria(\'' + String(entry.tel).replace(/[^0-9+]/g,'') + '\')" title="Historia klienta — wszystkie naprawy" class="link-tel" style="display:flex;align-items:center;gap:4px;font-size:var(--text-md);cursor:pointer;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>' + escHTML(entry.tel) + '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:1px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>' : '') +
             (entry.kodOdbioru ? '<div style="font-size:14px;font-weight:800;color:#f59e0b;letter-spacing:2px;">🔑 ' + escHTML(entry.kodOdbioru) + '</div>' : '') +
           '</div>' +
-          (przyjęcieLine ? '<div style="font-size:13px;color:#ef4444;font-weight:500;margin-top:2px;">' + escHTML(przyjęcieLine) + '</div>' : '') +
-          (terminLine ? '<div style="font-size:13px;color:#f59e0b;font-weight:600;">' + escHTML(terminLine) + '</div>' : '') +
-          (dataZakLine ? '<div style="font-size:13px;color:#22c55e;font-weight:600;">' + escHTML(dataZakLine) + '</div>' : '') +
-          (dataWydLine ? '<div style="font-size:13px;color:#a78bfa;font-weight:600;">' + escHTML(dataWydLine) + '</div>' : '') +
+          (przyjęcieLine ? '<div class="history-item-date" style="margin-top:2px;">' + escHTML(przyjęcieLine) + '</div>' : '') +
+          (terminLine ? '<div class="history-item-date">' + escHTML(terminLine) + '</div>' : '') +
+          (dataZakLine ? '<div class="history-item-date">' + escHTML(dataZakLine) + '</div>' : '') +
+          (dataWydLine ? '<div class="history-item-date">' + escHTML(dataWydLine) + '</div>' : '') +
         '</div>' +
         '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">' +
           (_archPrev > 0 ? '<div class="history-item-total" style="font-size:19px;color:#6b7280;">' + escHTML(entry.totalZlecenia || entry.totalPrzedRaportem) + '</div>' : '') +
@@ -6317,12 +7168,12 @@ function renderArchive(filterStr) {
         '</div>' +
       '</div>' +
       '<div class="history-item-actions">' +
-        '<button class="btn-history-del" onclick="deleteArchive(' + entry.id + ')" title="Przenieś do kosza"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>' +
-        '<button class="btn-history-load" style="background:#6b7280;border-color:#6b7280;display:inline-flex;align-items:center;justify-content:center;" onclick="unarchiveWycena(' + entry.id + ')" title="Cofnij"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg></button>' +
-        (entry.raportKoncowy ? '<button class="btn-history-load" style="background:#16a34a;border-color:#16a34a;" onclick="downloadRaportPDF(' + entry.id + ')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Naprawa</button>' : '') +
+        '<button class="btn-action ui-tile ui-tile--sm ui-tile--danger btn-action--danger-ghost btn-history-del" onclick="deleteArchive(' + entry.id + ')" title="Przenieś do kosza"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>' +
+        '<button class="btn-action ui-tile ui-tile--sm ui-tile--neutral btn-action--ghost" onclick="unarchiveWycena(' + entry.id + ')" title="Cofnij"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg></button>' +
+        (entry.raportKoncowy ? '<button class="btn-action ui-tile ui-tile--sm ui-tile--wydanie btn-action--success" onclick="downloadRaportPDF(' + entry.id + ')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Naprawa</button>' : '') +
 
-        '<button class="btn-history-load" style="background:#7c3aed;border-color:#7c3aed;" onclick="openPodsumowanieWydane(' + entry.id + ')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> PDF</button>' +
-        '<button class="btn-history-load" style="background:#f59e0b;border-color:#f59e0b;color:#111827;display:inline-flex;align-items:center;justify-content:center;padding:8px 14px;min-height:33px;font-size:13px;" onclick="openRabAssignForArchive(' + entry.id + ')" title="Dodaj kod rabatowy"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#111827" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v7a2 2 0 0 1-2 2H7l-4-4V5a2 2 0 0 1 2-2h7"/><path d="M16 2l6 6"/><path d="M14 8l8-8"/></svg></button>' +
+        '<button class="btn-action ui-tile ui-tile--sm ui-tile--accent btn-action--archive" onclick="openPodsumowanieWydane(' + entry.id + ')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> PDF</button>' +
+        '<button class="btn-action ui-tile ui-tile--sm ui-tile--warning btn-action--warning" onclick="openRabAssignForArchive(' + entry.id + ')" title="Dodaj kod rabatowy"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#111827" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v7a2 2 0 0 1-2 2H7l-4-4V5a2 2 0 0 1 2-2h7"/><path d="M16 2l6 6"/><path d="M14 8l8-8"/></svg></button>' +
       '</div>';
 
     list.appendChild(item);
@@ -6459,7 +7310,8 @@ function renderKosz(filterTel) {
   kosz.forEach(entry => {
     const item = document.createElement('div');
     item.className = 'history-item';
-    item.style.borderColor = 'rgba(192,57,43,0.3)';
+    item.style.borderColor = '#5c3030';
+    item.style.backgroundColor = '#221515';
 
     const nameParts = [(entry.marka || null), entry.model].filter(Boolean).join(' ');
     const from = entry.deletedFrom === 'archiwum' ? 'Wydane' : 'Przyjęte';
@@ -6474,9 +7326,9 @@ function renderKosz(filterTel) {
         '<div class="history-item-info">' +
           '<div style="display:flex;align-items:center;gap:6px;">' +
             kolorDot +
-            '<span style="font-size:17px;font-weight:700;color:#fff;">' + escHTML(nameParts || '') + '</span>' + ((entry.ebike || entry.marka === 'E-BIKE') ? '<span style="margin-left:5px;font-size:15px;" title="e-Bike">⚡</span>' : '') +
+            '<span class="text-primary" style="font-size:var(--text-md);font-weight:700;">' + escHTML(nameParts || '') + '</span>' + ((entry.ebike || entry.marka === 'E-BIKE') ? '<span style="margin-left:5px;font-size:15px;" title="e-Bike">⚡</span>' : '') +
           '</div>' +
-          '<div style="font-size:11px;color:#ef4444;font-weight:600;margin-top:2px;">' + escHTML(timeInfo) + '</div>' +
+          '<div class="history-item-date history-item-date--sm" style="margin-top:2px;">' + escHTML(timeInfo) + '</div>' +
           '<div style="font-size:11px;color:var(--text3);margin-top:1px;">Z zakładki: ' + from + '</div>' +
           (entry.tel ? '<div style="font-size:12px;color:var(--text2);margin-top:1px;">' + escHTML(entry.tel) + '</div>' : '') +
         '</div>' +
@@ -6485,8 +7337,8 @@ function renderKosz(filterTel) {
         '</div>' +
       '</div>' +
       '<div class="history-item-actions">' +
-        '<button class="btn-history-load" style="background:#16a34a;border-color:#16a34a;" onclick="restoreFromKosz(' + entry.id + ')">&#8630; Przywróć</button>' +
-        '<button class="btn-history-del" style="margin-left:auto;" onclick="deletePermanently(' + entry.id + ')">Usuń na stałe</button>' +
+        '<button class="btn-action ui-tile ui-tile--sm ui-tile--wydanie btn-action--success" onclick="restoreFromKosz(' + entry.id + ')">&#8630; Przywróć</button>' +
+        '<button class="btn-action ui-tile ui-tile--sm ui-tile--danger btn-action--danger-ghost btn-history-del" style="margin-left:auto;" onclick="deletePermanently(' + entry.id + ')">Usuń na stałe</button>' +
       '</div>';
 
     list.appendChild(item);
@@ -7141,7 +7993,7 @@ function buildArchiveHTML(entry, useRaport) {
     .bike-name{font-size:22px;font-weight:800;color:#fff;line-height:1.2;}
     .tel{font-size:14px;color:#3b7cf4;margin-top:6px;display:flex;align-items:center;gap:6px;}
     .dates{margin-top:10px;display:flex;flex-direction:column;gap:3px;}
-    .date-row{font-size:12px;font-weight:600;}
+    .date-row{font-size:12px;font-weight:600;color:var(--text2);}
     table{width:100%;border-collapse:collapse;table-layout:fixed;}
     col.c-name{width:52%;}
     col.c-unit{width:18%;}
@@ -7170,10 +8022,10 @@ function buildArchiveHTML(entry, useRaport) {
     <div class="bike-name">${escHTML([marka, model].filter(Boolean).join(' ') || '')}</div>
     ${tel ? `<div class="tel">📞 ${escHTML(tel)}</div>` : ''}
     <div class="dates">
-      ${entry.label ? `<div class="date-row" style="color:#ef4444;">Przyjęto na serwis: ${escHTML(entry.label.split(' ')[0])}</div>` : ''}
-      ${entry.termin ? `<div class="date-row" style="color:#f59e0b;">Planowana data naprawy: ${escHTML(entry.termin)}</div>` : ''}
-      ${dataZakonczenia ? `<div class="date-row" style="color:#22c55e;">Zakończono naprawę: ${escHTML(dataZakonczenia)}</div>` : ''}
-      ${dataWydania ? `<div class="date-row" style="color:#a78bfa;">Wydano z serwisu: ${escHTML(dataWydania)}</div>` : ''}
+      ${entry.label ? `<div class="date-row">Przyjęto na serwis: ${escHTML(entry.label.split(' ')[0])}</div>` : ''}
+      ${entry.termin ? `<div class="date-row">Planowana data naprawy: ${escHTML(entry.termin)}</div>` : ''}
+      ${dataZakonczenia ? `<div class="date-row">Zakończono naprawę: ${escHTML(dataZakonczenia)}</div>` : ''}
+      ${dataWydania ? `<div class="date-row">Wydano z serwisu: ${escHTML(dataWydania)}</div>` : ''}
     </div>
   </div>
   <div class="card" style="border-left-color:#1e1e30;padding:0;overflow:hidden;">
@@ -7318,6 +8170,7 @@ function openModal() {
 
   $('modal-kolor').value = kolor;
   setKolorPickerFromValue(kolor);
+  updateModalKolorPreview();
 
   $('modal-tel').value = savedTel;
   // Wczytaj termin
@@ -7423,6 +8276,7 @@ function cancelModal() {
   $('modal-marka').value = '';
   $('modal-kolor').value = '';
   if (typeof setKolorPickerFromValue === 'function') setKolorPickerFromValue('');
+  updateModalKolorPreview();
   $('modal-tel').value = '';
   $('modal-termin').value = '';
   $('modal-error').style.display = 'none';
@@ -7491,6 +8345,7 @@ function _updateKolorPickerUI() {
   const val = (c0.toLowerCase() === c1.toLowerCase()) ? c0 : (c0 + '/' + c1);
   const hid = $('modal-kolor');
   if (hid) hid.value = val;
+  updateModalKolorPreview();
 }
 function setKolorPickerFromValue(value) {
   const v = String(value || '').trim();
@@ -7541,7 +8396,12 @@ function _kolorPickerInit() {
 window.setKolorPickerFromValue = setKolorPickerFromValue;
 window._kolorPickerInit = _kolorPickerInit;
 
-function updateModalKolorPreview() { /* podgląd marki/modelu usunięty */ }
+function updateModalKolorPreview() {
+  const el = $('modal-kolor-preview');
+  const kolor = ($('modal-kolor') || {}).value || '';
+  _applyKolorPreviewEl(el, kolor);
+}
+window.updateModalKolorPreview = updateModalKolorPreview;
 
 function openNotatkaModal() {
   const ta = $('notatka-serwisowa');
@@ -7619,26 +8479,25 @@ let raportRItems = [];
 let raportRSubs = [];
 let raportReturnTab = null;
 
-function prepareRaportHeader(entry, wstepnaTotalRaw) {
+function _resolveEntryKolor(entry, st) {
+  let k = String((entry && entry.kolor) || (st && st.kolor) || '').trim();
+  if (k) return k;
+  if (entry && entry.model && String(entry.model).trim()) return '';
+  const marka = String((entry && entry.marka) || (st && st.marka) || '').trim();
+  if (!marka || !marka.includes(' ')) return '';
+  const colors = ['CZARNY','BRĄZOWY','SZARY','BIAŁY','SREBRNY','NIEBIESKI','CZERWONY','ZIELONY','ŻÓŁTY','BIANCHI','FIOLETOWY','ZŁOTY'];
+  const last = marka.split(' ').pop().toUpperCase();
+  return colors.includes(last) ? last : '';
+}
+
+function prepareRaportHeader(entry, wstepnaTotalRaw, st) {
   const nameParts = [(entry.marka || null), entry.model].filter(Boolean).join(' ');
   $('raport-title').textContent = nameParts || '';
 
-  // Pasek koloru na cały lewy bok bannera (jak w EDYCJI/PRZEGLĄDAJ)
   const sideBar = $('raport-summary-kolor-bar');
   if (sideBar) {
-    const k = String(entry.kolor || '').toUpperCase().trim();
-    if (!k) {
-      sideBar.style.background = 'transparent';
-    } else if (k.includes('/')) {
-      const parts = k.split('/').map(s => s.trim()).filter(Boolean);
-      const c1 = COLOR_MAP[parts[0]];
-      const c2 = COLOR_MAP[parts[1]];
-      sideBar.style.background = (c1 && c2)
-        ? ('linear-gradient(180deg,' + c1 + ' 0,' + c1 + ' 50%,' + c2 + ' 50%,' + c2 + ' 100%)')
-        : 'repeating-linear-gradient(45deg,#6b7280 0 3px,#111827 3px 6px)';
-    } else {
-      sideBar.style.background = COLOR_MAP[k] || 'repeating-linear-gradient(45deg,#6b7280 0 3px,#111827 3px 6px)';
-    }
+    const kolor = _resolveEntryKolor(entry, st);
+    sideBar.style.background = kolor ? _kolorBackgroundStyle(kolor) : 'transparent';
   }
 
   // Tel + Kod odbioru (inline)
@@ -7751,7 +8610,7 @@ function buildRaportLocalSubs(st) {
 }
 
 function renderRaportEditor(entry, st, cfg) {
-  const wstepnaVal = prepareRaportHeader(entry, cfg.wstepnaTotalRaw ?? entry.total);
+  const wstepnaVal = prepareRaportHeader(entry, cfg.wstepnaTotalRaw ?? entry.total, st);
   const rItems = buildRaportLocalItems(st, entry, !!cfg.filterEbikeItems);
   const rSubs = buildRaportLocalSubs(st);
 
@@ -7795,7 +8654,6 @@ function renderRaportEditor(entry, st, cfg) {
   gc.innerHTML = '';
   const wrap = document.createElement('div');
   wrap.className = 'group-card';
-  wrap.style.margin = '12px 8px 3px';
 
   const hdr = document.createElement('div');
   hdr.className = 'group-header';
@@ -7983,7 +8841,7 @@ function openPodglad(entry) {
   const leftHTML = `
     <div style="flex:1;min-width:0;position:relative;overflow:hidden;border:1px solid var(--border);border-radius:10px;background:var(--bg);padding:10px 12px 10px 18px;">
       ${kolorBar}
-      ${nameParts.length ? `<div style="display:flex;align-items:center;gap:6px;font-size:17px;font-weight:700;color:#fff;margin-bottom:4px;">${escHTML(nameParts.join(' '))}</div>` : ''}
+      ${nameParts.length ? `<div style="display:flex;align-items:center;gap:6px;font-size:var(--text-md);font-weight:700;color:var(--text);margin-bottom:4px;">${escHTML(nameParts.join(' '))}</div>` : ''}
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
         ${entry.tel ? `<a href="tel:${entry.tel.replace(/[^0-9+]/g,'')}" style="display:inline-flex;align-items:center;gap:5px;font-size:16px;font-weight:600;color:#3b7cf4;text-decoration:none;"><svg width="13" height="13" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>${escHTML(entry.tel)}</a>` : ''}
         ${entry.kodOdbioru ? `<span style="display:inline-flex;align-items:center;gap:4px;font-size:13px;font-weight:800;color:#f59e0b;letter-spacing:2px;">🔑 ${escHTML(entry.kodOdbioru)}</span>` : ''}
@@ -7992,8 +8850,8 @@ function openPodglad(entry) {
 
   const rightHTML = `
     <div style="text-align:right;flex-shrink:0;display:flex;flex-direction:column;gap:3px;justify-content:center;align-self:stretch;">
-      ${entry.label ? `<div style="font-size:11px;color:#ef4444;font-weight:600;">Przyjęto: ${escHTML(entry.label)}</div>` : ''}
-      ${rk?.dataZakonczenia ? `<div style="font-size:11px;color:#22c55e;font-weight:600;">Zakończono: ${escHTML(rk.dataZakonczenia)}</div>` : ''}
+      ${entry.label ? `<div class="history-item-date history-item-date--sm">Przyjęto: ${escHTML(entry.label)}</div>` : ''}
+      ${rk?.dataZakonczenia ? `<div class="history-item-date history-item-date--sm">Zakończono: ${escHTML(rk.dataZakonczenia)}</div>` : ''}
     </div>`;
 
   $('podglad-header').innerHTML = `<div style="display:flex;align-items:stretch;gap:12px;">${leftHTML}${rightHTML}</div>`;
@@ -8133,9 +8991,9 @@ function openPodsumowanieWydane(id) {
     </div>`;
   const rightHTML = `
     <div style="text-align:right;flex-shrink:0;display:flex;flex-direction:column;gap:3px;justify-content:center;align-self:stretch;">
-      ${entry.label ? `<div style="font-size:11px;color:var(--text3);">Przyjęto: ${escHTML(entry.label)}</div>` : ''}
-      ${rk?.dataZakonczenia ? `<div style="font-size:11px;color:#ef4444;">Zakończono naprawę: ${escHTML(rk.dataZakonczenia)}</div>` : ''}
-      ${entry.dataWydania ? `<div style="font-size:11px;color:#a78bfa;">Wydano: ${escHTML(entry.dataWydania)}</div>` : ''}
+      ${entry.label ? `<div class="history-item-date history-item-date--sm">Przyjęto: ${escHTML(entry.label)}</div>` : ''}
+      ${rk?.dataZakonczenia ? `<div class="history-item-date history-item-date--sm">Zakończono naprawę: ${escHTML(rk.dataZakonczenia)}</div>` : ''}
+      ${entry.dataWydania ? `<div class="history-item-date history-item-date--sm">Wydano: ${escHTML(entry.dataWydania)}</div>` : ''}
     </div>`;
 
   $('podglad-title').textContent = 'Podsumowanie';
@@ -8249,15 +9107,15 @@ function openPodsumowanieDoWydania(id) {
   const leftHTML = `
     <div style="flex:1;min-width:0;position:relative;overflow:hidden;padding:10px 12px 10px 26px;">
       ${kolorBar}
-      ${nameParts.length ? `<div style="display:flex;align-items:center;gap:6px;font-size:17px;font-weight:700;color:#fff;margin-bottom:8px;">${escHTML(nameParts.join(' '))}</div>` : ''}
+      ${nameParts.length ? `<div style="display:flex;align-items:center;gap:6px;font-size:var(--text-md);font-weight:700;color:var(--text);margin-bottom:8px;">${escHTML(nameParts.join(' '))}</div>` : ''}
       <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
         ${entry.tel ? `<a href="tel:${entry.tel.replace(/[^0-9+]/g,'')}" style="display:inline-flex;align-items:center;gap:5px;font-size:16px;font-weight:600;color:#3b7cf4;text-decoration:none;"><svg width="13" height="13" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>${escHTML(entry.tel)}</a>` : ''}
       </div>
     </div>`;
   const rightHTML = `
     <div style="text-align:right;flex-shrink:0;display:flex;flex-direction:column;gap:3px;justify-content:center;align-self:stretch;">
-      ${entry.label ? `<div style="font-size:11px;color:var(--text3);">Przyjęto: ${escHTML(entry.label)}</div>` : ''}
-      ${rk?.dataZakonczenia ? `<div style="font-size:11px;color:#ef4444;">Zakończono naprawę: ${escHTML(rk.dataZakonczenia)}</div>` : ''}
+      ${entry.label ? `<div class="history-item-date history-item-date--sm">Przyjęto: ${escHTML(entry.label)}</div>` : ''}
+      ${rk?.dataZakonczenia ? `<div class="history-item-date history-item-date--sm">Zakończono naprawę: ${escHTML(rk.dataZakonczenia)}</div>` : ''}
     </div>`;
 
   $('podglad-title').textContent = 'Podsumowanie';
@@ -8634,14 +9492,13 @@ function openPodgladZlecenia(id) {
   const leftHTML = `
     <div style="flex:1;min-width:0;position:relative;overflow:hidden;padding:10px 12px 10px 26px;">
       ${kolorBar}
-      ${nameParts.length ? `<div style="display:flex;align-items:center;gap:6px;font-size:17px;font-weight:700;color:#fff;margin-bottom:8px;">${escHTML(nameParts.join(' '))}</div>` : ''}
-      ${entry.tel ? `<a href="tel:${entry.tel.replace(/[^0-9+]/g,'')}" style="display:inline-flex;align-items:center;gap:5px;font-size:16px;font-weight:600;color:#3b7cf4;text-decoration:none;margin-top:2px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>${escHTML(entry.tel)}</a>` : ''}
+      ${nameParts.length ? `<div style="display:flex;align-items:center;gap:6px;font-size:var(--text-md);font-weight:700;color:var(--text);margin-bottom:8px;">${escHTML(nameParts.join(' '))}</div>` : ''}
     </div>`;
 
   const rightHTML = `
     <div style="text-align:right;flex-shrink:0;display:flex;flex-direction:column;gap:3px;justify-content:center;align-self:stretch;">
-      ${entry.label ? `<div style="font-size:11px;color:#ef4444;font-weight:600;">Przyjęto na serwis: ${escHTML(entry.label)}</div>` : ''}
-      ${entry.termin ? `<div style="font-size:11px;color:#f59e0b;font-weight:600;">Data naprawy: ${escHTML(entry.termin)}</div>` : ''}
+      ${entry.label ? `<div class="history-item-date history-item-date--sm">Przyjęto na serwis: ${escHTML(entry.label)}</div>` : ''}
+      ${entry.termin ? `<div class="history-item-date history-item-date--sm">Data naprawy: ${escHTML(entry.termin)}</div>` : ''}
     </div>`;
 
   $('podglad-title').textContent = 'Zlecenie';
@@ -9236,7 +10093,7 @@ window.euroConvert    = euroConvert;
   <rect width="512" height="512" rx="80" fill="#0a0a0f"/>
   <svg x="56" y="56" width="400" height="400" viewBox="0 0 24 24">
     <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"
-      fill="#c0392b" stroke="#c0392b" stroke-width="0.3" stroke-linecap="round" stroke-linejoin="round"/>
+      class="brand-logo-icon" fill="currentColor" stroke="currentColor" stroke-width="0.3" stroke-linecap="round" stroke-linejoin="round"/>
   </svg>
 </svg>`;
   const iconUrl = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(icon)));
@@ -9328,7 +10185,8 @@ function openOpisBanner(initialValue) {
     const footer = document.createElement('div');
     footer.style.cssText = 'display:flex;gap:8px;padding:0 16px 16px;';
     const cancelBtn = document.createElement('button');
-    cancelBtn.style.cssText = 'flex:1;padding:11px;background:none;border:1px solid #7f1d1d;border-radius:8px;color:#ef4444;font-size:13px;font-weight:700;cursor:pointer;';
+    cancelBtn.className = 'btn-close btn-cancel ui-tile ui-tile--sm ui-tile--danger';
+    cancelBtn.style.cssText = 'flex:1;margin-left:0;';
     cancelBtn.textContent = 'Anuluj';
     const okBtn = document.createElement('button');
     okBtn.style.cssText = 'flex:2;padding:11px;background:var(--blue);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;';
@@ -9522,7 +10380,7 @@ window.cselSetValue = cselSetValue;
       <div style="font-size:13px;color:var(--text3);line-height:1.6;">Plik <code style="color:#22c55e;font-size:12px;">kopia-serwis-*.json</code> zostanie pobrany na Twoje urządzenie. Przechowuj go w bezpiecznym miejscu.</div>
     </div>
     <div style="display:flex;gap:10px;">
-      <button onclick="$('kopia-lokalnie-modal').style.display='none'" style="flex:1;padding:12px;background:none;border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:14px;font-weight:700;cursor:pointer;">Anuluj</button>
+      <button onclick="$('kopia-lokalnie-modal').style.display='none'" class="btn-close btn-cancel ui-tile ui-tile--sm ui-tile--danger" style="flex:1;margin-left:0;">Anuluj</button>
       <button onclick="kopiaZapasowalokalnie();$('kopia-lokalnie-modal').style.display='none'" style="flex:2;padding:12px;background:#16a34a;border:none;border-radius:8px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;">Pobierz plik</button>
     </div>
   </div>
@@ -9540,49 +10398,51 @@ window.cselSetValue = cselSetValue;
         Z pliku lokalnego
       </button>
     </div>
-    <button onclick="$('przywroc-modal').style.display='none'" style="background:none;border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;">Anuluj</button>
+    <button onclick="$('przywroc-modal').style.display='none'" class="btn-close btn-cancel ui-tile ui-tile--sm ui-tile--danger" style="margin-left:0;">Anuluj</button>
   </div>
 </div>
 <!-- Admin modal -->
-<div id="admin-modal" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.75);align-items:center;justify-content:center;">
-  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:24px 20px;max-width:95vw;width:95vw;margin:0 auto;display:flex;flex-direction:column;gap:12px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;">
-      <span style="font-size:16px;font-weight:700;color:#fff;">Administracja</span>
-      <button onclick="$('admin-modal').style.display='none'" style="background:#ef4444;border:1px solid #ef4444;border-radius:8px;padding:6px 14px;cursor:pointer;color:#fff;font-size:13px;font-weight:700;text-transform:uppercase;">Zamknij</button>
+<div id="admin-modal" class="overlay-full" style="display:none;z-index:999;">
+  <div class="app">
+    <div class="tool-page-header">
+      <span class="tool-page-title">Administracja</span>
+      <button type="button" onclick="closeAdminModal()" class="btn-close ui-tile ui-tile--sm ui-tile--danger">Zamknij</button>
     </div>
 
-    <button onclick="$('admin-modal').style.display='none';openGlobalSearch()" class="admin-act-btn" style="background:#0d1622;border:1px solid #3b7cf4;border-radius:12px;padding:16px 18px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;">
-      <span class="aab-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      </span>
-      <span class="aab-text">Szukaj globalnie</span>
-    </button>
-    <button onclick="otworzRaportZGlownego()" class="admin-act-btn" style="background:#0f0d1a;border:1px solid #4f46e5;border-radius:12px;padding:16px 18px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;">
-      <span class="aab-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-      </span>
-      <span class="aab-text">Raport napraw</span>
-    </button>
-    <button onclick="otworzKopiaZGlownego()" class="admin-act-btn" style="background:#1a0d0d;border:1px solid #c0392b;border-radius:12px;padding:16px 18px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;">
-      <span class="aab-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      </span>
-      <span class="aab-text">Kopia zapasowa</span>
-    </button>
-    <button onclick="$('admin-modal').style.display='none';otworzGithubUpdate()" class="admin-act-btn" style="background:#0a160d;border:1px solid #238636;border-radius:12px;padding:16px 18px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;">
-      <span class="aab-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3fb950" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
-      </span>
-      <span class="aab-text">Update App</span>
-    </button>
+    <div class="tool-page-body">
+      <button type="button" onclick="closeAdminModal();openGlobalSearch()" class="admin-act-btn ui-tile ui-tile--md ui-tile--naprawa admin-act-btn--search">
+        <span class="aab-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </span>
+        <span class="aab-text">Szukaj globalnie</span>
+      </button>
+      <button type="button" onclick="otworzRaportZGlownego()" class="admin-act-btn ui-tile ui-tile--md ui-tile--accent admin-act-btn--report">
+        <span class="aab-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        </span>
+        <span class="aab-text">Raport napraw</span>
+      </button>
+      <button type="button" onclick="otworzKopiaZGlownego()" class="admin-act-btn ui-tile ui-tile--md ui-tile--danger admin-act-btn--backup">
+        <span class="aab-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        </span>
+        <span class="aab-text">Kopia zapasowa</span>
+      </button>
+      <button type="button" onclick="closeAdminModal();otworzGithubUpdate()" class="admin-act-btn ui-tile ui-tile--md ui-tile--wydanie admin-act-btn--update">
+        <span class="aab-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+        </span>
+        <span class="aab-text">Update App</span>
+      </button>
+    </div>
   </div>
 </div>
-<div id="confirm-modal" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;">
-  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:24px 20px;max-width:95vw;width:95vw;margin:0 auto;display:flex;flex-direction:column;gap:16px;">
-    <div id="confirm-msg" style="font-size:15px;font-weight:600;color:var(--text);line-height:1.5;text-align:center;"></div>
-    <div style="display:flex;gap:10px;">
-      <button id="confirm-no" style="flex:1;padding:12px;background:none;border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:14px;font-weight:700;cursor:pointer;">Anuluj</button>
-      <button id="confirm-yes" style="flex:1;padding:12px;background:var(--red);border:1px solid var(--red);border-radius:8px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;">Potwierdź</button>
+<div id="confirm-modal" class="overlay-backdrop" style="display:none;z-index:999;" onclick="if(event.target===this){this.style.display='none';}">
+  <div class="dialog" style="max-width:95vw;width:95vw;" onclick="event.stopPropagation()">
+    <div id="confirm-msg" class="dialog-body"></div>
+    <div class="dialog-actions">
+      <button type="button" id="confirm-no" class="btn btn-close btn-cancel ui-tile ui-tile--sm ui-tile--danger">Anuluj</button>
+      <button type="button" id="confirm-yes" class="btn ui-tile ui-tile--sm ui-tile--danger">Potwierdź</button>
     </div>
   </div>
 </div>
@@ -9592,10 +10452,10 @@ window.cselSetValue = cselSetValue;
   <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:0;max-width:560px;width:100%;max-height:88vh;display:flex;flex-direction:column;overflow:hidden;">
     <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 18px;border-bottom:1px solid var(--border);">
       <div style="display:flex;flex-direction:column;gap:2px;min-width:0;">
-        <span style="font-size:16px;font-weight:800;color:#fff;">Historia klienta</span>
-        <span id="klient-historia-tel" style="font-size:13px;font-weight:600;color:#3b7cf4;"></span>
+        <span class="dialog-title">Historia klienta</span>
+        <span id="klient-historia-tel" class="link-tel" style="font-size:var(--text-sm);"></span>
       </div>
-      <button onclick="$('klient-historia-modal').style.display='none'" style="flex-shrink:0;background:#ef4444;border:1px solid #ef4444;border-radius:8px;padding:6px 14px;cursor:pointer;color:#fff;font-size:13px;font-weight:700;text-transform:uppercase;">Zamknij</button>
+      <button type="button" onclick="$('klient-historia-modal').style.display='none'" class="btn-close ui-tile ui-tile--sm ui-tile--danger" style="flex-shrink:0;margin-left:0;">Zamknij</button>
     </div>
     <div id="klient-historia-summary" style="padding:10px 18px;border-bottom:1px solid var(--border);display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--text3);"></div>
     <div id="klient-historia-list" style="padding:12px 14px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;"></div>
@@ -9607,7 +10467,7 @@ window.cselSetValue = cselSetValue;
   <div class="app" style="padding:14px 14px 40px;">
     <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;">
       <span style="font-size:18px;font-weight:800;color:#fff;">Wyszukiwarka globalna</span>
-      <button onclick="closeGlobalSearch()" class="btn-close" style="margin-left:0;">Zamknij</button>
+      <button onclick="closeGlobalSearch()" class="btn-close ui-tile ui-tile--sm ui-tile--danger" style="margin-left:0;">Zamknij</button>
     </div>
 
     <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:12px;">
@@ -9669,7 +10529,7 @@ window.cselSetValue = cselSetValue;
       <div id="raport-calendar" style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:10px;"></div>
     </div>
     <div style="display:flex;gap:10px;">
-      <button onclick="$('raport-date-modal').style.display='none'" style="flex:1;padding:12px;background:#c0392b;border:1px solid #c0392b;border-radius:8px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;">Anuluj</button>
+      <button onclick="$('raport-date-modal').style.display='none'" class="btn-close btn-cancel ui-tile ui-tile--sm ui-tile--danger" style="flex:1;margin-left:0;">Anuluj</button>
       <button onclick="generujRaportZDaty()" style="flex:1;padding:12px;background:#6366f1;border:1px solid #6366f1;border-radius:8px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;">Generuj PDF</button>
     </div>
   </div>
@@ -9730,7 +10590,7 @@ function otworzGithubUpdate() {
       </label>
       <div id="gh-status" style="display:none;font-size:13px;padding:10px 12px;border-radius:8px;font-weight:600;text-align:center;"></div>
       <div style="display:flex;gap:10px;">
-        <button id="gh-cancel-btn" style="flex:1;padding:12px;background:#c0392b;border:1px solid #c0392b;border-radius:8px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;">Anuluj</button>
+        <button id="gh-cancel-btn" class="btn-close btn-cancel ui-tile ui-tile--sm ui-tile--danger" style="flex:1;margin-left:0;">Anuluj</button>
         <button id="gh-upload-btn" style="flex:2;padding:12px;background:#238636;border:none;border-radius:8px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
           Wyślij update
