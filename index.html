@@ -6059,8 +6059,6 @@ function updateTabCounts() {
     const counts = {
       historia: getPrzyjeteList().length,
       wydanie:  getDoWydaniaList().length,
-      // "Wydane" pokazuje tylko liczbę wydanych DZISIAJ
-      archiwum: getArchive().filter(e => _isTodayDateStr(e.dataWydania)).length,
     };
     Object.keys(counts).forEach(k => {
       const el = $('count-' + k);
@@ -6069,6 +6067,11 @@ function updateTabCounts() {
       el.textContent = n;
       el.classList.toggle('show', n > 0);
     });
+    const archCount = $('count-archiwum');
+    if (archCount) {
+      archCount.textContent = '';
+      archCount.classList.remove('show');
+    }
   } catch (e) {}
 }
 window.updateTabCounts = updateTabCounts;
