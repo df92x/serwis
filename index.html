@@ -1280,11 +1280,17 @@ html.day-mode .history-list-pdf-btn {
   line-height: 1;
 }
 .btn-history-sms:not(.btn-history-sms-sent):hover { filter: brightness(1.08); }
+.btn-history-sms:not(.btn-history-sms-sent) .btn-history-sms-ico{
+  color:#3b7cf4;
+}
 .btn-history-sms-sent {
   background: var(--bg3) !important;
-  color: #22c55e !important;
-  border: 1px solid #166534 !important;
+  color: var(--text3) !important;
+  border: 1px solid var(--border) !important;
   opacity: 1;
+}
+.btn-history-sms-sent .btn-history-sms-ico{
+  color:var(--text3);
 }
 .btn-history-sms-sent:hover { opacity: 0.92; }
 .gs-result-item{
@@ -1847,10 +1853,19 @@ button.btn-history-sms:not(.btn-history-sms-sent) {
 a.btn-history-sms-sent,
 button.btn-history-sms-sent {
   background: var(--bg3) !important;
-  color: #22c55e !important;
-  border-color: #166534 !important;
+  color: var(--text3) !important;
+  border-color: var(--border) !important;
   opacity: 1;
   pointer-events: auto;
+}
+.btn-history-sms-sent .btn-history-sms-ico,
+a.btn-history-sms-sent .btn-history-sms-ico,
+button.btn-history-sms-sent .btn-history-sms-ico{
+  color:var(--text3);
+}
+a.btn-history-sms:not(.btn-history-sms-sent) .btn-history-sms-ico,
+button.btn-history-sms:not(.btn-history-sms-sent) .btn-history-sms-ico{
+  color:#3b7cf4;
 }
 .start-cta.start-cta--add { background: var(--solid-wydanie-bg) !important; border: 1px solid var(--solid-wydanie-border) !important; color: #86efac !important; }
 .start-cta.start-cta--browse { background: var(--solid-naprawa-bg) !important; border: 1px solid var(--solid-naprawa-border) !important; color: #93c5fd !important; }
@@ -6584,7 +6599,7 @@ function _buildZlecenieDetailsHTML(entry, opts) {
 }
 
 function _smsBtnInnerHTML(sent) {
-  const svg = '<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>';
+  const svg = '<svg class="btn-history-sms-ico" width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>';
   return svg + ' ' + (sent ? 'SMS ✓' : 'SMS');
 }
 
@@ -8490,6 +8505,8 @@ function _fractionForColor(hex, preferEnd) {
   return best;
 }
 let _kolorFrac = [0, 1];
+let _kolorHandle1Touched = false;
+
 function _updateKolorPickerUI() {
   [0, 1].forEach(i => {
     const col = kolorAtFraction(_kolorFrac[i]);
@@ -8498,7 +8515,9 @@ function _updateKolorPickerUI() {
   });
   const c0 = kolorAtFraction(_kolorFrac[0]);
   const c1 = kolorAtFraction(_kolorFrac[1]);
-  const val = (c0.toLowerCase() === c1.toLowerCase()) ? c0 : (c0 + '/' + c1);
+  const val = !_kolorHandle1Touched
+    ? c0
+    : ((c0.toLowerCase() === c1.toLowerCase()) ? c0 : (c0 + '/' + c1));
   const hid = $('modal-kolor');
   if (hid) hid.value = val;
   updateModalKolorPreview();
@@ -8506,8 +8525,16 @@ function _updateKolorPickerUI() {
 function setKolorPickerFromValue(value) {
   const v = String(value || '').trim();
   let a = '', b = '';
-  if (v.includes('/')) { const p = v.split('/'); a = (p[0] || '').trim(); b = (p[1] || '').trim(); }
-  else { a = v; b = ''; }
+  if (v.includes('/')) {
+    const p = v.split('/');
+    a = (p[0] || '').trim();
+    b = (p[1] || '').trim();
+    _kolorHandle1Touched = true;
+  } else {
+    a = v;
+    b = '';
+    _kolorHandle1Touched = false;
+  }
   const toFrac = (tok, preferEnd) => {
     if (!tok) return preferEnd ? 1 : 0;
     const css = _kolorCss(tok);
@@ -8532,12 +8559,14 @@ function _kolorPickerInit() {
     h.addEventListener('pointerdown', e => {
       e.preventDefault(); e.stopPropagation();
       dragIdx = i;
+      if (i === 1) _kolorHandle1Touched = true;
       try { h.setPointerCapture(e.pointerId); } catch (_) {}
     });
   });
   track.addEventListener('pointerdown', e => {
     const f = fracFromX(e.clientX);
     dragIdx = Math.abs(_kolorFrac[0] - f) <= Math.abs(_kolorFrac[1] - f) ? 0 : 1;
+    if (dragIdx === 1) _kolorHandle1Touched = true;
     _kolorFrac[dragIdx] = f;
     _updateKolorPickerUI();
   });
