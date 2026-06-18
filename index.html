@@ -1282,11 +1282,39 @@ html.day-mode .history-list-pdf-btn {
 .btn-history-sms:not(.btn-history-sms-sent):hover { filter: brightness(1.08); }
 .btn-history-sms-sent {
   background: var(--bg3) !important;
-  color: var(--text3) !important;
-  border: 1px solid var(--border) !important;
-  opacity: 0.85;
+  color: #22c55e !important;
+  border: 1px solid #166534 !important;
+  opacity: 1;
 }
-.btn-history-sms-sent:hover { opacity: 0.85; }
+.btn-history-sms-sent:hover { opacity: 0.92; }
+.gs-result-item{
+  cursor:pointer;
+  transition:filter 0.12s;
+}
+.gs-result-item:hover{ filter:brightness(1.06); }
+.historia-termin-chip{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-top:6px;
+  padding:6px 10px;
+  border-radius:8px;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  font-size:12px;
+  color:var(--text2);
+}
+.historia-termin-chip strong{ color:#f59e0b; }
+.historia-termin-chip button{
+  margin-left:auto;
+  background:none;
+  border:none;
+  color:var(--text3);
+  font-size:16px;
+  line-height:1;
+  cursor:pointer;
+  padding:2px 4px;
+}
 .btn-history-del {
   background: none; border: 1px solid var(--red);
   color: var(--red); font-size: var(--btn-font); font-weight: 600;
@@ -1642,6 +1670,12 @@ button.order-cal-day{
   cursor:pointer;
   font-family:inherit;
 }
+button.order-cal-day.order-cal-day--browse{
+  cursor:pointer;
+}
+button.order-cal-day.order-cal-day--browse:active{
+  transform:scale(0.96);
+}
 .order-cal-day--load-low{
   font-weight:800;
   color:var(--text);
@@ -1813,9 +1847,9 @@ button.btn-history-sms:not(.btn-history-sms-sent) {
 a.btn-history-sms-sent,
 button.btn-history-sms-sent {
   background: var(--bg3) !important;
-  color: var(--text3) !important;
-  border-color: var(--border) !important;
-  opacity: 0.85;
+  color: #22c55e !important;
+  border-color: #166534 !important;
+  opacity: 1;
   pointer-events: auto;
 }
 .start-cta.start-cta--add { background: var(--solid-wydanie-bg) !important; border: 1px solid var(--solid-wydanie-border) !important; color: #86efac !important; }
@@ -2473,6 +2507,7 @@ html.day-mode #tab-archiwum.order-tab.active { color: #7c3aed !important; }
             <input type="text" id="historia-search-tel" placeholder="Szukaj: tel. / rower" maxlength="25"
               style="background:var(--bg);border:1px solid var(--border);color:#fff;outline:none;"
               onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
+            <div id="historia-termin-chip" class="historia-termin-chip" style="display:none;"></div>
           </div>
           <div id="wydanie-search-wrap" style="display:none;">
             <input type="text" id="wydanie-search-tel" placeholder="Szukaj: tel. / kod / rower" maxlength="25"
@@ -4386,6 +4421,7 @@ let _rabHighlightUntil = 0;
 
 let _zlecHighlightId = '';
 let _zlecHighlightUntil = 0;
+let _historyTerminFilter = '';
 
 function highlightZlecenie(id) {
   _zlecHighlightId = String(id ?? '');
@@ -4711,7 +4747,7 @@ function renderRabatyActive() {
     const smsSent = !!r.smsSent;
     smsBtn.className = 'btn-action ui-tile ui-tile--sm btn-history-sms' + (smsSent ? ' btn-history-sms-sent' : ' ui-tile--naprawa');
     smsBtn.style.cssText = 'font-weight:900;gap:6px;';
-    smsBtn.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> SMS';
+    smsBtn.innerHTML = _smsBtnInnerHTML(smsSent);
     smsBtn.title = smsSent ? 'SMS wysłany' : 'Wyślij SMS z kodem';
     if (smsSent) smsBtn.disabled = true;
     smsBtn.onclick = (ev) => {
@@ -4722,6 +4758,7 @@ function renderRabatyActive() {
       markRabSmsSent(r.code);
       smsBtn.classList.remove('ui-tile--naprawa');
       smsBtn.classList.add('btn-history-sms-sent');
+      smsBtn.innerHTML = _smsBtnInnerHTML(true);
       smsBtn.disabled = true;
       const body = _smsRabatyBody(r);
       window.location.href = 'sms:' + tel.replace(/[^0-9+]/g,'') + '?body=' + encodeURIComponent(body);
@@ -5444,6 +5481,10 @@ function _buildOrderCalGrid(y, m, opts) {
     if (pickable && !disabled) {
       const ddmm = String(d).padStart(2, '0') + '.' + String(m + 1).padStart(2, '0');
       html += `<button type="button" class="${cls.join(' ')}" onclick="terminPick('${ddmm}')">${dayContent}</button>`;
+    } else if (opts.dayClickFn && cnt > 0) {
+      const ddmm = String(d).padStart(2, '0') + '.' + String(m + 1).padStart(2, '0');
+      cls.push('order-cal-day--browse');
+      html += `<button type="button" class="${cls.join(' ')}" title="Zobacz ${cnt} zleceń na ${ddmm}" onclick="${opts.dayClickFn}('${ddmm}')">${dayContent}</button>`;
     } else {
       html += `<div class="${cls.join(' ')}">${dayContent}</div>`;
     }
@@ -5535,8 +5576,49 @@ let _startCalSwipeY = 0;
 let _startCalSwipeBound = false;
 
 function _buildStartCalMonthHtml(y, m) {
-  return _buildOrderCalHtml(y, m, { pickable: false, prevFn: 'startCalPrev', nextFn: 'startCalNext' });
+  return _buildOrderCalHtml(y, m, { pickable: false, prevFn: 'startCalPrev', nextFn: 'startCalNext', dayClickFn: 'startCalOpenTermin' });
 }
+
+function startCalOpenTermin(ddmm) {
+  openHistoryForTermin(ddmm);
+}
+window.startCalOpenTermin = startCalOpenTermin;
+
+function _terminMatchesDay(termin, ddmm) {
+  const t = _parseTerminParts(termin);
+  const d = _parseTerminParts(ddmm);
+  if (t.length < 2 || d.length < 2) return false;
+  return parseInt(t[0], 10) === parseInt(d[0], 10) && parseInt(t[1], 10) === parseInt(d[1], 10);
+}
+
+function _updateHistoriaTerminChip() {
+  const chip = $('historia-termin-chip');
+  if (!chip) return;
+  if (!_historyTerminFilter) {
+    chip.style.display = 'none';
+    chip.innerHTML = '';
+    return;
+  }
+  chip.style.display = 'flex';
+  chip.innerHTML = '<span>Termin naprawy: <strong>' + escHTML(_historyTerminFilter) + '</strong></span>'
+    + '<button type="button" onclick="clearHistoriaTerminFilter()" title="Wyczyść filtr terminu">✕</button>';
+}
+
+function clearHistoriaTerminFilter() {
+  _historyTerminFilter = '';
+  _updateHistoriaTerminChip();
+  renderHistory($('historia-search-tel')?.value || '');
+}
+window.clearHistoriaTerminFilter = clearHistoriaTerminFilter;
+
+function openHistoryForTermin(ddmm) {
+  _historyTerminFilter = ddmm;
+  $('start-overlay').style.display = 'none';
+  $('history-overlay').style.display = 'block';
+  updateKoszBadge();
+  switchTab('historia', { keepTerminFilter: true });
+}
+window.openHistoryForTermin = openHistoryForTermin;
 
 function _bindStartCalSwipe() {
   if (_startCalSwipeBound) return;
@@ -6191,6 +6273,18 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ── Wyszukiwarka globalna (Administracja) ──
+function openGlobalSearchResult(status, id) {
+  if (id === null || id === undefined) return;
+  $('global-search-modal').style.display = 'none';
+  $('start-overlay').style.display = 'none';
+  highlightZlecenie(id);
+  $('history-overlay').style.display = 'block';
+  updateKoszBadge();
+  const tab = (status === 'wydanie' || status === 'archiwum' || status === 'kosz') ? status : 'historia';
+  switchTab(tab);
+}
+window.openGlobalSearchResult = openGlobalSearchResult;
+
 function openGlobalSearch() {
   $('global-search-modal').style.display = 'block';
   setTimeout(() => { const q = $('gs-query'); if (q) q.focus(); }, 60);
@@ -6283,7 +6377,7 @@ function runGlobalSearch() {
     if (e.label) dates.push('Przyjęto: ' + stripYear(e.label));
     if (e.dataWydania) dates.push('Wydano: ' + stripYear(e.dataWydania));
     const kolorBar = (typeof makeKolorBarHTML === 'function') ? makeKolorBarHTML(e.kolor || '') : '';
-    return '<div class="history-item" style="position:relative;border-color:var(--border);background:var(--bg);margin-bottom:0;cursor:default;">'
+    return '<div class="history-item gs-result-item" onclick="openGlobalSearchResult(\'' + e._status + '\',' + (e.id ?? 'null') + ')" style="position:relative;border-color:var(--border);background:var(--bg);margin-bottom:0;">'
       + kolorBar
       + '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">'
         + '<div style="min-width:0;display:flex;flex-direction:column;gap:3px;">'
@@ -6296,7 +6390,10 @@ function runGlobalSearch() {
           + (dates.length ? '<div style="font-size:12px;color:var(--text2);">' + dates.map(escHTML).join(' · ') + '</div>' : '')
           + (e.kodOdbioru ? '<div style="font-size:12px;font-weight:700;color:#f59e0b;letter-spacing:1px;">🔑 ' + escHTML(e.kodOdbioru) + '</div>' : '')
         + '</div>'
-        + '<div style="text-align:right;flex-shrink:0;font-size:18px;font-weight:800;color:#fff;">' + escHTML(e.total || '') + '</div>'
+        + '<div style="text-align:right;flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:4px;">'
+        + '<div style="font-size:18px;font-weight:800;color:#fff;">' + escHTML(e.total || '') + '</div>'
+        + '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>'
+        + '</div>'
       + '</div>'
       + '</div>';
   }).join('');
@@ -6486,12 +6583,26 @@ function _buildZlecenieDetailsHTML(entry, opts) {
   return telBlock + `<table style="width:100%;border-collapse:collapse;"><tbody>${rows}</tbody></table>${notatka}`;
 }
 
+function _smsBtnInnerHTML(sent) {
+  const svg = '<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>';
+  return svg + ' ' + (sent ? 'SMS ✓' : 'SMS');
+}
+
 function renderHistory(filterTel) {
   const list = $('history-list');
   if (typeof updateTabCounts === 'function') updateTabCounts();
-  const sorted = getPrzyjeteList(filterTel);
+  _updateHistoriaTerminChip();
+  let sorted = getPrzyjeteList(filterTel);
+  if (_historyTerminFilter) {
+    sorted = sorted.filter(e => _terminMatchesDay(e.termin, _historyTerminFilter));
+  }
   if (!sorted.length) {
-    list.innerHTML = emptyStateHTML({ query: filterTel, emptyTitle: 'Brak przyjętych zleceń', emptySub: 'Nowe zlecenia dodasz przyciskiem DODAJ.' });
+    const q = (filterTel && filterTel.trim().length >= 2) ? filterTel : (_historyTerminFilter ? 'termin ' + _historyTerminFilter : '');
+    list.innerHTML = emptyStateHTML({
+      query: q,
+      emptyTitle: _historyTerminFilter ? 'Brak zleceń na ten termin' : 'Brak przyjętych zleceń',
+      emptySub: _historyTerminFilter ? 'Spróbuj inny dzień w kalendarzu lub wyczyść filtr.' : 'Nowe zlecenia dodasz przyciskiem DODAJ.',
+    });
     return;
   }
   list.innerHTML = '';
@@ -6536,7 +6647,7 @@ function renderHistory(filterTel) {
         </div>
       </div>
       <div class="history-item-actions">
-        ${entry.tel ? `<a class="btn-action ui-tile ui-tile--sm btn-history-sms${entry.smsSent ? ' btn-history-sms-sent' : ' ui-tile--naprawa'}" onclick="openOrderSms(${entry.id}, this, event)" href="sms:${entry.tel.replace(/[^0-9+]/g,'')}?body=${encodeURIComponent((_smsRower(entry.marka, entry.model) || '') + ' - przyjęto na serwis.' + (entry.termin ? '\nWstępna data naprawy: ' + entry.termin : '') + '\nPo zakończeniu naprawy otrzymasz SMS z kodem odbioru. Serwis')}"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> SMS</a>` : ''}
+        ${entry.tel ? `<a class="btn-action ui-tile ui-tile--sm btn-history-sms${entry.smsSent ? ' btn-history-sms-sent' : ' ui-tile--naprawa'}" onclick="openOrderSms(${entry.id}, this, event)" href="sms:${entry.tel.replace(/[^0-9+]/g,'')}?body=${encodeURIComponent((_smsRower(entry.marka, entry.model) || '') + ' - przyjęto na serwis.' + (entry.termin ? '\nWstępna data naprawy: ' + entry.termin : '') + '\nPo zakończeniu naprawy otrzymasz SMS z kodem odbioru. Serwis')}">${_smsBtnInnerHTML(!!entry.smsSent)}</a>` : ''}
         <button class="btn-action ui-tile ui-tile--sm ui-tile--neutral btn-action--ghost" onclick="loadWycena(${entry.id})" title="Edytuj"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
         <div class="history-actions-primary">
           <button class="btn-action ui-tile ui-tile--sm ui-tile--naprawa btn-action--repair" onclick="openRaport(${entry.id})"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg> NAPRAWA</button>
@@ -6813,7 +6924,8 @@ function getArchive() {
 }
 
 // ── Przełączanie zakładek ──
-function switchTab(tab) {
+function switchTab(tab, opts) {
+  opts = opts || {};
   const histList    = $('history-list');
   const wydList     = $('wydanie-list');
   const archList    = $('archive-list');
@@ -6834,31 +6946,36 @@ function switchTab(tab) {
   if (tab === 'historia') {
     histList.style.display = '';
     $('historia-search-wrap').style.display = 'block';
-    $('historia-search-tel').value = '';
+    if (!opts.keepTerminFilter) {
+      _historyTerminFilter = '';
+      _updateHistoriaTerminChip();
+    }
+    if (!opts.keepSearch) $('historia-search-tel').value = '';
     tabHist.classList.add('active');
-    renderHistory();
+    renderHistory($('historia-search-tel')?.value || '');
     setTimeout(() => scrollToHighlightedZlecenie('history-list'), 80);
   } else if (tab === 'wydanie') {
     wydList.style.display = '';
     $('wydanie-search-wrap').style.display = 'block';
-    $('wydanie-search-tel').value = '';
+    if (!opts.keepSearch) $('wydanie-search-tel').value = '';
     tabWyd.classList.add('active');
-    renderWydanie();
+    renderWydanie($('wydanie-search-tel')?.value || '');
     setTimeout(() => scrollToHighlightedZlecenie('wydanie-list'), 80);
     setTimeout(() => { const s = $('wydanie-search-tel'); if (s) s.focus(); }, 80);
     // podświetlenie dotyczy też przejścia na inne zakładki
   } else if (tab === 'kosz') {
     koszList.style.display = '';
     $('kosz-search-wrap').style.display = 'block';
-    $('kosz-search-tel').value = '';
+    if (!opts.keepSearch) $('kosz-search-tel').value = '';
     tabKosz.classList.add('active');
-    renderKosz();
+    renderKosz($('kosz-search-tel')?.value || '');
+    setTimeout(() => scrollToHighlightedZlecenie('kosz-list'), 80);
   } else {
     archList.style.display = '';
     $('archive-search-wrap').style.display = 'block';
-    $('archive-search-tel').value = '';
+    if (!opts.keepSearch) $('archive-search-tel').value = '';
     tabArch.classList.add('active');
-    renderArchive();
+    renderArchive($('archive-search-tel')?.value || '');
     setTimeout(() => scrollToHighlightedZlecenie('archive-list'), 80);
   }
 
@@ -6874,6 +6991,7 @@ function markSmsSent(id, el) {
   localStorage.setItem(HISTORY_KEY, JSON.stringify(hist));
   el.classList.remove('ui-tile--naprawa');
   el.classList.add('btn-history-sms-sent');
+  el.innerHTML = _smsBtnInnerHTML(true);
 }
 
 function openOrderSms(id, el, ev) {
@@ -6948,7 +7066,7 @@ function renderWydanie(filterTel) {
         </div>
       </div>
       <div class="history-item-actions">
-        ${entry.tel ? '<a class="btn-action ui-tile ui-tile--sm btn-history-sms' + (entry.smsSent ? ' btn-history-sms-sent' : ' ui-tile--naprawa') + '" href="sms:' + entry.tel.replace(/[^0-9+]/g,'') + '?body=' + encodeURIComponent((_smsRower(entry.marka, entry.model) || '') + ' - przygotowany do odbioru\n\nGodziny otwarcia\nPn-pt 10:00-18:00\nSobota 9:00-14:00\n\nKwota do zapłaty - ' + entry.total + ' zł\nPłatność gotówka/karta/BLIK\n\nKod odbioru: ' + (entry.kodOdbioru || '–')) + '" onclick="openOrderSms(' + entry.id + ', this, event)"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> SMS</a>' : ''}
+        ${entry.tel ? '<a class="btn-action ui-tile ui-tile--sm btn-history-sms' + (entry.smsSent ? ' btn-history-sms-sent' : ' ui-tile--naprawa') + '" href="sms:' + entry.tel.replace(/[^0-9+]/g,'') + '?body=' + encodeURIComponent((_smsRower(entry.marka, entry.model) || '') + ' - przygotowany do odbioru\n\nGodziny otwarcia\nPn-pt 10:00-18:00\nSobota 9:00-14:00\n\nKwota do zapłaty - ' + entry.total + ' zł\nPłatność gotówka/karta/BLIK\n\nKod odbioru: ' + (entry.kodOdbioru || '–')) + '" onclick="openOrderSms(' + entry.id + ', this, event)">' + _smsBtnInnerHTML(!!entry.smsSent) + '</a>' : ''}
         <button class="btn-action ui-tile ui-tile--sm ui-tile--neutral btn-action--ghost" onclick="cofnijDoAktualne(${entry.id})" title="Cofnij do przyjętych"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg></button>
         <button class="btn-action ui-tile ui-tile--sm ui-tile--neutral btn-action--ghost" onclick="openRaportEdycja(${entry.id})" title="Edytuj"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
         <div class="history-actions-primary">
@@ -7175,7 +7293,7 @@ function renderArchive(filterStr) {
     const dataZakLine = entry.raportKoncowy?.dataZakonczenia ? 'Zakończono naprawę: ' + stripYear(entry.raportKoncowy.dataZakonczenia) : '';
     const dataWydLine = entry.dataWydania ? 'Wydano z serwisu: ' + stripYear(entry.dataWydania) : '';
     const smsHTML = entry.tel
-      ? '<a class="btn-action ui-tile ui-tile--sm btn-history-sms' + (entry.smsSent ? ' btn-history-sms-sent' : ' ui-tile--naprawa') + '" href="sms:' + entry.tel.replace(/[^0-9+]/g,'') + '?body=' + encodeURIComponent((_smsRower(entry.marka, entry.model) || '') + ' - przygotowany do odbioru\n\nGodziny otwarcia\nPn-pt 10:00-18:00\nSobota 9:00-14:00\n\nKwota do zapłaty - ' + entry.total + ' zł\nPłatność gotówka/karta/BLIK\n\nKod odbioru: ' + (entry.kodOdbioru || '–')) + '" onclick="openOrderSms(' + entry.id + ', this, event)"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> SMS</a>'
+      ? '<a class="btn-action ui-tile ui-tile--sm btn-history-sms' + (entry.smsSent ? ' btn-history-sms-sent' : ' ui-tile--naprawa') + '" href="sms:' + entry.tel.replace(/[^0-9+]/g,'') + '?body=' + encodeURIComponent((_smsRower(entry.marka, entry.model) || '') + ' - przygotowany do odbioru\n\nGodziny otwarcia\nPn-pt 10:00-18:00\nSobota 9:00-14:00\n\nKwota do zapłaty - ' + entry.total + ' zł\nPłatność gotówka/karta/BLIK\n\nKod odbioru: ' + (entry.kodOdbioru || '–')) + '" onclick="openOrderSms(' + entry.id + ', this, event)">' + _smsBtnInnerHTML(!!entry.smsSent) + '</a>'
       : '';
 
     const kolorBar = makeKolorBarHTML(entry.kolor || '');
@@ -7347,6 +7465,7 @@ function renderKosz(filterTel) {
   kosz.forEach(entry => {
     const item = document.createElement('div');
     item.className = 'history-item';
+    item.dataset.orderId = String(entry.id ?? '');
     item.style.borderColor = '#5c3030';
     item.style.backgroundColor = '#221515';
 
