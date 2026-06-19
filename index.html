@@ -1321,6 +1321,29 @@ html.day-mode .history-list-pdf-btn {
   cursor:pointer;
   padding:2px 4px;
 }
+.archive-wydane-chip{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-top:6px;
+  padding:6px 10px;
+  border-radius:8px;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  font-size:12px;
+  color:var(--text2);
+}
+.archive-wydane-chip strong{ color:#a78bfa; }
+.archive-wydane-chip button{
+  margin-left:auto;
+  background:none;
+  border:none;
+  color:var(--text3);
+  font-size:16px;
+  line-height:1;
+  cursor:pointer;
+  padding:2px 4px;
+}
 .btn-history-del {
   background: none; border: 1px solid var(--red);
   color: var(--red); font-size: var(--btn-font); font-weight: 600;
@@ -1728,6 +1751,11 @@ button.order-cal-day.order-cal-day--browse:active{
 .order-cal-day--load-low .order-cal-count{ background:var(--cal-load-low-badge); color:#fff; }
 .order-cal-day--load-mid .order-cal-count{ background:var(--cal-load-mid-badge); color:#111827; }
 .order-cal-day--load-high .order-cal-count{ background:var(--cal-load-high-badge); color:#fff; }
+.order-cal-count--wydane{ background:#7c3aed !important; color:#fff !important; }
+.order-cal-day--browse-wydane{
+  border-color:#584088 !important;
+  background:var(--solid-tab-archiwum-bg) !important;
+}
 .order-cal-day--selected .order-cal-count{
   background:rgba(0,0,0,0.28);
   color:#fff;
@@ -2533,6 +2561,7 @@ html.day-mode #tab-archiwum.order-tab.active { color: #7c3aed !important; }
             <input type="text" id="archive-search-tel" placeholder="Szukaj: tel. / kod / rower" maxlength="25"
               style="background:var(--bg);border:1px solid var(--border);color:#fff;outline:none;"
               onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
+            <div id="archive-wydane-chip" class="archive-wydane-chip" style="display:none;"></div>
           </div>
           <div id="kosz-search-wrap" style="display:none;">
             <div style="display:flex;gap:6px;align-items:center;">
@@ -4437,6 +4466,8 @@ let _rabHighlightUntil = 0;
 let _zlecHighlightId = '';
 let _zlecHighlightUntil = 0;
 let _historyTerminFilter = '';
+let _archiveWydaneFilter = '';
+let _archiveWydaneFilterYear = null;
 
 function highlightZlecenie(id) {
   _zlecHighlightId = String(id ?? '');
@@ -5458,9 +5489,53 @@ function _calLoadTier(cnt) {
   return 'high';
 }
 const _ORDER_CAL_MONTHS = ['Styczeń','Luty','Marzec','Kwiecień','Maj','Czerwiec','Lipiec','Sierpień','Wrzesień','Październik','Listopad','Grudzień'];
+function _entryWydaneDayParts(e) {
+  if (!e) return null;
+  if (e.dataWydania) {
+    const p = _parseTerminParts(String(e.dataWydania).split(' ')[0]);
+    if (p.length >= 2) {
+      const d = parseInt(p[0], 10), m = parseInt(p[1], 10);
+      if (!d || !m) return null;
+      const y = p.length >= 3 ? parseInt(p[2], 10) : new Date().getFullYear();
+      return { d, m, y: isNaN(y) ? new Date().getFullYear() : y };
+    }
+  }
+  if (e.archivedAt) {
+    try {
+      const dt = new Date(e.archivedAt);
+      if (!isNaN(dt.getTime())) return { d: dt.getDate(), m: dt.getMonth() + 1, y: dt.getFullYear() };
+    } catch (_) {}
+  }
+  return null;
+}
+
+function _wydaneCountsForMonth(y, m) {
+  const map = {};
+  try {
+    getArchiveNormalized().forEach(e => {
+      const parts = _entryWydaneDayParts(e);
+      if (!parts || parts.y !== y || parts.m !== (m + 1)) return;
+      const key = parts.d + '.' + parts.m;
+      map[key] = (map[key] || 0) + 1;
+    });
+  } catch (_) {}
+  return map;
+}
+
+function _archiveMatchesWydaneDay(e, ddmm, year) {
+  const target = _parseTerminParts(ddmm);
+  if (target.length < 2) return false;
+  const td = parseInt(target[0], 10), tm = parseInt(target[1], 10);
+  const parts = _entryWydaneDayParts(e);
+  if (!parts) return false;
+  const y = year != null ? year : new Date().getFullYear();
+  return parts.d === td && parts.m === tm && parts.y === y;
+}
+
 function _buildOrderCalGrid(y, m, opts) {
   opts = opts || {};
   const counts = _terminCounts();
+  const wydaneCounts = opts.startMenu ? _wydaneCountsForMonth(y, m) : {};
   const startDow = (new Date(y, m, 1).getDay() + 6) % 7;
   const daysInMonth = new Date(y, m + 1, 0).getDate();
   const today = new Date();
@@ -5481,25 +5556,35 @@ function _buildOrderCalGrid(y, m, opts) {
     const isSunday = dow === 0;
     const isPast = dateObj < today;
     const isToday = dateObj.getTime() === today.getTime();
-    const cnt = counts[d + '.' + (m + 1)] || 0;
+    const dayKey = d + '.' + (m + 1);
+    const terminCnt = counts[dayKey] || 0;
+    const wydaneCnt = wydaneCounts[dayKey] || 0;
+    const ddmm = String(d).padStart(2, '0') + '.' + String(m + 1).padStart(2, '0');
+    const showWydaneDay = opts.startMenu && isPast && wydaneCnt > 0;
+    const showTerminDay = !isPast && terminCnt > 0;
+    const cnt = showWydaneDay ? wydaneCnt : terminCnt;
     const tier = _calLoadTier(cnt);
     const isSel = selD === d && selM === (m + 1);
-    const disabled = isSunday || isPast;
+    const disabled = isSunday || (pickable && isPast);
     const cls = ['order-cal-day', 'order-cal-day--load-' + tier];
     if (isToday) cls.push('is-today');
     if (isSel) cls.push('order-cal-day--selected');
     if (disabled) cls.push('order-cal-day--disabled');
-    const badge = cnt > 0
-      ? `<span class="order-cal-count">${cnt}</span>`
-      : '';
+    if (showWydaneDay) cls.push('order-cal-day--browse-wydane');
+    else if (showTerminDay && opts.dayClickFn) cls.push('order-cal-day--browse');
+    let badge = '';
+    if (showWydaneDay) {
+      badge = `<span class="order-cal-count order-cal-count--wydane">${wydaneCnt}</span>`;
+    } else if (terminCnt > 0) {
+      badge = `<span class="order-cal-count">${terminCnt}</span>`;
+    }
     const dayContent = `<span class="order-cal-day-num">${d}</span>${badge}`;
     if (pickable && !disabled) {
-      const ddmm = String(d).padStart(2, '0') + '.' + String(m + 1).padStart(2, '0');
       html += `<button type="button" class="${cls.join(' ')}" onclick="terminPick('${ddmm}')">${dayContent}</button>`;
-    } else if (opts.dayClickFn && cnt > 0) {
-      const ddmm = String(d).padStart(2, '0') + '.' + String(m + 1).padStart(2, '0');
-      cls.push('order-cal-day--browse');
-      html += `<button type="button" class="${cls.join(' ')}" title="Zobacz ${cnt} zleceń na ${ddmm}" onclick="${opts.dayClickFn}('${ddmm}')">${dayContent}</button>`;
+    } else if (showWydaneDay && opts.dayClickWydaneFn) {
+      html += `<button type="button" class="${cls.join(' ')}" title="Zobacz ${wydaneCnt} wydanych ${ddmm}.${y}" onclick="${opts.dayClickWydaneFn}('${ddmm}',${y})">${dayContent}</button>`;
+    } else if (showTerminDay && opts.dayClickFn) {
+      html += `<button type="button" class="${cls.join(' ')}" title="Zobacz ${terminCnt} zleceń na ${ddmm}" onclick="${opts.dayClickFn}('${ddmm}')">${dayContent}</button>`;
     } else {
       html += `<div class="${cls.join(' ')}">${dayContent}</div>`;
     }
@@ -5591,13 +5676,25 @@ let _startCalSwipeY = 0;
 let _startCalSwipeBound = false;
 
 function _buildStartCalMonthHtml(y, m) {
-  return _buildOrderCalHtml(y, m, { pickable: false, prevFn: 'startCalPrev', nextFn: 'startCalNext', dayClickFn: 'startCalOpenTermin' });
+  return _buildOrderCalHtml(y, m, {
+    pickable: false,
+    prevFn: 'startCalPrev',
+    nextFn: 'startCalNext',
+    dayClickFn: 'startCalOpenTermin',
+    dayClickWydaneFn: 'startCalOpenWydane',
+    startMenu: true,
+  });
 }
 
 function startCalOpenTermin(ddmm) {
   openHistoryForTermin(ddmm);
 }
 window.startCalOpenTermin = startCalOpenTermin;
+
+function startCalOpenWydane(ddmm, year) {
+  openHistoryForWydaneDay(ddmm, year);
+}
+window.startCalOpenWydane = startCalOpenWydane;
 
 function _terminMatchesDay(termin, ddmm) {
   const t = _parseTerminParts(termin);
@@ -5634,6 +5731,38 @@ function openHistoryForTermin(ddmm) {
   switchTab('historia', { keepTerminFilter: true });
 }
 window.openHistoryForTermin = openHistoryForTermin;
+
+function _updateArchiveWydaneChip() {
+  const chip = $('archive-wydane-chip');
+  if (!chip) return;
+  if (!_archiveWydaneFilter) {
+    chip.style.display = 'none';
+    chip.innerHTML = '';
+    return;
+  }
+  const y = _archiveWydaneFilterYear || new Date().getFullYear();
+  chip.style.display = 'flex';
+  chip.innerHTML = '<span>Wydane: <strong>' + escHTML(_archiveWydaneFilter + '.' + y) + '</strong></span>'
+    + '<button type="button" onclick="clearArchiveWydaneFilter()" title="Wyczyść filtr daty">✕</button>';
+}
+
+function clearArchiveWydaneFilter() {
+  _archiveWydaneFilter = '';
+  _archiveWydaneFilterYear = null;
+  _updateArchiveWydaneChip();
+  renderArchive($('archive-search-tel')?.value || '');
+}
+window.clearArchiveWydaneFilter = clearArchiveWydaneFilter;
+
+function openHistoryForWydaneDay(ddmm, year) {
+  _archiveWydaneFilter = ddmm;
+  _archiveWydaneFilterYear = year != null ? year : new Date().getFullYear();
+  $('start-overlay').style.display = 'none';
+  $('history-overlay').style.display = 'block';
+  updateKoszBadge();
+  switchTab('archiwum', { keepWydaneFilter: true });
+}
+window.openHistoryForWydaneDay = openHistoryForWydaneDay;
 
 function _bindStartCalSwipe() {
   if (_startCalSwipeBound) return;
@@ -6941,6 +7070,44 @@ function getArchive() {
   try { return JSON.parse(localStorage.getItem(ARCHIVE_KEY) || '[]'); } catch { return []; }
 }
 
+function _archiveEntryDate(e) {
+  let t = _klientParseDate(e && e.dataWydania);
+  if (t) return t;
+  if (e && e.archivedAt) {
+    try {
+      const d = new Date(e.archivedAt);
+      if (!isNaN(d.getTime())) {
+        d.setHours(0, 0, 0, 0);
+        return d.getTime();
+      }
+    } catch (_) {}
+  }
+  return _klientParseDate(e && e.label) || 0;
+}
+
+function _normalizeArchiveEntries(list) {
+  let changed = false;
+  const out = (Array.isArray(list) ? list : []).map(e => {
+    if (!e || e.dataWydania || !e.archivedAt) return e;
+    try {
+      const d = new Date(e.archivedAt);
+      if (isNaN(d.getTime())) return e;
+      changed = true;
+      return Object.assign({}, e, {
+        dataWydania: d.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' }),
+      });
+    } catch (_) {
+      return e;
+    }
+  });
+  if (changed) localStorage.setItem(ARCHIVE_KEY, JSON.stringify(out));
+  return out;
+}
+
+function getArchiveNormalized() {
+  return _normalizeArchiveEntries(getArchive());
+}
+
 // ── Przełączanie zakładek ──
 function switchTab(tab, opts) {
   opts = opts || {};
@@ -6989,8 +7156,13 @@ function switchTab(tab, opts) {
     renderKosz($('kosz-search-tel')?.value || '');
     setTimeout(() => scrollToHighlightedZlecenie('kosz-list'), 80);
   } else {
-    archList.style.display = '';
+    archList.style.display = 'block';
     $('archive-search-wrap').style.display = 'block';
+    if (!opts.keepWydaneFilter) {
+      _archiveWydaneFilter = '';
+      _archiveWydaneFilterYear = null;
+      _updateArchiveWydaneChip();
+    }
     if (!opts.keepSearch) $('archive-search-tel').value = '';
     tabArch.classList.add('active');
     renderArchive($('archive-search-tel')?.value || '');
@@ -7279,26 +7451,34 @@ window.generujZleceniaPrzyjete = generujZleceniaPrzyjete;
 function renderArchive(filterStr) {
   const list = $('archive-list');
   if (typeof updateTabCounts === 'function') updateTabCounts();
-  let arch = getArchive();
+  _updateArchiveWydaneChip();
+  let arch = getArchiveNormalized();
+  if (_archiveWydaneFilter) {
+    arch = arch.filter(e => _archiveMatchesWydaneDay(e, _archiveWydaneFilter, _archiveWydaneFilterYear));
+  }
   // Filtruj po numerze telefonu, kodzie odbioru lub nazwie roweru
   if (filterStr && filterStr.trim().length >= 2) {
     arch = arch.filter(e => _zlecenieMatch(e, filterStr));
   }
   if (!arch.length) {
-    list.innerHTML = emptyStateHTML({ query: filterStr, emptyTitle: 'Brak wydanych zleceń', emptySub: 'Wydane zlecenia trafiają do tego archiwum.' });
+    const q = (filterStr && filterStr.trim().length >= 2)
+      ? filterStr
+      : (_archiveWydaneFilter ? 'wydane ' + _archiveWydaneFilter + '.' + (_archiveWydaneFilterYear || new Date().getFullYear()) : '');
+    list.innerHTML = emptyStateHTML({
+      query: q,
+      emptyTitle: _archiveWydaneFilter ? 'Brak wydań tego dnia' : 'Brak wydanych zleceń',
+      emptySub: _archiveWydaneFilter ? 'Spróbuj inny dzień w kalendarzu lub wyczyść filtr.' : 'Wydane zlecenia trafiają do tego archiwum.',
+    });
     return;
   }
-  // Sortuj po dacie wydania — od najnowszych
+  // Sortuj po dacie wydania (dataWydania → archivedAt → data przyjęcia), od najnowszych
   arch = arch.slice().sort((a, b) => {
-    const parseDate = s => {
-      if (!s) return 0;
-      const p = s.split('.');
-      if (p.length < 2) return 0;
-      const d = parseInt(p[0]), m = parseInt(p[1]) - 1;
-      const y = p.length >= 3 ? parseInt(p[2]) : new Date().getFullYear();
-      return new Date(y, m, d).getTime();
-    };
-    return parseDate(b.dataWydania) - parseDate(a.dataWydania);
+    const da = _archiveEntryDate(a);
+    const db = _archiveEntryDate(b);
+    if (db !== da) return db - da;
+    const ia = parseInt(a.id, 10) || 0;
+    const ib = parseInt(b.id, 10) || 0;
+    return ib - ia;
   });
   list.innerHTML = '';
   arch.forEach(entry => {
@@ -7308,8 +7488,11 @@ function renderArchive(filterStr) {
     const terminLine   = entry.termin ? 'Planowana data naprawy: ' + entry.termin : '';
     const przyjęcieLine = entry.label ? 'Przyjęto na serwis: ' + entry.label.split(' ')[0].split('.').slice(0,2).join('.') : '';
     const stripYear = s => s ? s.split('.').slice(0,2).join('.') : '';
+    const dataWydaniaDisplay = entry.dataWydania || (entry.archivedAt
+      ? new Date(entry.archivedAt).toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' })
+      : '');
     const dataZakLine = entry.raportKoncowy?.dataZakonczenia ? 'Zakończono naprawę: ' + stripYear(entry.raportKoncowy.dataZakonczenia) : '';
-    const dataWydLine = entry.dataWydania ? 'Wydano z serwisu: ' + stripYear(entry.dataWydania) : '';
+    const dataWydLine = dataWydaniaDisplay ? 'Wydano z serwisu: ' + stripYear(dataWydaniaDisplay) : '';
     const smsHTML = entry.tel
       ? '<a class="btn-action ui-tile ui-tile--sm btn-history-sms' + (entry.smsSent ? ' btn-history-sms-sent' : ' ui-tile--naprawa') + '" href="sms:' + entry.tel.replace(/[^0-9+]/g,'') + '?body=' + encodeURIComponent((_smsRower(entry.marka, entry.model) || '') + ' - przygotowany do odbioru\n\nGodziny otwarcia\nPn-pt 10:00-18:00\nSobota 9:00-14:00\n\nKwota do zapłaty - ' + entry.total + ' zł\nPłatność gotówka/karta/BLIK\n\nKod odbioru: ' + (entry.kodOdbioru || '–')) + '" onclick="openOrderSms(' + entry.id + ', this, event)">' + _smsBtnInnerHTML(!!entry.smsSent) + '</a>'
       : '';
