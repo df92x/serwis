@@ -235,6 +235,15 @@
   border-bottom-left-radius: var(--radius-md);
   border: none; background: transparent; pointer-events: none;
 }
+.summary-info-with-kolor{
+  position:relative;
+  width:100%;
+  padding-left:calc(var(--color-bar-w) + var(--space-2));
+  box-sizing:border-box;
+}
+.summary-info-with-kolor > .summary-kolor-bar{
+  border-bottom-left-radius:0;
+}
 .summary-card {
   border-radius: var(--radius-md);
   padding: var(--space-3) var(--space-4) var(--space-3) calc(var(--color-bar-w) + var(--space-3));
@@ -865,11 +874,16 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
 }
 .modal-rower-kolor-wrap{
   display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.modal-rower-kolor-row{
+  display:flex;
   flex-direction:row;
   gap:10px;
   align-items:stretch;
 }
-.modal-rower-fields{
+.modal-rower-inputs{
   flex:1;
   min-width:0;
   display:flex;
@@ -883,7 +897,8 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
   border:1px solid var(--border);
   background:transparent;
   align-self:stretch;
-  min-height:88px;
+  min-height:0;
+  height:auto;
   box-sizing:border-box;
 }
 #kolor-picker{ margin-top:0; }
@@ -1545,6 +1560,78 @@ body > .app{
   box-shadow:none !important;
   overflow:hidden;
 }
+.order-header-banner{
+  position:sticky;
+  top:16px;
+  z-index:10;
+  margin:0 8px 10px;
+  background:var(--bg-panel);
+  border:1px solid var(--border-panel);
+  border-radius:12px;
+  overflow:hidden;
+  box-sizing:border-box;
+}
+.order-header-banner > #summary-card-main{
+  position:static !important;
+  top:auto !important;
+  margin:0 !important;
+  border:none !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  padding:0 !important;
+}
+.order-header-banner .summary-info-with-kolor{
+  display:flex;
+  align-items:stretch;
+  gap:0;
+  padding:0;
+  margin:0;
+}
+.order-header-banner .summary-info-with-kolor > #summary-kolor-bar{
+  position:relative;
+  flex:0 0 24px;
+  width:24px;
+  min-width:24px;
+  top:auto;
+  bottom:auto;
+  left:auto;
+  align-self:stretch;
+  min-height:0;
+  max-height:none;
+  height:auto;
+  border-radius:0;
+  border-top-left-radius:11px !important;
+  border-bottom-left-radius:0 !important;
+  border:none;
+  border-right:1px solid rgba(255,255,255,0.08);
+  box-shadow:none;
+}
+.order-header-banner .summary-info-with-kolor > #summary-kolor-bar.summary-kolor-chip--empty{
+  background:var(--border) !important;
+  opacity:0.35;
+}
+.order-header-banner .summary-info-with-kolor .summary-body{
+  flex:1;
+  min-width:0;
+  padding:12px 14px;
+}
+.order-header-banner .notatka-bottom-wrap{
+  margin:0;
+  padding:10px 14px 12px 14px;
+  border-top:1px solid var(--border-panel);
+  border-bottom:none;
+}
+.order-header-banner .order-header-actions{
+  padding:10px 14px 12px;
+  border-top:1px solid var(--border-panel);
+}
+.order-header-banner .order-header-actions .btn-grid{
+  width:100%;
+}
+.order-header-banner .notatka-bottom-textarea{
+  min-height:72px;
+  max-height:120px;
+}
 #summary-kolor-bar,
 #raport-summary-kolor-bar{
   border-top-left-radius:12px !important;
@@ -2101,7 +2188,9 @@ body > .app .flat-list .item-card.qty-zero{
 <body>
 <div class="app">
 
+  <div class="order-header-banner">
   <div class="summary-card" id="summary-card-main">
+    <div class="summary-info-with-kolor">
     <span id="summary-kolor-bar" class="summary-kolor-bar"></span>
     <div class="summary-body">
       <div class="summary-body-left">
@@ -2116,7 +2205,19 @@ body > .app .flat-list .item-card.qty-zero{
         <div class="summary-total" id="total-display">0,00</div>
       </div>
     </div>
+    </div>
     <div id="sync-status" style="display:none;font-size:11px;color:#556;text-align:center;min-height:0;height:0;line-height:1;transition:color 0.3s;"></div>
+  </div>
+
+  <div id="notatka-bottom-wrap" class="notatka-bottom-wrap">
+    <textarea id="notatka-serwisowa" placeholder="Notatka serwisowa" maxlength="500"
+      class="notatka-bottom-textarea"
+      oninput="save()"
+      onfocus="this.style.borderColor='var(--blue)'"
+      onblur="this.style.borderColor='var(--border)';flushSave();"></textarea>
+  </div>
+
+  <div class="order-header-actions">
     <div class="btn-grid" style="grid-template-columns:2fr 3fr 3fr;">
       <div style="display:flex;gap:4px;align-items:stretch;min-width:0;">
         <button id="btn-usun-zlecenie" type="button" onclick="usunZlecenie()" title="Przenieś do kosza" class="btn-action ui-tile ui-tile--sm ui-tile--danger btn-action--danger-ghost" style="display:none;flex-shrink:0;">
@@ -2136,16 +2237,9 @@ body > .app .flat-list .item-card.qty-zero{
       </button>
     </div>
   </div>
+  </div>
 
   <div id="add-parts-banner" class="parts-banner">
-    <div id="notatka-bottom-wrap" class="notatka-bottom-wrap">
-      <div class="notatka-bottom-label">Notatka serwisowa</div>
-      <textarea id="notatka-serwisowa" placeholder="Wpisz notatkę..." maxlength="500"
-        class="notatka-bottom-textarea"
-        oninput="save()"
-        onfocus="this.style.borderColor='var(--blue)'"
-        onblur="this.style.borderColor='var(--border)';flushSave();"></textarea>
-    </div>
     <div class="items-list flat-list flat-csel" id="items-list"></div>
     <div id="group-container" class="flat-group"></div>
   </div>
@@ -2704,8 +2798,9 @@ body > .app .flat-list .item-card.qty-zero{
     <div style="padding:16px 16px 40px;display:flex;flex-direction:column;gap:14px;">
       <div class="modal-banner">
       <div class="modal-rower-kolor-wrap">
+        <div class="modal-rower-kolor-row">
         <div id="modal-kolor-preview" class="modal-kolor-preview" title="Wybrany kolor"></div>
-        <div class="modal-rower-fields">
+        <div class="modal-rower-inputs">
       <div class="modal-field">
         <label style="display:none;">Marka</label>
         <div class="modal-marka-row">
@@ -2777,9 +2872,10 @@ body > .app .flat-list .item-card.qty-zero{
           </button>
           <input type="file" id="photo-input" accept="image/*" capture="environment" multiple style="display:none" onchange="handlePhotos(event)">
         </div>
-        <div class="photo-previews" id="photo-previews" style="margin-top:8px;"></div>
       </div>
         </div>
+        </div>
+        <div class="photo-previews" id="photo-previews" style="margin-top:0;"></div>
       </div>
       <div class="modal-field">
         <label>Kolor</label>
@@ -4015,9 +4111,7 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx, uiCtx) {
     }
     const priceGroup = document.createElement('div');
     priceGroup.className = 'item-price-opis-group';
-    if (uiCtx === 'main') {
-      priceGroup.appendChild(buildOpisControl());
-    } else if (it.qty === undefined) {
+    if (it.qty === undefined && uiCtx === 'raport') {
       priceEl.style.width = '52px';
     }
     priceGroup.appendChild(priceEl);
@@ -6186,10 +6280,11 @@ function updateClientInfoBar() {
       }
     }
 
-    // Pasek koloru na CAŁY lewy bok bannera (ekran edycji)
+    // Pasek koloru obok danych roweru (ekran edycji)
     const summaryBar = $('summary-kolor-bar');
     if (summaryBar) {
       summaryBar.style.background = kolor ? _kolorBackgroundStyle(kolor) : 'transparent';
+      summaryBar.classList.toggle('summary-kolor-chip--empty', !kolor);
     }
 
     // Telefon
