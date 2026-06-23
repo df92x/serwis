@@ -5,13 +5,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SERWIS [UI tile v4]</title>
+<title>Serwis ROW-POL</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <meta name="theme-color" content="#0a0a0f">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Wycena">
+<meta name="apple-mobile-web-app-title" content="Serwis ROW-POL">
 <link rel="manifest" id="pwa-manifest">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -76,8 +76,7 @@
   --cal-load-high-bg: #281818;
   --cal-load-high-border: #6c3838;
   --cal-load-high-badge: #ef4444;
-  --solid-day-bg: #221c12;
-  --solid-day-border: #5c4828;
+
   /* Promienie */
   --radius-sm: 8px;
   --radius-md: 12px;
@@ -218,12 +217,6 @@
 .start-cta-slot { flex: 0 0 80px; display: flex; align-items: center; justify-content: center; }
 .start-cta-label { flex: 1; text-align: center; }
 
-html.day-mode .text-primary,
-html.day-mode .bike-name,
-html.day-mode .history-item-total,
-html.day-mode header h1,
-html.day-mode .summary-total { color: var(--text) !important; }
-html.day-mode .start-icon-btn { background: var(--bg2); }
 /* ── Design system v3: layout, dialogi, karty ── */
 .link-tel { color: var(--color-link) !important; font-weight: 600; text-decoration: none; }
 .link-tel:hover { opacity: 0.88; }
@@ -401,40 +394,6 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
 .tab-count.show{ display:inline-block; }
 .order-tab:not(.active) .tab-count{ background:var(--bg3); color:var(--text2); }
 .order-tab.active .tab-count{ background:var(--bg3); color:inherit; }
-
-/* ── Tryb jasny (dzienny) ── */
-html.day-mode{
-  --bg:#eef1f6;
-  --bg2:#ffffff;
-  --bg3:#e4e9f1;
-  --border:#d3d9e3;
-  --border2:#b7c5df;
-  --blue-dim:#151c28;
-  --text:#13161d;
-  --text2:#3a4150;
-  --text3:#6a7280;
-  color-scheme: light;
-}
-html.day-mode body{ background:var(--bg); color:var(--text); }
-/* Białe teksty (inline + klasy) → ciemne, by były czytelne na jasnym tle */
-html.day-mode [style*="color:#fff"],
-html.day-mode [style*="color:#ffffff"],
-html.day-mode [style*="color: #fff"]{ color:#13161d !important; }
-html.day-mode .history-item-total,
-html.day-mode header h1{ color:#13161d !important; }
-/* Ciemne tła paneli/boxów → jasne (żeby ciemny tekst był czytelny) */
-html.day-mode [style*="background:#0d0d14"],
-html.day-mode [style*="background:#111118"]{ background:var(--bg3) !important; }
-/* Przyciski akcji z bardzo ciemnym tłem (kopia/admin/login) → jasna karta */
-html.day-mode [style*="background:#0d1a0f"],
-html.day-mode [style*="background:#0d1020"],
-html.day-mode [style*="background:#1a0d0d"],
-html.day-mode [style*="background:#0f0d1a"],
-html.day-mode [style*="background:#0a160d"],
-html.day-mode [style*="background:#0d1622"],
-html.day-mode [style*="background:#1a2a1a"]{ background:var(--bg2) !important; }
-/* Status bar przeglądarki w trybie jasnym */
-html.day-mode .summary-total{ color:#13161d !important; }
 
 /* ── Skeleton (animacja ładowania) ── */
 @keyframes skeleton-shimmer { 0%{background-position:-300px 0;} 100%{background-position:300px 0;} }
@@ -923,6 +882,31 @@ html.day-mode .summary-total{ color:#13161d !important; }
   min-height:88px;
   box-sizing:border-box;
 }
+#kolor-picker{ margin-top:0; }
+#kolor-track{
+  position:relative;
+  height:52px;
+  border-radius:26px;
+  border:1px solid var(--border);
+  cursor:pointer;
+  touch-action:none;
+  background:linear-gradient(90deg,#000 0%,#ff0000 6%,#ff8c00 16%,#ffeb00 26%,#00be28 38%,#00c8c8 50%,#1450ff 62%,#9600ff 74%,#969696 86%,#e8e8e8 94%,#fff 100%);
+}
+.kolor-handle{
+  position:absolute;
+  top:50%;
+  left:0;
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  border:3px solid #fff;
+  box-shadow:0 1px 4px rgba(0,0,0,0.5),0 0 0 1px rgba(0,0,0,0.28);
+  transform:translate(-50%,-50%);
+  cursor:grab;
+  touch-action:none;
+  z-index:1;
+}
+.kolor-handle[data-idx="1"]{ z-index:2; }
 
 /* Raport: flat layout via .flat-list .flat-csel (dodane w HTML) */
 #raport-overlay .card-row{ gap: 6px; }
@@ -1174,11 +1158,6 @@ html.day-mode .summary-total{ color:#13161d !important; }
 }
 .history-list-pdf-btn:hover { filter: brightness(1.08); }
 .history-list-pdf-btn:active { transform: scale(0.97); }
-html.day-mode .history-list-pdf-btn {
-  color: #64748b !important;
-  background: var(--bg2) !important;
-  border-color: var(--border) !important;
-}
 .history-list-sum-box {
   flex: 1;
   min-width: 0;
@@ -1263,13 +1242,13 @@ html.day-mode .history-list-pdf-btn {
   font-weight:900;
 }
 .btn-history-sms:not(.btn-history-sms-sent) {
-  background: var(--solid-naprawa-bg) !important;
-  border: 1px solid var(--solid-naprawa-border) !important;
-  color: #93c5fd !important;
+  background: #192840 !important;
+  border: 1px solid #3d78b8 !important;
+  color: #b8daff !important;
   border-radius: var(--radius-btn);
   padding: var(--btn-py) var(--btn-px);
   font-size: var(--btn-font);
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   flex-shrink: 0;
   text-decoration: none;
@@ -1279,9 +1258,9 @@ html.day-mode .history-list-pdf-btn {
   min-height: 33px;
   line-height: 1;
 }
-.btn-history-sms:not(.btn-history-sms-sent):hover { filter: brightness(1.08); }
+.btn-history-sms:not(.btn-history-sms-sent):hover { filter: brightness(1.1); }
 .btn-history-sms:not(.btn-history-sms-sent) .btn-history-sms-ico{
-  color:#3b7cf4;
+  color:#5098ff;
 }
 .btn-history-sms-sent {
   background: var(--bg3) !important;
@@ -1569,13 +1548,6 @@ body > .app .card-row{ gap:6px; }
   border-color:#555 !important;
   background:#444 !important;
 }
-html.day-mode #summary-card-main,
-html.day-mode #add-parts-banner.parts-banner,
-html.day-mode #raport-summary-card,
-html.day-mode #raport-parts-banner.parts-banner{
-  background:var(--bg2) !important;
-  border-color:var(--border) !important;
-}
 
 /* Kalendarz zleceń — wspólny układ (menu główne + modal terminu) */
 #start-menu-calendar-wrap{
@@ -1857,7 +1829,6 @@ select.native-sel { display: none !important; }
 .ui-tile--przyjete { color: #f87171; border-color: var(--solid-danger-border);  background: var(--solid-danger-bg); }
 .ui-tile--accent   { color: #c4b5fd; border-color: var(--solid-accent-border); background: var(--solid-accent-bg); }
 .ui-tile--neutral  { color: var(--text2); border-color: var(--border-panel); background: var(--bg-panel); }
-.start-icon-day.ui-tile--active, .start-icon-day.active { color: #fde68a; border-color: var(--solid-day-border); background: var(--solid-day-bg); }
 
 .btn-primary { background: var(--solid-wydanie-bg) !important; border: 1px solid var(--solid-wydanie-border) !important; color: #86efac !important; }
 .btn-primary--blue { background: var(--solid-naprawa-bg) !important; border-color: var(--solid-naprawa-border) !important; color: #93c5fd !important; }
@@ -1870,11 +1841,12 @@ select.native-sel { display: none !important; }
 .btn-action--ghost { background: var(--bg-panel) !important; border: 1px solid var(--border-panel) !important; color: var(--text2) !important; min-height: 33px; text-decoration: none; }
 a.btn-history-sms:not(.btn-history-sms-sent),
 button.btn-history-sms:not(.btn-history-sms-sent) {
-  background: var(--solid-naprawa-bg) !important;
-  border: 1px solid var(--solid-naprawa-border) !important;
-  color: #93c5fd !important;
+  background: #192840 !important;
+  border: 1px solid #3d78b8 !important;
+  color: #b8daff !important;
   min-height: 33px;
   text-decoration: none;
+  font-weight: 700;
 }
 .btn-action--danger-ghost, .btn-data, .btn-close, .btn-cancel { background: var(--solid-danger-bg) !important; border: 1px solid var(--solid-danger-border) !important; color: #f87171 !important; }
 .btn-history-sms-sent,
@@ -1893,7 +1865,7 @@ button.btn-history-sms-sent .btn-history-sms-ico{
 }
 a.btn-history-sms:not(.btn-history-sms-sent) .btn-history-sms-ico,
 button.btn-history-sms:not(.btn-history-sms-sent) .btn-history-sms-ico{
-  color:#3b7cf4;
+  color:#5098ff;
 }
 .start-cta.start-cta--add { background: var(--solid-wydanie-bg) !important; border: 1px solid var(--solid-wydanie-border) !important; color: #86efac !important; }
 .start-cta.start-cta--browse { background: var(--solid-naprawa-bg) !important; border: 1px solid var(--solid-naprawa-border) !important; color: #93c5fd !important; }
@@ -1948,13 +1920,6 @@ body > .app .flat-list .item-card.qty-zero{
   border:1px solid var(--border-panel) !important;
   border-radius:12px !important;
 }
-html.day-mode #summary-card-main,
-html.day-mode #add-parts-banner.parts-banner,
-html.day-mode #raport-summary-card,
-html.day-mode #raport-parts-banner.parts-banner{
-  background:var(--bg2) !important;
-  border-color:var(--border) !important;
-}
 .stat-box { background: var(--bg-panel) !important; border: 1px solid var(--border-panel) !important; }
 .stat-box--success { border-color: var(--solid-wydanie-border) !important; background: var(--solid-wydanie-bg) !important; }
 .stat-box--accent { border-color: var(--solid-accent-border) !important; background: var(--solid-accent-bg) !important; }
@@ -1967,13 +1932,7 @@ html.day-mode #raport-parts-banner.parts-banner{
 .admin-act-btn--backup { color: #f87171 !important; border-color: var(--solid-danger-border) !important; background: var(--solid-danger-bg) !important; }
 .admin-act-btn--update { color: #86efac !important; border-color: var(--solid-wydanie-border) !important; background: var(--solid-wydanie-bg) !important; }
 
-html.day-mode .ui-tile--danger, html.day-mode .btn-data, html.day-mode .btn-close, html.day-mode .btn-cancel { color: #dc2626 !important; }
-html.day-mode .ui-tile--naprawa, html.day-mode .btn-action--repair { color: #2563eb !important; }
-html.day-mode .ui-tile--wydanie, html.day-mode .btn-save { color: #16a34a !important; }
-html.day-mode #tab-historia.order-tab.active { color: #dc2626 !important; }
-html.day-mode #tab-wydanie.order-tab.active { color: #16a34a !important; }
 .btn-history-load { background: var(--solid-naprawa-bg) !important; border: 1px solid var(--solid-naprawa-border) !important; color: #93c5fd !important; }
-html.day-mode #tab-archiwum.order-tab.active { color: #7c3aed !important; }
 </style>
 </head>
 <body>
@@ -2174,10 +2133,8 @@ html.day-mode #tab-archiwum.order-tab.active { color: #7c3aed !important; }
       <button type="button" onclick="startLancuch()" class="start-icon-btn ui-tile ui-tile--md ui-tile--info" title="Łańcuch" aria-label="Łańcuch">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
       </button>
-      <button type="button" id="day-mode-btn" onclick="toggleDayMode()" class="start-icon-btn ui-tile ui-tile--md ui-tile--warning" title="Tryb kolorystyczny" aria-label="Tryb kolorystyczny">
-        <span id="day-mode-icon" style="display:flex;align-items:center;justify-content:center;">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-        </span>
+      <button type="button" onclick="openCrSms()" class="start-icon-btn ui-tile ui-tile--md ui-tile--naprawa" title="SMS — rower CR gotowy do odbioru" aria-label="SMS CR">
+        <span class="start-icon-cr-label">CR</span>
       </button>
     </div>
 
@@ -2219,10 +2176,15 @@ html.day-mode #tab-archiwum.order-tab.active { color: #7c3aed !important; }
         transition:opacity 0.15s, transform 0.1s, background 0.15s, border-color 0.15s;
       }
       .start-icon-btn:active{ transform:scale(0.97); }
+      .start-icon-cr-label{
+        font-size:15px;
+        font-weight:900;
+        letter-spacing:0.06em;
+        line-height:1;
+      }
       .start-icon-admin,
       .start-icon-rabaty,
-      .start-icon-lancuch,
-      .start-icon-day{
+      .start-icon-lancuch{
         background:var(--bg-panel);
         border-color:var(--border-panel);
         color:var(--text2);
@@ -2230,24 +2192,6 @@ html.day-mode #tab-archiwum.order-tab.active { color: #7c3aed !important; }
       .start-icon-admin{ color:var(--color-danger); border-color:var(--solid-danger-border); background:var(--solid-danger-bg); }
       .start-icon-rabaty{ color:#fbbf24; border-color:var(--solid-warning-border); background:var(--solid-warning-bg); }
       .start-icon-lancuch{ color:#67e8f9; border-color:var(--solid-info-border); background:var(--solid-info-bg); }
-      .start-icon-day{ color:#fbbf24; border-color:var(--solid-warning-border); background:var(--solid-warning-bg); }
-      .start-icon-day.active{
-        color:#fde68a;
-        border-color:var(--solid-day-border);
-        background:var(--solid-day-bg);
-      }
-      html.day-mode .start-icon-btn{
-        background:var(--bg2);
-      }
-      html.day-mode .start-icon-admin{ color:#dc2626; border-color:#fca5a5; background:#fef2f2; }
-      html.day-mode .start-icon-rabaty{ color:#d97706; border-color:#fcd34d; background:#fffbeb; }
-      html.day-mode .start-icon-lancuch{ color:#0891b2; border-color:#67e8f9; background:#ecfeff; }
-      html.day-mode .start-icon-day{ color:#d97706; border-color:#fcd34d; background:#fffbeb; }
-      html.day-mode .start-icon-day.active{
-        color:#b45309;
-        border-color:#f59e0b;
-        background:#fef3c7;
-      }
 
       /* Administracja modal: równe ikony jak w menu */
       #admin-modal .admin-act-btn{
@@ -2670,10 +2614,10 @@ html.day-mode #tab-archiwum.order-tab.active { color: #7c3aed !important; }
       <div class="modal-field">
         <label>Kolor</label>
         <input type="hidden" id="modal-kolor" value="">
-        <div id="kolor-picker" style="margin-top:0;">
-          <div id="kolor-track" style="position:relative;height:34px;border-radius:17px;border:1px solid var(--border);cursor:pointer;touch-action:none;background:linear-gradient(90deg,#000 0%,#ff0000 6%,#ff8c00 16%,#ffeb00 26%,#00be28 38%,#00c8c8 50%,#1450ff 62%,#9600ff 74%,#969696 86%,#000 100%);">
-            <div id="kolor-handle-0" class="kolor-handle" data-idx="0" style="position:absolute;top:50%;left:0;width:30px;height:30px;border-radius:50%;border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,0.5);transform:translate(-50%,-50%);background:#000;cursor:grab;touch-action:none;"></div>
-            <div id="kolor-handle-1" class="kolor-handle" data-idx="1" style="position:absolute;top:50%;left:100%;width:30px;height:30px;border-radius:50%;border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,0.5);transform:translate(-50%,-50%);background:#000;cursor:grab;touch-action:none;"></div>
+        <div id="kolor-picker">
+          <div id="kolor-track">
+            <div id="kolor-handle-0" class="kolor-handle" data-idx="0"></div>
+            <div id="kolor-handle-1" class="kolor-handle" data-idx="1"></div>
           </div>
         </div>
         <input type="hidden" id="modal-kolor-inny" value="">
@@ -2918,6 +2862,20 @@ function _applyKolorPreviewEl(el, kolor) {
   el.style.display = '';
   el.style.background = _kolorBackgroundStyle(kolor);
 }
+
+// Treść SMS — rower CR gotowy do odbioru
+const SMS_CR_MAPS_URL = 'https://maps.app.goo.gl/tjHR1HLMDi5CtHfv9';
+function _smsCrBody() {
+  return 'Dzień dobry,\n'
+    + 'Zamawiany rower w CR, został przez nas złożony, wyregulowany i jest już przygotowany do odbioru.\n'
+    + 'Płatność zgodnie z cennikiem w zamówieniu - gotówka/karta/BLIK.\n\n'
+    + 'Zapraszamy! Serwis ROW-POL\n'
+    + SMS_CR_MAPS_URL;
+}
+function openCrSms() {
+  window.location.href = 'sms:?body=' + encodeURIComponent(_smsCrBody());
+}
+window.openCrSms = openCrSms;
 
 // Pomocnicza: nazwa roweru do SMS
 function _smsRower(marka, model) {
@@ -5186,7 +5144,7 @@ function startNowe() {
   $('cf-tel').value    = '';
   $('cf-model').value  = '';
   $('cf-kolor').value  = '';
-  $('cf-termin').value = '';
+  $('cf-termin').value = _defaultTerminNextDay();
   photos = [];
   renderPhotos();
   if ($('notatka-serwisowa')) $('notatka-serwisowa').value = '';
@@ -5429,6 +5387,13 @@ function _terminDDMM(d) {
   const dd = String(d.getDate()).padStart(2,'0');
   const mm = String(d.getMonth()+1).padStart(2,'0');
   return dd + '.' + mm;
+}
+function _defaultTerminNextDay() {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  d.setDate(d.getDate() + 1);
+  if (d.getDay() === 0) d.setDate(d.getDate() + 1);
+  return _terminDDMM(d);
 }
 function initTerminQuickBtns() {
   const btns = Array.from(document.querySelectorAll('#modal-overlay .btn-termin'));
@@ -6264,22 +6229,6 @@ function rerenderCurrentHistoryTab() {
 window.showSyncSkeleton = showSyncSkeleton;
 window.rerenderCurrentHistoryTab = rerenderCurrentHistoryTab;
 
-// ── Tryb dzienny (jasność / kontrast) ──
-const DAY_MODE_KEY = 'serwis-day-mode';
-function applyDayMode() {
-  const on = localStorage.getItem(DAY_MODE_KEY) === '1';
-  document.documentElement.classList.toggle('day-mode', on);
-  const btn = $('day-mode-btn');
-  if (btn) { btn.classList.toggle('active', on); btn.classList.toggle('ui-tile--active', on); }
-}
-function toggleDayMode() {
-  const on = localStorage.getItem(DAY_MODE_KEY) === '1';
-  localStorage.setItem(DAY_MODE_KEY, on ? '0' : '1');
-  applyDayMode();
-}
-window.toggleDayMode = toggleDayMode;
-window.applyDayMode = applyDayMode;
-
 // ── Historia klienta po numerze telefonu (zakładka Wydane) ──
 function _klientParseDate(s) {
   if (!s) return 0;
@@ -6546,9 +6495,6 @@ function runGlobalSearch() {
   }).join('');
 }
 window.runGlobalSearch = runGlobalSearch;
-document.addEventListener('DOMContentLoaded', applyDayMode);
-// Zastosuj jak najwcześniej (przed pełnym załadowaniem), by uniknąć migotania.
-try { if (localStorage.getItem(DAY_MODE_KEY) === '1') document.documentElement.classList.add('day-mode'); } catch (e) {}
 function closeHistory() { $('history-overlay').style.display = 'none'; }
 function closeHistoryToMenu() { closeHistory(); $('start-overlay').style.display = 'flex'; refreshStartMenu(); }
 function closeHistoryOutside(e) { /* pełny ekran — nieaktywne */ }
@@ -8532,11 +8478,7 @@ function openModal() {
   $('modal-tel').value = savedTel;
   // Wczytaj termin
   const savedTermin = _normalizeTerminStr($('cf-termin').value.trim());
-  if (savedTermin) {
-    $('modal-termin').value = savedTermin;
-  } else {
-    $('modal-termin').value = '';
-  }
+  $('modal-termin').value = savedTermin || _defaultTerminNextDay();
   initTerminCalendar();
   $('modal-overlay').style.display = 'block';
   setTimeout(() => $('modal-marka-sel')?.focus(), 100);
@@ -8654,7 +8596,7 @@ window.openModal = openModal;
 const KOLOR_SCALE = [
   [0.00, [0, 0, 0]], [0.06, [255, 0, 0]], [0.16, [255, 140, 0]], [0.26, [255, 235, 0]],
   [0.38, [0, 190, 40]], [0.50, [0, 200, 200]], [0.62, [20, 80, 255]], [0.74, [150, 0, 255]],
-  [0.86, [150, 150, 150]], [0.94, [60, 60, 60]], [1.00, [0, 0, 0]]
+  [0.86, [150, 150, 150]], [0.94, [232, 232, 232]], [1.00, [255, 255, 255]]
 ];
 function _hex2(n) { return Math.max(0, Math.min(255, n)).toString(16).padStart(2, '0'); }
 function kolorAtFraction(f) {
@@ -8673,11 +8615,16 @@ function kolorAtFraction(f) {
 }
 function _isBlackCss(css) {
   const c = String(css || '').toLowerCase();
-  return c === '#000000' || c === '#111' || c === '#111111';
+  return c === '#000000' || c === '#000' || c === '#111' || c === '#111111';
+}
+function _isWhiteCss(css) {
+  const c = String(css || '').toLowerCase();
+  return c === '#ffffff' || c === '#fff' || c === '#f0f0f0';
 }
 function _fractionForColor(hex, preferEnd) {
   const css = String(hex || '').toLowerCase();
-  if (_isBlackCss(css)) return preferEnd ? 1 : 0;
+  if (_isBlackCss(css)) return 0;
+  if (_isWhiteCss(css)) return 1;
   const h = String(hex || '').replace('#', '');
   if (h.length !== 6) return 0;
   const tr = parseInt(h.slice(0, 2), 16), tg = parseInt(h.slice(2, 4), 16), tb = parseInt(h.slice(4, 6), 16);
@@ -8690,14 +8637,14 @@ function _fractionForColor(hex, preferEnd) {
   }
   return best;
 }
-let _kolorFrac = [0, 1];
+let _kolorFrac = [0, 0];
 let _kolorHandle1Touched = false;
 
 function _updateKolorPickerUI() {
   [0, 1].forEach(i => {
     const col = kolorAtFraction(_kolorFrac[i]);
     const handle = $('kolor-handle-' + i);
-    if (handle) { handle.style.left = 'clamp(15px, ' + (_kolorFrac[i] * 100) + '%, calc(100% - 15px))'; handle.style.background = col; }
+    if (handle) { handle.style.left = 'clamp(21px, ' + (_kolorFrac[i] * 100) + '%, calc(100% - 21px))'; handle.style.background = col; }
   });
   const c0 = kolorAtFraction(_kolorFrac[0]);
   const c1 = kolorAtFraction(_kolorFrac[1]);
@@ -8727,7 +8674,7 @@ function setKolorPickerFromValue(value) {
     return css ? _fractionForColor(css, preferEnd) : (preferEnd ? 1 : 0);
   };
   _kolorFrac[0] = a ? toFrac(a, false) : 0;
-  _kolorFrac[1] = b ? toFrac(b, true) : 1;
+  _kolorFrac[1] = b ? toFrac(b, true) : 0;
   _updateKolorPickerUI();
 }
 function _kolorPickerInit() {
@@ -9764,7 +9711,7 @@ function generujPodsumowaniePDF(id) {
     pdf.rect(M, 32, 40, 1.5, 'F');
 
     pdf.setFontSize(11); pdf.setFont('helvetica','bold'); pdf.setTextColor(192,57,43);
-    pdf.text('SERWIS', M, 42);
+    pdf.text('Serwis ROW-POL', M, 42);
 
     // Prawa: daty — uproszczone etykiety bez polskich znaków
     const rk = entry.raportKoncowy;
@@ -10534,7 +10481,7 @@ window.euroConvert    = euroConvert;
   </svg>
 </svg>`;
   const iconUrl = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(icon)));
-  const manifest = { name:'Wycena Napraw', short_name:'Wycena', start_url:'.', display:'standalone', background_color:'#0a0a0f', theme_color:'#0a0a0f', icons:[{src:iconUrl,sizes:'512x512',type:'image/svg+xml',purpose:'any maskable'}] };
+  const manifest = { name:'Serwis ROW-POL', short_name:'ROW-POL', start_url:'.', display:'standalone', background_color:'#0a0a0f', theme_color:'#0a0a0f', icons:[{src:iconUrl,sizes:'512x512',type:'image/svg+xml',purpose:'any maskable'}] };
   const ml = document.getElementById('pwa-manifest');
   if (ml) ml.href = URL.createObjectURL(new Blob([JSON.stringify(manifest)], {type:'application/manifest+json'}));
   if ('serviceWorker' in navigator) {
