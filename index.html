@@ -76,6 +76,9 @@
   --cal-load-high-bg: #281818;
   --cal-load-high-border: #6c3838;
   --cal-load-high-badge: #ef4444;
+  --cal-sunday-bg: #2a181c;
+  --cal-sunday-border: #5a3038;
+  --cal-sunday-text: #b89090;
 
   /* Promienie */
   --radius-sm: 8px;
@@ -862,6 +865,7 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
 }
 .modal-rower-kolor-wrap{
   display:flex;
+  flex-direction:row;
   gap:10px;
   align-items:stretch;
 }
@@ -873,7 +877,7 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
   gap:12px;
 }
 .modal-kolor-preview{
-  width:var(--color-bar-w);
+  width:var(--kolor-side-w,34px);
   flex-shrink:0;
   border-radius:10px;
   border:1px solid var(--border);
@@ -885,8 +889,10 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
 #kolor-picker{ margin-top:0; }
 #kolor-track{
   position:relative;
-  height:52px;
-  border-radius:26px;
+  --kolor-track-h:68px;
+  --kolor-handle-s:calc((var(--kolor-track-h) - 2px) / 2);
+  height:var(--kolor-track-h);
+  border-radius:12px;
   border:1px solid var(--border);
   cursor:pointer;
   touch-action:none;
@@ -894,19 +900,42 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
 }
 .kolor-handle{
   position:absolute;
-  top:50%;
   left:0;
-  width:42px;
-  height:42px;
-  border-radius:50%;
-  border:3px solid #fff;
+  width:var(--kolor-handle-s);
+  height:var(--kolor-handle-s);
+  border-radius:10px;
+  border:2px solid #fff;
   box-shadow:0 1px 4px rgba(0,0,0,0.5),0 0 0 1px rgba(0,0,0,0.28);
-  transform:translate(-50%,-50%);
+  transform:translateX(-50%);
   cursor:grab;
   touch-action:none;
   z-index:1;
+  box-sizing:border-box;
 }
-.kolor-handle[data-idx="1"]{ z-index:2; }
+.kolor-handle[data-idx="0"]{ top:0; z-index:2; }
+.kolor-handle[data-idx="1"]{ bottom:0; z-index:1; }
+.kolor-handle[data-idx="1"]:not(.kolor-handle--active){
+  background:#9ca3af !important;
+  opacity:1;
+}
+.kolor-handle[data-idx="1"]:not(.kolor-handle--active)::before,
+.kolor-handle[data-idx="1"]:not(.kolor-handle--active)::after{
+  content:'';
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:58%;
+  height:2px;
+  background:#374151;
+  border-radius:1px;
+  pointer-events:none;
+}
+.kolor-handle[data-idx="1"]:not(.kolor-handle--active)::before{
+  transform:translate(-50%,-50%) rotate(45deg);
+}
+.kolor-handle[data-idx="1"]:not(.kolor-handle--active)::after{
+  transform:translate(-50%,-50%) rotate(-45deg);
+}
 
 /* Raport: flat layout via .flat-list .flat-csel (dodane w HTML) */
 #raport-overlay .card-row{ gap: 6px; }
@@ -1065,6 +1094,51 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
   width: 100%;
 }
 .btn-photo:hover { background: var(--blue-dim); border-color: var(--blue); color: #7ba8f5; }
+.modal-marka-row{
+  display:flex;
+  gap:8px;
+  align-items:stretch;
+}
+.modal-marka-row > .modal-marka-sel-wrap{
+  flex:1;
+  min-width:0;
+}
+.modal-model-row{
+  display:flex;
+  gap:8px;
+  align-items:stretch;
+}
+.modal-model-row input{
+  flex:1;
+  min-width:0;
+}
+.modal-marka-row > #modal-ebike-btn,
+.modal-model-row > .modal-photo-btn{
+  flex:0 0 auto;
+  min-width:56px;
+}
+.modal-photo-btn{
+  flex:1;
+  min-height:44px;
+  padding:0 6px;
+  border:2px solid var(--border);
+  border-radius:8px;
+  background:none;
+  color:var(--text3);
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:all 0.15s;
+}
+.modal-photo-btn:hover{
+  background:var(--blue-dim);
+  border-color:var(--blue);
+  color:#7ba8f5;
+}
+.modal-photo-btn svg{
+  flex-shrink:0;
+}
 .photo-previews { display: flex; flex-wrap: wrap; gap: 8px; }
 .photo-thumb {
   position: relative; width: 72px; height: 72px;
@@ -1566,12 +1640,24 @@ body > .app .card-row{ gap:6px; }
   box-sizing:border-box;
 }
 
+.order-cal-header{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:8px;
+  min-width:0;
+}
 .order-cal-nav{
   display:flex;
   align-items:center;
-  justify-content:space-between;
-  margin-bottom:8px;
-  gap:8px;
+  justify-content:flex-start;
+  gap:6px;
+  margin-bottom:0;
+  flex:3 1 0;
+  min-width:0;
+}
+.order-cal-header:not(:has(.order-cal-termin)) .order-cal-nav{
+  flex:1 1 auto;
 }
 .order-cal-nav-btn{
   width:34px;
@@ -1590,33 +1676,21 @@ body > .app .card-row{ gap:6px; }
   font-weight:700;
   color:var(--text);
   text-align:center;
+  white-space:nowrap;
+  min-width:0;
+  flex:1 1 auto;
 }
 
-.order-cal-sel-bar{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
-  margin-bottom:8px;
-  padding:8px 10px;
-  background:var(--cal-load-low-bg);
-  border:1px solid var(--cal-load-low-border);
-  border-radius:8px;
-}
-.order-cal-sel-label{
-  font-size:14px;
-  font-weight:800;
-  color:var(--cal-load-low-badge);
-}
-.order-cal-sel-clear{
-  background:none;
-  border:1px solid var(--border);
-  border-radius:6px;
-  padding:2px 8px;
-  color:var(--text3);
-  font-size:14px;
-  cursor:pointer;
-  line-height:1.2;
+.order-cal-termin{
+  flex:2 1 0;
+  min-width:0;
+  font-size:16px;
+  font-weight:700;
+  color:var(--text);
+  text-align:right;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 .order-cal-grid{
   display:grid;
@@ -1716,18 +1790,66 @@ button.order-cal-day.order-cal-day--browse:active{
   border-color:var(--cal-load-high-badge);
 }
 .order-cal-day--disabled{
-  opacity:0.35;
   cursor:default;
   pointer-events:none;
+}
+.order-cal-day--disabled:not(.order-cal-day--sunday){
+  opacity:0.35;
+}
+.order-cal-day--sunday{
+  background:var(--cal-sunday-bg) !important;
+  border-color:var(--cal-sunday-border) !important;
+  color:var(--cal-sunday-text) !important;
+  opacity:1;
+  cursor:default;
+  pointer-events:none;
+}
+.order-cal-day--sunday .order-cal-day-num{
+  color:var(--cal-sunday-text);
+}
+.order-cal-day--sunday.order-cal-day--outside{
+  filter:brightness(0.82);
+  border-style:dashed;
+}
+.order-cal-day--past{
+  opacity:0.42;
+  filter:saturate(0.25);
+  background:var(--bg2) !important;
+  border-color:var(--border) !important;
+  color:var(--text3) !important;
+}
+.order-cal-day--past .order-cal-day-num{
+  color:var(--text3);
+}
+.order-cal-day--past .order-cal-count{
+  background:var(--border) !important;
+  color:var(--text3) !important;
+}
+.order-cal-day--past.order-cal-day--sunday{
+  opacity:0.42;
+  filter:saturate(0.3);
+  background:var(--bg2) !important;
+  border-color:var(--cal-sunday-border) !important;
+  box-shadow:inset 0 0 0 1px rgba(90,48,56,0.5);
+  color:var(--text3) !important;
+}
+.order-cal-day--past.order-cal-day--sunday .order-cal-day-num{
+  color:#9a7078;
+}
+.order-cal-day--past.order-cal-day--sunday .order-cal-count{
+  background:rgba(90,48,56,0.55) !important;
+  color:var(--text3) !important;
+}
+.order-cal-day--disabled.order-cal-day--outside:not(.order-cal-day--sunday){
+  opacity:0.35;
+}
+.order-cal-day--outside{
+  border-style:dashed;
+  filter:brightness(0.72);
 }
 .order-cal-day--load-low .order-cal-count{ background:var(--cal-load-low-badge); color:#fff; }
 .order-cal-day--load-mid .order-cal-count{ background:var(--cal-load-mid-badge); color:#111827; }
 .order-cal-day--load-high .order-cal-count{ background:var(--cal-load-high-badge); color:#fff; }
-.order-cal-count--wydane{ background:#7c3aed !important; color:#fff !important; }
-.order-cal-day--browse-wydane{
-  border-color:#584088 !important;
-  background:var(--solid-tab-archiwum-bg) !important;
-}
 .order-cal-day--selected .order-cal-count{
   background:rgba(0,0,0,0.28);
   color:#fff;
@@ -1792,7 +1914,48 @@ button.order-cal-day.order-cal-day--browse:active{
 .csel-btn svg { flex-shrink: 0; color: var(--text3); }
 .csel-btn.has-val { color: #fff; border-color: var(--border); }
 
-/* Inline OPIS — input w miejscu dawnego przycisku */
+/* OPIS — mały kwadrat przy cenie (DODAJ) / pole inline (raport) */
+.item-price-opis-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+button.opis-click-btn {
+  box-sizing: border-box;
+  width: 64px;
+  height: 32px;
+  min-width: 64px;
+  max-width: 64px;
+  padding: 0;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: #a0a8c0;
+  cursor: pointer;
+  line-height: 1;
+}
+button.opis-click-btn svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  display: block;
+}
+button.opis-click-btn.opis-click-btn--filled {
+  color: #86efac !important;
+  border-color: var(--solid-wydanie-border) !important;
+  background: var(--solid-wydanie-bg) !important;
+}
+#add-parts-banner button.opis-click-btn {
+  width: 64px;
+  height: 32px;
+  min-width: 64px;
+  border-radius: 10px;
+}
 input.opis-inline-input {
   outline: none;
   text-align: right;
@@ -2133,7 +2296,7 @@ body > .app .flat-list .item-card.qty-zero{
       <button type="button" onclick="startLancuch()" class="start-icon-btn ui-tile ui-tile--md ui-tile--info" title="Łańcuch" aria-label="Łańcuch">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
       </button>
-      <button type="button" onclick="openCrSms()" class="start-icon-btn ui-tile ui-tile--md ui-tile--naprawa" title="SMS — rower CR gotowy do odbioru" aria-label="SMS CR">
+      <button type="button" onclick="copyCrSmsToClipboard()" class="start-icon-btn ui-tile ui-tile--md ui-tile--naprawa" title="Kopiuj treść SMS CR" aria-label="Kopiuj treść SMS CR">
         <span class="start-icon-cr-label">CR</span>
       </button>
     </div>
@@ -2545,8 +2708,8 @@ body > .app .flat-list .item-card.qty-zero{
         <div class="modal-rower-fields">
       <div class="modal-field">
         <label style="display:none;">Marka</label>
-        <div style="display:flex;gap:8px;align-items:stretch;">
-          <div style="flex:0 0 auto;min-width:0;width:72%;">
+        <div class="modal-marka-row">
+          <div class="modal-marka-sel-wrap">
             <select id="modal-marka-sel" class="native-sel" data-title="Wybierz markę" >
               <option value="ROWER" selected>ROWER</option>
               <option value="INNY">INNE</option>
@@ -2599,7 +2762,7 @@ body > .app .flat-list .item-card.qty-zero{
               <option value="WOOM">WOOM</option>
             </select>
           </div>
-          <button type="button" id="modal-ebike-btn" onclick="toggleEbikeCheck()" style="flex:1;padding:0 6px;border:2px solid var(--border);border-radius:8px;background:none;color:var(--text3);font-size:11px;font-weight:800;cursor:pointer;transition:all 0.15s;white-space:nowrap;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;letter-spacing:.5px;text-transform:uppercase;align-self:stretch;min-height:44px;">
+          <button type="button" id="modal-ebike-btn" onclick="toggleEbikeCheck()" style="flex:0 0 auto;min-width:56px;padding:0 6px;border:2px solid var(--border);border-radius:8px;background:none;color:var(--text3);font-size:11px;font-weight:800;cursor:pointer;transition:all 0.15s;white-space:nowrap;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;letter-spacing:.5px;text-transform:uppercase;align-self:stretch;min-height:44px;">
             <span style="font-size:22px;line-height:1;">⚡</span>
             eBike
           </button>
@@ -2607,7 +2770,14 @@ body > .app .flat-list .item-card.qty-zero{
       </div>
       <div class="modal-field">
         <label>Model</label>
+        <div class="modal-model-row">
         <input type="text" id="modal-marka" placeholder="MODEL" maxlength="12" style="text-transform:uppercase;" oninput="this.value=this.value.toUpperCase()">
+          <button type="button" class="modal-photo-btn" onclick="triggerPhotoInput()" title="Dodaj zdjęcie" aria-label="Dodaj zdjęcie">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          </button>
+          <input type="file" id="photo-input" accept="image/*" capture="environment" multiple style="display:none" onchange="handlePhotos(event)">
+        </div>
+        <div class="photo-previews" id="photo-previews" style="margin-top:8px;"></div>
       </div>
         </div>
       </div>
@@ -2641,19 +2811,6 @@ body > .app .flat-list .item-card.qty-zero{
         <label>Termin naprawy</label>
         <input type="hidden" id="modal-termin" value="">
         <div id="modal-termin-calendar"></div>
-      </div>
-      </div>
-      <div class="modal-banner">
-      <div class="modal-field">
-        <label>Zdjęcia roweru</label>
-        <div class="photo-section-top" style="background:transparent;border:none;padding:0;margin:0;">
-          <button class="btn-photo" onclick="triggerPhotoInput()" style="width:100%;justify-content:center;font-size:16px;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-            + Dodaj zdjęcie
-          </button>
-          <input type="file" id="photo-input" accept="image/*" capture="environment" multiple style="display:none" onchange="handlePhotos(event)">
-        </div>
-        <div class="photo-previews" id="photo-previews" style="margin-top:8px;"></div>
       </div>
       </div>
       <div id="modal-error" style="display:none;font-size:14px;font-weight:600;color:#ef4444;background:#221515;border:1px solid #5c3030;border-radius:6px;padding:10px 14px;"></div>
@@ -2741,7 +2898,7 @@ const DEFAULTS = [
       {label:'Centrowanie',price:0},
       {label:'Serwis amortyzatora',price:0},
     ] },
-  { name: 'Korba',      price: 0,   checked: false,
+  { name: 'Mechanizm korbowy', price: 0, checked: false,
     presets: [{label:'Kwadrat',price:119},{label:'Octalink',price:189},{label:'Hollowtech',price:229}] },
   { name: 'Support',    price: 0,   checked: false,
     presets: [{label:'Neco',price:45},{label:'Nexelo',price:65},{label:'Octalink',price:80},{label:'Hollowtech',price:79},{label:'Hollowtech Pro',price:129},{label:'TOKEN',price:229}] },
@@ -2761,6 +2918,8 @@ const DEFAULTS = [
   { name: 'Hak',        price: 0,   checked: false },
   { name: 'Pedała',     price: 0,   checked: false,
     presets: [{label:'Plastikowe',price:25},{label:'Aluminium',price:39},{label:'Nexelo',price:79},{label:'Zeray',price:119}] },
+  { name: 'Dźwignie',   price: 0, checked: false },
+  { name: 'Hamulce',    price: 0, checked: false },
   { name: 'Tarcza',     price: 0,   checked: false, qty: 0,
     presets: [{label:'RT10',price:45},{label:'RT56',price:65},{label:'RT66',price:90},{label:'Centerline',price:120},{label:'Magura',price:120}] },
   { name: 'Klocki',     price: 0,   checked: false, qty: 0,
@@ -2778,8 +2937,6 @@ const DEFAULTS = [
   { name: 'Koło przednie', price: 0, checked: false },
   { name: 'Owijka/Chwyty', price: 0, checked: false },
   { name: 'Siodło',     price: 0, checked: false },
-  { name: 'Dźwignie',   price: 0, checked: false },
-  { name: 'Hamulce',    price: 0, checked: false },
   { name: 'Amortyzator', price: 0,  checked: false },
   { name: 'Akcesoria',  price: 0, checked: false },
   { name: 'Części i akcesoria', price: 0, checked: false, note: true },
@@ -2788,6 +2945,7 @@ const DEFAULTS = [
 // Mapa starych nazw → nowych (migracja danych)
 const NAME_ALIASES = {
   'Pedały': 'Pedała',
+  'Korba': 'Mechanizm korbowy',
   'Fajka': 'Fajka/Gumka',
 };
 function findDefault(name) {
@@ -2872,10 +3030,29 @@ function _smsCrBody() {
     + 'Zapraszamy! Serwis ROW-POL\n'
     + SMS_CR_MAPS_URL;
 }
-function openCrSms() {
-  window.location.href = 'sms:?body=' + encodeURIComponent(_smsCrBody());
+async function copyCrSmsToClipboard() {
+  const text = _smsCrBody();
+  try {
+    if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+      await navigator.clipboard.writeText(text);
+      return;
+    }
+  } catch (e) { /* fallback below */ }
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    ta.style.top = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    ta.setSelectionRange(0, ta.value.length);
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  } catch (e2) { /* silent */ }
 }
-window.openCrSms = openCrSms;
+window.copyCrSmsToClipboard = copyCrSmsToClipboard;
 
 // Pomocnicza: nazwa roweru do SMS
 function _smsRower(marka, model) {
@@ -3393,7 +3570,7 @@ const State = {
 // ─────────────────────────────────────────
 const ITEM_ICONS = {
   'Naprawa':              `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="#3b7cf4" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>`,
-  'Korba':                `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 9V3M12 21v-6M9 12H3M21 12h-6"/></svg>`,
+  'Mechanizm korbowy':     `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 9V3M12 21v-6M9 12H3M21 12h-6"/></svg>`,
   'Support':              `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>`,
   'Łańcuch':              `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`,
   'Kaseta':               `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="3" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="21"/><line x1="3" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="21" y2="12"/></svg>`,
@@ -3765,53 +3942,86 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx, uiCtx) {
   }
 
   function buildOpisControl() {
-    // Opis wpisywany bezpośrednio w polu (bez dodatkowego okna dialogowego)
-    const inp = document.createElement('input');
-    inp.type = 'text';
-    inp.className = 'csel-btn opis-inline-input';
-    inp.placeholder = 'Opis';
-    inp.maxLength = 80;
-    inp.autocomplete = 'off';
-    inp.value = it.customName || '';
-    inp.classList.toggle('has-val', !!(it.customName && it.customName.trim()));
-    inp.addEventListener('input', () => {
-      it.customName = inp.value;
-      if (!isLocal()) State.setItemCustomName(it.id, inp.value);
-      if (inp.value.trim() && !it.checked) { it.checked = true; bar.checked = true; syncBarCircle(); }
-      inp.classList.toggle('has-val', !!inp.value.trim());
-      save();
-    });
-    inp.addEventListener('blur', () => {
-      it.customName = inp.value.trim();
-      inp.value = it.customName;
+    if (uiCtx === 'raport') {
+      const inp = document.createElement('input');
+      inp.type = 'text';
+      inp.className = 'csel-btn opis-inline-input';
+      inp.placeholder = 'Opis';
+      inp.maxLength = 80;
+      inp.autocomplete = 'off';
+      inp.value = it.customName || '';
+      inp.classList.toggle('has-val', !!(it.customName && it.customName.trim()));
+      inp.addEventListener('input', () => {
+        it.customName = inp.value;
+        if (!isLocal()) State.setItemCustomName(it.id, inp.value);
+        if (inp.value.trim() && !it.checked) { it.checked = true; bar.checked = true; syncBarCircle(); }
+        inp.classList.toggle('has-val', !!inp.value.trim());
+        save();
+      });
+      inp.addEventListener('blur', () => {
+        it.customName = inp.value.trim();
+        inp.value = it.customName;
+        if (!isLocal()) State.setItemCustomName(it.id, it.customName);
+        recalcCtx();
+        save();
+      });
+      inp.addEventListener('keydown', e => {
+        if (e.key === 'Enter') { e.preventDefault(); inp.blur(); }
+      });
+      return inp;
+    }
+
+    const OPIS_BTN_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>';
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'opis-click-btn';
+    btn.title = 'Opis pozycji';
+    btn.setAttribute('aria-label', 'Opis pozycji');
+    const syncOpisBtn = () => {
+      const has = !!(it.customName && String(it.customName).trim());
+      btn.classList.toggle('opis-click-btn--filled', has);
+      btn.innerHTML = OPIS_BTN_ICON;
+    };
+    syncOpisBtn();
+    btn.addEventListener('click', async () => {
+      const val = await openOpisBanner(it.customName || '');
+      if (val === null) return;
+      it.customName = val;
       if (!isLocal()) State.setItemCustomName(it.id, it.customName);
-      recalcCtx();
+      if (val && !it.checked) { it.checked = true; bar.checked = true; syncBarCircle(); }
+      syncOpisBtn();
       save();
+      recalcCtx();
     });
-    inp.addEventListener('keydown', e => {
-      if (e.key === 'Enter') { e.preventDefault(); inp.blur(); }
-    });
-    return inp;
+    return btn;
   }
 
   // ── Row 1: name | qty | price (all item types) ──
   // priceEl is appended per-branch after qty ctrl
 
-  // ── Wszystkie pozycje: OPIS (wolny tekst) zamiast list wyboru ──
+  // ── Wszystkie pozycje: nazwa | [opis] | qty | [opis+cena] ──
   {
-    nameEl.style.flex = '0 0 auto';
-    const opisWrap = document.createElement('div');
-    opisWrap.className = 'kalk-csel-cell';
-    opisWrap.style.cssText = 'flex:1;min-width:0;';
-    opisWrap.appendChild(buildOpisControl());
-    topRow.appendChild(opisWrap);
+    nameEl.style.flex = uiCtx === 'main' ? '1' : '0 0 auto';
+    if (uiCtx === 'raport') {
+      const opisWrap = document.createElement('div');
+      opisWrap.className = 'kalk-csel-cell';
+      opisWrap.style.cssText = 'flex:1;min-width:0;';
+      opisWrap.appendChild(buildOpisControl());
+      topRow.appendChild(opisWrap);
+    }
     if (it.qty !== undefined) {
       const { ctrl } = buildQty(null, it.name === 'Końcówki' ? 5 : 1);
       topRow.appendChild(ctrl);
-    } else {
+    }
+    const priceGroup = document.createElement('div');
+    priceGroup.className = 'item-price-opis-group';
+    if (uiCtx === 'main') {
+      priceGroup.appendChild(buildOpisControl());
+    } else if (it.qty === undefined) {
       priceEl.style.width = '52px';
     }
-    topRow.appendChild(priceEl);
+    priceGroup.appendChild(priceEl);
+    topRow.appendChild(priceGroup);
     body.appendChild(topRow);
   }
 
@@ -5497,6 +5707,118 @@ function _archiveMatchesWydaneDay(e, ddmm, year) {
   return parts.d === td && parts.m === tm && parts.y === y;
 }
 
+function _calWeekMonday(d) {
+  const dt = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  dt.setHours(0, 0, 0, 0);
+  dt.setDate(dt.getDate() - ((dt.getDay() + 6) % 7));
+  return dt;
+}
+function _calPickableHorizonEnd(today) {
+  const end = _calWeekMonday(today);
+  end.setDate(end.getDate() + 20);
+  return end;
+}
+function _easterSunday(year) {
+  const a = year % 19;
+  const b = Math.floor(year / 100);
+  const c = year % 100;
+  const d = Math.floor(b / 4);
+  const e = b % 4;
+  const f = Math.floor((b + 8) / 25);
+  const g = Math.floor((b - f + 1) / 3);
+  const h = (19 * a + b - d - g + 15) % 30;
+  const i = Math.floor(c / 4);
+  const k = c % 4;
+  const l = (32 + 2 * e + 2 * i - h - k) % 7;
+  const m = Math.floor((a + 11 * h + 22 * l) / 451);
+  const month = Math.floor((h + l - 7 * m + 114) / 31);
+  const day = ((h + l - 7 * m + 114) % 31) + 1;
+  return new Date(year, month - 1, day);
+}
+function _isPolishHoliday(y, m, d) {
+  const fixed = [[0, 1], [0, 6], [4, 1], [4, 3], [7, 15], [10, 1], [10, 11], [11, 24], [11, 25], [11, 26]];
+  for (let i = 0; i < fixed.length; i++) {
+    if (m === fixed[i][0] && d === fixed[i][1]) return true;
+  }
+  const easter = _easterSunday(y);
+  easter.setHours(0, 0, 0, 0);
+  const addDays = (dt, n) => {
+    const x = new Date(dt.getTime());
+    x.setDate(x.getDate() + n);
+    x.setHours(0, 0, 0, 0);
+    return x;
+  };
+  const movable = [easter, addDays(easter, 1), addDays(easter, 49), addDays(easter, 60)];
+  for (let j = 0; j < movable.length; j++) {
+    const t = movable[j];
+    if (t.getFullYear() === y && t.getMonth() === m && t.getDate() === d) return true;
+  }
+  return false;
+}
+function _isCalDayOff(y, m, d) {
+  const dt = new Date(y, m, d);
+  return dt.getDay() === 0 || _isPolishHoliday(y, m, d);
+}
+
+function _orderCalDayCellHtml(y, m, d, ctx) {
+  const opts = ctx.opts || {};
+  const outsideMode = ctx.outsideMode || null;
+  const counts = ctx.counts || {};
+  const wydaneCounts = ctx.wydaneCounts || {};
+  const today = ctx.today;
+  const selD = ctx.selD || 0;
+  const selM = ctx.selM || 0;
+  const pickable = !!ctx.pickable;
+  const dateObj = new Date(y, m, d);
+  dateObj.setHours(0, 0, 0, 0);
+  const isDayOff = _isCalDayOff(y, m, d);
+  const isPast = dateObj < today;
+  const isToday = dateObj.getTime() === today.getTime();
+  const isStartMenuPast = opts.startMenu && isPast && !isToday;
+  if (pickable && opts.hidePast && ctx.weekStart && isPast && dateObj < ctx.weekStart) return '<div></div>';
+  if (outsideMode === 'pad') {
+    const padCls = ['order-cal-day', 'order-cal-day--outside'];
+    if (isDayOff) padCls.push('order-cal-day--sunday', 'order-cal-day--disabled');
+    else padCls.push('order-cal-day--load-low');
+    return `<div class="${padCls.join(' ')}"><span class="order-cal-day-num">${d}</span></div>`;
+  }
+  const dayKey = d + '.' + (m + 1);
+  const terminCnt = counts[dayKey] || 0;
+  const wydaneCnt = wydaneCounts[dayKey] || 0;
+  const ddmm = String(d).padStart(2, '0') + '.' + String(m + 1).padStart(2, '0');
+  const showWydaneDay = opts.startMenu && isPast && wydaneCnt > 0;
+  const showTerminDay = !isPast && terminCnt > 0;
+  const cnt = showWydaneDay ? wydaneCnt : terminCnt;
+  const tier = isStartMenuPast ? 'low' : _calLoadTier(cnt);
+  const isSel = selD === d && selM === (m + 1);
+  const disabled = isDayOff || (pickable && isPast);
+  const cls = ['order-cal-day', 'order-cal-day--load-' + tier];
+  if (outsideMode === 'pickable') cls.push('order-cal-day--outside');
+  if (ctx.extraCls) cls.push(ctx.extraCls);
+  if (isToday) cls.push('is-today');
+  if (isSel) cls.push('order-cal-day--selected');
+  if (isDayOff) cls.push('order-cal-day--sunday');
+  if (isStartMenuPast) cls.push('order-cal-day--past');
+  if (disabled) cls.push('order-cal-day--disabled');
+  else if (showTerminDay && opts.dayClickFn) cls.push('order-cal-day--browse');
+  else if (showWydaneDay && opts.dayClickWydaneFn) cls.push('order-cal-day--browse');
+  let badge = '';
+  if (showWydaneDay || terminCnt > 0) {
+    badge = `<span class="order-cal-count">${showWydaneDay ? wydaneCnt : terminCnt}</span>`;
+  }
+  const dayContent = `<span class="order-cal-day-num">${d}</span>${badge}`;
+  if (pickable && !disabled) {
+    return `<button type="button" class="${cls.join(' ')}" onclick="terminPick('${ddmm}')">${dayContent}</button>`;
+  }
+  if (showWydaneDay && opts.dayClickWydaneFn) {
+    return `<button type="button" class="${cls.join(' ')}" title="Zobacz ${wydaneCnt} wydanych ${ddmm}.${y}" onclick="${opts.dayClickWydaneFn}('${ddmm}',${y})">${dayContent}</button>`;
+  }
+  if (showTerminDay && opts.dayClickFn) {
+    return `<button type="button" class="${cls.join(' ')}" title="Zobacz ${terminCnt} zleceń na ${ddmm}" onclick="${opts.dayClickFn}('${ddmm}')">${dayContent}</button>`;
+  }
+  return `<div class="${cls.join(' ')}">${dayContent}</div>`;
+}
+
 function _buildOrderCalGrid(y, m, opts) {
   opts = opts || {};
   const counts = _terminCounts();
@@ -5508,59 +5830,93 @@ function _buildOrderCalGrid(y, m, opts) {
   const selD = opts.selD || 0;
   const selM = opts.selM || 0;
   const pickable = !!opts.pickable;
+  const fillGrid = !!opts.fillGrid;
+  const usePickRange = pickable && !!opts.hidePast;
+  const isCurrentMonth = y === today.getFullYear() && m === today.getMonth();
+  const isFutureMonth = y > today.getFullYear() || (y === today.getFullYear() && m > today.getMonth());
+  const useFillGrid = fillGrid || (usePickRange && isFutureMonth);
+  const weekStart = usePickRange ? _calWeekMonday(today) : null;
+  const horizonEnd = usePickRange ? _calPickableHorizonEnd(today) : null;
+  const dayCtx = { opts, counts, wydaneCounts, today, selD, selM, pickable, weekStart, horizonEnd };
 
   let html = '<div class="order-cal-grid">';
   ['Pn','Wt','Śr','Cz','Pt','So','Nd'].forEach(d => {
     html += `<div class="order-cal-dow">${d}</div>`;
   });
-  for (let i = 0; i < startDow; i++) html += '<div></div>';
-  for (let d = 1; d <= daysInMonth; d++) {
-    const dateObj = new Date(y, m, d);
-    dateObj.setHours(0, 0, 0, 0);
-    const dow = dateObj.getDay();
-    const isSunday = dow === 0;
-    const isPast = dateObj < today;
-    const isToday = dateObj.getTime() === today.getTime();
-    const dayKey = d + '.' + (m + 1);
-    const terminCnt = counts[dayKey] || 0;
-    const wydaneCnt = wydaneCounts[dayKey] || 0;
-    const ddmm = String(d).padStart(2, '0') + '.' + String(m + 1).padStart(2, '0');
-    const showWydaneDay = opts.startMenu && isPast && wydaneCnt > 0;
-    const showTerminDay = !isPast && terminCnt > 0;
-    const cnt = showWydaneDay ? wydaneCnt : terminCnt;
-    const tier = _calLoadTier(cnt);
-    const isSel = selD === d && selM === (m + 1);
-    const disabled = isSunday || (pickable && isPast);
-    const cls = ['order-cal-day', 'order-cal-day--load-' + tier];
-    if (isToday) cls.push('is-today');
-    if (isSel) cls.push('order-cal-day--selected');
-    if (disabled) cls.push('order-cal-day--disabled');
-    if (showWydaneDay) cls.push('order-cal-day--browse-wydane');
-    else if (showTerminDay && opts.dayClickFn) cls.push('order-cal-day--browse');
-    let badge = '';
-    if (showWydaneDay) {
-      badge = `<span class="order-cal-count order-cal-count--wydane">${wydaneCnt}</span>`;
-    } else if (terminCnt > 0) {
-      badge = `<span class="order-cal-count">${terminCnt}</span>`;
+  if (useFillGrid && startDow > 0) {
+    const pm = m === 0 ? 11 : m - 1;
+    const py = m === 0 ? y - 1 : y;
+    const prevDays = new Date(py, pm + 1, 0).getDate();
+    for (let i = 0; i < startDow; i++) {
+      const d = prevDays - startDow + i + 1;
+      html += _orderCalDayCellHtml(py, pm, d, Object.assign({}, dayCtx, { outsideMode: 'pad' }));
     }
-    const dayContent = `<span class="order-cal-day-num">${d}</span>${badge}`;
-    if (pickable && !disabled) {
-      html += `<button type="button" class="${cls.join(' ')}" onclick="terminPick('${ddmm}')">${dayContent}</button>`;
-    } else if (showWydaneDay && opts.dayClickWydaneFn) {
-      html += `<button type="button" class="${cls.join(' ')}" title="Zobacz ${wydaneCnt} wydanych ${ddmm}.${y}" onclick="${opts.dayClickWydaneFn}('${ddmm}',${y})">${dayContent}</button>`;
-    } else if (showTerminDay && opts.dayClickFn) {
-      html += `<button type="button" class="${cls.join(' ')}" title="Zobacz ${terminCnt} zleceń na ${ddmm}" onclick="${opts.dayClickFn}('${ddmm}')">${dayContent}</button>`;
-    } else {
-      html += `<div class="${cls.join(' ')}">${dayContent}</div>`;
+  } else if (usePickRange && startDow > 0) {
+    const pm = m === 0 ? 11 : m - 1;
+    const py = m === 0 ? y - 1 : y;
+    const prevDays = new Date(py, pm + 1, 0).getDate();
+    for (let i = 0; i < startDow; i++) {
+      const pd = prevDays - startDow + i + 1;
+      const dt = new Date(py, pm, pd);
+      dt.setHours(0, 0, 0, 0);
+      if (dt >= weekStart && (!isCurrentMonth || dt <= horizonEnd)) {
+        html += _orderCalDayCellHtml(py, pm, pd, Object.assign({}, dayCtx, { outsideMode: 'pickable' }));
+      } else {
+        html += '<div></div>';
+      }
+    }
+  } else {
+    for (let i = 0; i < startDow; i++) html += '<div></div>';
+  }
+  for (let d = 1; d <= daysInMonth; d++) {
+    if (usePickRange && !useFillGrid) {
+      const dt = new Date(y, m, d);
+      dt.setHours(0, 0, 0, 0);
+      if (dt < weekStart || (isCurrentMonth && dt > horizonEnd)) {
+        html += '<div></div>';
+        continue;
+      }
+    }
+    html += _orderCalDayCellHtml(y, m, d, dayCtx);
+  }
+  if (useFillGrid) {
+    const totalCells = startDow + daysInMonth;
+    const trailing = (7 - (totalCells % 7)) % 7;
+    if (trailing > 0) {
+      const nm = (m + 1) % 12;
+      const ny = m === 11 ? y + 1 : y;
+      for (let d = 1; d <= trailing; d++) {
+        html += _orderCalDayCellHtml(ny, nm, d, Object.assign({}, dayCtx, { outsideMode: 'pad' }));
+      }
+    }
+  } else if (usePickRange && isCurrentMonth) {
+    const monthEnd = new Date(y, m, daysInMonth);
+    monthEnd.setHours(0, 0, 0, 0);
+    if (monthEnd < horizonEnd) {
+      const nm = (m + 1) % 12;
+      const ny = m === 11 ? y + 1 : y;
+      const daysNext = new Date(ny, nm + 1, 0).getDate();
+      for (let d = 1; d <= daysNext; d++) {
+        const dt = new Date(ny, nm, d);
+        dt.setHours(0, 0, 0, 0);
+        if (dt > horizonEnd) break;
+        html += _orderCalDayCellHtml(ny, nm, d, Object.assign({}, dayCtx, { outsideMode: 'pickable' }));
+      }
     }
   }
   html += '</div>';
   return html;
 }
-function _buildOrderCalNavHtml(y, m, prevFn, nextFn) {
+function _buildOrderCalNavHtml(y, m, prevFn, nextFn, opts) {
+  opts = opts || {};
+  const now = new Date();
+  const atMinMonth = opts.noPastNav && y === now.getFullYear() && m === now.getMonth();
+  const prevBtn = atMinMonth
+    ? '<button type="button" class="order-cal-nav-btn" disabled style="opacity:0.35;pointer-events:none;">‹</button>'
+    : `<button type="button" class="order-cal-nav-btn" onclick="${prevFn}()">‹</button>`;
   return `
     <div class="order-cal-nav">
-      <button type="button" class="order-cal-nav-btn" onclick="${prevFn}()">‹</button>
+      ${prevBtn}
       <span class="order-cal-title">${_ORDER_CAL_MONTHS[m]} ${y}</span>
       <button type="button" class="order-cal-nav-btn" onclick="${nextFn}()">›</button>
     </div>`;
@@ -5569,23 +5925,31 @@ function _buildOrderCalHtml(y, m, opts) {
   opts = opts || {};
   const prevFn = opts.prevFn || 'terminCalPrev';
   const nextFn = opts.nextFn || 'terminCalNext';
-  let html = _buildOrderCalNavHtml(y, m, prevFn, nextFn);
-  if (opts.selVal) {
-    html += `<div class="order-cal-sel-bar">
-      <span class="order-cal-sel-label">Termin: ${escHTML(opts.selVal)}</span>
-      <button type="button" class="order-cal-sel-clear" onclick="clearTermin()" title="Wyczyść termin">✕</button>
-    </div>`;
+  let html = '<div class="order-cal-header">';
+  html += _buildOrderCalNavHtml(y, m, prevFn, nextFn, opts);
+  if (opts.pickable) {
+    const selVal = opts.selVal || '';
+    html += `<span class="order-cal-termin">Termin:${selVal ? ' ' + escHTML(selVal) : ''}</span>`;
   }
+  html += '</div>';
   html += _buildOrderCalGrid(y, m, opts);
   return html;
 }
 function initTerminCalendar() {
   const saved = _parseTerminParts($('modal-termin').value || '');
   const now = new Date();
+  now.setHours(0, 0, 0, 0);
   let y = now.getFullYear(), m = now.getMonth();
   if (saved.length >= 2 && parseInt(saved[1], 10)) {
-    m = parseInt(saved[1], 10) - 1;
-    if (saved.length >= 3 && parseInt(saved[2], 10)) y = parseInt(saved[2], 10);
+    const sy = saved.length >= 3 && parseInt(saved[2], 10) ? parseInt(saved[2], 10) : y;
+    const sm = parseInt(saved[1], 10) - 1;
+    const sd = parseInt(saved[0], 10) || 1;
+    const savedDate = new Date(sy, sm, sd);
+    savedDate.setHours(0, 0, 0, 0);
+    if (savedDate >= now) {
+      y = sy;
+      m = sm;
+    }
   }
   _terminCalMonth = { y, m };
   _renderTerminCalendar();
@@ -5598,11 +5962,17 @@ function _renderTerminCalendar() {
   const selD = parseInt(sel[0], 10) || 0;
   const selM = parseInt(sel[1], 10) || 0;
   const selVal = _normalizeTerminStr($('modal-termin').value);
-  cont.innerHTML = _buildOrderCalHtml(y, m, { pickable: true, selD, selM, selVal });
+  cont.innerHTML = _buildOrderCalHtml(y, m, { pickable: true, hidePast: true, noPastNav: true, selD, selM, selVal });
 }
 function terminCalPrev() {
+  const now = new Date();
+  const minY = now.getFullYear(), minM = now.getMonth();
   _terminCalMonth.m--;
   if (_terminCalMonth.m < 0) { _terminCalMonth.m = 11; _terminCalMonth.y--; }
+  if (_terminCalMonth.y < minY || (_terminCalMonth.y === minY && _terminCalMonth.m < minM)) {
+    _terminCalMonth.y = minY;
+    _terminCalMonth.m = minM;
+  }
   _renderTerminCalendar();
 }
 function terminCalNext() {
@@ -5643,6 +6013,7 @@ let _startCalSwipeBound = false;
 function _buildStartCalMonthHtml(y, m) {
   return _buildOrderCalHtml(y, m, {
     pickable: false,
+    fillGrid: true,
     prevFn: 'startCalPrev',
     nextFn: 'startCalNext',
     dayClickFn: 'startCalOpenTermin',
@@ -8640,11 +9011,32 @@ function _fractionForColor(hex, preferEnd) {
 let _kolorFrac = [0, 0];
 let _kolorHandle1Touched = false;
 
+function _kolorHandleHalfPx() {
+  const track = $('kolor-track');
+  if (!track) return 17;
+  const h = track.getBoundingClientRect().height || 68;
+  return Math.max(14, Math.round((h - 2) / 4));
+}
+function _kolorDragIdxFromEvent(e, track) {
+  const r = track.getBoundingClientRect();
+  const midY = r.top + r.height / 2;
+  return (e.clientY < midY) ? 0 : 1;
+}
+
 function _updateKolorPickerUI() {
+  const half = _kolorHandleHalfPx();
   [0, 1].forEach(i => {
     const col = kolorAtFraction(_kolorFrac[i]);
     const handle = $('kolor-handle-' + i);
-    if (handle) { handle.style.left = 'clamp(21px, ' + (_kolorFrac[i] * 100) + '%, calc(100% - 21px))'; handle.style.background = col; }
+    if (handle) {
+      handle.style.left = 'clamp(' + half + 'px, ' + (_kolorFrac[i] * 100) + '%, calc(100% - ' + half + 'px))';
+      if (i === 1 && !_kolorHandle1Touched) {
+        handle.style.background = '';
+      } else {
+        handle.style.background = col;
+      }
+      handle.classList.toggle('kolor-handle--active', i === 0 || _kolorHandle1Touched);
+    }
   });
   const c0 = kolorAtFraction(_kolorFrac[0]);
   const c1 = kolorAtFraction(_kolorFrac[1]);
@@ -8692,20 +9084,27 @@ function _kolorPickerInit() {
     h.addEventListener('pointerdown', e => {
       e.preventDefault(); e.stopPropagation();
       dragIdx = i;
-      if (i === 1) _kolorHandle1Touched = true;
+      if (i === 1) {
+        _kolorHandle1Touched = true;
+      }
       try { h.setPointerCapture(e.pointerId); } catch (_) {}
     });
   });
   track.addEventListener('pointerdown', e => {
     const f = fracFromX(e.clientX);
-    dragIdx = Math.abs(_kolorFrac[0] - f) <= Math.abs(_kolorFrac[1] - f) ? 0 : 1;
-    if (dragIdx === 1) _kolorHandle1Touched = true;
+    if (!_kolorHandle1Touched) {
+      dragIdx = _kolorDragIdxFromEvent(e, track);
+      if (dragIdx === 1) _kolorHandle1Touched = true;
+    } else {
+      dragIdx = _kolorDragIdxFromEvent(e, track);
+    }
     _kolorFrac[dragIdx] = f;
     _updateKolorPickerUI();
   });
   window.addEventListener('pointermove', e => {
     if (dragIdx === null) return;
     _kolorFrac[dragIdx] = fracFromX(e.clientX);
+    if (dragIdx === 1) _kolorHandle1Touched = true;
     _updateKolorPickerUI();
   });
   window.addEventListener('pointerup', () => { dragIdx = null; });
@@ -10543,38 +10942,37 @@ function openOpisBanner(initialValue) {
     overlay.style.cssText = 'position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,0.75);display:flex;align-items:center;justify-content:center;';
 
     const sheet = document.createElement('div');
-    sheet.style.cssText = 'background:var(--bg2);border:1px solid var(--border);border-radius:14px;width:95vw;max-width:95vw;display:flex;flex-direction:column;overflow:hidden;';
+    sheet.style.cssText = 'background:var(--bg2);border:1px solid var(--border);border-radius:14px;width:95vw;max-width:480px;display:flex;flex-direction:column;overflow:hidden;';
 
     const hdr = document.createElement('div');
-    hdr.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:16px 16px 12px;border-bottom:1px solid var(--border);';
+    hdr.style.cssText = 'padding:16px 16px 12px;border-bottom:1px solid var(--border);';
     const title = document.createElement('span');
-    title.style.cssText = 'flex:1;font-size:18px;font-weight:700;color:#fff;text-align:center;';
+    title.style.cssText = 'display:block;font-size:18px;font-weight:700;color:#fff;text-align:center;';
     title.textContent = 'Opis pozycji';
-    const closeBtn = document.createElement('button');
-    closeBtn.style.cssText = 'background:none;border:none;color:#ef4444;font-size:22px;cursor:pointer;line-height:1;padding:0 4px;';
-    closeBtn.innerHTML = '&times;';
     hdr.appendChild(title);
-    hdr.appendChild(closeBtn);
 
     const body = document.createElement('div');
     body.style.cssText = 'padding:14px 16px 16px;';
-    const input = document.createElement('input');
-    input.type = 'text';
+    const input = document.createElement('textarea');
     input.maxLength = 120;
     input.value = initialValue || '';
     input.placeholder = 'Wpisz opis...';
-    input.style.cssText = 'width:100%;font-size:15px;padding:10px 12px;border:1px solid var(--blue);border-radius:8px;background:var(--bg);color:#fff;outline:none;';
+    input.rows = 4;
+    input.style.cssText = 'width:100%;font-size:15px;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:#fff;outline:none;resize:vertical;min-height:96px;font-family:inherit;line-height:1.45;';
     body.appendChild(input);
 
     const footer = document.createElement('div');
     footer.style.cssText = 'display:flex;gap:8px;padding:0 16px 16px;';
     const cancelBtn = document.createElement('button');
+    cancelBtn.type = 'button';
     cancelBtn.className = 'btn-close btn-cancel ui-tile ui-tile--sm ui-tile--danger';
-    cancelBtn.style.cssText = 'flex:1;margin-left:0;';
+    cancelBtn.style.cssText = 'flex:1;min-width:0;margin-left:0;';
     cancelBtn.textContent = 'Anuluj';
     const okBtn = document.createElement('button');
-    okBtn.style.cssText = 'flex:2;padding:11px;background:var(--blue);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;';
-    okBtn.textContent = 'Zatwierdź';
+    okBtn.type = 'button';
+    okBtn.className = 'btn-save ui-tile ui-tile--sm ui-tile--wydanie';
+    okBtn.style.cssText = 'flex:3;min-width:0;';
+    okBtn.textContent = 'OK';
     footer.appendChild(cancelBtn);
     footer.appendChild(okBtn);
 
@@ -10583,11 +10981,9 @@ function openOpisBanner(initialValue) {
       resolve(val);
     };
 
-    closeBtn.addEventListener('click', () => close(null));
     cancelBtn.addEventListener('click', () => close(null));
     okBtn.addEventListener('click', () => close((input.value || '').trim()));
     input.addEventListener('keydown', e => {
-      if (e.key === 'Enter') { e.preventDefault(); close((input.value || '').trim()); }
       if (e.key === 'Escape') { e.preventDefault(); close(null); }
     });
     overlay.addEventListener('click', e => { if (e.target === overlay) close(null); });
@@ -10600,6 +10996,7 @@ function openOpisBanner(initialValue) {
     setTimeout(() => { input.focus(); input.select(); }, 0);
   });
 }
+window.openOpisBanner = openOpisBanner;
 
 function buildCsel(sel, extraClass) {
   const wrap = document.createElement('div');
