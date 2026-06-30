@@ -3026,12 +3026,13 @@ const DEFAULTS = [
   { name: 'Pancerz',    price: 0,   checked: false, qty: 0 },
   { name: 'Końcówki',   price: 0,   checked: false, qty: 0 },
   { name: 'Fajka/Gumka', price: 0, checked: false, qty: 0 },
+  { name: 'Opona',      price: 0,   checked: false, qty: 0 },
   { name: 'Dętka',      price: 0,   checked: false, qty: 0,
     presets: [{label:'Standard',price:25},{label:'Vittoria/Vredestein',price:39},{label:'Premium',price:49}] },
-  { name: 'Opona',      price: 0,   checked: false, qty: 0 },
+  { name: 'Ochraniacz', price: 6,   checked: false, qty: 0 },
   { name: 'Koło tylne',  price: 0,  checked: false },
   { name: 'Koło przednie', price: 0, checked: false },
-  { name: 'Owijka/Chwyty', price: 0, checked: false },
+  { name: 'Owijka',     price: 0, checked: false },
   { name: 'Siodło',     price: 0, checked: false },
   { name: 'Amortyzator', price: 0,  checked: false },
   { name: 'Akcesoria',  price: 0, checked: false },
@@ -3043,6 +3044,7 @@ const NAME_ALIASES = {
   'Pedały': 'Pedała',
   'Korba': 'Mechanizm korbowy',
   'Fajka': 'Fajka/Gumka',
+  'Owijka/Chwyty': 'Owijka',
 };
 function findDefault(name) {
   const canonical = NAME_ALIASES[name] || name;
@@ -3055,6 +3057,24 @@ let items = [];
 let subs = [];         // inne części rows
 let groupOpen = true;
 let idSeq = 0;
+
+function getSubPlaceholder(index) {
+  if (index === 0) return 'Części koło';
+  if (index === 1) return 'Łożyska';
+  return 'Nazwa części';
+}
+
+function createDefaultSubs(count = 3) {
+  return Array.from({ length: count }, () => ({
+    id: newSubId(), name: '', price: 0, checked: false,
+  }));
+}
+
+function createDefaultRaportSubs(count = 3) {
+  return Array.from({ length: count }, (_, i) => ({
+    id: 'rs_def' + i, name: '', price: 0, checked: false,
+  }));
+}
 
 function newId()    { return ++idSeq; }
 function newSubId() { return 's' + (++idSeq); }
@@ -3493,7 +3513,7 @@ function load() {
     }));
 
     // Remove deprecated items
-    items = items.filter(it => it.name !== 'Ochraniacz' && it.name !== 'Diagnostyka eBike' && it.name !== 'Diagnostyka e-Bike');
+    items = items.filter(it => it.name !== 'Diagnostyka eBike' && it.name !== 'Diagnostyka e-Bike');
 
     // Stare zlecenia: zamień dawne wybory z list na tekstowy opis
     items.forEach(migrateSelectionToOpis);
@@ -3522,11 +3542,11 @@ function load() {
 
     // Reset inne części unless loading from history
     if (!fromHist) {
-      subs = [1,2,3].map(() => ({ id: newSubId(), name: '', price: 0, checked: false }));
+      subs = createDefaultSubs();
       groupOpen = true;
     } else {
       subs = (st.subs || []).map(s => ({ id: newSubId(), name: s.name, price: s.price, checked: s.checked }));
-      if (!subs.length) subs = [1,2,3].map(() => ({ id: newSubId(), name: '', price: 0, checked: false }));
+      if (!subs.length) subs = createDefaultSubs();
       while (subs.length < 3) subs.push({ id: newSubId(), name: '', price: 0, checked: false });
       groupOpen = st.groupOpen !== false;
     }
@@ -3684,7 +3704,8 @@ const ITEM_ICONS = {
   'Opona':                `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="5"/></svg>`,
   'Koło tylne':           `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="9"/><line x1="12" y1="15" x2="12" y2="22"/><line x1="2" y1="12" x2="9" y2="12"/><line x1="15" y1="12" x2="22" y2="12"/></svg>`,
   'Koło przednie':        `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="9"/><line x1="12" y1="15" x2="12" y2="22"/><line x1="2" y1="12" x2="9" y2="12"/><line x1="15" y1="12" x2="22" y2="12"/></svg>`,
-  'Owijka/Chwyty':        `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v18M18 3v18M6 8h12M6 16h12"/></svg>`,
+  'Owijka':               `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v18M18 3v18M6 8h12M6 16h12"/></svg>`,
+  'Ochraniacz':           `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>`,
   'Dźwignie':             `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 3a3 3 0 0 0-3 3v12a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3zM6 3a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3z"/></svg>`,
   'Hamulce':              `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="4" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="20"/><line x1="4" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="20" y2="12"/></svg>`,
   'Amortyzator':          `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="22"/><path d="M8 6h8M8 18h8M9 10h6M9 14h6"/></svg>`,
@@ -3711,14 +3732,30 @@ function autoSelectCtx(itemsArr, itemName, keyword) {
 // ─────────────────────────────────────────
 // RENDER ITEMS
 // ─────────────────────────────────────────
+function placeGroupAtEnd(list, groupEl) {
+  if (!list || !groupEl) return;
+  list.appendChild(groupEl);
+}
+
+function detachGroupFromList(list, groupEl, fallbackParent) {
+  if (list && groupEl && list.contains(groupEl) && fallbackParent) {
+    fallbackParent.appendChild(groupEl);
+  }
+}
+
 function renderItems() {
   const list = $('items-list');
+  const groupContainer = $('group-container');
+  detachGroupFromList(list, groupContainer, $('add-parts-banner'));
   list.innerHTML = '';
 
   for (const it of items) {
     const card = buildCard(it);
     list.appendChild(card);
   }
+
+  placeGroupAtEnd(list, groupContainer);
+  renderGroup();
 }
 
 function buildCard(it, itemsCtx, renderCtx, recalcCtx, uiCtx) {
@@ -4252,7 +4289,8 @@ function buildSubRow(sub, subsArr, onAddRow, recalcFn) {
   nameEl.type = 'text';
   nameEl.className = 'sub-name-input';
   nameEl.value = sub.name;
-  nameEl.placeholder = 'Nazwa części';
+  const subIndex = subsArr.indexOf(sub);
+  nameEl.placeholder = getSubPlaceholder(subIndex >= 0 ? subIndex : subsArr.length);
   nameEl.maxLength = 60;
   nameEl.addEventListener('input', () => {
     sub.name = nameEl.value;
@@ -4615,7 +4653,7 @@ window.removePhoto = removePhoto;
 // ─────────────────────────────────────────
 if (!load()) {
   items = cloneDefaults();
-  subs  = [{ id: newSubId(), name: '', price: 0, checked: false }];
+  subs  = createDefaultSubs();
 }
 
 renderItems();
@@ -5454,7 +5492,7 @@ function startNowe() {
   if ($('notatka-serwisowa')) $('notatka-serwisowa').value = '';
   idSeq = 0;
   items = cloneDefaults();
-  subs  = [1,2,3].map(() => ({ id: newSubId(), name: '', price: 0, checked: false }));
+  subs  = createDefaultSubs();
   groupOpen = true;
   renderItems();
   renderGroup();
@@ -9021,7 +9059,7 @@ function anulujWycene() {
   // Reset wyceny do wartości domyślnych
   idSeq = 0;
   items = cloneDefaults();
-  subs  = [1,2,3].map(() => ({ id: newSubId(), name: '', price: 0, checked: false }));
+  subs  = createDefaultSubs();
   groupOpen = true;
   renderItems();
   renderGroup();
@@ -9390,7 +9428,7 @@ function buildRaportLocalItems(st, entry, filterEbikeItems) {
   if (filterEbikeItems) {
     const isEbike = entry.ebike || entry.marka === 'E-BIKE';
     if (!isEbike) {
-      rItems = rItems.filter(it => it.name !== 'Ochraniacz' && it.name !== 'Diagnostyka eBike' && it.name !== 'Diagnostyka e-Bike');
+      rItems = rItems.filter(it => it.name !== 'Diagnostyka eBike' && it.name !== 'Diagnostyka e-Bike');
     }
   }
   // Uzupełnij brakujące pozycje domyślne (np. nowo dodane do listy),
@@ -9416,7 +9454,7 @@ function buildRaportLocalSubs(st) {
   let rSubs = (st.subs || []).map((s, i) => ({
     id: 'rs' + i, name: s.name, price: s.price, checked: s.checked
   }));
-  if (!rSubs.length) rSubs = [1,2,3].map((_,i) => ({ id: 'rs_def'+i, name: '', price: 0, checked: false }));
+  if (!rSubs.length) rSubs = createDefaultRaportSubs();
   while (rSubs.filter(s => !s.checked && !s.price && !s.name).length < 3) rSubs.push({ id: 'rs_pad'+rSubs.length, name: '', price: 0, checked: false });
   return rSubs;
 }
@@ -9455,14 +9493,16 @@ function renderRaportEditor(entry, st, cfg) {
 
   // Render items
   const list = $('raport-items-list');
+  const gc = $('raport-group-container');
+  detachGroupFromList(list, gc, $('raport-parts-banner'));
   list.innerHTML = '';
   for (const it of rItems) {
     const card = buildCard(it, rItems, null, recalcRaport, 'raport');
     list.appendChild(card);
   }
 
-  // Render group (inne części)
-  const gc = $('raport-group-container');
+  // Render group (inne części) — pod Amortyzatorem
+  placeGroupAtEnd(list, gc);
   gc.innerHTML = '';
   const wrap = document.createElement('div');
   wrap.className = 'group-card';
