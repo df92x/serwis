@@ -3138,13 +3138,13 @@ function _applyKolorPreviewEl(el, kolor) {
 }
 
 // Treść SMS — rower CR gotowy do odbioru
-const SMS_CR_MAPS_URL = 'https://maps.app.goo.gl/tjHR1HLMDi5CtHfv9';
 function _smsCrBody() {
   return 'Dzień dobry,\n'
-    + 'Zamawiany rower w CR, został przez nas złożony, wyregulowany i jest już przygotowany do odbioru.\n'
-    + 'Płatność zgodnie z cennikiem w zamówieniu - gotówka/karta/BLIK.\n\n'
-    + 'Zapraszamy! Serwis ROW-POL\n'
-    + SMS_CR_MAPS_URL;
+    + 'Zamawiany rower jest już przygotowany do odbioru.\n'
+    + 'Przed odbiorem prosimy zapoznać się z krótką informacją\n'
+    + 'www.rowpol.pl/info\n\n'
+    + 'Zapraszamy!\n'
+    + 'Serwis ROW-POL';
 }
 async function copyCrSmsToClipboard() {
   const text = _smsCrBody();
