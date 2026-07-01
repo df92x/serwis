@@ -3709,10 +3709,62 @@ function _buildStateObject() {
   };
 }
 
+// ── Slim state — tylko pozycje z danymi (mniejszy localStorage i kopia) ──
+function _itemWorthSaving(it) {
+  if (it.checked) return true;
+  if (it.qty !== undefined && (it.qty || 0) > 0) return true;
+  if ((parseFloat(it.price) || 0) > 0) return true;
+  if (it.customName && String(it.customName).trim()) return true;
+  if (it.noteText && String(it.noteText).trim()) return true;
+  if (it.selectedPreset != null && it.selectedPreset >= 0) return true;
+  if (it.selectedOptions && it.selectedOptions.length) return true;
+  if (it.customLabel) return true;
+  return false;
+}
+
+function _subWorthSaving(s) {
+  return s.checked && ((parseFloat(s.price) || 0) > 0 || String(s.name || '').trim());
+}
+
+function _slimStateObject(state) {
+  if (!state || !state.items) return state;
+  return {
+    items: state.items.filter(_itemWorthSaving).map(it => {
+      const o = { name: it.name, price: it.price, checked: it.checked };
+      if (it.qty !== undefined) o.qty = it.qty;
+      if (it.selectedPreset != null && it.selectedPreset >= 0) o.selectedPreset = it.selectedPreset;
+      if (it.customName) o.customName = it.customName;
+      if (it.customLabel) o.customLabel = it.customLabel;
+      if (it.selectedOptions && it.selectedOptions.length) o.selectedOptions = it.selectedOptions;
+      if (it.noteText) o.noteText = it.noteText;
+      return o;
+    }),
+    subs: (state.subs || []).filter(_subWorthSaving),
+    groupOpen: state.groupOpen,
+    cr: state.cr,
+    crState: state.crState,
+    marka: state.marka,
+    ebike: state.ebike,
+    tel: state.tel,
+    model: state.model,
+    kolor: state.kolor,
+    termin: state.termin,
+    notatka: state.notatka,
+  };
+}
+
+function _stateItemsKey(state) {
+  return JSON.stringify(_slimStateObject(state || {}).items || []);
+}
+
+function _stateSubsKey(state) {
+  return JSON.stringify(_slimStateObject(state || {}).subs || []);
+}
+
 // ── Właściwy zapis do localStorage (z fallbackami) ──
 function _doSave() {
   _setSaveStatus('saving');
-  const state = _buildStateObject();
+  const state = _slimStateObject(_buildStateObject());
   const json  = JSON.stringify(state);
 
   // Próba 1: pełny zapis
@@ -6839,10 +6891,10 @@ function saveWycena() {
     const existing = hist[dupIdx];
     const existingState = safeParseJSON(existing.state || '{}', {});
     const currentState  = safeParseJSON(localStorage.getItem('wycena-v2') || '{}', {});
-    const existingItems = JSON.stringify(existingState.items || []);
-    const currentItems  = JSON.stringify(currentState.items  || []);
-    const existingSubs  = JSON.stringify(existingState.subs  || []);
-    const currentSubs   = JSON.stringify(currentState.subs   || []);
+    const existingItems = _stateItemsKey(existingState);
+    const currentItems  = _stateItemsKey(currentState);
+    const existingSubs  = _stateSubsKey(existingState);
+    const currentSubs   = _stateSubsKey(currentState);
 
     if (existingItems !== currentItems || existingSubs !== currentSubs || existing.total !== total) {
       // Coś się zmieniło — nadpisz
@@ -7680,22 +7732,80 @@ function kopiaZapasowa() {
   $('kopia-modal').style.display = 'flex';
 }
 
-function kopiaZapasowalokalnie() {
+function _slimEntryForBackup(entry) {
+  if (!entry || !entry.state) return entry;
+  const st = safeParseJSON(entry.state, null);
+  if (!st || !st.items) return entry;
+  const next = JSON.stringify(_slimStateObject(st));
+  if (next === entry.state) return entry;
+  return Object.assign({}, entry, { state: next });
+}
+
+function _slimEntriesForBackup(arr) {
+  return (arr || []).map(_slimEntryForBackup);
+}
+
+function _slimAktywneForBackup(raw) {
+  if (!raw) return null;
+  const st = safeParseJSON(raw, null);
+  if (!st) return raw;
+  return JSON.stringify(_slimStateObject(st));
+}
+
+function _buildBackupPayload() {
+  return {
+    exportDate: new Date().toISOString(),
+    version: 2,
+    historia: _slimEntriesForBackup(JSON.parse(localStorage.getItem('wycena-history') || '[]')),
+    wydane:   _slimEntriesForBackup(JSON.parse(localStorage.getItem('wycena-archive') || '[]')),
+    kosz:     _slimEntriesForBackup(JSON.parse(localStorage.getItem('wycena-kosz')    || '[]')),
+    aktywne:  _slimAktywneForBackup(localStorage.getItem('wycena-v2')),
+  };
+}
+
+async function _backupToBlob() {
+  const json = JSON.stringify(_buildBackupPayload());
+  if (typeof CompressionStream !== 'undefined') {
+    const stream = new Blob([json], { type: 'application/json' }).stream()
+      .pipeThrough(new CompressionStream('gzip'));
+    const blob = await new Response(stream).blob();
+    return { blob, ext: '.json.gz', mime: 'application/gzip' };
+  }
+  return { blob: new Blob([json], { type: 'application/json' }), ext: '.json', mime: 'application/json' };
+}
+
+async function _parseBackupFile(file) {
+  const isGz = /\.gz$/i.test(file.name) || file.type === 'application/gzip';
+  let text;
+  if (isGz) {
+    if (typeof DecompressionStream === 'undefined') {
+      throw new Error('Przeglądarka nie obsługuje plików .gz — użyj Chrome, Edge lub Firefox.');
+    }
+    const stream = file.stream().pipeThrough(new DecompressionStream('gzip'));
+    text = await new Response(stream).text();
+  } else {
+    text = await file.text();
+  }
+  return JSON.parse(text);
+}
+
+function _restoreBackupData(backup) {
+  if (!backup.version || backup.historia === undefined) {
+    throw new Error('Nieprawidłowy plik kopii zapasowej.');
+  }
+  localStorage.setItem('wycena-history', JSON.stringify(backup.historia));
+  if (backup.wydane !== undefined) localStorage.setItem('wycena-archive', JSON.stringify(backup.wydane));
+  if (backup.kosz !== undefined) localStorage.setItem('wycena-kosz', JSON.stringify(backup.kosz));
+  if (backup.aktywne != null) localStorage.setItem('wycena-v2', backup.aktywne);
+}
+
+async function kopiaZapasowalokalnie() {
   const now = new Date();
   const datePart = now.toLocaleDateString('pl-PL', {day:'2-digit',month:'2-digit',year:'numeric'}).replace(/\./g,'-');
   const timePart = now.toLocaleTimeString('pl-PL', {hour:'2-digit',minute:'2-digit'}).replace(':','-');
-  const filename = 'kopia-serwis-' + datePart + '_' + timePart + '.json';
+  const { blob, ext } = await _backupToBlob();
+  const filename = 'kopia-serwis-' + datePart + '_' + timePart + ext;
 
-  const backup = {
-    exportDate: now.toISOString(),
-    version: 1,
-    historia: JSON.parse(localStorage.getItem('wycena-history') || '[]'),
-    wydane:   JSON.parse(localStorage.getItem('wycena-archive') || '[]'),
-    kosz:     JSON.parse(localStorage.getItem('wycena-kosz')    || '[]'),
-    aktywne:  localStorage.getItem('wycena-v2') || null,
-  };
-
-  const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url; a.download = filename;
@@ -7715,23 +7825,28 @@ function przywrocKopie() {
 function wczytajKopie(event) {
   const file = event.target.files[0];
   if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
+  (async () => {
     try {
-      const backup = JSON.parse(e.target.result);
-      if (!backup.version || !backup.historia) { alert('Nieprawidłowy plik kopii zapasowej.'); return; }
+      const backup = await _parseBackupFile(file);
+      if (!backup.version || backup.historia === undefined) {
+        alert('Nieprawidłowy plik kopii zapasowej.');
+        return;
+      }
       showConfirm('Przywrócić dane z kopii z dnia ' + (backup.exportDate ? new Date(backup.exportDate).toLocaleDateString('pl-PL') : '?') + '?\n\nAktualne dane zostaną zastąpione.', () => {
-        if (backup.historia) localStorage.setItem('wycena-history', JSON.stringify(backup.historia));
-        if (backup.wydane)   localStorage.setItem('wycena-archive', JSON.stringify(backup.wydane));
-        if (backup.kosz)     localStorage.setItem('wycena-kosz',    JSON.stringify(backup.kosz));
-        if (backup.aktywne)  localStorage.setItem('wycena-v2',      backup.aktywne);
+        try {
+          _restoreBackupData(backup);
+        } catch (err) {
+          alert(err.message || 'Błąd przywracania kopii.');
+          return;
+        }
         $('kopia-modal').style.display = 'none';
         sessionStorage.setItem('allow-reload', '1');
         location.reload();
       });
-    } catch { alert('Błąd odczytu pliku. Upewnij się że to prawidłowy plik kopii zapasowej.'); }
-  };
-  reader.readAsText(file);
+    } catch {
+      alert('Błąd odczytu pliku. Upewnij się że to prawidłowy plik kopii zapasowej (.json lub .json.gz).');
+    }
+  })();
   event.target.value = '';
 }
 
@@ -7754,30 +7869,17 @@ async function kopiaGoogleDrive() {
   if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; }
 
   try {
-    // Przygotuj dane do zapisania
     const now = new Date();
     const datePart = now.toLocaleDateString('pl-PL', {day:'2-digit',month:'2-digit',year:'numeric'}).replace(/\./g,'-');
     const timePart = now.toLocaleTimeString('pl-PL', {hour:'2-digit',minute:'2-digit'}).replace(':','-');
-    const filename = 'kopia-serwis-' + datePart + '_' + timePart + '.json';
+    const { blob, ext, mime } = await _backupToBlob();
+    const filename = 'kopia-serwis-' + datePart + '_' + timePart + ext;
 
-    const backup = {
-      exportDate: now.toISOString(),
-      version: 1,
-      historia: JSON.parse(localStorage.getItem('wycena-history') || '[]'),
-      wydane:   JSON.parse(localStorage.getItem('wycena-archive') || '[]'),
-      kosz:     JSON.parse(localStorage.getItem('wycena-kosz')    || '[]'),
-      aktywne:  localStorage.getItem('wycena-v2') || null,
-    };
-    const json = JSON.stringify(backup, null, 2);
-
-    // Znajdź lub utwórz folder na Drive
     const folderId = await _getFolderId();
 
-    // Zapisz plik na Drive
-    await _saveFile(folderId, filename, json);
+    await _saveFile(folderId, filename, blob, mime);
 
-    // Zapisz też jako "kopia-serwis-latest.json" dla łatwego znalezienia
-    await _saveFile(folderId, 'kopia-serwis-latest.json', json);
+    await _saveFile(folderId, 'kopia-serwis-latest' + ext, blob, mime);
 
     // Zapisz datę kopii
     localStorage.setItem('last-backup-gdrive', now.toISOString());
@@ -11114,7 +11216,8 @@ async function _getFolderId() {
   return id;
 }
 
-async function _saveFile(folderId, filename, json) {
+async function _saveFile(folderId, filename, body, contentType = 'application/json') {
+  const fileBody = body instanceof Blob ? body : new Blob([body], { type: contentType });
   const q = encodeURIComponent("name='" + filename + "' and '" + folderId + "' in parents and trashed=false");
   const search = await _driveReq('GET',
     'https://www.googleapis.com/drive/v3/files?q=' + q + '&fields=files(id)');
@@ -11122,13 +11225,13 @@ async function _saveFile(folderId, filename, json) {
   if (fileId) {
     await fetch('https://www.googleapis.com/upload/drive/v3/files/' + fileId + '?uploadType=media', {
       method: 'PATCH',
-      headers: { Authorization: 'Bearer ' + gdriveToken, 'Content-Type': 'application/json' },
-      body: json
+      headers: { Authorization: 'Bearer ' + gdriveToken, 'Content-Type': contentType },
+      body: fileBody
     });
   } else {
     const form = new FormData();
     form.append('metadata', new Blob([JSON.stringify({ name: filename, parents: [folderId] })], { type: 'application/json' }));
-    form.append('file',     new Blob([json], { type: 'application/json' }));
+    form.append('file', fileBody);
     await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
       method: 'POST', headers: { Authorization: 'Bearer ' + gdriveToken }, body: form
     });
@@ -11677,7 +11780,7 @@ window.cselSetValue = cselSetValue;
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/></svg>
       Przywróć dane
     </button>
-    <input type="file" id="kopia-file-input" accept=".json" style="display:none" onchange="wczytajKopie(event)">
+    <input type="file" id="kopia-file-input" accept=".json,.json.gz,application/json,application/gzip" style="display:none" onchange="wczytajKopie(event)">
   </div>
 </div>
 
@@ -11687,7 +11790,7 @@ window.cselSetValue = cselSetValue;
     <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
     <div>
       <div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:6px;">Kopia lokalna</div>
-      <div style="font-size:13px;color:var(--text3);line-height:1.6;">Plik <code style="color:#22c55e;font-size:12px;">kopia-serwis-*.json</code> zostanie pobrany na Twoje urządzenie. Przechowuj go w bezpiecznym miejscu.</div>
+      <div style="font-size:13px;color:var(--text3);line-height:1.6;">Plik <code style="color:#22c55e;font-size:12px;">kopia-serwis-*.json.gz</code> (skompresowany) zostanie pobrany na Twoje urządzenie. Przechowuj go w bezpiecznym miejscu.</div>
     </div>
     <div style="display:flex;gap:10px;">
       <button onclick="$('kopia-lokalnie-modal').style.display='none'" class="btn-close btn-cancel ui-tile ui-tile--sm ui-tile--danger" style="flex:1;margin-left:0;">Anuluj</button>
