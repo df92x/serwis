@@ -2468,9 +2468,6 @@ body > .app .flat-list .item-card.qty-zero{
       <button type="button" onclick="startLancuch()" class="start-icon-btn ui-tile ui-tile--md ui-tile--info" title="Łańcuch" aria-label="Łańcuch">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
       </button>
-      <button type="button" onclick="copyCrSmsToClipboard()" class="start-icon-btn ui-tile ui-tile--md ui-tile--naprawa" title="Kopiuj treść SMS CR" aria-label="Kopiuj treść SMS CR">
-        <span class="start-icon-cr-label">CR</span>
-      </button>
     </div>
 
     <style>
@@ -2490,10 +2487,10 @@ body > .app .flat-list .item-card.qty-zero{
 }
       .sync-dot-blink { animation: blink-red 0.9s ease-in-out infinite; }
 
-      /* Menu główne: ikony pod kalendarzem, układ 2-1-1-1 */
+      /* Menu główne: ikony pod kalendarzem, układ 2-1-1 */
       .start-icon-grid{
         display:grid;
-        grid-template-columns:2fr 1fr 1fr 1fr;
+        grid-template-columns:2fr 1fr 1fr;
         gap:8px;
         width:100%;
         margin-top:10px;
@@ -3388,16 +3385,6 @@ function _applyKolorPreviewEl(el, kolor) {
   el.style.background = _kolorBackgroundStyle(kolor);
 }
 
-// Treść SMS — rower CR gotowy do odbioru (menu główne — bez kodu)
-function _smsCrBody() {
-  return 'Dzień dobry,\n'
-    + 'Zamawiany rower jest już przygotowany do odbioru.\n'
-    + 'Przed odbiorem prosimy zapoznać się z krótką informacją\n'
-    + 'www.rowpol.pl/info\n\n'
-    + 'Zapraszamy!\n'
-    + 'Serwis ROW-POL';
-}
-
 function isEntryCr(entry) {
   if (!entry) return false;
   if (entry.cr === true || entry.cr === 1 || entry.cr === '1') return true;
@@ -3430,29 +3417,6 @@ function _smsWydanieBody(entry) {
   return rowerStr + ' - przygotowany do odbioru\n\nGodziny otwarcia\nPn-pt 10:00-18:00\nSobota 9:00-14:00\n\nKwota do zapłaty - '
     + entry.total + ' zł\nPłatność gotówka/karta/BLIK\n\nKod odbioru: ' + (entry.kodOdbioru || '–');
 }
-async function copyCrSmsToClipboard() {
-  const text = _smsCrBody();
-  try {
-    if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
-      await navigator.clipboard.writeText(text);
-      return;
-    }
-  } catch (e) { /* fallback below */ }
-  try {
-    const ta = document.createElement('textarea');
-    ta.value = text;
-    ta.setAttribute('readonly', '');
-    ta.style.position = 'fixed';
-    ta.style.left = '-9999px';
-    ta.style.top = '0';
-    document.body.appendChild(ta);
-    ta.select();
-    ta.setSelectionRange(0, ta.value.length);
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-  } catch (e2) { /* silent */ }
-}
-window.copyCrSmsToClipboard = copyCrSmsToClipboard;
 
 // Pomocnicza: nazwa roweru do SMS
 function _smsRower(marka, model) {
