@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-<meta name="app-build" content="2026-07-02T16:25:33.986Z">
+<meta name="app-build" content="2026-07-02T16:28:06.606Z">
 <meta charset="UTF-8">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -14887,6 +14887,34 @@ window.cselSetValue = cselSetValue;
 
 
 <script>
+function _guessGhRepoFromLocation() {
+  try {
+    var host = String(window.location.hostname || '').toLowerCase();
+    var m = host.match(/^([^.]+)\.github\.io$/);
+    if (!m) return '';
+    var user = m[1];
+    var seg = String(window.location.pathname || '').replace(/^\/+|\/+$/g, '').split('/').filter(Boolean)[0] || '';
+    if (seg && seg.toLowerCase() !== user.toLowerCase()) return user + '/' + seg;
+    return user + '/' + user;
+  } catch (e) { return ''; }
+}
+
+function _normalizeGhRepo(raw) {
+  var repo = String(raw || '').trim();
+  if (!repo) return _guessGhRepoFromLocation();
+  repo = repo.replace(/^https?:\/\//i, '');
+  repo = repo.replace(/^www\./i, '');
+  repo = repo.replace(/^github\.com\//i, '');
+  repo = repo.replace(/\.git$/i, '');
+  repo = repo.split('?')[0].split('#')[0];
+  repo = repo.replace(/\/+$/, '');
+  if (repo.indexOf('/') < 0) {
+    var guess = _guessGhRepoFromLocation();
+    if (guess && guess.indexOf('/') >= 0) return guess.split('/')[0] + '/' + repo;
+  }
+  return repo;
+}
+
 function ghModalClose() {
   var m = document.getElementById('github-update-modal');
   if (m) m.remove();
@@ -14897,7 +14925,7 @@ function otworzGithubUpdate() {
   if (old) old.remove();
 
   var token = localStorage.getItem('gh_token') || '';
-  var repo  = localStorage.getItem('gh_repo')  || '';
+  var repo  = localStorage.getItem('gh_repo') || _guessGhRepoFromLocation() || '';
 
   var overlay = document.createElement('div');
   overlay.id = 'github-update-modal';
@@ -14930,9 +14958,10 @@ function otworzGithubUpdate() {
         </div>
       </div>
       <div style="display:flex;flex-direction:column;gap:6px;">
-        <label style="font-size:11px;font-weight:700;color:#8b949e;text-transform:uppercase;letter-spacing:.6px;">Serwer</label>
+        <label style="font-size:11px;font-weight:700;color:#8b949e;text-transform:uppercase;letter-spacing:.6px;">Repo GitHub</label>
         <input type="text" id="gh-repo-input" placeholder="df92x/serwis"
-          style="width:100%;font-size:13px;padding:10px 12px;border:1px solid #30363d;border-radius:8px;background:#161b22;color:#e6edf3;outline:none;">
+          style="width:100%;font-size:13px;padding:10px 12px;border:1px solid #30363d;border-radius:8px;background:#161b22;color:#e6edf3;outline:none;"
+          autocomplete="off" spellcheck="false">
       </div>
       <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:#8b949e;">
         <input type="checkbox" id="gh-save" checked style="accent-color:#238636;">
@@ -14994,7 +15023,9 @@ function ghStatus(msg, type) {
 // ── Auto-update GitHub ──
 async function githubUpdate() {
   var token = (document.getElementById('gh-token-input') || {value:''}).value.trim();
-  var repo  = (document.getElementById('gh-repo-input')  || {value:''}).value.trim().replace(/^https?:\/\/github\.com\//,'').replace(/\/$/,'');
+  var repoEl = document.getElementById('gh-repo-input');
+  var repo = _normalizeGhRepo(repoEl ? repoEl.value : '');
+  if (repoEl && repo) repoEl.value = repo;
   var fileInput = document.getElementById('gh-file-input');
   var file = fileInput && fileInput.files[0];
 
@@ -15003,7 +15034,10 @@ async function githubUpdate() {
     ghStatus('⚠️ Token wygląda niepoprawnie (oczekiwane: ghp_… lub github_pat_…)', 'err');
     return;
   }
-  if (!repo || !repo.includes('/')) { ghStatus('⚠️ Wpisz repo: user/nazwa', 'err'); return; }
+  if (!repo || repo.indexOf('/') < 0) {
+    ghStatus('⚠️ Wpisz repo GitHub: user/nazwa (np. df92x/serwis)', 'err');
+    return;
+  }
   if (!file) { ghStatus('⚠️ Wybierz plik HTML!', 'err'); return; }
   if (!/\.html$/i.test(file.name || '')) { ghStatus('⚠️ Plik musi mieć rozszerzenie .html', 'err'); return; }
 
