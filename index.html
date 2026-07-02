@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
+<meta name="app-build" content="2026-07-02T16:11:28.355Z">
 <meta charset="UTF-8">
-<meta name="app-build" content="2026-07-02T16:09:59.307Z">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14448,7 +14448,7 @@ window.euroConvert    = euroConvert;
   if (ml) ml.href = URL.createObjectURL(new Blob([JSON.stringify(manifest)], {type:'application/manifest+json'}));
   if ('serviceWorker' in navigator) {
     const sw = `"use strict";
-var C="wycena-v4";
+var C="wycena-v3";
 var CORE=["."];
 function isCacheable(req){
   try{
@@ -14459,44 +14459,30 @@ function isCacheable(req){
     return true;
   }catch(e){ return false; }
 }
-function isAppShell(req){
-  if(req.mode==="navigate") return true;
-  try{
-    var p=new URL(req.url).pathname;
-    return p==="/"||/index\\.html$/i.test(p);
-  }catch(e){ return false; }
-}
-function networkFirst(req){
-  return fetch(req).then(function(res){
-    if(res && res.ok && res.type==="basic"){
-      caches.open(C).then(function(c){ c.put(req,res.clone()); });
-    }
-    return res;
-  }).catch(function(){
-    return caches.match(req).then(function(r){ return r||caches.match("."); });
-  });
-}
 self.addEventListener("install",function(e){
   e.waitUntil(caches.open(C).then(function(c){ return c.addAll(CORE); }));
   self.skipWaiting();
 });
 self.addEventListener("activate",function(e){
   e.waitUntil(caches.keys().then(function(ks){
-    return Promise.all(ks.filter(function(k){return k!==C;}).map(function(k){return caches.delete(k);}));
+    return Promise.all(ks.filter(function(k){return k!==C;}).map(function(k){return caches.delete(k);})); 
   }));
   self.clients.claim();
 });
 self.addEventListener("fetch",function(e){
   var req=e.request;
   if(!isCacheable(req)) return;
-  if(isAppShell(req)){
-    e.respondWith(networkFirst(req));
-    return;
-  }
   e.respondWith(
     caches.match(req).then(function(r){
       if(r) return r;
-      return networkFirst(req);
+      return fetch(req).then(function(res){
+        try{
+          if(res && res.ok && res.type==="basic"){
+            caches.open(C).then(function(c){ c.put(req,res.clone()); });
+          }
+        }catch(_){}
+        return res;
+      }).catch(function(){ return caches.match("."); });
     })
   );
 });`;
@@ -15006,83 +14992,6 @@ function ghStatus(msg, type) {
 }
 
 // ── Auto-update GitHub ──
-function _injectAppBuildMeta(html, buildIso) {
-  var meta = '<meta name="app-build" content="' + buildIso + '">';
-  if (/<meta\s+name=["']app-build["']/i.test(html)) {
-    return html.replace(/<meta\s+name=["']app-build["'][^>]*>/i, meta);
-  }
-  return html.replace(/<head>/i, '<head>\n' + meta);
-}
-
-function _githubPagesLiveUrl(repo) {
-  var parts = String(repo || '').split('/');
-  if (parts.length < 2 || !parts[0] || !parts[1]) return '';
-  return 'https://' + parts[0] + '.github.io/' + parts[1] + '/';
-}
-
-function _sleep(ms) {
-  return new Promise(function(resolve) { setTimeout(resolve, ms); });
-}
-
-async function _waitForGithubPages(repo, token, buildIso, onTick) {
-  var liveUrl = _githubPagesLiveUrl(repo);
-  if (!liveUrl) return { ok: false, url: '' };
-  var since = Date.parse(buildIso) || Date.now();
-  var headers = {
-    'Authorization': 'Bearer ' + token,
-    'Accept': 'application/vnd.github+json',
-    'X-GitHub-Api-Version': '2022-11-28'
-  };
-  var started = Date.now();
-  var deadline = started + 90000;
-  while (Date.now() < deadline) {
-    var elapsed = Math.round((Date.now() - started) / 1000);
-    if (onTick) onTick(elapsed);
-
-    try {
-      var pageRes = await fetch(liveUrl + 'index.html?ghdeploy=' + Date.now(), { cache: 'no-store' });
-      if (pageRes.ok) {
-        var html = await pageRes.text();
-        var m = html.match(/<meta\s+name=["']app-build["']\s+content=["']([^"']+)["']/i);
-        if (m) {
-          var buildTime = Date.parse(m[1]);
-          if (!isNaN(buildTime) && buildTime >= since - 5000) return { ok: true, url: liveUrl };
-        }
-      }
-    } catch (_) {}
-
-    try {
-      var apiRes = await fetch('https://api.github.com/repos/' + repo + '/pages/builds/latest', { headers: headers });
-      if (apiRes.ok) {
-        var b = await apiRes.json();
-        if (b.status === 'errored') throw new Error('GitHub Pages: build nieudany');
-        if (b.status === 'built') {
-          var buildAt = Date.parse(b.updated_at || b.created_at || 0);
-          if (buildAt >= since - 15000) return { ok: true, url: liveUrl };
-        }
-      }
-    } catch (e) {
-      if (e && e.message && e.message.indexOf('build nieudany') >= 0) throw e;
-    }
-
-    await _sleep(5000);
-  }
-  return { ok: false, url: liveUrl };
-}
-
-async function _purgeAppCaches() {
-  try {
-    if ('caches' in window) {
-      var keys = await caches.keys();
-      await Promise.all(keys.map(function(k) { return caches.delete(k); }));
-    }
-    if ('serviceWorker' in navigator) {
-      var regs = await navigator.serviceWorker.getRegistrations();
-      await Promise.all(regs.map(function(r) { return r.unregister(); }));
-    }
-  } catch (_) {}
-}
-
 async function githubUpdate() {
   var token = (document.getElementById('gh-token-input') || {value:''}).value.trim();
   var repo  = (document.getElementById('gh-repo-input')  || {value:''}).value.trim().replace(/^https?:\/\/github\.com\//,'').replace(/\/$/,'');
@@ -15090,7 +14999,6 @@ async function githubUpdate() {
   var file = fileInput && fileInput.files[0];
 
   if (!token) { ghStatus('⚠️ Wpisz Token!', 'err'); return; }
-  // Podstawowa walidacja formatu (GitHub classic: ghp_..., fine-grained: github_pat_...)
   if (!/^ghp_[A-Za-z0-9_]{20,}$/.test(token) && !/^github_pat_[A-Za-z0-9_]{20,}$/.test(token)) {
     ghStatus('⚠️ Token wygląda niepoprawnie (oczekiwane: ghp_… lub github_pat_…)', 'err');
     return;
@@ -15111,7 +15019,6 @@ async function githubUpdate() {
   var btn = document.getElementById('gh-upload-btn');
   if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; }
 
-  // Zawsze publikujemy jako index.html (nazwa lokalnego pliku nie ma znaczenia)
   var apiUrl = 'https://api.github.com/repos/' + repo + '/contents/index.html';
   var headers = {
     'Authorization': 'Bearer ' + token,
@@ -15141,16 +15048,14 @@ async function githubUpdate() {
     }
 
     ghStatus('📄 Wczytywanie pliku…', 'info');
-    var buildIso = new Date().toISOString();
     var html = await new Promise(function(resolve, reject) {
       var reader = new FileReader();
       reader.onload = function(e) { resolve(e.target.result); };
       reader.onerror = function() { reject(new Error('Błąd odczytu pliku')); };
       reader.readAsText(file, 'UTF-8');
     });
-    html = _injectAppBuildMeta(html, buildIso);
 
-    ghStatus('⬆️ Wysyłanie na GitHub…', 'info');
+    ghStatus('⬆️ Wysyłanie…', 'info');
     var body = {
       message: 'Update App ' + new Date().toLocaleString('pl-PL'),
       content: btoa(unescape(encodeURIComponent(html))),
@@ -15167,31 +15072,14 @@ async function githubUpdate() {
       throw new Error(m);
     }
 
-    // Zapisz datę kliknięcia
-    localStorage.setItem('gh_last_update', buildIso);
+    localStorage.setItem('gh_last_update', new Date().toISOString());
 
-    ghStatus('⏳ Czekam na GitHub Pages… (do 90 s)', 'info');
-    var deploy = await _waitForGithubPages(repo, token, buildIso, function(sec) {
-      ghStatus('⏳ GitHub Pages publikuje… ' + sec + ' s', 'info');
-    });
-
-    if (deploy.ok) {
-      ghStatus('✅ Opublikowano na GitHub Pages', 'ok');
-    } else {
-      ghStatus('✅ Wysłano na GitHub — Pages może potrzebować jeszcze 1–2 min', 'ok');
-    }
-
-    await _purgeAppCaches();
-
+    ghStatus('✅ Wykonano', 'ok');
     setTimeout(function() {
       ghModalClose();
       updateAdminSyncRow();
-      if (deploy.ok && confirm('Update jest już na serwerze.\nOdświeżyć aplikację teraz?')) {
-        location.reload();
-        return;
-      }
       $('start-overlay').style.display = 'flex';
-    }, 1200);
+    }, 1000);
   } catch(e) {
     ghStatus('❌ ' + (e.message || String(e)), 'err');
     if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
