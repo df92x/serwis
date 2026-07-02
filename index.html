@@ -218,7 +218,14 @@
 }
 /* start-cta → ui-tile v4 */
 .start-cta-slot { flex: 0 0 80px; display: flex; align-items: center; justify-content: center; }
-.start-cta-label { flex: 1; text-align: center; }
+.start-cta-label {
+  flex: 1;
+  text-align: center;
+  font-size: 22px;
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
 
 /* ── Design system v3: layout, dialogi, karty ── */
 .link-tel { color: var(--color-link) !important; font-weight: 600; text-decoration: none; }
@@ -479,6 +486,16 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
   color:#fff;
 }
 #history-overlay .btn-kosz-header svg{ flex-shrink:0; display:block; }
+#history-overlay .btn-archive-header{
+  min-width:33px;
+  padding:6px 10px;
+  font-family:inherit;
+}
+#history-overlay #tab-archive-full.active{
+  border-color:var(--solid-archiwum-border);
+  background:var(--solid-archiwum-bg);
+  color:#c4b5fd;
+}
 
 /* ── Summary card ── */
 .summary-card {
@@ -1255,23 +1272,283 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
 .btn-save:active { transform: scale(0.97); }
 .btn-save:hover { filter: brightness(1.08); }
 .history-item {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 10px 12px;
-  display: flex; flex-direction: column; gap: 8px;
-  transition: border-color 0.15s;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  display: flex; flex-direction: column; gap: 0;
+  transition: none;
   margin-bottom: 10px;
   position: relative;
-  overflow: hidden;
-  padding-left: 34px;
+  overflow: visible;
 }
-.history-item.hl-red,
-.history-item.hl-green,
-.history-item.hl-purple{
-  border-color: var(--border-panel) !important;
-  background-color: var(--bg-panel) !important;
-  box-shadow: 0 0 0 1px var(--text3) !important;
+.history-item-row{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  width:100%;
+}
+.history-order-card{
+  flex:1;
+  min-width:0;
+}
+.history-order-card-head{
+  display:flex;
+  align-items:stretch;
+  justify-content:space-between;
+  gap:8px;
+  padding-right:4px;
+  position:relative;
+  overflow:hidden;
+}
+.history-order-card .history-order-card-head{
+  align-items:stretch;
+}
+.history-order-card-head .podglad-summary-bike{
+  flex:1;
+  min-width:0;
+  padding-right:8px;
+  padding-left:14px;
+}
+.history-order-card .history-order-card-head .podglad-summary-bike{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:8px;
+}
+.history-order-card .podglad-summary-bike .podglad-bike-name{
+  margin:0;
+  padding:0;
+}
+.history-item-actions--top{
+  flex-shrink:0;
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  align-items:center;
+  justify-content:flex-end;
+  max-width:58%;
+  margin:0;
+  padding:10px 8px 0 0;
+}
+.history-order-card .history-item-actions--top{
+  padding:0;
+}
+.history-item-price-col{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:4px;
+  flex-shrink:0;
+  padding-top:10px;
+}
+.history-item-total--prev{
+  font-size:19px;
+  color:#6b7280;
+}
+.history-kod-odbioru{
+  display:flex;
+  margin-top:4px;
+}
+.history-kod-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  font-size:15px;
+  font-weight:800;
+  letter-spacing:2px;
+  min-height:34px;
+  padding:6px 12px;
+  cursor:default;
+  pointer-events:none;
+}
+.history-ebike-badge{
+  margin-left:5px;
+  font-size:16px;
+}
+.history-item-details{
+  margin-top:8px;
+  padding:8px 2px 0;
+  border-top:1px solid var(--border-panel);
+}
+.history-order-card .history-item-details{
+  margin:0;
+  padding:0;
+  border-top:1px solid var(--border-panel);
+  background:var(--bg-panel);
+}
+.history-order-card .history-item-details-inner{
+  padding:12px 14px 14px;
+}
+.history-order-card .history-item-details table{
+  width:100%;
+  border-collapse:collapse;
+}
+.history-order-card .history-item-details td{
+  padding:8px 10px;
+  font-size:14px;
+  color:var(--text);
+  border-bottom:1px solid var(--border-panel);
+  vertical-align:top;
+}
+.history-order-card .history-item-details td:last-child{
+  color:var(--text2);
+  text-align:right;
+  white-space:nowrap;
+}
+.history-order-card .history-item-details tr:last-child td{
+  border-bottom:none;
+}
+.history-order-card .history-item-details-empty{
+  padding:10px 8px;
+  font-size:13px;
+  font-style:italic;
+  color:var(--text3);
+  text-align:center;
+}
+.history-order-card .history-item-details-notatka{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  margin-top:0;
+  margin-bottom:10px;
+  padding:10px 12px;
+  border:1px solid var(--border-panel);
+  border-left:3px solid var(--blue);
+  border-radius:8px;
+  font-size:14px;
+  color:var(--text);
+  line-height:1.5;
+  white-space:pre-wrap;
+  background:var(--bg-elevated);
+}
+.history-notatka-ico{
+  flex-shrink:0;
+  display:flex;
+  align-items:center;
+  color:#fbbf24;
+  margin-top:1px;
+}
+.history-notatka-txt{
+  flex:1;
+  min-width:0;
+}
+.notatka-zlecenie-readonly{
+  margin:0 4px 14px;
+  padding:12px 14px;
+  border:1px solid var(--border-panel);
+  border-left:3px solid var(--blue);
+  border-radius:10px;
+  background:var(--bg-elevated);
+}
+.notatka-zlecenie-readonly__lbl{
+  font-size:10px;
+  font-weight:700;
+  color:var(--text3);
+  text-transform:uppercase;
+  letter-spacing:.6px;
+  margin-bottom:6px;
+}
+.notatka-zlecenie-readonly__txt{
+  font-size:14px;
+  color:var(--text);
+  line-height:1.55;
+  white-space:pre-wrap;
+}
+.podsumowanie-notatka-zlecenie{
+  padding:10px 12px;
+  border-bottom:1px solid var(--border-panel);
+  background:var(--bg-elevated);
+}
+.podsumowanie-notatka-zlecenie .notatka-zlecenie-readonly__lbl{
+  margin-bottom:5px;
+}
+#podglad-overlay .overlay-header{
+  margin-bottom:12px;
+}
+#podglad-header{
+  margin-top:2px;
+  margin-bottom:14px;
+  padding-bottom:0;
+  border-bottom:none;
+}
+#klient-historia-modal .klient-historia-body{
+  padding:0 16px 40px;
+}
+.klient-historia-header-text{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  min-width:0;
+}
+.klient-historia-summary{
+  margin-bottom:12px;
+}
+.klient-historia-summary-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+.klient-historia-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.klient-historia-item{
+  margin-bottom:0 !important;
+  cursor:pointer;
+}
+.klient-historia-item:active .history-order-card{
+  filter:brightness(1.06);
+}
+.klient-historia-status{
+  margin-top:4px;
+}
+.klient-historia-badge{
+  display:inline-flex;
+  align-items:center;
+  font-size:10px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.55px;
+  padding:3px 10px;
+  border-radius:999px;
+  border:1px solid var(--border-panel);
+}
+.klient-historia-badge--archiwum{
+  background:var(--solid-tab-archiwum-bg);
+  border-color:var(--solid-tab-archiwum-border);
+  color:#ddd6fe;
+}
+.klient-historia-badge--wydanie{
+  background:var(--solid-tab-wydanie-bg);
+  border-color:var(--solid-tab-wydanie-border);
+  color:#bbf7d0;
+}
+.klient-historia-badge--historia{
+  background:var(--solid-tab-historia-bg);
+  border-color:var(--solid-tab-historia-border);
+  color:#fca5a5;
+}
+.klient-historia-open-ico{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--text3);
+  padding:4px 2px;
+}
+.klient-historia-item .history-order-card-head .history-item-actions--top{
+  padding-top:14px;
+  max-width:none;
+}
+#history-list .history-item.history-item--termin-soon .history-order-card,
+#history-list .history-item.history-item--termin-soon .history-order-card:hover{
+  border-color:var(--solid-tab-historia-border) !important;
+}
+.history-item.hl-red .history-order-card,
+.history-item.hl-green .history-order-card,
+.history-item.hl-purple .history-order-card{
+  box-shadow:0 0 0 1px var(--text3) !important;
 }
 .zlecenie-grupa {
   border-radius: 14px;
@@ -1350,27 +1627,60 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
 }
 #history-list .history-item.history-item--termin-soon,
 #history-list .history-item.history-item--termin-soon:hover {
-  border-color: var(--solid-tab-historia-border) !important;
+  border-color: transparent !important;
 }
 .history-color-bar{
   position:absolute;
   left:0; top:0; bottom:0;
   width:var(--color-bar-w);
-  border-radius:var(--radius-md) 0 0 var(--radius-md);
+  border-radius:0;
+  z-index:1;
 }
-.history-item:hover { background: var(--bg-elevated); }
-.history-item-details-tel{
+.podglad-summary-card .history-color-bar,
+.podglad-summary-bike .history-color-bar{
+  border-radius:12px 0 0 0;
+}
+.history-order-card{
+  position:relative;
+}
+.history-order-card:has(> .history-color-bar){
+  padding-left:var(--color-bar-w);
+}
+.history-order-card > .history-color-bar{
+  border-radius:12px 0 0 12px;
+}
+.history-item:hover { background: transparent; }
+.history-item-details-tel,
+.history-item-details-kod{
   display:flex;
   justify-content:center;
   margin-bottom:10px;
 }
-.history-item-details-tel .link-tel{
+.history-item-details-tel + .history-item-details-kod{
+  margin-top:-4px;
+}
+.history-details-chip{
   display:inline-flex;
   align-items:center;
-  gap:6px;
-  font-size:var(--text-md);
-  font-weight:600;
+  justify-content:center;
+  gap:8px;
+  max-width:100%;
+  font-size:17px;
+  font-weight:800;
+  letter-spacing:0;
+  text-decoration:none;
+  box-sizing:border-box;
 }
+.history-details-chip.ui-tile--md{
+  padding:10px 18px;
+  min-width:min(100%, 220px);
+}
+.history-details-kod-btn{
+  letter-spacing:2px;
+  cursor:default;
+  pointer-events:none;
+}
+.app-ico{ flex-shrink:0; }
 .history-item-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
 .history-item-info { flex: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 .history-item-total { font-size: var(--text-lg); font-weight: 800; color: var(--text); flex-shrink: 0; letter-spacing: -0.5px; }
@@ -1550,7 +1860,7 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
   padding:0 16px 40px !important;
 }
 .podsumowanie-section{
-  margin-bottom:4px;
+  margin-bottom:10px;
 }
 .podsumowanie-section-toggle{
   width:100%;
@@ -1612,6 +1922,337 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
   color:var(--text2);
   background:var(--bg2);
   border-bottom:1px solid var(--border);
+}
+.podglad-summary-card{
+  background:var(--bg-panel);
+  border:1px solid var(--border-panel);
+  border-radius:12px;
+  overflow:hidden;
+}
+.podglad-summary-bike{
+  position:relative;
+  padding:12px 14px 12px 28px;
+  overflow:hidden;
+}
+.podglad-summary-bike .podglad-bike-name{
+  font-size:var(--text-md);
+  font-weight:800;
+  color:var(--text);
+  margin-bottom:8px;
+  line-height:1.2;
+}
+.history-order-card .podglad-summary-bike{
+  padding-top:14px;
+  padding-bottom:14px;
+}
+.history-order-card .podglad-summary-bike .podglad-bike-name{
+  font-size:20px;
+  font-weight:800;
+  letter-spacing:-0.3px;
+  margin-bottom:6px;
+  line-height:1.15;
+}
+.history-order-card .podglad-summary-bike .podglad-bike-tel{
+  font-size:17px;
+}
+.history-contact-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:nowrap;
+  margin:0;
+  min-height:36px;
+}
+.history-contact-row .history-contact-chip,
+.history-contact-row .history-tel-btn,
+.history-contact-row .history-kod-chip{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  height:36px;
+  min-height:36px;
+  max-height:36px;
+  padding:0 12px !important;
+  margin:0 !important;
+  box-sizing:border-box;
+  line-height:1;
+  flex-shrink:0;
+  font-size:15px;
+  font-weight:800;
+  text-decoration:none;
+}
+.history-contact-row .history-kod-chip{ pointer-events:none; }
+.history-order-card .history-contact-row .history-kod-odbioru{
+  margin:0;
+  display:contents;
+}
+.history-tel-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  text-decoration:none;
+  font-weight:800;
+  font-size:15px;
+  padding:6px 12px;
+  min-height:34px;
+}
+.history-order-card .history-kod-odbioru{
+  margin-top:5px;
+}
+.history-order-card .history-contact-row .history-kod-odbioru{
+  margin-top:0;
+}
+.history-order-card .history-kod-chip{
+  font-size:15px;
+  min-height:34px;
+}
+.history-order-card .podglad-meta-item{
+  padding:12px 10px;
+  gap:4px;
+  justify-content:center;
+  min-height:58px;
+}
+.history-order-card .podglad-meta-k{
+  font-size:11px;
+  letter-spacing:.55px;
+}
+.history-order-card .podglad-meta-v{
+  font-size:15px;
+  font-weight:800;
+  line-height:1.15;
+}
+.history-order-card .podglad-meta-w{
+  font-size:13px;
+  font-weight:600;
+}
+.history-order-card .podglad-meta-v--price{
+  font-size:24px;
+  font-weight:800;
+  letter-spacing:-0.5px;
+  line-height:1.1;
+}
+.history-order-card .podglad-meta-item--price{
+  align-items:center;
+  text-align:center;
+  justify-content:center;
+}
+.history-order-card .podglad-meta-item--price .podglad-meta-k,
+.history-order-card .podglad-meta-item--price .podglad-meta-v,
+.history-order-card .podglad-meta-item--price .podglad-meta-w{
+  text-align:center;
+  width:100%;
+}
+.history-order-card .podglad-meta-item--price .podglad-meta-k{
+  font-size:12px;
+}
+.history-order-card .podglad-meta-w--prev{
+  font-size:13px;
+}
+.history-order-card .history-order-head-price .history-item-total{
+  font-size:22px;
+}
+.history-order-card .history-order-head-price .history-item-total--prev{
+  font-size:17px;
+}
+.history-order-card .history-ebike-badge{
+  font-size:18px;
+}
+.podglad-summary-bike .podglad-bike-tel{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-size:15px;
+  font-weight:600;
+  color:#3b7cf4;
+  text-decoration:none;
+}
+.podglad-meta-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:0;
+  border-top:1px solid var(--border-panel);
+}
+.podglad-meta-item{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+  padding:10px 8px;
+  min-width:0;
+  border-right:1px solid var(--border-panel);
+}
+.podglad-meta-item:last-child{border-right:none;}
+.podglad-meta-k{
+  font-size:9px;
+  font-weight:700;
+  color:var(--text3);
+  text-transform:uppercase;
+  letter-spacing:.5px;
+}
+.podglad-meta-k--inline{
+  font-size:14px;
+  font-weight:900;
+  letter-spacing:-0.2px;
+  color:var(--text);
+  white-space:nowrap;
+  flex-shrink:0;
+}
+.podglad-meta-item--compact{
+  gap:16px;
+  justify-content:space-between;
+  flex-direction:row;
+  align-items:center;
+}
+.podglad-meta-compact-left{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:2px;
+  min-width:0;
+  padding-right:2px;
+}
+.podglad-meta-item--compact .podglad-meta-k{
+  line-height:1.05;
+}
+.podglad-meta-item--compact .podglad-meta-w{
+  line-height:1.05;
+}
+.podglad-meta-compact-date{
+  font-size:22px;
+  font-weight:900;
+  letter-spacing:-0.2px;
+  line-height:1;
+  color:var(--text);
+  white-space:nowrap;
+  flex-shrink:0;
+}
+.podglad-meta-item--compact .podglad-meta-k{
+  flex-shrink:1;
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.history-order-card .podglad-meta-grid--list .podglad-meta-item{
+  min-height:0;
+  padding:7px 8px;
+  gap:2px;
+}
+.history-order-card .podglad-meta-grid--list .podglad-meta-compact-date{
+  font-size:20px;
+}
+.history-order-card .podglad-meta-grid--list .podglad-meta-w{
+  font-size:12px;
+  line-height:1.1;
+}
+.history-order-card .podglad-meta-grid--list .podglad-meta-item--price .podglad-meta-v--price{
+  font-size:22px;
+}
+.podglad-meta-v{
+  font-size:12px;
+  font-weight:700;
+  color:var(--text);
+  line-height:1.2;
+}
+.podglad-meta-w{
+  font-size:10px;
+  font-weight:500;
+  color:var(--text3);
+  line-height:1.2;
+}
+.podglad-meta-grid--3{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+}
+.podglad-meta-v--price{
+  font-size:15px;
+  font-weight:800;
+  letter-spacing:-0.3px;
+}
+.podglad-meta-w--prev{
+  text-decoration:line-through;
+  color:var(--text3);
+}
+.history-order-head-side{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:6px;
+  flex-shrink:0;
+  padding:0 10px 0 0;
+  justify-content:center;
+}
+.history-order-card .history-order-head-side{
+  align-self:stretch;
+  height:100%;
+}
+.history-order-head-side .history-item-actions--top{
+  max-width:none;
+  padding:0;
+}
+.history-order-head-price{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:2px;
+  padding:0;
+  justify-content:center;
+}
+.history-order-card .history-order-head-side{
+  display:grid;
+  grid-template-rows:auto 1fr;
+  align-content:stretch;
+  justify-items:end;
+  row-gap:8px;
+  padding-top:10px;
+  padding-bottom:10px;
+}
+.history-order-card .history-order-head-side{
+  padding-right:10px;
+}
+.history-order-card .history-order-head-price{
+  justify-content:center;
+  padding:0 2px;
+  margin:0;
+  align-self:center;
+}
+.history-order-card .history-order-head-side .history-item-actions--top{
+  align-self:start;
+}
+.history-order-card .history-order-head-price .history-item-total{
+  font-size:26px;
+  line-height:1.05;
+}
+#podglad-pdf-bar{
+  display:none;
+  margin-top:14px;
+  gap:10px;
+  align-items:stretch;
+}
+.podglad-png-btn{
+  flex:1;
+  aspect-ratio:1;
+  max-height:84px;
+  min-height:0;
+  padding:8px 6px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.6px;
+  line-height:1.1;
+  text-transform:uppercase;
+}
+@media (max-width:480px){
+  .podglad-meta-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .podglad-meta-item:nth-child(2){border-right:none;}
+  .podglad-meta-item:nth-child(1),
+  .podglad-meta-item:nth-child(2){border-bottom:1px solid var(--border-panel);}
+  .history-order-card .podglad-meta-item{min-height:52px;padding:10px 8px;}
+  .history-order-card .podglad-summary-bike .podglad-bike-name{font-size:18px;}
+  .history-order-card .podglad-meta-v{font-size:14px;}
+  .history-order-card .podglad-meta-v--price{font-size:20px;}
 }
 
 /* Wspólny układ: NAPRAWA + Dodaj części — solidne szare panele (bez glass) */
@@ -2203,15 +2844,12 @@ button.btn-history-sms:not(.btn-history-sms-sent) .btn-history-sms-ico{
 #tab-archiwum.order-tab.active { background: var(--solid-tab-archiwum-bg) !important; border-color: var(--solid-tab-archiwum-border) !important; color: #ddd6fe !important; }
 .order-tab.active .tab-count { background: var(--bg3) !important; color: inherit !important; }
 
-.history-item { background: var(--bg-panel) !important; border: 1px solid var(--border-panel) !important; border-radius: var(--radius-md) !important; }
-.history-item:hover { border-color: var(--border-panel) !important; background: var(--bg-elevated) !important; }
-#history-list .history-item.history-item--termin-soon,
-#history-list .history-item.history-item--termin-soon:hover {
-  border-color: var(--solid-tab-historia-border) !important;
-}
-.history-item.hl-red,
-.history-item.hl-green,
-.history-item.hl-purple { border-color: var(--border-panel) !important; background: var(--bg-panel) !important; box-shadow: 0 0 0 1px var(--text3) !important; }
+.history-item { background: transparent !important; border: none !important; border-radius: 0 !important; }
+.history-item:hover { background: transparent !important; }
+.history-order-card { background: var(--bg-panel) !important; border: 1px solid var(--border-panel) !important; }
+.history-item.hl-red .history-order-card,
+.history-item.hl-green .history-order-card,
+.history-item.hl-purple .history-order-card { border-color: var(--border-panel) !important; background: var(--bg-panel) !important; box-shadow: 0 0 0 1px var(--text3) !important; }
 
 #summary-card-main,
 #raport-summary-card {
@@ -2370,8 +3008,12 @@ body > .app .flat-list .item-card.qty-zero{
 
     <!-- Items list (układ jak przy przyjęciu zlecenia: notatka na górze, potem lista) -->
     <div id="raport-parts-banner" class="parts-banner">
+      <div id="raport-notatka-zlecenie-wrap" class="notatka-zlecenie-readonly" style="display:none;">
+        <div class="notatka-zlecenie-readonly__lbl">Notatka ze zlecenia przyjęcia</div>
+        <div id="raport-notatka-zlecenie-txt" class="notatka-zlecenie-readonly__txt"></div>
+      </div>
       <div class="notatka-bottom-wrap">
-        <div class="notatka-bottom-label">Notatka serwisowa</div>
+        <div class="notatka-bottom-label">Notatka z naprawy</div>
         <textarea id="raport-notatka" placeholder="Wpisz notatkę do naprawy..." maxlength="500"
           class="notatka-bottom-textarea"
           onfocus="this.style.borderColor='var(--blue)'"
@@ -2394,9 +3036,9 @@ body > .app .flat-list .item-card.qty-zero{
       <button type="button" onclick="closePodglad()" class="btn-close ui-tile ui-tile--sm ui-tile--danger" style="flex-shrink:0;margin-left:0;">Zamknij</button>
     </div>
     <div class="podglad-body">
-      <div id="podglad-header" style="font-size:13px;color:var(--text2);margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border);"></div>
+      <div id="podglad-header"></div>
       <div id="podglad-table" style="width:100%;"></div>
-      <div class="stat-box ui-tile ui-tile--wydanie stat-box--success">
+      <div id="podglad-total-box" class="stat-box ui-tile ui-tile--wydanie stat-box--success" style="display:none;">
         <span class="stat-box-label">Łączna kwota</span>
         <span id="podglad-total" class="stat-box-value"></span>
       </div>
@@ -2409,8 +3051,18 @@ body > .app .flat-list .item-card.qty-zero{
         <span id="podglad-kod-odbioru-val" class="stat-box-value"></span>
       </div>
       <div id="podglad-notatka" style="display:none;margin-top:14px;border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:8px;padding:12px 14px;">
-        <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;">Notatka serwisowa</div>
+        <div id="podglad-notatka-lbl" style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;">Notatka serwisowa</div>
         <div id="podglad-notatka-txt" style="font-size:13px;color:var(--text);line-height:1.6;white-space:pre-wrap;"></div>
+      </div>
+      <div id="podglad-pdf-bar" class="podglad-png-bar">
+        <button type="button" id="podglad-raport-btn" class="btn-action btn-action--archive ui-tile ui-tile--accent podglad-png-btn" title="Pełny raport (zlecenie + naprawa + kod)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span>RAPORT</span>
+        </button>
+        <button type="button" id="podglad-naprawa-btn" class="btn-action btn-action--repair ui-tile ui-tile--naprawa podglad-png-btn" title="Tylko wykonane naprawy">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+          <span>NAPRAWA</span>
+        </button>
       </div>
       <div id="podglad-action-bar" style="display:none;margin-top:14px;">
         <button id="podglad-wydaj-btn" class="btn-action btn-action--release btn-block btn-lg" style="width:100%;min-height:66px;" onclick="">WYDAJ</button>
@@ -2559,7 +3211,7 @@ body > .app .flat-list .item-card.qty-zero{
 
     <div class="tool-page-body">
       <div class="tool-card">
-        <input id="rab-search" type="text" placeholder="Szukaj po numerze telefonu (xxx-xxx-xxx) lub kodzie (8 cyfr)"
+        <input id="rab-search" type="text" placeholder="WYSZUKIWARKA"
           style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:12px 12px;color:var(--text);font-size:14px;font-weight:800;outline:none;">
       </div>
 
@@ -2817,31 +3469,31 @@ body > .app .flat-list .item-card.qty-zero{
     <div style="padding:0 16px 0;">
       <div class="order-tabs">
         <button id="tab-historia" class="order-tab active" onclick="switchTab('historia')">Przyjęte<span class="tab-count" id="count-historia"></span></button>
-        <button id="tab-wydanie" class="order-tab" onclick="switchTab('wydanie')">Do wydania<span class="tab-count" id="count-wydanie"></span></button>
+        <button id="tab-wydanie" class="order-tab" onclick="switchTab('wydanie')">Gotowe<span class="tab-count" id="count-wydanie"></span></button>
         <button id="tab-archiwum" class="order-tab" onclick="switchTab('archiwum')">Wydane<span class="tab-count" id="count-archiwum"></span></button>
       </div>
       <div class="history-filter-bar" style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0 8px;flex-wrap:wrap;width:100%;">
         <div class="history-search-slot">
           <div id="historia-search-wrap" style="display:none;">
-            <input type="text" id="historia-search-tel" placeholder="Szukaj: tel. / rower" maxlength="25"
+            <input type="text" id="historia-search-tel" placeholder="WYSZUKIWARKA" maxlength="25"
               style="background:var(--bg);border:1px solid var(--border);color:#fff;outline:none;"
               onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
             <div id="historia-termin-chip" class="historia-termin-chip" style="display:none;"></div>
           </div>
           <div id="wydanie-search-wrap" style="display:none;">
-            <input type="text" id="wydanie-search-tel" placeholder="Szukaj: tel. / kod / rower" maxlength="25"
+            <input type="text" id="wydanie-search-tel" placeholder="WYSZUKIWARKA" maxlength="25"
               style="background:var(--bg);border:1px solid var(--border);color:#fff;outline:none;"
               onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
           </div>
           <div id="archive-search-wrap" style="display:none;">
-            <input type="text" id="archive-search-tel" placeholder="Szukaj: tel. / kod / rower" maxlength="25"
+            <input type="text" id="archive-search-tel" placeholder="WYSZUKIWARKA" maxlength="25"
               style="background:var(--bg);border:1px solid var(--border);color:#fff;outline:none;"
               onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
             <div id="archive-wydane-chip" class="archive-wydane-chip" style="display:none;"></div>
           </div>
           <div id="kosz-search-wrap" style="display:none;">
             <div style="display:flex;gap:6px;align-items:center;">
-              <input type="text" id="kosz-search-tel" placeholder="Szukaj: tel. / rower" maxlength="25"
+              <input type="text" id="kosz-search-tel" placeholder="WYSZUKIWARKA" maxlength="25"
                 style="flex:1;min-width:0;background:var(--bg);border:1px solid var(--border);color:#fff;outline:none;"
                 onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
               <button type="button" onclick="wyczyscKosz()" style="flex-shrink:0;background:none;border:1px solid var(--red);border-radius:8px;padding:6px 10px;color:var(--red);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;">Wyczyść</button>
@@ -2849,6 +3501,9 @@ body > .app .flat-list .item-card.qty-zero{
           </div>
         </div>
         <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+        <button id="tab-archive-full" type="button" class="btn-kosz-header btn-archive-header" onclick="toggleArchiveFullList()" title="Archiwum — wszystkie wydane" style="display:none;" aria-label="Archiwum">
+          <span style="font-size:15px;font-weight:900;line-height:1;letter-spacing:.5px;">A</span>
+        </button>
         <button id="tab-kosz" type="button" class="btn-kosz-header" onclick="switchTab('kosz')" title="Kosz" style="display:none;">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
         </button>
@@ -2864,6 +3519,32 @@ body > .app .flat-list .item-card.qty-zero{
       <div id="kosz-list" style="display:none;"></div>
     </div>
     <div style="padding-bottom:40px;"></div>
+  </div>
+</div>
+
+<!-- Archiwum (pełna lista) — osobne okno, ładowane dopiero po otwarciu -->
+<div id="archive-overlay" class="overlay-full" style="display:none;">
+  <div class="app">
+    <div style="padding:0 16px 0;">
+      <div class="history-filter-bar" style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 0 10px;flex-wrap:wrap;width:100%;">
+        <div style="display:flex;align-items:center;gap:10px;min-width:0;">
+          <div style="font-size:14px;font-weight:900;color:#ddd6fe;letter-spacing:.2px;white-space:nowrap;">ARCHIWUM</div>
+          <input type="text" id="archive2-search" placeholder="WYSZUKIWARKA" maxlength="25"
+            style="min-width:220px;flex:1;min-width:0;background:var(--bg);border:1px solid var(--border);color:#fff;outline:none;padding:10px 12px;border-radius:10px;"
+            onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+          <button type="button" onclick="closeArchiveModal()" class="btn-close ui-tile ui-tile--sm ui-tile--danger" style="margin-left:0;">Zamknij</button>
+        </div>
+      </div>
+    </div>
+    <div style="padding:0 8px 10px;">
+      <div id="archive2-list"></div>
+      <div id="archive2-more-wrap" style="display:none;padding:10px 8px 0;">
+        <button type="button" id="archive2-more-btn" class="ui-tile ui-tile--md ui-tile--archiwum ui-tile--block" onclick="archiveModalLoadMore()">Załaduj więcej</button>
+      </div>
+      <div style="padding-bottom:40px;"></div>
+    </div>
   </div>
 </div>
 
@@ -4804,7 +5485,7 @@ function buildDocHTML() {
   </div></body></html>`;
 }
 
-// ── Shared: ładowanie zewnętrznych skryptów (html2canvas, jspdf) ──
+// ── Shared: ładowanie zewnętrznych skryptów (html2canvas) ──
 function _loadScript(src, cb, onErr) {
   if (document.querySelector('script[src="' + src + '"]')) { cb(); return; }
   const s = document.createElement('script');
@@ -4813,17 +5494,16 @@ function _loadScript(src, cb, onErr) {
   document.head.appendChild(s);
 }
 const _H2C_URL = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
-const _JPDF_URL = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
-function _loadPdfLibs(cb, onErr) {
-  if (window.html2canvas && window.jspdf) { cb(); return; }
-  _loadScript(_H2C_URL, () => { _loadScript(_JPDF_URL, cb, onErr); }, onErr);
+function _loadH2c(cb, onErr) {
+  if (window.html2canvas) { cb(); return; }
+  _loadScript(_H2C_URL, cb, onErr);
 }
 
 function generateImage(triggerEl) {
   const btn = triggerEl || null;
   if (btn) { btn.disabled = true; btn.textContent = '...'; }
 
-  function runPDF() {
+  function runPNG() {
     const iframe = document.createElement('iframe');
     iframe.style.cssText = 'position:fixed;left:-9999px;top:0;width:680px;height:1px;border:none;';
     document.body.appendChild(iframe);
@@ -4838,68 +5518,28 @@ function generateImage(triggerEl) {
       setTimeout(() => {
         html2canvas(doc.body, {scale:2, useCORS:true, backgroundColor:'#fff'})
           .then(canvas => {
-            const imgData = canvas.toDataURL('image/png');
-            const pdf = new window.jspdf.jsPDF({orientation:'portrait', unit:'mm', format:'a4'});
-            const pdfW = pdf.internal.pageSize.getWidth();
-            const pdfH = pdf.internal.pageSize.getHeight();
-            const imgW = pdfW;
-            const imgH = (canvas.height * imgW) / canvas.width;
-            // If taller than a4, scale to fit
-            const finalH = imgH > pdfH ? pdfH : imgH;
-            const finalW = imgH > pdfH ? (canvas.width * finalH) / canvas.height : imgW;
-            const offsetX = (pdfW - finalW) / 2;
-            pdf.addImage(imgData, 'PNG', offsetX, 0, finalW, finalH);
             const now = new Date();
             const hh = String(now.getHours()).padStart(2,'0');
             const mm = String(now.getMinutes()).padStart(2,'0');
             const model = $('cf-marka').value.trim() || 'brak-modelu';
             const phone = $('cf-tel').value.trim()   || 'brak-tel';
-            // Add photos below table on same page(s)
-            if (photos.length === 0) {
-              pdf.save(`${hh}-${mm} - ${model} - ${phone}.pdf`);
+            canvas.toBlob(blob => {
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = `${hh}-${mm} - ${model} - ${phone}.png`;
+              document.body.appendChild(a); a.click();
+              setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 500);
               cleanup();
-            } else {
-              const pw = pdf.internal.pageSize.getWidth();
-              const ph = pdf.internal.pageSize.getHeight();
-              const margin = 10;
-              const thumbW = (pw - margin * 2 - 4 * (photos.length > 1 ? 4 : 0)) / Math.min(photos.length, 3);
-              let curX = margin;
-              let curY = finalH + 6; // start just below wycena
-              let photoChain = Promise.resolve();
-              photos.forEach((p, idx) => {
-                photoChain = photoChain.then(() => new Promise(res => {
-                  const img2 = new Image();
-                  img2.onload = () => {
-                    const ratio = img2.width / img2.height;
-                    const tW = Math.min(thumbW, 60);
-                    const tH = tW / ratio;
-                    if (curY + tH > ph - margin) {
-                      pdf.addPage();
-                      curY = margin;
-                      curX = margin;
-                    }
-                    pdf.addImage(img2, 'JPEG', curX, curY, tW, tH);
-                    curX += tW + 4;
-                    if (curX + tW > pw - margin) { curX = margin; curY += tH + 4; }
-                    res();
-                  };
-                  img2.onerror = res;
-                  img2.src = p.dataUrl;
-                }));
-              });
-              photoChain.then(() => {
-                pdf.save(`${hh}-${mm} - ${model} - ${phone}.pdf`);
-                cleanup();
-              });
-            }
+            }, 'image/png');
           })
-          .catch(err => { console.error(err); alert('Błąd generowania PDF'); cleanup(); });
+          .catch(err => { console.error(err); alert('Błąd generowania PNG'); cleanup(); });
       }, 300);
     }, 100);
   }
 
   const _errCb = () => { alert('Brak połączenia z internetem'); if (btn) { btn.disabled = false; btn.innerHTML = BTN_HTML; } };
-  _loadPdfLibs(runPDF, _errCb);
+  _loadH2c(runPNG, _errCb);
 }
 
 // ─────────────────────────────────────────
@@ -5104,6 +5744,13 @@ let _zlecHighlightUntil = 0;
 let _historyTerminFilter = '';
 let _archiveWydaneFilter = '';
 let _archiveWydaneFilterYear = null;
+let _archiveShowAll = false;
+const ARCHIVE_RECENT_LIMIT = 10;
+
+// Pełne archiwum w osobnym oknie (ładowane dopiero po otwarciu)
+let _archiveModalCache = null;     // pełna lista (tylko gdy overlay otwarty)
+let _archiveModalOffset = 0;       // ile już wyrenderowano
+const ARCHIVE_MODAL_PAGE = 60;     // strona renderu
 
 function highlightZlecenie(id) {
   _zlecHighlightId = String(id ?? '');
@@ -5975,6 +6622,20 @@ function _parseTerminParts(val) {
   return _normalizeTerminStr(val).split('.');
 }
 
+/** Zawsze DD.MM.RRRR — uzupełnia brakujący rok (np. termin DD.MM). */
+function formatDateFullDMY(val) {
+  if (val == null || val === '') return '';
+  const datePart = String(val).trim().split(/\s+/)[0];
+  const parts = datePart.split('.').filter(p => p !== '');
+  if (parts.length < 2) return String(val).trim();
+  const d = String(parseInt(parts[0], 10) || 0).padStart(2, '0');
+  const m = String(parseInt(parts[1], 10) || 0).padStart(2, '0');
+  let y = parts.length >= 3 ? parseInt(parts[2], 10) : new Date().getFullYear();
+  if (!Number.isFinite(y) || y < 100) y = new Date().getFullYear();
+  if (y < 1000) y += 2000;
+  return d + '.' + m + '.' + y;
+}
+
 function showTerminSundayWarn() {
   let el = $('termin-sunday-warn');
   if (!el) {
@@ -6560,6 +7221,128 @@ function clearArchiveWydaneFilter() {
 }
 window.clearArchiveWydaneFilter = clearArchiveWydaneFilter;
 
+function _updateArchiveFullBtn() {
+  const btn = $('tab-archive-full');
+  if (!btn) return;
+  // Ten przycisk nie przełącza już "pokaż wszystko" w tej samej zakładce.
+  // Otwiera osobne okno archiwum (pełna lista + paginacja).
+  btn.classList.remove('active');
+  btn.title = 'Archiwum — pełna lista';
+}
+
+function toggleArchiveFullList() {
+  openArchiveModal();
+}
+window.toggleArchiveFullList = toggleArchiveFullList;
+
+function _bindArchiveModalSearchOnce() {
+  const inp = $('archive2-search');
+  if (!inp || inp.dataset.bound) return;
+  inp.dataset.bound = '1';
+  inp.addEventListener('input', () => renderArchiveModal({ reset: true }));
+  inp.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeArchiveModal();
+  });
+}
+
+function openArchiveModal() {
+  const ov = $('archive-overlay');
+  if (!ov) return;
+  _bindArchiveModalSearchOnce();
+  ov.style.display = 'block';
+  // cache ładowany dopiero tutaj
+  _archiveModalCache = getArchiveNormalized();
+  _archiveModalOffset = 0;
+  const inp = $('archive2-search');
+  if (inp) inp.value = '';
+  renderArchiveModal({ reset: true });
+  setTimeout(() => { try { $('archive2-search')?.focus(); } catch {} }, 50);
+}
+window.openArchiveModal = openArchiveModal;
+
+function closeArchiveModal() {
+  const ov = $('archive-overlay');
+  if (ov) ov.style.display = 'none';
+  _archiveModalCache = null;
+  _archiveModalOffset = 0;
+}
+window.closeArchiveModal = closeArchiveModal;
+
+function archiveModalLoadMore() {
+  renderArchiveModal({ append: true });
+}
+window.archiveModalLoadMore = archiveModalLoadMore;
+
+function renderArchiveModal(opts) {
+  opts = opts || {};
+  const list = $('archive2-list');
+  const moreWrap = $('archive2-more-wrap');
+  if (!list) return;
+  if (!_archiveModalCache) _archiveModalCache = getArchiveNormalized();
+
+  const q = String($('archive2-search')?.value || '').trim();
+  let src = _archiveModalCache;
+
+  // Filtruj po numerze telefonu, kodzie odbioru lub nazwie roweru
+  if (q.length >= 2) {
+    src = src.filter(e => _zlecenieMatch(e, q));
+  }
+
+  // Sortuj jak w archiwum (od najnowszych), ale tylko w oknie archiwum
+  src = src.slice().sort((a, b) => {
+    const da = _archiveEntryDate(a);
+    const db = _archiveEntryDate(b);
+    if (db !== da) return db - da;
+    const ia = parseInt(a.id, 10) || 0;
+    const ib = parseInt(b.id, 10) || 0;
+    return ib - ia;
+  });
+
+  if (opts.reset) {
+    _archiveModalOffset = 0;
+    list.innerHTML = '';
+  }
+
+  if (!src.length) {
+    list.innerHTML = emptyStateHTML({ query: q, emptyTitle: q ? 'Brak wyników' : 'Brak wydanych zleceń', emptySub: q ? '' : 'Archiwum jest puste.' });
+    if (moreWrap) moreWrap.style.display = 'none';
+    return;
+  }
+
+  const start = _archiveModalOffset;
+  const end = Math.min(src.length, start + ARCHIVE_MODAL_PAGE);
+  const chunk = src.slice(start, end);
+
+  chunk.forEach(entry => {
+    const item = document.createElement('div');
+    item.className = 'history-item';
+    item.dataset.orderId = String(entry.id ?? '');
+
+    const actionsHTML =
+      '<button class="btn-action ui-tile ui-tile--sm ui-tile--danger btn-action--danger-ghost btn-history-del" onclick="deleteArchive(' + entry.id + ')" title="Przenieś do kosza"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>'
+      + '<button class="btn-action ui-tile ui-tile--sm ui-tile--neutral btn-action--ghost" onclick="unarchiveWycena(' + entry.id + ')" title="Cofnij"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg></button>'
+      + (entry.raportKoncowy ? '<button class="btn-action ui-tile ui-tile--sm ui-tile--accent btn-action--archive" onclick="event.stopPropagation();openPodsumowanieWydane(' + entry.id + ')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> RAPORT</button>' : '')
+      + '<button class="btn-action ui-tile ui-tile--sm ui-tile--warning btn-action--warning" onclick="openRabAssignForArchive(' + entry.id + ')" title="Dodaj kod rabatowy" aria-label="Dodaj kod rabatowy"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v7a2 2 0 0 1-2 2H7l-4-4V5a2 2 0 0 1 2-2h7"/><path d="M16 2l6 6"/><path d="M14 8l8-8"/></svg></button>';
+
+    item.innerHTML = _buildHistoryOrderCardHTML(entry, {
+      listVariant: 'wydane',
+      showTelInHeader: true,
+      klientHistoria: true,
+      showKodOdbioru: true,
+      inlineTelKod: true,
+      actionsHTML,
+      priceInHeader: true,
+      headerPriceHTML: _historyHeaderPriceHTML(entry, false),
+    });
+    _attachHistoryItemDetails(item, entry, { showTelInDetails: false });
+    list.appendChild(item);
+  });
+
+  _archiveModalOffset = end;
+  if (moreWrap) moreWrap.style.display = (_archiveModalOffset < src.length && q.length < 2) ? 'block' : 'none';
+}
+window.renderArchiveModal = renderArchiveModal;
+
 function openHistoryForWydaneDay(ddmm, year) {
   _archiveWydaneFilter = ddmm;
   _archiveWydaneFilterYear = year != null ? year : new Date().getFullYear();
@@ -6756,19 +7539,19 @@ async function copyModalTelToClipboard() {
 }
 window.copyModalTelToClipboard = copyModalTelToClipboard;
 
-function generateCurrentPDF() {
+function generateCurrentPNG() {
   // Zapisz tymczasowo do historii i pobierz ID
   const hist = getHistory();
   const fromId = sessionStorage.getItem('from-history-id');
   if (fromId) {
     const id = parseInt(fromId) || fromId;
     const entry = hist.find(e => String(e.id) === String(id));
-    if (entry) { downloadZleceniePDF(entry.id); return; }
+    if (entry) { downloadZleceniePNG(entry.id); return; }
   }
   // Jeśli nie zapisane — poinformuj użytkownika
-  alert('Zapisz zlecenie najpierw, aby wygenerować PDF.');
+  alert('Zapisz zlecenie najpierw, aby wygenerować PNG.');
 }
-window.generateCurrentPDF = generateCurrentPDF;
+window.generateCurrentPNG = generateCurrentPNG;
 
 // ─────────────────────────────────────────
 // HISTORIA WYCEN
@@ -7090,6 +7873,38 @@ function _klientEntryDate(e) {
     || _klientParseDate(e.label)
     || 0;
 }
+function closeKlientHistoria() {
+  const modal = $('klient-historia-modal');
+  if (modal) modal.style.display = 'none';
+}
+window.closeKlientHistoria = closeKlientHistoria;
+
+function _klientHistoriaBadgeHTML(st) {
+  const labels = { archiwum: 'Wydane', wydanie: 'Gotowe', historia: 'Przyjęte' };
+  const cls = { archiwum: 'archiwum', wydanie: 'wydanie', historia: 'historia' };
+  const label = labels[st] || 'Zlecenie';
+  const c = cls[st] || 'historia';
+  return '<span class="klient-historia-badge klient-historia-badge--' + c + '">' + label + '</span>';
+}
+
+function _buildKlientHistoriaCardHTML(e) {
+  const variant = e._status === 'archiwum' ? 'wydane' : (e._status === 'wydanie' ? 'wydanie' : 'przyjete');
+  const opts = {
+    listVariant: variant,
+    showTelInHeader: false,
+    showKodOdbioru: e._status !== 'historia' && !!e.kodOdbioru,
+    extraHeaderHTML: '<div class="klient-historia-status">' + _klientHistoriaBadgeHTML(e._status) + '</div>',
+    actionsHTML: '<span class="klient-historia-open-ico" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></span>',
+  };
+  if (variant === 'wydane') {
+    opts.priceInHeader = true;
+    opts.headerPriceHTML = _historyHeaderPriceHTML(e, false);
+  }
+  return '<div class="history-item klient-historia-item" role="button" tabindex="0" onclick="openKlientHistoriaDetail(\'' + e._status + '\',' + (e.id ?? 'null') + ')">'
+    + _buildHistoryOrderCardHTML(e, opts)
+    + '</div>';
+}
+
 function openKlientHistoria(tel) {
   const digits = String(tel || '').replace(/\D/g, '');
   if (!digits) return;
@@ -7103,7 +7918,10 @@ function openKlientHistoria(tel) {
   const matched = all.filter(e => String(e.tel || '').replace(/\D/g, '') === digits);
   matched.sort((a, b) => _klientEntryDate(b) - _klientEntryDate(a));
 
-  $('klient-historia-tel').textContent = tel ? String(tel) : digits;
+  const telDisplay = tel ? String(tel) : digits;
+  const telClean = digits;
+  const phoneSvg = '<svg width="14" height="14" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>';
+  $('klient-historia-tel').innerHTML = '<a href="tel:' + telClean + '" class="podglad-bike-tel" onclick="event.stopPropagation()">' + phoneSvg + escHTML(telDisplay) + '</a>';
 
   const list = $('klient-historia-list');
   const summary = $('klient-historia-summary');
@@ -7111,51 +7929,20 @@ function openKlientHistoria(tel) {
   if (!matched.length) {
     summary.innerHTML = '';
     list.innerHTML = emptyStateHTML({ emptyTitle: 'Brak historii', emptySub: 'Nie znaleziono innych zleceń tego numeru.' });
-    $('klient-historia-modal').style.display = 'flex';
+    $('klient-historia-modal').style.display = 'block';
     return;
   }
 
   const sumNum = matched.reduce((acc, e) => acc + (parseFloat(String(e.total || '').replace(/\s/g, '').replace(',', '.')) || 0), 0);
   summary.innerHTML =
-    '<span><b style="color:var(--text);font-weight:800;">' + matched.length + '</b> ' + (matched.length === 1 ? 'naprawa' : (matched.length < 5 ? 'naprawy' : 'napraw')) + '</span>'
-    + '<span>Łącznie: <b style="color:#f59e0b;font-weight:800;">' + fmt(sumNum) + ' zł</b></span>';
+    '<div class="klient-historia-summary-grid">'
+    + '<div class="stat-box ui-tile ui-tile--neutral"><span class="stat-box-label">Liczba napraw</span><span class="stat-box-value">' + matched.length + '</span></div>'
+    + '<div class="stat-box ui-tile ui-tile--wydanie stat-box--success"><span class="stat-box-label">Łącznie</span><span class="stat-box-value">' + fmt(sumNum) + ' zł</span></div>'
+    + '</div>';
 
-  const badge = (st) => {
-    if (st === 'archiwum') return '<span style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;padding:2px 8px;border-radius:999px;background:#221828;color:#a78bfa;">Wydane</span>';
-    if (st === 'wydanie')  return '<span style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;padding:2px 8px;border-radius:999px;background:#182818;color:#22c55e;">Do wydania</span>';
-    return '<span style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;padding:2px 8px;border-radius:999px;background:#281818;color:#ef4444;">Przyjęte</span>';
-  };
-  const stripYear = s => s ? String(s).split(' ')[0].split('.').slice(0, 2).join('.') : '';
+  list.innerHTML = matched.map(e => _buildKlientHistoriaCardHTML(e)).join('');
 
-  list.innerHTML = matched.map(e => {
-    const nameParts = [(e.marka || null), e.model].filter(Boolean).join(' ') || 'Rower';
-    const dates = [];
-    if (e.label) dates.push('Przyjęto: ' + stripYear(e.label));
-    if (e.raportKoncowy && e.raportKoncowy.dataZakonczenia) dates.push('Naprawa: ' + stripYear(e.raportKoncowy.dataZakonczenia));
-    if (e.dataWydania) dates.push('Wydano: ' + stripYear(e.dataWydania));
-    const kolorBar = (typeof makeKolorBarHTML === 'function') ? makeKolorBarHTML(e.kolor || '') : '';
-    return '<div class="history-item" onclick="openKlientHistoriaDetail(\'' + e._status + '\',' + (e.id ?? 'null') + ')" style="position:relative;border-color:var(--border);background:var(--bg);margin-bottom:0;cursor:pointer;">'
-      + kolorBar
-      + '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">'
-        + '<div style="min-width:0;display:flex;flex-direction:column;gap:3px;">'
-          + '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">'
-            + '<span style="font-size:15px;font-weight:700;color:#fff;">' + escHTML(nameParts) + '</span>'
-            + ((e.ebike || e.marka === 'E-BIKE') ? '<span style="font-size:14px;">⚡</span>' : '')
-            + badge(e._status)
-          + '</div>'
-          + (e.kolor ? '<div style="font-size:12px;color:var(--text3);">Kolor: ' + escHTML(e.kolor) + '</div>' : '')
-          + (dates.length ? '<div style="font-size:12px;color:var(--text2);">' + dates.map(escHTML).join(' · ') + '</div>' : '')
-          + (e.kodOdbioru ? '<div style="font-size:12px;font-weight:700;color:#f59e0b;letter-spacing:1px;">🔑 ' + escHTML(e.kodOdbioru) + '</div>' : '')
-        + '</div>'
-        + '<div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">'
-          + '<span style="text-align:right;font-size:18px;font-weight:800;color:#fff;">' + escHTML(e.total || '') + '</span>'
-          + '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>'
-        + '</div>'
-      + '</div>'
-      + '</div>';
-  }).join('');
-
-  $('klient-historia-modal').style.display = 'flex';
+  $('klient-historia-modal').style.display = 'block';
 }
 window.openKlientHistoria = openKlientHistoria;
 
@@ -7248,7 +8035,7 @@ window.resetGlobalSearch = resetGlobalSearch;
 
 function _gsStatusMeta(st) {
   if (st === 'archiwum') return { label: 'Wydane',      color: '#a78bfa', bg: '#221828' };
-  if (st === 'wydanie')  return { label: 'Do wydania',  color: '#22c55e', bg: '#182818' };
+  if (st === 'wydanie')  return { label: 'Gotowe',  color: '#22c55e', bg: '#182818' };
   if (st === 'kosz')     return { label: 'Kosz',        color: '#9ca3af', bg: '#1a1a1a' };
   return { label: 'Przyjęte', color: '#ef4444', bg: '#281818' };
 }
@@ -7344,7 +8131,7 @@ function closeHistory() { $('history-overlay').style.display = 'none'; }
 function closeHistoryToMenu() { closeHistory(); $('start-overlay').style.display = 'flex'; refreshStartMenu(); }
 function closeHistoryOutside(e) { /* pełny ekran — nieaktywne */ }
 
-// Helper: parsuje DD.MM lub DD.MM.YYYY i zwraca skrót dnia tygodnia
+// Helper: parsuje DD.MM lub DD.MM.YYYY i zwraca nazwę dnia tygodnia
 function dayOfWeek(dateStr) {
   if (!dateStr) return '';
   const parts = _parseTerminParts(dateStr);
@@ -7352,7 +8139,19 @@ function dayOfWeek(dateStr) {
   const d = parseInt(parts[0]), m = parseInt(parts[1]) - 1;
   const y = parts.length >= 3 ? parseInt(parts[2]) : new Date().getFullYear();
   const day = new Date(y, m, d).getDay();
-  return ['Niedziela','Poniedziałek','Wtorek','Środa','Czwartek','Piątek','Sobota'][day];
+  return ['NIEDZIELA','PONIEDZIAŁEK','WTOREK','ŚRODA','CZWARTEK','PIĄTEK','SOBOTA'][day];
+}
+
+function _formatDDMMRR(rawVal) {
+  const dateStr = rawVal ? String(rawVal).trim().split(/\s+/)[0] : '';
+  if (!dateStr) return '';
+  const parts = _parseTerminParts(dateStr);
+  if (parts.length < 2) return '';
+  const d = String(parts[0] || '').padStart(2, '0');
+  const m = String(parts[1] || '').padStart(2, '0');
+  const y = parts.length >= 3 ? parseInt(parts[2], 10) : new Date().getFullYear();
+  const yy = String((y || 0) % 100).padStart(2, '0');
+  return d + '.' + m + '.' + yy;
 }
 
 function _terminIsTodayOrTomorrow(termin) {
@@ -7450,37 +8249,112 @@ function _zlecenieMatch(e, filter) {
   return false;
 }
 
-// Telefon na górze rozwijanych szczegółów (wyśrodkowany)
+function _iconPhoneSVG(w, h) {
+  w = w || 16; h = h || 16;
+  return '<svg class="app-ico app-ico--phone" width="' + w + '" height="' + h + '" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>';
+}
+function _iconKeySVG(w, h) {
+  w = w || 16; h = h || 16;
+  return '<svg class="app-ico app-ico--key" width="' + w + '" height="' + h + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-2 2"/><path d="m15 8 6 6"/><path d="m18 5 3 3"/></svg>';
+}
+function _iconLockSVG(w, h) {
+  w = w || 16; h = h || 16;
+  return '<svg class="app-ico app-ico--lock" width="' + w + '" height="' + h + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
+}
+function _iconAlertSVG(w, h) {
+  w = w || 16; h = h || 16;
+  return '<svg class="app-ico app-ico--alert" width="' + w + '" height="' + h + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
+}
+function _buildHistoryKodOdbioruHTML(kod, inline) {
+  if (!kod) return '';
+  const chip = '<span class="ui-tile ui-tile--sm ui-tile--warning history-kod-chip history-contact-chip" aria-label="Kod odbioru">'
+    + _iconLockSVG(14, 14) + '<span>' + escHTML(kod) + '</span></span>';
+  if (inline) return chip;
+  return '<div class="history-kod-odbioru">' + chip + '</div>';
+}
+function _buildHistoryNotatkaHTML(text) {
+  const t = String(text || '').trim();
+  if (!t) return '';
+  return '<div class="history-item-details-notatka"><span class="history-notatka-ico">' + _iconAlertSVG(16, 16)
+    + '</span><span class="history-notatka-txt">' + escHTML(t) + '</span></div>';
+}
+// Telefon na górze rozwijanych szczegółów (wyśrodkowany, jako przycisk)
 function _buildHistoryItemTelHTML(entry) {
   if (!entry || !entry.tel) return '';
   const telClean = String(entry.tel).replace(/[^0-9+]/g, '');
-  return `<div class="history-item-details-tel">`
-    + `<a href="tel:${telClean}" class="link-tel" onclick="event.stopPropagation()">`
-    + `<svg width="12" height="12" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`
-    + `${escHTML(entry.tel)}</a></div>`;
+  return '<div class="history-item-details-tel"><a href="tel:' + telClean
+    + '" class="btn-action ui-tile ui-tile--md ui-tile--naprawa history-details-chip history-details-tel-btn" onclick="event.stopPropagation()">'
+    + _iconPhoneSVG(16, 16) + '<span>' + escHTML(entry.tel) + '</span></a></div>';
+}
+function _buildHistoryItemKodHTML(entry) {
+  if (!entry || !entry.kodOdbioru) return '';
+  return '<div class="history-item-details-kod"><span class="btn-action ui-tile ui-tile--md ui-tile--warning history-details-chip history-details-kod-btn">'
+    + _iconLockSVG(16, 16) + '<span>' + escHTML(entry.kodOdbioru) + '</span></span></div>';
 }
 
 function _attachHistoryItemDetails(item, entry, opts) {
   opts = opts || {};
+  const card = item.querySelector('.history-order-card');
+  const host = card || item;
   const details = document.createElement('div');
   details.className = 'history-item-details';
-  details.style.cssText = 'display:none;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);';
-  details.innerHTML = _buildZlecenieDetailsHTML(entry, opts);
-  item.appendChild(details);
+  details.style.display = 'none';
+  details.innerHTML = '<div class="history-item-details-inner">' + _buildZlecenieDetailsHTML(entry, opts) + '</div>';
+  host.appendChild(details);
   item.style.cursor = 'pointer';
   item.addEventListener('click', (e) => {
     if (e.target.closest('a, button, input, textarea, select')) return;
     const open = details.style.display !== 'none';
     details.style.display = open ? 'none' : 'block';
+    if (card) card.classList.toggle('history-order-card--open', !open);
   });
 }
 
 // Buduje rozwijane szczegóły zlecenia (telefon + pozycje + notatka)
+function _getNotatkaZlecenia(entry) {
+  const st = entry && entry.state ? safeParseJSON(entry.state, null) : null;
+  return st && st.notatka ? String(st.notatka).trim() : '';
+}
+
+function _getNotatkaNaprawy(entry) {
+  const rk = entry && entry.raportKoncowy;
+  return rk && rk.notatka ? String(rk.notatka).trim() : '';
+}
+
+function _buildNotatkaZlecenieReadonlyHTML(text, label) {
+  const t = String(text || '').trim();
+  if (!t) return '';
+  return '<div class="notatka-zlecenie-readonly"><div class="notatka-zlecenie-readonly__lbl">'
+    + escHTML(label || 'Notatka ze zlecenia przyjęcia')
+    + '</div><div class="notatka-zlecenie-readonly__txt">' + escHTML(t) + '</div></div>';
+}
+
+function _buildNotatkaZleceniePodsumowanieHTML(text) {
+  const t = String(text || '').trim();
+  if (!t) return '';
+  return '<div class="podsumowanie-notatka-zlecenie"><div class="notatka-zlecenie-readonly__lbl">Notatka ze zlecenia przyjęcia</div><div class="notatka-zlecenie-readonly__txt">' + escHTML(t) + '</div></div>';
+}
+
+function _setRaportNotatkaZlecenia(entry, st) {
+  const wrap = $('raport-notatka-zlecenie-wrap');
+  const txt = $('raport-notatka-zlecenie-txt');
+  if (!wrap || !txt) return;
+  const note = _getNotatkaZlecenia(entry) || (st && st.notatka ? String(st.notatka).trim() : '');
+  if (note) {
+    txt.textContent = note;
+    wrap.style.display = '';
+  } else {
+    txt.textContent = '';
+    wrap.style.display = 'none';
+  }
+}
+
 function _buildZlecenieDetailsHTML(entry, opts) {
   opts = opts || {};
   const fmtPLN = v => Number(v || 0).toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  const td  = 'style="padding:6px 8px;font-size:13px;color:var(--text);border-bottom:1px solid var(--border);"';
-  const tdr = 'style="padding:6px 8px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border);text-align:right;white-space:nowrap;"';
+  const inCard = true;
+  const td  = inCard ? '' : 'style="padding:6px 8px;font-size:13px;color:var(--text);border-bottom:1px solid var(--border);"';
+  const tdr = inCard ? '' : 'style="padding:6px 8px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border);text-align:right;white-space:nowrap;"';
   let rows = '';
   const rk = entry.raportKoncowy;
   if (rk && Array.isArray(rk.items)) {
@@ -7488,12 +8362,12 @@ function _buildZlecenieDetailsHTML(entry, opts) {
       const qty = it.qty !== undefined ? (it.qty || 1) : 1;
       const price = parseFloat(it.price) || 0;
       const qtyTxt = qty > 1 ? qty + '× ' + fmtPLN(price) : fmtPLN(price);
-      rows += `<tr><td ${td}>${escHTML(itemLabelWithDetails(it, true))}</td><td ${tdr}>${qtyTxt}</td></tr>`;
+      rows += '<tr><td' + (td ? ' ' + td : '') + '>' + escHTML(itemLabelWithDetails(it, true)) + '</td><td' + (tdr ? ' ' + tdr : '') + '>' + qtyTxt + '</td></tr>';
     });
   }
   if (rk && Array.isArray(rk.subs)) {
     rk.subs.filter(s => s.checked && (s.name || parseFloat(s.price) > 0)).forEach(s => {
-      rows += `<tr><td ${td}>${escHTML(s.name || 'Część')}</td><td ${tdr}>${fmtPLN(s.price)}</td></tr>`;
+      rows += '<tr><td' + (td ? ' ' + td : '') + '>' + escHTML(s.name || 'Część') + '</td><td' + (tdr ? ' ' + tdr : '') + '>' + fmtPLN(s.price) + '</td></tr>';
     });
   }
   if (!rows) {
@@ -7503,27 +8377,190 @@ function _buildZlecenieDetailsHTML(entry, opts) {
         const qty = it.qty !== undefined ? (it.qty || 1) : 1;
         const price = parseFloat(it.price) || 0;
         const qtyTxt = qty > 1 ? qty + '× ' + fmtPLN(price) : fmtPLN(price);
-        rows += `<tr><td ${td}>${escHTML(itemLabelWithDetails(it, true))}</td><td ${tdr}>${qtyTxt}</td></tr>`;
+        rows += '<tr><td' + (td ? ' ' + td : '') + '>' + escHTML(itemLabelWithDetails(it, true)) + '</td><td' + (tdr ? ' ' + tdr : '') + '>' + qtyTxt + '</td></tr>';
       });
     }
     if (st && Array.isArray(st.subs)) {
       st.subs.filter(s => s.checked && (s.name || parseFloat(s.price) > 0)).forEach(s => {
-        rows += `<tr><td ${td}>${escHTML(s.name || 'Część')}</td><td ${tdr}>${fmtPLN(s.price)}</td></tr>`;
+        rows += '<tr><td' + (td ? ' ' + td : '') + '>' + escHTML(s.name || 'Część') + '</td><td' + (tdr ? ' ' + tdr : '') + '>' + fmtPLN(s.price) + '</td></tr>';
       });
     }
   }
-  if (!rows) rows = `<tr><td colspan="2" style="padding:10px 8px;font-size:12px;font-style:italic;color:var(--text3);text-align:center;">Brak wybranych pozycji</td></tr>`;
-  const notatkaText = (rk && rk.notatka) || (entry.state ? (safeParseJSON(entry.state, null) || {}).notatka : '');
-  const notatka = notatkaText
-    ? `<div style="margin-top:8px;padding:8px 10px;border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:8px;font-size:13px;color:var(--text);line-height:1.5;white-space:pre-wrap;">📝 ${escHTML(notatkaText)}</div>`
-    : '';
+  const tableHTML = rows
+    ? '<table><tbody>' + rows + '</tbody></table>'
+    : '<div class="history-item-details-empty">Brak wybranych pozycji</div>';
   const telBlock = opts.showTelInDetails === false ? '' : _buildHistoryItemTelHTML(entry);
-  return telBlock + `<table style="width:100%;border-collapse:collapse;"><tbody>${rows}</tbody></table>${notatka}`;
+  const kodBlock = opts.showKodInDetails ? _buildHistoryItemKodHTML(entry) : '';
+  const notatkaZlec = _getNotatkaZlecenia(entry);
+  const notatkaNaprawy = _getNotatkaNaprawy(entry);
+  let notatkaBlock = '';
+  if (notatkaZlec) {
+    notatkaBlock += _buildHistoryNotatkaHTML(notatkaZlec);
+  } else if (notatkaNaprawy) {
+    notatkaBlock += _buildHistoryNotatkaHTML(notatkaNaprawy);
+  }
+  return telBlock + kodBlock + notatkaBlock + tableHTML;
 }
 
 function _smsBtnInnerHTML(sent) {
   const svg = '<svg class="btn-history-sms-ico" width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>';
   return svg + ' ' + (sent ? 'SMS ✓' : 'SMS');
+}
+
+function _getEntryDataWydaniaDisplay(entry) {
+  if (!entry) return '';
+  if (entry.dataWydania) return entry.dataWydania;
+  if (entry.archivedAt) {
+    return new Date(entry.archivedAt).toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  }
+  return '';
+}
+
+function _buildOrderSummaryMetaGrid(entry) {
+  const rk = entry.raportKoncowy;
+  return [
+    _podsumowanieMetaDateItem('Przyjęto', entry.label),
+    _podsumowanieMetaDateItem('Termin', entry.termin),
+    _podsumowanieMetaDateItem('GOTOWE', rk?.dataZakonczenia),
+    _podsumowanieMetaDateItem('Wydano', _getEntryDataWydaniaDisplay(entry)),
+  ].join('');
+}
+
+function _podsumowanieMetaPriceItem(label, total, prevTotal) {
+  const display = total ? escHTML(String(total)) : '—';
+  const prevLine = prevTotal
+    ? '<span class="podglad-meta-w podglad-meta-w--prev">' + escHTML(String(prevTotal)) + '</span>'
+    : '';
+  return '<div class="podglad-meta-item podglad-meta-item--price"><span class="podglad-meta-k">' + escHTML(label) + '</span><span class="podglad-meta-v podglad-meta-v--price">' + display + '</span>' + prevLine + '</div>';
+}
+
+function _metaDDMM(rawVal) {
+  const dateStr = rawVal ? String(rawVal).trim().split(/\s+/)[0] : '';
+  if (!dateStr) return '';
+  const parts = dateStr.split('.');
+  if (parts.length < 2) return '';
+  const d = String(parts[0] || '').padStart(2, '0');
+  const m = String(parts[1] || '').padStart(2, '0');
+  return d + '.' + m;
+}
+
+function _podsumowanieMetaDateItemCompact(label, rawVal) {
+  const dateStr = rawVal ? String(rawVal).trim().split(/\s+/)[0] : '';
+  const ddmm = _metaDDMM(dateStr);
+  const wday = dateStr ? dayOfWeek(dateStr) : '—';
+  const display = ddmm || '—';
+  return `<div class="podglad-meta-item podglad-meta-item--compact"><div class="podglad-meta-compact-left"><span class="podglad-meta-k">${escHTML(label)}</span><span class="podglad-meta-w">${escHTML(wday)}</span></div><span class="podglad-meta-compact-date">${escHTML(display)}</span></div>`;
+}
+
+function _buildHistoryMetaGrid(entry, variant) {
+  const rk = entry.raportKoncowy;
+  if (variant === 'przyjete') {
+    return [
+      _podsumowanieMetaDateItem('Przyjęto', entry.label),
+      _podsumowanieMetaDateItem('Termin', entry.termin),
+      _podsumowanieMetaPriceItem('Cena', entry.total, entry.totalPrzedRaportem),
+    ].join('');
+  }
+  if (variant === 'wydanie') {
+    return [
+      _podsumowanieMetaDateItem('Przyjęto', entry.label),
+      _podsumowanieMetaDateItem('Termin', entry.termin),
+      _podsumowanieMetaDateItem('Gotowe', rk?.dataZakonczenia),
+      _podsumowanieMetaPriceItem('Cena', entry.total),
+    ].join('');
+  }
+  return _buildOrderSummaryMetaGrid(entry);
+}
+
+function _historyHeaderPriceHTML(entry, showPrev) {
+  let html = '<div class="history-order-head-price">';
+  if (showPrev) {
+    const prev = entry.totalZlecenia || entry.totalPrzedRaportem;
+    const prevNum = parseFloat(String(prev || '').replace(/\s/g, '').replace(',', '.')) || 0;
+    if (prevNum > 0) {
+      html += '<div class="history-item-total history-item-total--prev">' + escHTML(prev) + '</div>';
+    }
+  }
+  html += '<div class="history-item-total">' + escHTML(entry.total || '') + '</div></div>';
+  return html;
+}
+
+function _historyTelHeaderHTML(entry, opts) {
+  opts = opts || {};
+  if (!entry || !entry.tel) return '';
+  const telClean = String(entry.tel).replace(/[^0-9+]/g, '');
+  if (opts.klientHistoria) {
+    return '<button type="button" class="btn-action ui-tile ui-tile--sm ui-tile--naprawa history-tel-btn history-contact-chip"'
+      + ' onclick="event.stopPropagation();openKlientHistoria(&quot;' + telClean + '&quot;)"'
+      + ' title="Historia klienta — wszystkie naprawy" aria-label="Historia klienta: ' + escAttr(String(entry.tel)) + '">'
+      + _iconPhoneSVG(14, 14)
+      + '<span>' + escHTML(entry.tel) + '</span>'
+      + '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="opacity:.9;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>'
+      + '</button>';
+  }
+  return '<a href="tel:' + telClean + '" class="btn-action ui-tile ui-tile--sm ui-tile--naprawa history-tel-btn history-contact-chip" onclick="event.stopPropagation()">'
+    + _iconPhoneSVG(14, 14) + '<span>' + escHTML(entry.tel) + '</span></a>';
+}
+
+function _historyHeaderContactRowHTML(entry, opts) {
+  opts = opts || {};
+  const tel = opts.showTelInHeader ? _historyTelHeaderHTML(entry, opts) : '';
+  const kod = (opts.showKodOdbioru && entry && entry.kodOdbioru) ? _buildHistoryKodOdbioruHTML(entry.kodOdbioru, true) : '';
+  if (!tel && !kod) return '';
+  return '<div class="history-contact-row">' + tel + kod + '</div>';
+}
+
+function _historyPriceColHTML(innerHTML) {
+  return '<div class="history-item-price-col">' + innerHTML + '</div>';
+}
+
+function _entryKolor(entry) {
+  if (!entry) return '';
+  if (entry.kolor) return entry.kolor;
+  const st = entry.state ? safeParseJSON(entry.state, null) : null;
+  return (st && st.kolor) || '';
+}
+
+function _buildHistoryOrderCardHTML(entry, opts) {
+  opts = opts || {};
+  const kolorBar = makeKolorBarHTML(_entryKolor(entry));
+  const nameParts = [entry.marka, entry.model].filter(Boolean);
+  const ebike = (entry.ebike || entry.marka === 'E-BIKE') ? '<span class="history-ebike-badge" title="e-Bike">⚡</span>' : '';
+  const nameRow = nameParts.length
+    ? '<div class="podglad-bike-name">' + escHTML(nameParts.join(' ')) + ebike + '</div>'
+    : '';
+  const telHtml = opts.telHeaderHTML != null
+    ? opts.telHeaderHTML
+    : (opts.showTelInHeader ? _historyTelHeaderHTML(entry, opts) : '');
+  const inlineContacts = !!opts.inlineTelKod;
+  const contactRow = inlineContacts ? _historyHeaderContactRowHTML(entry, opts) : '';
+  const kodLine = opts.extraHeaderHTML || (inlineContacts ? '' : (opts.showKodOdbioru ? _buildHistoryKodOdbioruHTML(entry.kodOdbioru) : ''));
+  const variant = opts.listVariant || 'wydane';
+  const metaGridClass = variant === 'przyjete'
+    ? 'podglad-meta-grid podglad-meta-grid--3 podglad-meta-grid--list'
+    : (variant === 'wydanie' ? 'podglad-meta-grid podglad-meta-grid--list' : 'podglad-meta-grid');
+  let actionsBlock = '';
+  if (opts.priceInHeader) {
+    const priceBlock = opts.headerPriceHTML || '';
+    actionsBlock = opts.actionsHTML
+      ? '<div class="history-order-head-side"><div class="history-item-actions history-item-actions--top">' + opts.actionsHTML + '</div>' + priceBlock + '</div>'
+      : priceBlock;
+  } else if (opts.actionsHTML) {
+    actionsBlock = '<div class="history-item-actions history-item-actions--top">' + opts.actionsHTML + '</div>';
+  }
+  const price = opts.priceHTML || '';
+  return '<div class="history-item-row">'
+    + '<div class="podglad-summary-card history-order-card">'
+    + kolorBar
+    + '<div class="history-order-card-head">'
+    + '<div class="podglad-summary-bike">'
+    + nameRow + (inlineContacts ? contactRow : (telHtml + kodLine))
+    + '</div>' + actionsBlock
+    + '</div>'
+    + '<div class="' + metaGridClass + '">' + _buildHistoryMetaGrid(entry, variant) + '</div>'
+    + '</div>'
+    + price
+    + '</div>';
 }
 
 function renderHistory(filterTel) {
@@ -7550,50 +8587,22 @@ function renderHistory(filterTel) {
     item.className = 'history-item';
     item.dataset.orderId = String(entry.id ?? '');
 
-    // Bazowa ramka dla wszystkich zleceń w Przyjęte
     const isHL = _zlecHighlightId && String(entry.id ?? '') === String(_zlecHighlightId) && Date.now() < (_zlecHighlightUntil || 0);
     if (isHL) item.classList.add('hl-red');
     if (_terminIsTodayOrTomorrow(entry.termin)) item.classList.add('history-item--termin-soon');
 
-    // Nowe wpisy mają osobne pola model/kolor, stare mają wszystko w marka
-    const hasNewFields = entry.model || entry.kolor;
-    const titleLine = hasNewFields
-      ? [(entry.marka || null), entry.model, entry.kolor].filter(Boolean).join(' - ')
-      : (entry.marka && entry.marka || entry.model || '');
+    const actionsHTML =
+      (entry.tel && !isEntryCr(entry) ? '<a class="btn-action ui-tile ui-tile--sm btn-history-sms' + (entry.smsSent ? ' btn-history-sms-sent' : ' ui-tile--naprawa') + '" onclick="openOrderSms(' + entry.id + ', this, event)" href="sms:' + entry.tel.replace(/[^0-9+]/g,'') + '?body=' + encodeURIComponent(_smsPrzyjecieBody(entry)) + '">' + _smsBtnInnerHTML(!!entry.smsSent) + '</a>' : '')
+      + '<button class="btn-action ui-tile ui-tile--sm ui-tile--neutral btn-action--ghost" onclick="loadWycena(' + entry.id + ')" title="Edytuj"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg></button>'
+      + (isEntryCr(entry)
+        ? '<button class="btn-action ui-tile ui-tile--sm ui-tile--naprawa btn-action--repair" onclick="markCrGotowe(' + entry.id + ')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/></svg> Gotowe</button>'
+        : '<button class="btn-action ui-tile ui-tile--sm ui-tile--naprawa btn-action--repair" onclick="openRaport(' + entry.id + ')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg> NAPRAWA</button>');
 
-    const przyjęcieLine = entry.label ? 'Przyjęto: ' + entry.label.split(' ')[0].split('.').slice(0,2).join('.') + ' ' + dayOfWeek(entry.label.split(' ')[0]) : '';
-
-    const kolorBar = makeKolorBarHTML(entry.kolor || '');
-    const nameParts = [(entry.marka || null), entry.model].filter(Boolean).join(' ');
-    const terminHTML = entry.termin
-      ? `<div class="history-item-date">${_formatDataNaprawyLine(entry.termin)}</div>`
-      : '';
-
-    item.innerHTML = `
-      ${kolorBar}
-      <div class="history-item-top">
-        <div class="history-item-info">
-          <div style="display:flex;align-items:center;gap:6px;">
-            <span class="text-primary" style="font-size:var(--text-md);font-weight:700;">${escHTML(nameParts || '')}</span>${(entry.ebike || entry.marka === 'E-BIKE') ? '<span style=\'margin-left:5px;font-size:16px;\' title=\'e-Bike\'>⚡</span>' : ''}
-          </div>
-          ${terminHTML}
-        </div>
-        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
-          ${entry.label ? `<div class="history-item-date history-item-date--right">Przyjęte: ${entry.label.split(' ')[0].split('.').slice(0,2).join('.')} </div>` : ''}
-          ${entry.totalPrzedRaportem ? `<div style="font-size:11px;color:var(--text3);text-decoration:line-through;">${escHTML(entry.totalPrzedRaportem)}</div>` : ''}
-          <div class="history-item-total">${escHTML(entry.total)}</div>
-        </div>
-      </div>
-      <div class="history-item-actions">
-        ${entry.tel && !isEntryCr(entry) ? `<a class="btn-action ui-tile ui-tile--sm btn-history-sms${entry.smsSent ? ' btn-history-sms-sent' : ' ui-tile--naprawa'}" onclick="openOrderSms(${entry.id}, this, event)" href="sms:${entry.tel.replace(/[^0-9+]/g,'')}?body=${encodeURIComponent(_smsPrzyjecieBody(entry))}">${_smsBtnInnerHTML(!!entry.smsSent)}</a>` : ''}
-        <button class="btn-action ui-tile ui-tile--sm ui-tile--neutral btn-action--ghost" onclick="loadWycena(${entry.id})" title="Edytuj"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
-        <div class="history-actions-primary">
-          ${isEntryCr(entry)
-            ? `<button class="btn-action ui-tile ui-tile--sm ui-tile--naprawa btn-action--repair" onclick="markCrGotowe(${entry.id})"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/></svg> Gotowe</button>`
-            : `<button class="btn-action ui-tile ui-tile--sm ui-tile--naprawa btn-action--repair" onclick="openRaport(${entry.id})"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg> NAPRAWA</button>`}
-        </div>
-      </div>
-    `;
+    item.innerHTML = _buildHistoryOrderCardHTML(entry, {
+      listVariant: 'przyjete',
+      showTelInHeader: false,
+      actionsHTML,
+    });
 
     _attachHistoryItemDetails(item, entry);
     return item;
@@ -7962,6 +8971,7 @@ function switchTab(tab, opts) {
   const tabWyd      = $('tab-wydanie');
   const tabArch     = $('tab-archiwum');
   const tabKosz     = $('tab-kosz');
+  const tabArchiveFull = $('tab-archive-full');
 
   // Reset all
   [histList, wydList, archList, koszList].forEach(el => el.style.display = 'none');
@@ -8006,6 +9016,9 @@ function switchTab(tab, opts) {
       _archiveWydaneFilterYear = null;
       _updateArchiveWydaneChip();
     }
+    // "A" otwiera osobne okno archiwum, nie przełącza widoku w tej zakładce.
+    _archiveShowAll = false;
+    _updateArchiveFullBtn();
     if (!opts.keepSearch) $('archive-search-tel').value = '';
     tabArch.classList.add('active');
     renderArchive($('archive-search-tel')?.value || '');
@@ -8013,6 +9026,7 @@ function switchTab(tab, opts) {
   }
 
   if (tabKosz) tabKosz.style.display = (tab === 'archiwum') ? '' : 'none';
+  if (tabArchiveFull) tabArchiveFull.style.display = (tab === 'archiwum') ? '' : 'none';
   updateTabCounts();
 }
 
@@ -8041,7 +9055,7 @@ function openOrderSms(id, el, ev) {
 window.markSmsSent = markSmsSent;
 window.openOrderSms = openOrderSms;
 
-// ── Lista „Do wydania” (opcjonalny filtr jak w polu szukania) ──
+// ── Lista „Gotowe” (opcjonalny filtr jak w polu szukania) ──
 function getDoWydaniaList(filterTel) {
   const hist = getHistory();
   let doWydania = hist.filter(e => e.raportKoncowy);
@@ -8056,14 +9070,14 @@ function getDoWydaniaList(filterTel) {
   return doWydania;
 }
 
-// ── Renderowanie zakładki 'Do wydania' ──
+// ── Renderowanie zakładki 'Gotowe' ──
 function renderWydanie(filterTel) {
   const list = $('wydanie-list');
   if (typeof updateTabCounts === 'function') updateTabCounts();
   const doWydania = getDoWydaniaList(filterTel);
 
   if (!doWydania.length) {
-    list.innerHTML = emptyStateHTML({ query: filterTel, emptyTitle: 'Brak zleceń do wydania', emptySub: 'Zlecenia po naprawie pojawią się tutaj.' });
+    list.innerHTML = emptyStateHTML({ query: filterTel, emptyTitle: 'Brak zleceń gotowych', emptySub: 'Zlecenia po naprawie pojawią się tutaj.' });
     return;
   }
   list.innerHTML = '';
@@ -8073,41 +9087,21 @@ function renderWydanie(filterTel) {
     item.className = 'history-item';
     item.dataset.orderId = String(entry.id ?? '');
 
-    const kolorBar = makeKolorBarHTML(entry.kolor || '');
-    const terminLine   = entry.termin ? 'Data naprawy: ' + entry.termin + ' ' + dayOfWeek(entry.termin) : '';
-    const przyjęcieLine = entry.label ? 'Przyjęto: ' + entry.label.split(' ')[0].split('.').slice(0,2).join('.') + ' ' + dayOfWeek(entry.label.split(' ')[0]) : '';
-    const dataZakLine = entry.raportKoncowy?.dataZakonczenia ? 'Zakończono: ' + entry.raportKoncowy.dataZakonczenia.split('.').slice(0,2).join('.') + ' ' + dayOfWeek(entry.raportKoncowy.dataZakonczenia) : '';
-    const nameParts = [(entry.marka || null), entry.model].filter(Boolean).join(' ');
+    const actionsHTML =
+      (entry.tel ? '<a class="btn-action ui-tile ui-tile--sm btn-history-sms' + (entry.smsSent ? ' btn-history-sms-sent' : ' ui-tile--naprawa') + '" href="sms:' + entry.tel.replace(/[^0-9+]/g,'') + '?body=' + encodeURIComponent(_smsWydanieBody(entry)) + '" onclick="openOrderSms(' + entry.id + ', this, event)">' + _smsBtnInnerHTML(!!entry.smsSent) + '</a>' : '')
+      + '<button class="btn-action ui-tile ui-tile--sm ui-tile--neutral btn-action--ghost" onclick="cofnijDoAktualne(' + entry.id + ')" title="Cofnij do przyjętych"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg></button>'
+      + '<button class="btn-action ui-tile ui-tile--sm ui-tile--neutral btn-action--ghost" onclick="openRaportEdycja(' + entry.id + ')" title="Edytuj"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg></button>'
+      + '<button class="btn-action ui-tile ui-tile--sm ui-tile--wydanie btn-action--release" onclick="openPodsumowanieDoWydania(' + entry.id + ')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg> WYDAJ</button>';
 
-    item.innerHTML = `
-      ${kolorBar}
-      <div class="history-item-top">
-        <div class="history-item-info">
-          <div style="display:flex;align-items:center;gap:6px;">
-            <span class="text-primary" style="font-size:var(--text-md);font-weight:700;">${escHTML(nameParts || '')}</span>${(entry.ebike || entry.marka === 'E-BIKE') ? '<span style=\'margin-left:5px;font-size:16px;\' title=\'e-Bike\'>⚡</span>' : ''}
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;margin-top:2px;flex-wrap:wrap;">
-            ${entry.tel ? `<div class="link-tel" style="display:flex;align-items:center;gap:4px;font-size:var(--text-md);"><svg width="12" height="12" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>${escHTML(entry.tel)}</div>` : ''}
-            ${entry.kodOdbioru ? `<div style="font-size:14px;font-weight:800;color:#f59e0b;letter-spacing:2px;">🔑 ${escHTML(entry.kodOdbioru)}</div>` : ''}
-          </div>
-          ${przyjęcieLine ? `<div class="history-item-date" style="margin-top:2px;">${escHTML(przyjęcieLine)}</div>` : ''}
-          ${dataZakLine ? `<div class="history-item-date">${escHTML(dataZakLine)}</div>` : ''}
-        </div>
-        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
-          ${entry.totalZlecenia || entry.totalPrzedRaportem ? `<div class="history-item-total" style="font-size:19px;color:#6b7280;">${escHTML(entry.totalZlecenia || entry.totalPrzedRaportem)}</div>` : ''}
-          <div class="history-item-total">${escHTML(entry.total)}</div>
-        </div>
-      </div>
-      <div class="history-item-actions">
-        ${entry.tel ? '<a class="btn-action ui-tile ui-tile--sm btn-history-sms' + (entry.smsSent ? ' btn-history-sms-sent' : ' ui-tile--naprawa') + '" href="sms:' + entry.tel.replace(/[^0-9+]/g,'') + '?body=' + encodeURIComponent(_smsWydanieBody(entry)) + '" onclick="openOrderSms(' + entry.id + ', this, event)">' + _smsBtnInnerHTML(!!entry.smsSent) + '</a>' : ''}
-        <button class="btn-action ui-tile ui-tile--sm ui-tile--neutral btn-action--ghost" onclick="cofnijDoAktualne(${entry.id})" title="Cofnij do przyjętych"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg></button>
-        <button class="btn-action ui-tile ui-tile--sm ui-tile--neutral btn-action--ghost" onclick="openRaportEdycja(${entry.id})" title="Edytuj"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
-        <div class="history-actions-primary">
-          <button class="btn-action ui-tile ui-tile--sm ui-tile--wydanie btn-action--release" onclick="openPodsumowanieDoWydania(${entry.id})"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg> WYDAJ</button>
-        </div>
-      </div>
-    `;
-    _attachHistoryItemDetails(item, entry, { showTelInDetails: false });
+    item.innerHTML = _buildHistoryOrderCardHTML(entry, {
+      listVariant: 'wydanie',
+      showTelInHeader: false,
+      showKodOdbioru: false,
+      inlineTelKod: false,
+      actionsHTML,
+    });
+
+    _attachHistoryItemDetails(item, entry, { showKodInDetails: true });
     return item;
   };
 
@@ -8178,7 +9172,7 @@ function generujPotwierdzeniaDoWydania() {
   const filterTel = ($('wydanie-search-tel') && $('wydanie-search-tel').value) || '';
   const doWydania = getDoWydaniaList(filterTel);
   if (!doWydania.length) {
-    alert('Brak zleceń do wydania na liście.');
+    alert('Brak zleceń gotowych na liście.');
     return;
   }
   const fmtPLN = v => Number(v || 0).toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -8229,7 +9223,7 @@ function generujPotwierdzeniaDoWydania() {
       + '</article>';
   }).join('');
 
-  openPotGridPrintWindow('Potwierdzenia — Do wydania', cards);
+  openPotGridPrintWindow('Potwierdzenia — Gotowe', cards);
 }
 window.generujPotwierdzeniaDoWydania = generujPotwierdzeniaDoWydania;
 
@@ -8314,6 +9308,8 @@ function renderArchive(filterStr) {
     });
     return;
   }
+  // Zakładka "Wydane" pokazuje tylko ostatnie wpisy.
+  // Pełne archiwum otwiera się w osobnym oknie (przycisk "A").
   // Sortuj po dacie wydania (dataWydania → archivedAt → data przyjęcia), od najnowszych
   arch = arch.slice().sort((a, b) => {
     const da = _archiveEntryDate(a);
@@ -8323,56 +9319,31 @@ function renderArchive(filterStr) {
     const ib = parseInt(b.id, 10) || 0;
     return ib - ia;
   });
+  const isSearching = filterStr && filterStr.trim().length >= 2;
+  const shouldLimit = !isSearching && !_archiveWydaneFilter;
+  if (shouldLimit && arch.length > ARCHIVE_RECENT_LIMIT) arch = arch.slice(0, ARCHIVE_RECENT_LIMIT);
   list.innerHTML = '';
   arch.forEach(entry => {
     const item = document.createElement('div');
     item.className = 'history-item';
     item.dataset.orderId = String(entry.id ?? '');
-    const terminLine   = entry.termin ? 'Planowana data naprawy: ' + entry.termin : '';
-    const przyjęcieLine = entry.label ? 'Przyjęto na serwis: ' + entry.label.split(' ')[0].split('.').slice(0,2).join('.') : '';
-    const stripYear = s => s ? s.split('.').slice(0,2).join('.') : '';
-    const dataWydaniaDisplay = entry.dataWydania || (entry.archivedAt
-      ? new Date(entry.archivedAt).toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' })
-      : '');
-    const dataZakLine = entry.raportKoncowy?.dataZakonczenia ? 'Zakończono naprawę: ' + stripYear(entry.raportKoncowy.dataZakonczenia) : '';
-    const dataWydLine = dataWydaniaDisplay ? 'Wydano z serwisu: ' + stripYear(dataWydaniaDisplay) : '';
-    const smsHTML = entry.tel
-      ? '<a class="btn-action ui-tile ui-tile--sm btn-history-sms' + (entry.smsSent ? ' btn-history-sms-sent' : ' ui-tile--naprawa') + '" href="sms:' + entry.tel.replace(/[^0-9+]/g,'') + '?body=' + encodeURIComponent((_smsRower(entry.marka, entry.model) || '') + ' - przygotowany do odbioru\n\nGodziny otwarcia\nPn-pt 10:00-18:00\nSobota 9:00-14:00\n\nKwota do zapłaty - ' + entry.total + ' zł\nPłatność gotówka/karta/BLIK\n\nKod odbioru: ' + (entry.kodOdbioru || '–')) + '" onclick="openOrderSms(' + entry.id + ', this, event)">' + _smsBtnInnerHTML(!!entry.smsSent) + '</a>'
-      : '';
 
-    const kolorBar = makeKolorBarHTML(entry.kolor || '');
-    const nameParts = [(entry.marka || null), entry.model].filter(Boolean).join(' ');
-    const _archPrev = parseFloat(String(entry.totalZlecenia || entry.totalPrzedRaportem || '').replace(/\s/g,'').replace(',','.')) || 0;
+    const actionsHTML =
+      '<button class="btn-action ui-tile ui-tile--sm ui-tile--danger btn-action--danger-ghost btn-history-del" onclick="deleteArchive(' + entry.id + ')" title="Przenieś do kosza"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>'
+      + '<button class="btn-action ui-tile ui-tile--sm ui-tile--neutral btn-action--ghost" onclick="unarchiveWycena(' + entry.id + ')" title="Cofnij"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg></button>'
+      + (entry.raportKoncowy ? '<button class="btn-action ui-tile ui-tile--sm ui-tile--accent btn-action--archive" onclick="event.stopPropagation();openPodsumowanieWydane(' + entry.id + ')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> RAPORT</button>' : '')
+      + '<button class="btn-action ui-tile ui-tile--sm ui-tile--warning btn-action--warning" onclick="openRabAssignForArchive(' + entry.id + ')" title="Dodaj kod rabatowy" aria-label="Dodaj kod rabatowy"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v7a2 2 0 0 1-2 2H7l-4-4V5a2 2 0 0 1 2-2h7"/><path d="M16 2l6 6"/><path d="M14 8l8-8"/></svg></button>';
 
-    item.innerHTML =
-      kolorBar +
-      '<div class="history-item-top">' +
-        '<div class="history-item-info">' +
-          '<div style="display:flex;align-items:center;gap:6px;">' +
-            '<span class="text-primary" style="font-size:var(--text-md);font-weight:700;">' + escHTML(nameParts || '') + '</span>' + ((entry.ebike || entry.marka === 'E-BIKE') ? '<span style="margin-left:5px;font-size:15px;" title="e-Bike">⚡</span>' : '') +
-          '</div>' +
-          '<div style="display:flex;align-items:center;gap:8px;margin-top:2px;flex-wrap:wrap;">' +
-            (entry.tel ? '<div onclick="event.stopPropagation();openKlientHistoria(\'' + String(entry.tel).replace(/[^0-9+]/g,'') + '\')" title="Historia klienta — wszystkie naprawy" class="link-tel" style="display:flex;align-items:center;gap:4px;font-size:var(--text-md);cursor:pointer;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>' + escHTML(entry.tel) + '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:1px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>' : '') +
-            (entry.kodOdbioru ? '<div style="font-size:14px;font-weight:800;color:#f59e0b;letter-spacing:2px;">🔑 ' + escHTML(entry.kodOdbioru) + '</div>' : '') +
-          '</div>' +
-          (przyjęcieLine ? '<div class="history-item-date" style="margin-top:2px;">' + escHTML(przyjęcieLine) + '</div>' : '') +
-          (terminLine ? '<div class="history-item-date">' + escHTML(terminLine) + '</div>' : '') +
-          (dataZakLine ? '<div class="history-item-date">' + escHTML(dataZakLine) + '</div>' : '') +
-          (dataWydLine ? '<div class="history-item-date">' + escHTML(dataWydLine) + '</div>' : '') +
-        '</div>' +
-        '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">' +
-          (_archPrev > 0 ? '<div class="history-item-total" style="font-size:19px;color:#6b7280;">' + escHTML(entry.totalZlecenia || entry.totalPrzedRaportem) + '</div>' : '') +
-          '<div class="history-item-total">' + escHTML(entry.total) + '</div>' +
-        '</div>' +
-      '</div>' +
-      '<div class="history-item-actions">' +
-        '<button class="btn-action ui-tile ui-tile--sm ui-tile--danger btn-action--danger-ghost btn-history-del" onclick="deleteArchive(' + entry.id + ')" title="Przenieś do kosza"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>' +
-        '<button class="btn-action ui-tile ui-tile--sm ui-tile--neutral btn-action--ghost" onclick="unarchiveWycena(' + entry.id + ')" title="Cofnij"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg></button>' +
-        (entry.raportKoncowy ? '<button class="btn-action ui-tile ui-tile--sm ui-tile--wydanie btn-action--success" onclick="downloadRaportPDF(' + entry.id + ')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Naprawa</button>' : '') +
-
-        '<button class="btn-action ui-tile ui-tile--sm ui-tile--accent btn-action--archive" onclick="openPodsumowanieWydane(' + entry.id + ')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> PDF</button>' +
-        '<button class="btn-action ui-tile ui-tile--sm ui-tile--warning btn-action--warning" onclick="openRabAssignForArchive(' + entry.id + ')" title="Dodaj kod rabatowy" aria-label="Dodaj kod rabatowy"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v7a2 2 0 0 1-2 2H7l-4-4V5a2 2 0 0 1 2-2h7"/><path d="M16 2l6 6"/><path d="M14 8l8-8"/></svg></button>' +
-      '</div>';
+    item.innerHTML = _buildHistoryOrderCardHTML(entry, {
+      listVariant: 'wydane',
+      showTelInHeader: true,
+      klientHistoria: true,
+      showKodOdbioru: true,
+      inlineTelKod: true,
+      actionsHTML,
+      priceInHeader: true,
+      headerPriceHTML: _historyHeaderPriceHTML(entry, false),
+    });
 
     _attachHistoryItemDetails(item, entry, { showTelInDetails: false });
     list.appendChild(item);
@@ -8389,7 +9360,7 @@ function deleteArchive(id) {
     addToKosz(entry);
     const newArch = arch.filter(e => e.id !== id);
     localStorage.setItem(ARCHIVE_KEY, JSON.stringify(newArch));
-    renderArchive();
+    renderArchive($('archive-search-tel')?.value || '');
     updateKoszBadge();
   });
 }
@@ -8651,7 +9622,7 @@ function confirmWydaj() {
   switchTab('wydanie');
 }
 
-// ── Wydanie grupowe — wszystkie zlecenia do wydania z jednego numeru telefonu ──
+// ── Wydanie grupowe — wszystkie zlecenia gotowe z jednego numeru telefonu ──
 function wydajGrupowo(telKey) {
   const hist = getHistory();
   const doWyd = hist.filter(e => e.raportKoncowy && String(e.tel || '').replace(/\D/g, '') === String(telKey));
@@ -9081,22 +10052,7 @@ function generujRaportZDaty() {
     .filter(d => wybrane.has(d.dataStr))
     .sort((a, b) => a.time - b.time);
 
-  function runRaportPDF() {
-    (async () => {
-      const pdf = new window.jspdf.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-      let firstPage = true;
-      for (const d of dni) {
-        const { canvas, blocks } = await _renderRaportDayCanvas(_buildRaportDobowyHTML(d.dataStr, d.entries));
-        firstPage = _addDayCanvasToPdf(pdf, canvas, blocks, firstPage);
-      }
-      const fname = dni.length === 1
-        ? 'raport-' + dni[0].dataStr.replace(/\./g, '-')
-        : 'raport-' + dni[0].dataStr.replace(/\./g, '-') + '_' + dni[dni.length - 1].dataStr.replace(/\./g, '-');
-      pdf.save(fname + '.pdf');
-    })().catch(err => { console.error(err); alert('Błąd generowania PDF'); });
-  }
-
-  _loadPdfLibs(runRaportPDF, () => { alert('Brak połączenia z internetem'); });
+  alert('Generowanie PDF zostało usunięte. Ten raport dzienny nie jest jeszcze dostępny jako PNG.');
 }
 window.generujRaportDobowy = generujRaportDobowy;
 window.generujRaportZDaty = generujRaportZDaty;
@@ -9140,7 +10096,69 @@ function cofnijDoAktualne(id) {
 }
 window.cofnijDoAktualne = cofnijDoAktualne;
 
-function buildArchiveHTML(entry, useRaport) {
+function _normalizeArchiveMode(mode) {
+  if (mode === true) return 'naprawa';
+  if (mode === false) return 'zlecenie';
+  return mode || 'naprawa';
+}
+
+function _archiveItemsFromState(st) {
+  if (!st) return { items: [], subs: [] };
+  return {
+    items: (st.items || []).filter(it => it.checked),
+    subs: (st.subs || []).filter(s => s.checked && (s.name || parseFloat(s.price) > 0)),
+  };
+}
+
+function _archiveCalcTotal(items, subs) {
+  let total = 0;
+  items.forEach(it => {
+    const qty = it.qty !== undefined ? (it.qty || 1) : 1;
+    total += (parseFloat(it.price) || 0) * qty;
+  });
+  subs.forEach(s => { total += parseFloat(s.price) || 0; });
+  return total;
+}
+
+function _archiveTableRowsHtml(items, subs, fmtPLN) {
+  let html = items.map((it, i) => {
+    const qty = it.qty !== undefined ? (it.qty || 1) : 1;
+    const label = itemLabelWithDetails(it, true);
+    const rowTotal = (it.price || 0) * qty;
+    const qtyStr = it.qty !== undefined && qty > 0 ? qty : '–';
+    const unitStr = it.qty !== undefined && qty > 0 ? fmtPLN(it.price) : '–';
+    return `<tr class="${i % 2 ? 'alt' : ''}"><td class="td">${escHTML(label)}</td><td class="tdr">${unitStr}</td><td class="tdr">${qtyStr}</td><td class="tdb">${fmtPLN(rowTotal)}</td></tr>`;
+  }).join('');
+  html += subs.map((s, j) => {
+    const idx = items.length + j;
+    return `<tr class="${idx % 2 ? 'alt' : ''}"><td class="td">${escHTML(s.name || 'Część')}</td><td class="tdr">–</td><td class="tdr">–</td><td class="tdb">${fmtPLN(s.price)}</td></tr>`;
+  }).join('');
+  return html;
+}
+
+function _archiveTableSection(sectionTitle, items, subs, fmtPLN, totalLabel) {
+  if (!items.length && !subs.length) return '';
+  const sectionTotal = _archiveCalcTotal(items, subs);
+  const rowHtml = _archiveTableRowsHtml(items, subs, fmtPLN);
+  return `<section class="services">
+      <div class="section-title">${escHTML(sectionTitle)}</div>
+      <table>
+        <colgroup><col class="c-name"><col class="c-unit"><col class="c-qty"><col class="c-total"></colgroup>
+        <thead><tr>
+          <th class="th">Usługa / część</th>
+          <th class="thr">Cena</th>
+          <th class="thr">Szt.</th>
+          <th class="thr">Razem</th>
+        </tr></thead>
+        <tbody>${rowHtml}
+          <tr><td class="td" colspan="3" style="font-weight:700;color:#64748b;">${escHTML(totalLabel)}</td><td class="tdb">${fmtPLN(sectionTotal)}</td></tr>
+        </tbody>
+      </table>
+    </section>`;
+}
+
+function buildArchiveHTML(entry, mode) {
+  mode = _normalizeArchiveMode(mode);
   const fmtPLN = v => Number(v||0).toLocaleString('pl-PL', {minimumFractionDigits:2,maximumFractionDigits:2}) + ' zł';
   const marka = entry.marka || '';
   const model = entry.model || '';
@@ -9148,183 +10166,226 @@ function buildArchiveHTML(entry, useRaport) {
   const dataZakonczenia = entry.raportKoncowy?.dataZakonczenia
     || (entry.raportKoncowy?.savedAt ? new Date(entry.raportKoncowy.savedAt).toLocaleDateString('pl-PL', {day:'2-digit',month:'2-digit',year:'numeric'}) : '');
   const dataWydania = entry.dataWydania || '';
-  const savedAt = useRaport ? dataZakonczenia : (dataWydania || entry.label || '');
 
-  let sourceItems = [], sourceSubs = [];
-  if (useRaport && entry.raportKoncowy) {
-    sourceItems = (entry.raportKoncowy.items || []).filter(it => it.checked);
-    sourceSubs  = (entry.raportKoncowy.subs  || []).filter(s  => s.checked && s.price > 0);
-  } else {
-    const st = safeParseJSON(entry.state || '{}', {});
-    sourceItems = (st.items || []).filter(it => it.checked);
-    sourceSubs  = (st.subs  || []).filter(s  => s.checked && s.price > 0);
-  }
+  const st = safeParseJSON(entry.state || '{}', {});
+  const zlecone = _archiveItemsFromState(st);
+  const wykonane = entry.raportKoncowy
+    ? _archiveItemsFromState({ items: entry.raportKoncowy.items, subs: entry.raportKoncowy.subs })
+    : { items: [], subs: [] };
 
-  let total = 0;
-  const rows = sourceItems.map(it => {
-    const qty = it.qty !== undefined ? (it.qty || 1) : 1;
-    const label = itemLabelWithDetails(it, true);
-    const rowTotal = (it.price || 0) * qty;
-    total += rowTotal;
-    const qtyStr = it.qty !== undefined && qty > 0 ? qty : '–';
-    const unitStr = it.qty !== undefined && qty > 0 ? fmtPLN(it.price) : '–';
-    return `<tr><td class="td">${escHTML(label)}</td><td class="tdr">${unitStr}</td><td class="tdr">${qtyStr}</td><td class="tdb">${fmtPLN(rowTotal)}</td></tr>`;
-  }).join('') + sourceSubs.map(s => {
-    total += s.price;
-    return `<tr><td class="td">${escHTML(s.name||'Część')}</td><td class="tdr">–</td><td class="tdr">–</td><td class="tdb">${fmtPLN(s.price)}</td></tr>`;
-  }).join('');
+  const wykonaneTotal = _archiveCalcTotal(wykonane.items, wykonane.subs);
+  const zlecTotal = _archiveCalcTotal(zlecone.items, zlecone.subs);
 
   const kwotaSprzedazy = entry.kwotaSprzedazy
     ? parseFloat(String(entry.kwotaSprzedazy).replace(/\s/g,'').replace(',','.')) : null;
-  const showKwota = useRaport && kwotaSprzedazy !== null && kwotaSprzedazy > total;
-  const notatka = useRaport && entry.raportKoncowy?.notatka ? entry.raportKoncowy.notatka : '';
-  const kodOdbioru = entry.kodOdbioru || '';
-  const titleLabel = useRaport ? 'Raport naprawy' : 'Zlecenie serwisowe';
+  const showKwota = mode === 'raport' && kwotaSprzedazy !== null && kwotaSprzedazy > wykonaneTotal;
+  const notatka = (mode === 'naprawa' || mode === 'raport') && entry.raportKoncowy?.notatka ? entry.raportKoncowy.notatka : '';
+
+  const titleByMode = { zlecenie: 'Zlecenie serwisowe', naprawa: 'Naprawa', raport: 'Raport serwisowy' };
+  const titleLabel = titleByMode[mode] || 'Raport serwisowy';
+
+  let servicesHtml = '';
+  if (mode === 'zlecenie') {
+    servicesHtml = _archiveTableSection('Zlecone usługi i części', zlecone.items, zlecone.subs, fmtPLN, 'Razem zlecenie');
+  } else if (mode === 'naprawa') {
+    servicesHtml = _archiveTableSection('Wykonane usługi i części', wykonane.items, wykonane.subs, fmtPLN, 'Razem naprawa');
+  } else {
+    const zleconeSec = _archiveTableSection('Zlecone naprawy', zlecone.items, zlecone.subs, fmtPLN, 'Razem zlecenie');
+    const wykonaneSec = _archiveTableSection('Wykonane naprawy', wykonane.items, wykonane.subs, fmtPLN, 'Razem naprawa');
+    servicesHtml = (zleconeSec || '') + (wykonaneSec || '');
+    if (!servicesHtml) {
+      servicesHtml = `<section class="services"><div class="section-title">Pozycje</div><table><tbody><tr><td class="td" colspan="4" style="text-align:center;color:#94a3b8;">Brak pozycji</td></tr></tbody></table></section>`;
+    }
+  }
+
+  const bikeName = escHTML([marka, model].filter(Boolean).join(' ') || '—');
+  const displayTotal = entry.total != null && entry.total !== '' ? String(entry.total) : fmtPLN(mode === 'zlecenie' ? zlecTotal : wykonaneTotal);
+
+  const datePrzyjeto = entry.label ? formatDateFullDMY(entry.label.split(' ')[0]) : '';
+  const dateTermin = entry.termin ? formatDateFullDMY(entry.termin) : '';
+  const dateZakonczenia = dataZakonczenia ? formatDateFullDMY(dataZakonczenia) : '';
+  const dateWydaniaFmt = dataWydania ? formatDateFullDMY(dataWydania) : '';
+  const docDateRaw = mode === 'naprawa' ? dataZakonczenia : (mode === 'raport' ? (dataWydania || dataZakonczenia) : (dataWydania || entry.label || ''));
+  const docDate = docDateRaw ? formatDateFullDMY(docDateRaw) : (dateZakonczenia || datePrzyjeto || '—');
+  const showKod = mode === 'raport' && entry.kodOdbioru;
+
+  const metaDateItem = (label, dateStr) => {
+    const d = dateStr || '—';
+    const wday = dateStr ? dayOfWeek(dateStr) : '—';
+    return `<div class="meta-item"><span class="meta-k">${label}</span><span class="meta-v">${escHTML(d)}</span><span class="meta-w">${escHTML(wday)}</span></div>`;
+  };
+
+  const metaRows = [
+    metaDateItem('Przyjęto', datePrzyjeto),
+    metaDateItem('Termin', dateTermin),
+    metaDateItem('GOTOWE', dateZakonczenia),
+    metaDateItem('Wydano', dateWydaniaFmt),
+  ].join('');
 
   return `<!DOCTYPE html><html><head><meta charset="UTF-8">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    *{box-sizing:border-box;margin:0;padding:0;font-family:'Inter','Segoe UI',Arial,sans-serif;}
-    body{font-family:'Inter','Segoe UI',Arial,sans-serif;background:#08080d;color:#e0e5f2;width:480px;padding:20px;}
-    .card{background:#111118;border:1px solid #1e1e30;border-left:4px solid #c0392b;border-radius:12px;padding:16px 18px;margin-bottom:12px;}
-    .title-label{font-size:9px;font-weight:700;color:#c0392b;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
-    .bike-name{font-size:22px;font-weight:800;color:#fff;line-height:1.2;}
-    .tel{font-size:14px;color:#3b7cf4;margin-top:6px;display:flex;align-items:center;gap:6px;}
-    .dates{margin-top:10px;display:flex;flex-direction:column;gap:3px;}
-    .date-row{font-size:12px;font-weight:600;color:var(--text2);}
-    table{width:100%;border-collapse:collapse;table-layout:fixed;}
-    col.c-name{width:52%;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Segoe UI',Arial,sans-serif;background:transparent;color:#111827;width:540px;padding:0;margin:0;-webkit-font-smoothing:antialiased;}
+    .doc{background:#fff;border-radius:20px;overflow:hidden;border:1px solid #e2e8f0;box-shadow:0 4px 24px rgba(15,23,42,.08);}
+    .doc-header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:22px 24px 18px;background:linear-gradient(135deg,#111827 0%,#1f2937 100%);color:#fff;}
+    .header-left{display:flex;align-items:center;gap:14px;flex:1;min-width:0;}
+    .header-titles{min-width:0;}
+    .brand-name{font-size:11px;font-weight:800;letter-spacing:2.4px;text-transform:uppercase;color:#f87171;margin-bottom:6px;}
+    .doc-type{font-size:20px;font-weight:800;line-height:1.15;letter-spacing:-.3px;}
+    .doc-date{text-align:right;font-size:11px;font-weight:600;color:#94a3b8;line-height:1.5;white-space:nowrap;}
+    .doc-date strong{display:block;font-size:13px;color:#e2e8f0;font-weight:700;margin-top:2px;}
+    .client{padding:20px 24px 16px;border-bottom:1px solid #eef1f6;}
+    .bike-name{font-size:24px;font-weight:800;color:#0f172a;line-height:1.15;letter-spacing:-.4px;margin-bottom:8px;}
+    .tel{font-size:14px;font-weight:600;color:#2563eb;margin-bottom:14px;}
+    .meta-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px 10px;align-items:start;}
+    .meta-item{display:flex;flex-direction:column;gap:2px;min-width:0;}
+    .meta-k{font-size:9px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.5px;}
+    .meta-v{font-size:12px;font-weight:700;color:#1e293b;line-height:1.2;}
+    .meta-w{font-size:10px;font-weight:500;color:#94a3b8;line-height:1.2;}
+    .services{padding:18px 24px 8px;}
+    .services + .services{padding-top:8px;}
+    .section-title{font-size:11px;font-weight:800;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;}
+    table{width:100%;border-collapse:collapse;table-layout:fixed;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;}
+    col.c-name{width:50%;}
     col.c-unit{width:18%;}
     col.c-qty{width:12%;}
-    col.c-total{width:18%;}
-    .th{padding:8px 10px;font-size:9px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid #1e1e30;white-space:nowrap;}
-    .thr{padding:8px 10px;font-size:9px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid #1e1e30;text-align:right;white-space:nowrap;}
-    .td{padding:9px 10px;font-size:13px;color:#e0e5f2;border-bottom:1px solid #1a1a28;word-break:break-word;}
-    .tdr{padding:9px 10px;font-size:13px;color:#9aa3bf;border-bottom:1px solid #1a1a28;text-align:right;white-space:nowrap;}
-    .tdb{padding:9px 10px;font-size:13px;font-weight:700;color:#22c55e;border-bottom:1px solid #1a1a28;text-align:right;white-space:nowrap;}
-    .total-box{background:#0a0a12;border:1px solid #1e1e30;border-radius:10px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;margin-top:12px;}
-    .total-lbl{font-size:11px;font-weight:700;color:#9aa3bf;text-transform:uppercase;letter-spacing:.6px;}
-    .total-amt{font-size:28px;font-weight:800;color:#22c55e;letter-spacing:-1px;}
-    .kwota-box{background:#2e1065;border:1px solid #4c1d95;border-radius:10px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;margin-top:8px;}
-    .kwota-lbl{font-size:11px;font-weight:700;color:#ddd8fe;text-transform:uppercase;letter-spacing:.6px;}
-    .kwota-amt{font-size:22px;font-weight:800;color:#fff;}
-    .kod-box{background:#052e16;border:1px solid #16a34a;border-radius:10px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;margin-top:8px;}
-    .kod-lbl{font-size:11px;font-weight:700;color:#86efac;text-transform:uppercase;letter-spacing:.6px;}
-    .kod-val{font-size:24px;font-weight:800;color:#22c55e;letter-spacing:4px;}
-    .notatka-box{margin-top:10px;border:1px solid #1e1e30;border-left:3px solid #3b7cf4;border-radius:8px;padding:12px 14px;}
-    .notatka-lbl{font-size:9px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;}
-    .notatka-txt{font-size:13px;color:#e0e5f2;line-height:1.6;white-space:pre-wrap;}
+    col.c-total{width:20%;}
+    thead tr{background:#f8fafc;}
+    .th,.thr{padding:10px 12px;font-size:9px;font-weight:800;color:#475569;text-transform:uppercase;letter-spacing:.7px;border-bottom:1px solid #e2e8f0;white-space:nowrap;}
+    .thr{text-align:right;}
+    .td{padding:11px 12px;font-size:13px;font-weight:500;color:#1e293b;border-bottom:1px solid #eef2f7;word-break:break-word;line-height:1.35;vertical-align:top;}
+    .tdr{padding:11px 12px;font-size:12px;font-weight:500;color:#64748b;border-bottom:1px solid #eef2f7;text-align:right;white-space:nowrap;vertical-align:top;}
+    .tdb{padding:11px 12px;font-size:13px;font-weight:700;color:#0f172a;border-bottom:1px solid #eef2f7;text-align:right;white-space:nowrap;vertical-align:top;}
+    tr.alt .td,tr.alt .tdr,tr.alt .tdb{background:#fafbfd;}
+    tr:last-child .td,tr:last-child .tdr,tr:last-child .tdb{border-bottom:none;}
+    .summary{padding:16px 24px 22px;background:#f8fafc;border-top:1px solid #e2e8f0;}
+    .total-box{background:#fff;border:2px solid #111827;border-radius:12px;padding:16px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px;}
+    .total-lbl{font-size:11px;font-weight:800;color:#475569;text-transform:uppercase;letter-spacing:.7px;}
+    .total-amt{font-size:30px;font-weight:800;color:#111827;letter-spacing:-1px;white-space:nowrap;}
+    .kwota-box{margin-top:10px;background:#f5f3ff;border:1px solid #ddd6fe;border-radius:10px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px;}
+    .kwota-lbl{font-size:10px;font-weight:800;color:#6d28d9;text-transform:uppercase;letter-spacing:.6px;}
+    .kwota-amt{font-size:20px;font-weight:800;color:#5b21b6;white-space:nowrap;}
+    .notatka-box{margin-top:12px;background:#fff;border:1px solid #e2e8f0;border-left:4px solid #2563eb;border-radius:10px;padding:12px 14px;}
+    .notatka-lbl{font-size:9px;font-weight:800;color:#64748b;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;}
+    .notatka-txt{font-size:13px;color:#334155;line-height:1.55;white-space:pre-wrap;}
+    .kod-box{margin-top:10px;background:#fffbeb;border:2px solid #f59e0b;border-radius:12px;padding:14px 16px;text-align:center;}
+    .kod-lbl{font-size:10px;font-weight:800;color:#b45309;text-transform:uppercase;letter-spacing:.7px;margin-bottom:6px;}
+    .kod-amt{font-size:32px;font-weight:800;color:#d97706;letter-spacing:8px;}
+    .doc-footer{padding:16px 24px 20px;text-align:center;font-size:10px;font-weight:500;color:#64748b;line-height:1.55;letter-spacing:.2px;border-top:1px solid #eef1f6;background:#fff;}
+    .doc-footer a,.doc-footer .footer-url{color:#2563eb;font-weight:800;font-size:14px;text-decoration:none;letter-spacing:.2px;}
+    .doc-footer .footer-hours{margin-top:8px;font-weight:600;color:#94a3b8;}
   </style></head><body>
-  <div class="card">
-    <div class="title-label">🔧 ${titleLabel}</div>
-    <div class="bike-name">${escHTML([marka, model].filter(Boolean).join(' ') || '')}</div>
-    ${tel ? `<div class="tel">📞 ${escHTML(tel)}</div>` : ''}
-    <div class="dates">
-      ${entry.label ? `<div class="date-row">Przyjęto na serwis: ${escHTML(entry.label.split(' ')[0])}</div>` : ''}
-      ${entry.termin ? `<div class="date-row">Planowana data naprawy: ${escHTML(entry.termin)}</div>` : ''}
-      ${dataZakonczenia ? `<div class="date-row">Zakończono naprawę: ${escHTML(dataZakonczenia)}</div>` : ''}
-      ${dataWydania ? `<div class="date-row">Wydano z serwisu: ${escHTML(dataWydania)}</div>` : ''}
-    </div>
-  </div>
-  <div class="card" style="border-left-color:#1e1e30;padding:0;overflow:hidden;">
-    <table>
-      <colgroup><col class="c-name"><col class="c-unit"><col class="c-qty"><col class="c-total"></colgroup>
-      <thead><tr>
-        <th class="th">Usługa / część</th>
-        <th class="thr">Cena</th>
-        <th class="thr">Szt.</th>
-        <th class="thr">Razem</th>
-      </tr></thead>
-      <tbody>${rows}</tbody>
-    </table>
-    <div style="padding:0 12px 14px;">
+  <div class="doc">
+    <header class="doc-header">
+      <div class="header-left">
+        <div class="header-titles">
+          <div class="brand-name">Serwis ROW-POL</div>
+          <div class="doc-type">${escHTML(titleLabel)}</div>
+        </div>
+      </div>
+      <div class="doc-date">Data dokumentu<strong>${escHTML(docDate)}</strong></div>
+    </header>
+    <section class="client">
+      <div class="bike-name">${bikeName}</div>
+      ${tel ? `<div class="tel">${escHTML(tel)}</div>` : ''}
+      ${metaRows ? `<div class="meta-grid">${metaRows}</div>` : ''}
+    </section>
+    ${servicesHtml}
+    <div class="summary">
       <div class="total-box">
         <div class="total-lbl">Łączna kwota</div>
-        <div class="total-amt">${fmtPLN(total)}</div>
+        <div class="total-amt">${escHTML(displayTotal.toLowerCase().includes('zł') ? displayTotal : displayTotal + ' zł')}</div>
       </div>
+      ${showKod ? `<div class="kod-box"><div class="kod-lbl">Kod odbioru</div><div class="kod-amt">${escHTML(String(entry.kodOdbioru))}</div></div>` : ''}
       ${showKwota ? `<div class="kwota-box"><div class="kwota-lbl">Kwota zapłacona</div><div class="kwota-amt">${fmtPLN(kwotaSprzedazy)}</div></div>` : ''}
-      ${(useRaport && kodOdbioru) ? `<div class="kod-box"><div class="kod-lbl">✓ Kod odbioru zweryfikowany</div><div class="kod-val">${escHTML(kodOdbioru)}</div></div>` : ''}
-      ${notatka ? `<div class="notatka-box"><div class="notatka-lbl">Notatka</div><div class="notatka-txt">${escHTML(notatka)}</div></div>` : ''}
+      ${notatka ? `<div class="notatka-box"><div class="notatka-lbl">Notatka serwisowa</div><div class="notatka-txt">${escHTML(notatka)}</div></div>` : ''}
+    </div>
+    <div class="doc-footer">
+      <div class="footer-url">www.rowpol.pl</div>
+      <div>FHU ROW-POL Adam Flinta, NIP: 944-119-25-71</div>
+      <div>Ks. Popiełuszki 25, 30-898 Kraków</div>
+      <div>tel. +48 531-933-977, +48 889-706-651</div>
+      <div class="footer-hours">Pn–Pt 10:00–18:00 · Sob 9:00–14:00</div>
     </div>
   </div>
   </body></html>`;
 }
 
-function runArchiveImage(entry, useRaport) {
-  const kod = entry.kodOdbioru || 'brak';
-  const dataZak = entry.raportKoncowy?.dataZakonczenia || '';
-  const dataPart = dataZak ? dataZak.replace(/\./g, '-') : (entry.dataWydania || '').replace(/\./g, '-');
-  const kwota = (entry.total || '0').replace(/\s/g,'').replace(',','.');
-  const label = useRaport
-    ? `${kod} - ${dataPart} - ${kwota}.png`
-    : 'zlecenie-' + (entry.marka || 'brak') + '.png';
-  const iframe = document.createElement('iframe');
-  iframe.style.cssText = 'position:fixed;left:-9999px;top:0;width:480px;height:1px;border:none;';
-  document.body.appendChild(iframe);
-  const doc = iframe.contentDocument || iframe.contentWindow.document;
-  doc.open(); doc.write(buildArchiveHTML(entry, useRaport)); doc.close();
-  const cleanup = () => { if (iframe.parentNode) iframe.parentNode.removeChild(iframe); };
-  setTimeout(() => {
-    iframe.style.height = doc.body.scrollHeight + 'px';
-    setTimeout(() => {
-      const loadScript = (src, cb) => {
-        if (document.querySelector('script[src="'+src+'"]')) { cb(); return; }
-        const s = document.createElement('script'); s.src = src; s.onload = cb; document.head.appendChild(s);
-      };
-      const run = () => {
-        html2canvas(doc.body, {scale:3, useCORS:true, backgroundColor:'#08080d'})
-          .then(canvas => {
-            canvas.toBlob(blob => {
-              const url = URL.createObjectURL(blob);
-              const a = document.createElement('a');
-              a.href = url; a.download = label;
-              document.body.appendChild(a); a.click();
-              setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 500);
-              cleanup();
-            }, 'image/png');
-          })
-          .catch(e => { console.error(e); alert('Błąd generowania obrazka'); cleanup(); });
-      };
-      const runWhenFontsReady = () => {
-        // Poczekaj aż webfont się załaduje w iframe, żeby nie było "skoku" kroju.
-        if (doc.fonts && doc.fonts.ready) {
-          doc.fonts.ready.then(() => setTimeout(run, 30)).catch(() => run());
-        } else {
-          run();
-        }
-      };
-      if (window.html2canvas) { runWhenFontsReady(); return; }
-      loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js', runWhenFontsReady);
-    }, 300);
-  }, 100);
+function _archivePngFilename(entry) {
+  const now = new Date();
+  const date = now.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  const hh = String(now.getHours()).padStart(2, '0');
+  const min = String(now.getMinutes()).padStart(2, '0');
+  const bike = [entry.marka, entry.model].filter(Boolean).join(' ') || 'rower';
+  const safe = bike.replace(/[<>:"/\\|?*\n\r]/g, '').replace(/\s+/g, ' ').trim();
+  return `${date} ${hh}-${min} ${safe}.png`;
 }
 
-function downloadZleceniePDF(id) {
+function runArchiveImage(entry, mode) {
+  mode = _normalizeArchiveMode(mode);
+  const label = _archivePngFilename(entry);
+
+  const iframe = document.createElement('iframe');
+  iframe.style.cssText = 'position:fixed;left:-9999px;top:0;width:540px;height:1200px;border:none;';
+  document.body.appendChild(iframe);
+  const doc = iframe.contentDocument || iframe.contentWindow.document;
+  const win = iframe.contentWindow;
+  const cleanup = () => { if (iframe.parentNode) iframe.parentNode.removeChild(iframe); };
+
+  doc.open();
+  doc.write(buildArchiveHTML(entry, mode));
+  doc.close();
+
+  const capture = () => {
+    const el = doc.querySelector('.doc');
+    if (!el) { alert('Błąd generowania obrazka'); cleanup(); return; }
+    iframe.style.height = Math.max(doc.body.scrollHeight, 400) + 'px';
+
+    const doH2c = () => {
+      if (!win.html2canvas) { alert('Brak połączenia z internetem'); cleanup(); return; }
+      win.html2canvas(el, {
+        scale: 2,
+        useCORS: false,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+      }).then(canvas => {
+        canvas.toBlob(blob => {
+          if (!blob) { alert('Błąd generowania obrazka'); cleanup(); return; }
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url; a.download = label;
+          document.body.appendChild(a); a.click();
+          setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 500);
+          cleanup();
+        }, 'image/png');
+      }).catch(e => { console.error(e); alert('Błąd generowania obrazka'); cleanup(); });
+    };
+
+    if (win.html2canvas) { doH2c(); return; }
+    const s = doc.createElement('script');
+    s.src = _H2C_URL;
+    s.onload = doH2c;
+    s.onerror = () => { alert('Brak połączenia z internetem'); cleanup(); };
+    doc.head.appendChild(s);
+  };
+
+  setTimeout(capture, 80);
+}
+
+function downloadZleceniePNG(id) {
   const arch = getArchive();
   const entry = arch.find(e => e.id === id);
   if (!entry) { alert('Brak danych'); return; }
   runArchiveImage(entry, false);
 }
 
-function downloadRaportPDF(id) {
-  const arch = getArchive();
-  const entry = arch.find(e => e.id === id);
-  if (!entry || !entry.raportKoncowy) { alert('Brak raportu końcowego'); return; }
-  runArchiveImage(entry, true);
-  // Otwórz SMS z numerem klienta po chwili (żeby obrazek zdążył się pobrać)
-  if (entry.tel) {
-    const rower = [(entry.marka || null), entry.model].filter(Boolean).join(' ');
-    const body = 'Raport naprawy roweru ' + rower;
-    setTimeout(() => {
-      window.location.href = 'sms:' + entry.tel.replace(/[^0-9+]/g,'') + '?body=' + encodeURIComponent(body);
-    }, 800);
-  }
+function downloadRaportPNG(id) {
+  openPodsumowanieWydane(id);
 }
 
-window.downloadZleceniePDF = downloadZleceniePDF;
-window.downloadRaportPDF = downloadRaportPDF;
+window.downloadZleceniePNG = downloadZleceniePNG;
+window.downloadRaportPNG = downloadRaportPNG;
 
 // ── Modal danych klienta ──
 function openModal() {
@@ -9953,6 +11014,7 @@ function renderRaportEditor(entry, st, cfg) {
   recalcRaport();
   closeHistory();
   $('raport-notatka').value = cfg.noteValue || '';
+  _setRaportNotatkaZlecenia(entry, st);
   $('raport-overlay').style.display = 'block';
 }
 
@@ -9987,10 +11049,8 @@ function markCrGotowe(id) {
   const entry = hist[idx];
   if (!isEntryCr(entry) || !entry.state) return;
   const { items, subs, total, notatka } = _raportFromWycenaState(entry.state);
-  const kodOdbioru = entry.kodOdbioru || String(Math.floor(10000 + Math.random() * 90000));
   if (!entry.totalPrzedRaportem) entry.totalPrzedRaportem = entry.total;
   if (!entry.totalZlecenia) entry.totalZlecenia = entry.total;
-  entry.kodOdbioru = kodOdbioru;
   entry.raportKoncowy = {
     items,
     subs,
@@ -10033,6 +11093,10 @@ function openRaport(id) {
 function closeRaport() {
   $('raport-overlay').style.display = 'none';
   $('raport-notatka').value = '';
+  const zlecWrap = $('raport-notatka-zlecenie-wrap');
+  const zlecTxt = $('raport-notatka-zlecenie-txt');
+  if (zlecWrap) zlecWrap.style.display = 'none';
+  if (zlecTxt) zlecTxt.textContent = '';
   if (raportReturnTab) {
     openHistory();
     switchTab(raportReturnTab);
@@ -10095,9 +11159,6 @@ function saveRaportKoncowy() {
     const list = ARCHIVE_SEARCHED[i];
     const idx = list.findIndex(e => e.id === raportEntryId);
     if (idx >= 0) {
-      // Generuj kod odbioru jeśli jeszcze nie ma
-      const kodOdbioru = list[idx].kodOdbioru || String(Math.floor(10000 + Math.random() * 90000));
-      list[idx].kodOdbioru = kodOdbioru;
       list[idx].raportKoncowy = {
         items: raportItems,
         subs: raportSubs,
@@ -10163,7 +11224,7 @@ function openPodglad(entry) {
   const rightHTML = `
     <div style="text-align:right;flex-shrink:0;display:flex;flex-direction:column;gap:3px;justify-content:center;align-self:stretch;">
       ${entry.label ? `<div class="history-item-date history-item-date--sm">Przyjęto: ${escHTML(entry.label)}</div>` : ''}
-      ${rk?.dataZakonczenia ? `<div class="history-item-date history-item-date--sm">Zakończono: ${escHTML(rk.dataZakonczenia)}</div>` : ''}
+      ${rk?.dataZakonczenia ? `<div class="history-item-date history-item-date--sm">GOTOWE: ${escHTML(rk.dataZakonczenia)}</div>` : ''}
     </div>`;
 
   $('podglad-header').innerHTML = `<div style="display:flex;align-items:stretch;gap:12px;">${leftHTML}${rightHTML}</div>`;
@@ -10280,125 +11341,109 @@ function closePodglad() {
 function closePodgladOutside(e) { if (e.target === $('podglad-overlay')) closePodglad(); }
 window.openPodglad = openPodglad;
 
-function openPodsumowanieWydane(id) {
+function _ensureKodOdbioruForEntryInArchive(id) {
+  const arch = getArchive();
+  const idx = arch.findIndex(e => e.id === id);
+  if (idx < 0) return null;
+  const entry = arch[idx];
+  if (!entry.kodOdbioru) {
+    entry.kodOdbioru = String(Math.floor(10000 + Math.random() * 90000));
+    localStorage.setItem(ARCHIVE_KEY, JSON.stringify(arch));
+  }
+  return entry;
+}
+
+function generujRaportPNG(id) {
+  const entry = _ensureKodOdbioruForEntryInArchive(id);
+  if (!entry || !entry.raportKoncowy) { alert('Brak raportu końcowego'); return; }
+  runArchiveImage(entry, 'raport');
+}
+window.generujRaportPNG = generujRaportPNG;
+
+function generujNaprawaPNG(id) {
   const arch = getArchive();
   const entry = arch.find(e => e.id === id);
-  if (!entry) { alert('Brak danych'); return; }
+  if (!entry || !entry.raportKoncowy) { alert('Brak raportu końcowego'); return; }
+  runArchiveImage(entry, 'naprawa');
+}
+window.generujNaprawaPNG = generujNaprawaPNG;
 
-  raportReturnTab = 'wydanie';
+function _podsumowanieMetaDateItem(label, rawVal) {
+  const dateStr = rawVal ? String(rawVal).trim().split(/\s+/)[0] : '';
+  const display = _formatDDMMRR(dateStr) || '—';
+  const wday = dateStr ? dayOfWeek(dateStr) : '—';
+  return `<div class="podglad-meta-item"><span class="podglad-meta-k">${escHTML(label)}</span><span class="podglad-meta-v">${escHTML(display)}</span><span class="podglad-meta-w">${escHTML(wday)}</span></div>`;
+}
 
-  const rk = entry.raportKoncowy;
-  const fmtPLN = v => Number(v||0).toLocaleString('pl-PL', {minimumFractionDigits:2,maximumFractionDigits:2});
-  const kolorDot = makeKolorDot(entry.kolor || '', 14);
+function _buildPodsumowanieHeaderHTML(entry) {
+  const kolorBar = makeKolorBarHTML(_entryKolor(entry));
   const nameParts = [entry.marka, entry.model].filter(Boolean);
+  const contactRow = _historyHeaderContactRowHTML(entry, {
+    showTelInHeader: !!entry.tel,
+    showKodOdbioru: !!entry.kodOdbioru,
+    klientHistoria: true,
+  });
+  return `<div class="podglad-summary-card">
+    <div class="podglad-summary-bike">
+      ${kolorBar}
+      ${nameParts.length ? `<div class="podglad-bike-name">${escHTML(nameParts.join(' '))}</div>` : ''}
+      ${contactRow}
+    </div>
+    <div class="podglad-meta-grid">${_buildOrderSummaryMetaGrid(entry)}</div>
+  </div>`;
+}
 
-  // Header
-  const leftHTML = `
-    <div style="flex:1;min-width:0;">
-      ${nameParts.length ? `<div style="display:flex;align-items:center;gap:6px;font-size:15px;font-weight:700;color:#fff;margin-bottom:6px;">${kolorDot}${escHTML(nameParts.join(' '))}</div>` : ''}
-      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-        ${entry.tel ? `<a href="tel:${entry.tel.replace(/[^0-9+]/g,'')}" style="display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:700;color:#3b7cf4;text-decoration:none;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>${escHTML(entry.tel)}</a>` : ''}
-        ${entry.kodOdbioru ? `<span style="font-size:13px;font-weight:800;color:#f59e0b;letter-spacing:2px;">🔑 ${escHTML(entry.kodOdbioru)}</span>` : ''}
-      </div>
-    </div>`;
-  const rightHTML = `
-    <div style="text-align:right;flex-shrink:0;display:flex;flex-direction:column;gap:3px;justify-content:center;align-self:stretch;">
-      ${entry.label ? `<div class="history-item-date history-item-date--sm">Przyjęto: ${escHTML(entry.label)}</div>` : ''}
-      ${rk?.dataZakonczenia ? `<div class="history-item-date history-item-date--sm">Zakończono naprawę: ${escHTML(rk.dataZakonczenia)}</div>` : ''}
-      ${entry.dataWydania ? `<div class="history-item-date history-item-date--sm">Wydano: ${escHTML(entry.dataWydania)}</div>` : ''}
-    </div>`;
-
-  $('podglad-title').textContent = 'Podsumowanie';
-  $('podglad-header').innerHTML = `<div style="display:flex;align-items:stretch;gap:12px;">${leftHTML}${rightHTML}</div>`;
-
-  const td  = 'style="padding:8px 10px;font-size:13px;color:var(--text);border-bottom:1px solid var(--border);"';
-  const tdr = 'style="padding:8px 10px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border);text-align:right;"';
-  const tdb = 'style="padding:8px 10px;font-size:13px;font-weight:700;color:#22c55e;border-bottom:1px solid var(--border);text-align:right;"';
-  const thead = `<thead><tr style="background:var(--bg);">
-    <td style="padding:7px 10px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;">Usługa / część</td>
-    <td style="padding:7px 10px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;text-align:right;">Cena</td>
-    <td style="padding:7px 10px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;text-align:right;">Szt.</td>
-    <td style="padding:7px 10px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;text-align:right;">Razem</td>
-  </tr></thead>`;
-
-  // ── SEKCJA 1: Zlecenie ──
-  let html = '';
-  let stItems = [];
-  let zlecTotal = 0;
-  const st = entry.state ? safeParseJSON(entry.state, null) : null;
-  if (st?.items) stItems = st.items.filter(it => it.checked);
-
-  if (stItems.length) {
-    html += `<div style="padding:10px 12px 6px;font-size:13px;font-weight:800;color:#22c55e;text-transform:uppercase;letter-spacing:.8px;background:var(--bg);text-align:center;">Zlecone naprawy</div>`;
-    html += `<table style="width:100%;border-collapse:collapse;">${thead}<tbody>`;
-    stItems.forEach(it => {
-      const qty = it.qty !== undefined ? (it.qty || 1) : 1;
-      const price = parseFloat(it.price) || 0;
-      const total = Math.round(price * qty * 100) / 100;
-      zlecTotal += total;
-      const name = itemLabelWithDetails(it, true);
-      html += `<tr><td ${td}>${escHTML(name)}</td><td ${tdr}>${fmtPLN(price)}</td><td ${tdr}>${qty}</td><td ${tdr}>${fmtPLN(total)}</td></tr>`;
-    });
-    html += `<tr><td colspan="3" style="padding:8px 10px;font-size:12px;font-weight:700;color:var(--text3);">Razem zlecenie</td><td style="padding:8px 10px;font-size:14px;font-weight:800;color:#fff;text-align:right;">${fmtPLN(zlecTotal)} zł</td></tr>`;
-    html += `</tbody></table>`;
+function _setupPodgladRaportBar(entryId, show) {
+  const pdfBar = $('podglad-pdf-bar');
+  if (!pdfBar) return;
+  if (!show) {
+    pdfBar.style.display = 'none';
+    return;
   }
+  pdfBar.style.display = 'flex';
+  const raportBtn = $('podglad-raport-btn');
+  const naprawaBtn = $('podglad-naprawa-btn');
+  if (raportBtn) raportBtn.onclick = () => generujRaportPNG(entryId);
+  if (naprawaBtn) naprawaBtn.onclick = () => generujNaprawaPNG(entryId);
+}
 
-  // ── SEKCJA 2: Raport naprawy ──
-  if (rk) {
-    let rapTotal = 0;
-    html += `<div style="padding:10px 12px 6px;font-size:13px;font-weight:800;color:#22c55e;text-transform:uppercase;letter-spacing:.8px;background:var(--bg);border-top:2px solid var(--border);margin-top:8px;text-align:center;">Wykonane naprawy</div>`;
-    html += `<table style="width:100%;border-collapse:collapse;">${thead}<tbody>`;
-    (rk.items || []).filter(it => it.checked).forEach(it => {
-      const qty = it.qty !== undefined ? (it.qty || 1) : 1;
-      const price = parseFloat(it.price) || 0;
-      const total = Math.round(price * qty * 100) / 100;
-      rapTotal += total;
-      const name = itemLabelWithDetails(it, true);
-      html += `<tr><td ${td}>${escHTML(name)}</td><td ${tdr}>${fmtPLN(price)}</td><td ${tdr}>${qty}</td><td ${tdr}>${fmtPLN(total)}</td></tr>`;
-    });
-    (rk.subs || []).filter(s => s.checked && s.name).forEach(s => {
-      const price = parseFloat(s.price) || 0;
-      rapTotal += price;
-      html += `<tr><td ${td}>${escHTML(s.name)}</td><td ${tdr}>${fmtPLN(price)}</td><td ${tdr}>1</td><td ${tdr}>${fmtPLN(price)}</td></tr>`;
-    });
-
-    // Kolor: rapTotal > zlecTotal → czerwony (drożej niż wycena), rapTotal <= zlecTotal → zielony
-    const rapColor = (zlecTotal > 0 && rapTotal > zlecTotal) ? '#ef4444' : '#22c55e';
-    html += `<tr><td colspan="3" style="padding:8px 10px;font-size:12px;font-weight:700;color:${rapColor};">Razem naprawa</td><td style="padding:8px 10px;font-size:14px;font-weight:800;color:${rapColor};text-align:right;">${fmtPLN(rapTotal)} zł</td></tr>`;
-    html += `</tbody></table>`;
-
-    if (rk.notatka) {
-      html += `<div style="margin:8px 10px;padding:10px 12px;border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:8px;font-size:13px;color:var(--text);line-height:1.6;white-space:pre-wrap;">${escHTML(rk.notatka)}</div>`;
-    }
-  }
-
-  $('podglad-table').innerHTML = html;
-  $('podglad-total').textContent = entry.total || '';
-
+function _resetPodgladExtras() {
+  const actionBar = $('podglad-action-bar');
+  if (actionBar) actionBar.style.display = 'none';
   const kodEl = $('podglad-kod-odbioru');
   if (kodEl) kodEl.style.display = 'none';
   const kwotaEl = $('podglad-kwota-zaplacona');
   if (kwotaEl) kwotaEl.style.display = 'none';
   const notatkaEl = $('podglad-notatka');
   if (notatkaEl) notatkaEl.style.display = 'none';
+  const notatkaLbl = $('podglad-notatka-lbl');
+  if (notatkaLbl) notatkaLbl.textContent = 'Notatka serwisowa';
+  _setupPodgladRaportBar(null, false);
+}
 
-  // Przycisk PDF
-  let pdfBar = $('podglad-pdf-bar');
-  if (!pdfBar) {
-    pdfBar = document.createElement('div');
-    pdfBar.id = 'podglad-pdf-bar';
-    pdfBar.style.cssText = 'display:flex;gap:8px;margin-top:14px;';
-    const container = $('podglad-overlay').querySelector('.app > div');
-    if (container) container.appendChild(pdfBar);
+function openPodsumowanieWydane(id) {
+  const arch = getArchive();
+  const entry = arch.find(e => e.id === id);
+  if (!entry) { alert('Brak danych'); return; }
+
+  raportReturnTab = 'archiwum';
+  const rk = entry.raportKoncowy;
+
+  $('podglad-title').textContent = 'Podsumowanie';
+  $('podglad-header').innerHTML = _buildPodsumowanieHeaderHTML(entry);
+  $('podglad-table').innerHTML = _buildPodsumowanieTablesHTML(entry, { collapseZlecone: true, collapseWykonane: true, wykonaneOpen: true });
+
+  _resetPodgladExtras();
+
+  if (rk?.notatka) {
+    const lbl = $('podglad-notatka-lbl');
+    if (lbl) lbl.textContent = 'Notatka z naprawy';
+    $('podglad-notatka-txt').textContent = rk.notatka;
+    $('podglad-notatka').style.display = 'block';
   }
-  pdfBar.style.display = 'flex';
-  pdfBar.innerHTML = `
-    <button onclick="generujPodsumowaniePDF(${entry.id})" style="flex:1;padding:13px;background:#1a1a2e;border:1px solid #4f46e5;border-radius:8px;color:#818cf8;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      Generuj Podsumowanie PDF
-    </button>
-  `;
 
+  _setupPodgladRaportBar(entry.id, true);
+  closeHistory();
   $('podglad-overlay').style.display = 'block';
 }
 window.openPodsumowanieWydane = openPodsumowanieWydane;
@@ -10410,38 +11455,26 @@ function openPodsumowanieDoWydania(id) {
   if (!entry.raportKoncowy) { alert('Brak raportu końcowego'); return; }
 
   raportReturnTab = 'wydanie';
-
   const rk = entry.raportKoncowy;
-  const fmtPLN = v => Number(v||0).toLocaleString('pl-PL', {minimumFractionDigits:2,maximumFractionDigits:2});
-  const kolorBar = makeKolorBarHTML(entry.kolor || '');
-  const nameParts = [entry.marka, entry.model].filter(Boolean);
-
-  const leftHTML = `
-    <div style="flex:1;min-width:0;position:relative;overflow:hidden;padding:10px 12px 10px 26px;">
-      ${kolorBar}
-      ${nameParts.length ? `<div style="display:flex;align-items:center;gap:6px;font-size:var(--text-md);font-weight:700;color:var(--text);margin-bottom:8px;">${escHTML(nameParts.join(' '))}</div>` : ''}
-      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-        ${entry.tel ? `<a href="tel:${entry.tel.replace(/[^0-9+]/g,'')}" style="display:inline-flex;align-items:center;gap:5px;font-size:16px;font-weight:600;color:#3b7cf4;text-decoration:none;"><svg width="13" height="13" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>${escHTML(entry.tel)}</a>` : ''}
-      </div>
-    </div>`;
-  const rightHTML = `
-    <div style="text-align:right;flex-shrink:0;display:flex;flex-direction:column;gap:3px;justify-content:center;align-self:stretch;">
-      ${entry.label ? `<div class="history-item-date history-item-date--sm">Przyjęto: ${escHTML(entry.label)}</div>` : ''}
-      ${rk?.dataZakonczenia ? `<div class="history-item-date history-item-date--sm">Zakończono naprawę: ${escHTML(rk.dataZakonczenia)}</div>` : ''}
-    </div>`;
 
   $('podglad-title').textContent = 'Podsumowanie';
-  $('podglad-header').innerHTML = `<div style="display:flex;align-items:stretch;gap:12px;">${leftHTML}${rightHTML}</div>`;
+  $('podglad-header').innerHTML = _buildPodsumowanieHeaderHTML(entry);
+  $('podglad-table').innerHTML = _buildPodsumowanieTablesHTML(entry, {
+    collapseZlecone: true,
+    collapseWykonane: true,
+    wykonaneOpen: true,
+    zleconeOpen: !!_getNotatkaZlecenia(entry),
+  });
 
-  $('podglad-table').innerHTML = _buildPodsumowanieTablesHTML(entry, { collapseZlecone: true });
-  $('podglad-total').textContent = entry.total || '';
+  _resetPodgladExtras();
 
-  const kodEl = $('podglad-kod-odbioru'); if (kodEl) kodEl.style.display = 'none';
-  const kwotaEl = $('podglad-kwota-zaplacona'); if (kwotaEl) kwotaEl.style.display = 'none';
-  const notatkaEl = $('podglad-notatka'); if (notatkaEl) notatkaEl.style.display = 'none';
-  const pdfBarEl = $('podglad-pdf-bar'); if (pdfBarEl) pdfBarEl.style.display = 'none';
+  if (rk?.notatka) {
+    const lbl = $('podglad-notatka-lbl');
+    if (lbl) lbl.textContent = 'Notatka z naprawy';
+    $('podglad-notatka-txt').textContent = rk.notatka;
+    $('podglad-notatka').style.display = 'block';
+  }
 
-  // Pokaż WYDAJ na dole (bez PDF)
   const bar = $('podglad-action-bar');
   const btn = $('podglad-wydaj-btn');
   if (bar && btn) {
@@ -10498,9 +11531,10 @@ function _buildZleconeTableHTML(stItems, parts) {
   return { table, zlecTotal, count: stItems.length };
 }
 
-function _wrapZleconeCollapsible(innerHtml, itemCount, zlecTotal) {
+function _wrapZleconeCollapsible(innerHtml, itemCount, zlecTotal, openByDefault) {
   const fmtPLN = v => Number(v || 0).toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  return `<div class="podsumowanie-section">
+  const openCls = openByDefault ? ' is-open' : '';
+  return `<div class="podsumowanie-section${openCls}">
     <button type="button" class="podsumowanie-section-toggle" onclick="togglePodsumowanieSection(this)">
       <span class="podsumowanie-section-title">Zlecone naprawy</span>
       <span class="podsumowanie-section-meta">${itemCount} poz. · ${fmtPLN(zlecTotal)} zł</span>
@@ -10521,17 +11555,31 @@ function _buildAllZleconeCollapsibleHTML(entries) {
   withItems.forEach((entry, i) => {
     const stItems = _getEntryZleconeItems(entry);
     const { table, zlecTotal, count } = _buildZleconeTableHTML(stItems, parts);
+    const notatkaZlec = _buildNotatkaZleceniePodsumowanieHTML(_getNotatkaZlecenia(entry));
     totalCount += count;
     totalSum += zlecTotal;
     if (withItems.length > 1) {
       const nazwa = [entry.marka, entry.model].filter(Boolean).join(' ') || ('Zlecenie ' + (i + 1));
-      inner += `<div class="podsumowanie-zlecone-block"><div class="podsumowanie-zlecone-bike">${escHTML(nazwa)}</div>${table}</div>`;
+      inner += `<div class="podsumowanie-zlecone-block"><div class="podsumowanie-zlecone-bike">${escHTML(nazwa)}</div>${notatkaZlec}${table}</div>`;
     } else {
-      inner += table;
+      inner += notatkaZlec + table;
     }
   });
 
   return _wrapZleconeCollapsible(inner, totalCount, totalSum);
+}
+
+function _wrapWykonaneCollapsible(innerHtml, itemCount, rapTotal, openByDefault) {
+  const fmtPLN = v => Number(v || 0).toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const openCls = openByDefault ? ' is-open' : '';
+  return `<div class="podsumowanie-section${openCls}">
+    <button type="button" class="podsumowanie-section-toggle" onclick="togglePodsumowanieSection(this)">
+      <span class="podsumowanie-section-title">Wykonane naprawy</span>
+      <span class="podsumowanie-section-meta">${itemCount} poz. · ${fmtPLN(rapTotal)} zł</span>
+      <span class="podsumowanie-section-chevron">▾</span>
+    </button>
+    <div class="podsumowanie-section-body">${innerHtml}</div>
+  </div>`;
 }
 
 function _buildPodsumowanieTablesHTML(entry, opts) {
@@ -10542,42 +11590,54 @@ function _buildPodsumowanieTablesHTML(entry, opts) {
 
   let html = '';
   const stItems = _getEntryZleconeItems(entry);
+  let zlecTotal = 0;
 
   if (stItems.length && !opts.skipZlecone) {
-    const { table: zlecTable, zlecTotal } = _buildZleconeTableHTML(stItems, { td, tdr, thead });
+    const built = _buildZleconeTableHTML(stItems, { td, tdr, thead });
+    zlecTotal = built.zlecTotal;
+    const notatkaZlec = _buildNotatkaZleceniePodsumowanieHTML(_getNotatkaZlecenia(entry));
+    const zleconeBody = notatkaZlec + built.table;
 
     if (opts.collapseZlecone) {
-      html += _wrapZleconeCollapsible(zlecTable, stItems.length, zlecTotal);
+      html += _wrapZleconeCollapsible(zleconeBody, stItems.length, built.zlecTotal, !!opts.zleconeOpen);
     } else {
-      html += `<div style="padding:10px 12px 6px;font-size:13px;font-weight:800;color:#22c55e;text-transform:uppercase;letter-spacing:.8px;background:var(--bg);text-align:center;">Zlecone naprawy</div>`;
-      html += zlecTable;
+      html += `<div class="podsumowanie-section is-open"><div class="podsumowanie-section-body" style="display:block;margin-top:0;border:none;border-radius:0;">${notatkaZlec}${built.table}</div></div>`;
     }
   }
 
   if (rk) {
     let rapTotal = 0;
-    html += `<div style="padding:10px 12px 6px;font-size:13px;font-weight:800;color:#22c55e;text-transform:uppercase;letter-spacing:.8px;background:var(--bg);border-top:2px solid var(--border);margin-top:8px;text-align:center;">Wykonane naprawy</div>`;
-    html += `<table style="width:100%;border-collapse:collapse;">${thead}<tbody>`;
+    let itemCount = 0;
+    let rapTable = `<table style="width:100%;border-collapse:collapse;">${thead}<tbody>`;
     (rk.items || []).filter(it => it.checked).forEach(it => {
       const qty = it.qty !== undefined ? (it.qty || 1) : 1;
       const price = parseFloat(it.price) || 0;
       const total = Math.round(price * qty * 100) / 100;
       rapTotal += total;
+      itemCount += 1;
       const name = itemLabelWithDetails(it, true);
-      html += `<tr><td ${td}>${escHTML(name)}</td><td ${tdr}>${fmtPLN(price)}</td><td ${tdr}>${qty}</td><td ${tdr}>${fmtPLN(total)}</td></tr>`;
+      rapTable += `<tr><td ${td}>${escHTML(name)}</td><td ${tdr}>${fmtPLN(price)}</td><td ${tdr}>${qty}</td><td ${tdr}>${fmtPLN(total)}</td></tr>`;
     });
     (rk.subs || []).filter(s => s.checked && s.name).forEach(s => {
       const price = parseFloat(s.price) || 0;
       rapTotal += price;
-      html += `<tr><td ${td}>${escHTML(s.name)}</td><td ${tdr}>${fmtPLN(price)}</td><td ${tdr}>1</td><td ${tdr}>${fmtPLN(price)}</td></tr>`;
+      itemCount += 1;
+      rapTable += `<tr><td ${td}>${escHTML(s.name)}</td><td ${tdr}>${fmtPLN(price)}</td><td ${tdr}>1</td><td ${tdr}>${fmtPLN(price)}</td></tr>`;
     });
-    html += `<tr><td colspan="3" style="padding:8px 10px;font-size:12px;font-weight:700;color:var(--text3);">Razem naprawa</td><td style="padding:8px 10px;font-size:14px;font-weight:800;color:#fff;text-align:right;">${fmtPLN(rapTotal)} zł</td></tr>`;
-    html += `</tbody></table>`;
+    const rapColor = (zlecTotal > 0 && rapTotal > zlecTotal) ? '#ef4444' : '#22c55e';
+    rapTable += `<tr><td colspan="3" style="padding:8px 10px;font-size:12px;font-weight:700;color:${rapColor};">Razem naprawa</td><td style="padding:8px 10px;font-size:14px;font-weight:800;color:${rapColor};text-align:right;">${fmtPLN(rapTotal)} zł</td></tr>`;
+    rapTable += `</tbody></table>`;
+
+    if (opts.collapseWykonane) {
+      html += _wrapWykonaneCollapsible(rapTable, itemCount, rapTotal, !!opts.wykonaneOpen);
+    } else {
+      html += rapTable;
+    }
   }
   return html;
 }
 
-// Podsumowanie grupowe — wszystkie zlecenia do wydania jednego klienta
+// Podsumowanie grupowe — wszystkie zlecenia gotowe jednego klienta
 function openPodsumowanieGrupowe(telKey) {
   const hist = getHistory();
   const doWyd = hist.filter(e => e.raportKoncowy && String(e.tel || '').replace(/\D/g, '') === String(telKey));
@@ -10611,7 +11671,7 @@ function openPodsumowanieGrupowe(telKey) {
   const kodEl = $('podglad-kod-odbioru'); if (kodEl) kodEl.style.display = 'none';
   const kwotaEl = $('podglad-kwota-zaplacona'); if (kwotaEl) kwotaEl.style.display = 'none';
   const notatkaEl = $('podglad-notatka'); if (notatkaEl) notatkaEl.style.display = 'none';
-  const pdfBarEl = $('podglad-pdf-bar'); if (pdfBarEl) pdfBarEl.style.display = 'none';
+  _setupPodgladRaportBar(null, false);
 
   const bar = $('podglad-action-bar');
   const btn = $('podglad-wydaj-btn');
@@ -10651,64 +11711,8 @@ window.closePodglad = closePodglad;
 window.closePodgladOutside = closePodgladOutside;
 
 function generujPodsumowaniePDF(id) {
-  const arch = getArchive();
-  const entry = arch.find(e => e.id === id);
-  if (!entry) { alert('Brak danych'); return; }
-
-  const loadScript = (src, cb) => {
-    if (window.jspdf) { cb(); return; }
-    const s = document.createElement('script');
-    s.src = src; s.onload = cb; document.head.appendChild(s);
-  };
-
-  loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js', () => {
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-    const fmt = v => Number(v||0).toLocaleString('pl-PL', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' zl';
-    const W = 210, M = 14, CW = W - M * 2;
-    let y = 0;
-
-    // Polskie znaki (jsPDF helvetica nie obsluguje UTF-8)
-    const pl = s => (s||'')
-      .replace(/ą/g,'a').replace(/ć/g,'c').replace(/ę/g,'e').replace(/ł/g,'l')
-      .replace(/ń/g,'n').replace(/ó/g,'o').replace(/ś/g,'s').replace(/ź/g,'z').replace(/ż/g,'z')
-      .replace(/Ą/g,'A').replace(/Ć/g,'C').replace(/Ę/g,'E').replace(/Ł/g,'L')
-      .replace(/Ń/g,'N').replace(/Ó/g,'O').replace(/Ś/g,'S').replace(/Ź/g,'Z').replace(/Ż/g,'Z');
-
-    // Termin z rokiem: DD.MM -> DD.MM.RRRR
-    const addYear = t => {
-      if (!t) return '';
-      return (t.length === 5 && t[2] === '.') ? t + '.' + new Date().getFullYear() : t;
-    };
-
-    // ── Tlo ──
-    pdf.setFillColor(245, 245, 248);
-    pdf.rect(0, 0, W, 297, 'F');
-
-    // ── Pasek naglowkowy ──
-    const HDR = 58;
-    pdf.setFillColor(30, 30, 40);
-    pdf.rect(0, 0, W, HDR, 'F');
-
-    // Lewa: marka/model + telefon
-    const rower = pl([(entry.marka || null), entry.model].filter(Boolean).join(' ') || '');
-    pdf.setFontSize(15); pdf.setFont('helvetica','bold'); pdf.setTextColor(255,255,255);
-    pdf.text(rower, M, 14);
-
-    if (entry.tel) {
-      pdf.setFontSize(12); pdf.setFont('helvetica','bold'); pdf.setTextColor(59, 124, 244);
-      pdf.text(entry.tel, M, 25);
-    }
-
-    // Czerwona linia akcentu
-    pdf.setFillColor(192, 57, 43);
-    pdf.rect(M, 32, 40, 1.5, 'F');
-
-    pdf.setFontSize(11); pdf.setFont('helvetica','bold'); pdf.setTextColor(192,57,43);
-    pdf.text('Serwis ROW-POL', M, 42);
-
-    // Prawa: daty — uproszczone etykiety bez polskich znaków
-    const rk = entry.raportKoncowy;
+  alert('PDF zostało usunięte. Użyj przycisku RAPORT (PNG) w podsumowaniu.');
+  return;
     let dateY = 7;
     const dateRight = (label, val, r, g, b) => {
       if (!val) return;
@@ -10840,16 +11844,6 @@ function generujPodsumowaniePDF(id) {
       y += 20;
     }
 
-    // Footer
-    pdf.setFontSize(7.5); pdf.setFont('helvetica','normal'); pdf.setTextColor(160,165,180);
-    const now = new Date();
-    const dateStr = now.toLocaleDateString('pl-PL');
-    const timeStr = now.toLocaleTimeString('pl-PL', {hour:'2-digit', minute:'2-digit'});
-    pdf.text('Wygenerowano: ' + dateStr + ' ' + timeStr, M, 291);
-
-    const fname = [entry.marka, entry.model, 'podsumowanie'].filter(Boolean).join('-').replace(/\s+/g,'-') + '.pdf';
-    pdf.save(fname);
-  });
 }
 window.generujPodsumowaniePDF = generujPodsumowaniePDF;
 
@@ -11209,17 +12203,17 @@ function _entryStatus(e) {
   // Priorytety konfliktów (im wyżej, tym ważniejsze):
   // 1. Przyjęte - SMS niewysłane
   // 2. Przyjęte - SMS wysłane
-  // 3. Do wydania - SMS niewysłane
-  // 4. Do wydania - SMS wysłane
+  // 3. Gotowe - SMS niewysłane
+  // 4. Gotowe - SMS wysłane
   // 5. Wydane
   // 6. Kosz
   if (e.deletedAt) return 6; // kosz
-  // Cofnięte z WYDANE → DO WYDANIA (unarchive): wyżej niż zwykłe WYDANE na Drive,
+  // Cofnięte z WYDANE → GOTOWE (unarchive): wyżej niż zwykłe WYDANE na Drive,
   // żeby scalanie nie przywracało archiwum. Bez wymogu raportKoncowy — inaczej
   // brak/niepełny raport dawał status 3–4 i przegrywał ze zdalnym WYDANE (5).
   if (e.unarchivedAt && !e.dataWydania && !e.archivedAt) return 5.5;
   if (e.dataWydania || e.archivedAt) return 5; // wydane
-  if (e.raportKoncowy) return e.smsSent ? 4 : 3; // do wydania
+  if (e.raportKoncowy) return e.smsSent ? 4 : 3; // gotowe
   return e.smsSent ? 2 : 1; // przyjęte
 }
 
@@ -11825,17 +12819,19 @@ window.cselSetValue = cselSetValue;
 </div>
 
 <!-- Historia klienta po numerze telefonu -->
-<div id="klient-historia-modal" onclick="if(event.target===this)this.style.display='none'" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.78);align-items:center;justify-content:center;padding:12px;">
-  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:0;max-width:560px;width:100%;max-height:88vh;display:flex;flex-direction:column;overflow:hidden;">
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 18px;border-bottom:1px solid var(--border);">
-      <div style="display:flex;flex-direction:column;gap:2px;min-width:0;">
-        <span class="dialog-title">Historia klienta</span>
-        <span id="klient-historia-tel" class="link-tel" style="font-size:var(--text-sm);"></span>
+<div id="klient-historia-modal" class="overlay-full" style="z-index:1000;display:none;">
+  <div class="app">
+    <div class="overlay-header">
+      <div class="klient-historia-header-text">
+        <span class="overlay-header-title">Historia klienta</span>
+        <span id="klient-historia-tel"></span>
       </div>
-      <button type="button" onclick="$('klient-historia-modal').style.display='none'" class="btn-close ui-tile ui-tile--sm ui-tile--danger" style="flex-shrink:0;margin-left:0;">Zamknij</button>
+      <button type="button" onclick="closeKlientHistoria()" class="btn-close ui-tile ui-tile--sm ui-tile--danger" style="flex-shrink:0;margin-left:0;">Zamknij</button>
     </div>
-    <div id="klient-historia-summary" style="padding:10px 18px;border-bottom:1px solid var(--border);display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--text3);"></div>
-    <div id="klient-historia-list" style="padding:12px 14px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;"></div>
+    <div class="klient-historia-body">
+      <div id="klient-historia-summary" class="klient-historia-summary"></div>
+      <div id="klient-historia-list" class="klient-historia-list"></div>
+    </div>
   </div>
 </div>
 
@@ -11848,7 +12844,7 @@ window.cselSetValue = cselSetValue;
     </div>
 
     <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:12px;">
-      <input type="text" id="gs-query" placeholder="Szukaj: telefon / rower / kod odbioru" maxlength="40"
+      <input type="text" id="gs-query" placeholder="WYSZUKIWARKA" maxlength="40"
         style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:11px 12px;color:#fff;font-size:15px;outline:none;"
         oninput="runGlobalSearch()" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
 
@@ -11881,7 +12877,7 @@ window.cselSetValue = cselSetValue;
       <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
         <span style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;">Zakres:</span>
         <label style="display:inline-flex;align-items:center;gap:5px;font-size:13px;color:var(--text2);cursor:pointer;"><input type="checkbox" id="gs-src-historia" checked onchange="runGlobalSearch()"> Przyjęte</label>
-        <label style="display:inline-flex;align-items:center;gap:5px;font-size:13px;color:var(--text2);cursor:pointer;"><input type="checkbox" id="gs-src-wydanie" checked onchange="runGlobalSearch()"> Do wydania</label>
+        <label style="display:inline-flex;align-items:center;gap:5px;font-size:13px;color:var(--text2);cursor:pointer;"><input type="checkbox" id="gs-src-wydanie" checked onchange="runGlobalSearch()"> Gotowe</label>
         <label style="display:inline-flex;align-items:center;gap:5px;font-size:13px;color:var(--text2);cursor:pointer;"><input type="checkbox" id="gs-src-archiwum" checked onchange="runGlobalSearch()"> Wydane</label>
         <label style="display:inline-flex;align-items:center;gap:5px;font-size:13px;color:var(--text2);cursor:pointer;"><input type="checkbox" id="gs-src-kosz" onchange="runGlobalSearch()"> Kosz</label>
         <button onclick="resetGlobalSearch()" style="margin-left:auto;background:none;border:1px solid var(--border);border-radius:8px;padding:7px 12px;color:var(--text2);font-size:12px;font-weight:700;cursor:pointer;">Wyczyść</button>
@@ -11907,7 +12903,7 @@ window.cselSetValue = cselSetValue;
     </div>
     <div style="display:flex;gap:10px;">
       <button onclick="$('raport-date-modal').style.display='none'" class="btn-close btn-cancel ui-tile ui-tile--sm ui-tile--danger" style="flex:1;margin-left:0;">Anuluj</button>
-      <button onclick="generujRaportZDaty()" style="flex:1;padding:12px;background:#6366f1;border:1px solid #6366f1;border-radius:8px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;">Generuj PDF</button>
+      <button onclick="generujRaportZDaty()" style="flex:1;padding:12px;background:#6366f1;border:1px solid #6366f1;border-radius:8px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;">Generuj</button>
     </div>
   </div>
 </div>
