@@ -5,7 +5,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="app-build" content="">
+<meta name="app-build" content="2026-07-02T16:51:46.346Z">
 <title>Serwis ROW-POL</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <meta name="theme-color" content="#0a0a0f">
@@ -401,15 +401,12 @@ select:focus,
   border: 1px solid var(--border-panel) !important;
   border-radius: 12px !important;
 }
-#main-sync-panel .main-app-ver-row{
-  padding:6px 14px 10px;
-  border-top:1px solid var(--border);
-  text-align:center;
+#main-sync-panel .main-app-ver-line{
   font-size:11px;
   line-height:1.35;
   color:var(--text3);
 }
-#main-sync-panel .main-app-ver-row--stale{
+#main-sync-panel .main-app-ver-line--stale{
   color:#fbbf24;
 }
 #backup-reminder{
@@ -5308,26 +5305,26 @@ async function refreshServerAppVersion() {
   if (typeof updateAdminSyncRow === 'function') updateAdminSyncRow();
 }
 
-function _appVerRowHTML() {
+function _appVerLineHTML() {
   var serverIso = _serverAppBuildIso || localStorage.getItem('server_app_build') || '';
   var loadedIso = _getLoadedAppBuildIso();
   if (_serverAppBuildLoading && !serverIso) {
-    return '<div class="main-app-ver-row">Wersja serwera: pobieranie…</div>';
+    return '<span class="main-app-ver-line">Wersja serwera: pobieranie…</span>';
   }
   if (!serverIso) {
     var localLbl = _formatAppVerDate(loadedIso);
     return localLbl
-      ? '<div class="main-app-ver-row">Wersja: ' + escHTML(localLbl) + '</div>'
+      ? '<span class="main-app-ver-line">Wersja: ' + escHTML(localLbl) + '</span>'
       : '';
   }
   var stale = false;
   if (loadedIso && serverIso) {
     stale = new Date(serverIso).getTime() - new Date(loadedIso).getTime() > 60000;
   }
-  var cls = 'main-app-ver-row' + (stale ? ' main-app-ver-row--stale' : '');
+  var cls = 'main-app-ver-line' + (stale ? ' main-app-ver-line--stale' : '');
   var line = 'Wersja serwera: ' + escHTML(_formatAppVerDate(serverIso));
   if (stale) line += ' · odśwież stronę';
-  return '<div class="' + cls + '">' + line + '</div>';
+  return '<span class="' + cls + '">' + line + '</span>';
 }
 
 function _appVerLabel() {
@@ -14116,7 +14113,7 @@ function updateAdminSyncRow() {
         new Date(ls).toLocaleDateString('pl-PL',{day:'2-digit',month:'2-digit'}) + ' ' +
         new Date(ls).toLocaleTimeString('pl-PL',{hour:'2-digit',minute:'2-digit'}) + '</span>'
            : '<span style="font-size:11px;color:#556;">Brak synchronizacji</span>') +
-      
+      _appVerLineHTML() +
     '</div>' +
     '<div style="display:flex;">' +
       '<button onclick="manualSync()" data-sync-btn="1" style="flex:1;background:var(--bg-panel);border:none;border-right:1px solid var(--border-panel);color:var(--text2);font-size:12px;font-weight:600;padding:10px 8px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;">' +
@@ -14127,15 +14124,15 @@ function updateAdminSyncRow() {
     '</div>';
 
   const guestHTML =
-    '<div style="display:flex;flex-direction:column;align-items:center;gap:2px;">' +
+    '<div style="display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 14px;border-bottom:1px solid var(--border);text-align:center;">' +
       '<button onclick="loginGoogle()" style="width:100%;background:none;border:none;color:var(--text3);font-size:13px;font-weight:600;padding:12px 16px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;">' +
         '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#556" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>' +
         'Zaloguj się z Google Drive' +
       '</button>' +
-      
+      _appVerLineHTML() +
     '</div>';
 
-  const html = (email ? loggedHTML : guestHTML) + _appVerRowHTML();
+  const html = email ? loggedHTML : guestHTML;
   const mainPanel = $('main-sync-panel');
   if (mainPanel) mainPanel.innerHTML = html;
 }
