@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-<meta name="app-build" content="2026-07-02T16:32:47.137Z">
+<meta name="app-build" content="2026-07-02T16:36:46.659Z">
 <meta charset="UTF-8">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -1718,10 +1718,10 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
   background:var(--bg-panel);
 }
 .podglad-meta-actions--gotowe{
-  grid-template-columns:44px minmax(0, 1fr) 44px minmax(0, 2fr);
+  grid-template-columns:44px minmax(0, 1fr) minmax(0, 2fr);
 }
 .podglad-meta-actions--przyjete{
-  grid-template-columns:44px minmax(0, 1fr) minmax(0, 3fr);
+  grid-template-columns:minmax(0, 1fr) minmax(0, 3fr);
 }
 .podglad-meta-actions--przyjete-no-sms{
   grid-template-columns:minmax(0, 1fr) minmax(0, 3fr);
@@ -1820,10 +1820,10 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
     grid-template-columns:repeat(2, minmax(0, 1fr));
   }
   .podglad-meta-actions--gotowe{
-    grid-template-columns:40px minmax(0, 1fr) 40px minmax(0, 2fr);
+    grid-template-columns:40px minmax(0, 1fr) minmax(0, 2fr);
   }
   .podglad-meta-actions--przyjete{
-    grid-template-columns:40px minmax(0, 1fr) minmax(0, 3fr);
+    grid-template-columns:minmax(0, 1fr) minmax(0, 3fr);
   }
   .podglad-meta-actions--wydane{
     grid-template-columns:44px 44px 44px minmax(0, 1fr) minmax(0, 1fr);
@@ -3142,6 +3142,7 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
   text-overflow:unset;
   word-break:break-word;
   overflow-wrap:anywhere;
+  text-align:left;
 }
 .history-order-card .history-head-name-row{
   flex:1;
@@ -3152,7 +3153,7 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
 .history-order-card .history-head-name-row .podglad-bike-name{
   margin-bottom:0;
   line-height:1.15;
-  text-align:center;
+  text-align:left;
 }
 .history-order-card .history-order-card-head .history-order-head-side{
   display:flex;
@@ -3164,7 +3165,7 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
   position:relative;
   display:flex;
   align-items:center;
-  justify-content:center;
+  justify-content:flex-start;
   min-width:0;
   width:100%;
   padding-left:0;
@@ -3176,7 +3177,7 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
   flex:1;
   min-width:0;
   width:100%;
-  text-align:center;
+  text-align:left;
   margin-bottom:0;
   white-space:normal;
   overflow:visible;
@@ -3223,8 +3224,14 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
   border-radius: var(--radius-btn);
   display:inline-flex;
   align-items:center;
-  gap:6px;
+  justify-content:center;
+  gap:0;
   line-height:1;
+  flex-shrink:0;
+}
+.history-head-phone .history-sms-btn .btn-history-sms-ico{
+  width:14px;
+  height:14px;
 }
 .history-head-phone .history-sms-btn .btn-history-sms-txt{ display:none; }
 .history-item-details .btn-history-sms-txt{ display:none; }
@@ -10399,9 +10406,8 @@ function renderHistory(filterTel) {
     if (isHL) item.classList.add('hl-red');
     if (_terminIsTodayOrTomorrow(entry.termin)) item.classList.add('history-item--termin-soon');
 
-    const smsBtn = _actionBarSmsBtnHTML(entry, 'przyjete');
-    const actionsBottomHTML = smsBtn
-      + '<button class="btn-action ui-tile ui-tile--sm ui-tile--soft-warning history-action-btn" onclick="loadWycena(' + entry.id + ')" title="Edytuj"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> EDYTUJ</button>'
+    const actionsBottomHTML =
+      '<button class="btn-action ui-tile ui-tile--sm ui-tile--soft-warning history-action-btn" onclick="loadWycena(' + entry.id + ')" title="Edytuj"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> EDYTUJ</button>'
       + (isEntryCr(entry)
         ? '<button class="btn-action ui-tile ui-tile--sm ui-tile--naprawa btn-action--repair history-action-btn" onclick="markCrGotowe(' + entry.id + ')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/></svg> GOTOWE</button>'
         : '<button class="btn-action ui-tile ui-tile--sm ui-tile--naprawa btn-action--repair history-action-btn" onclick="openRaport(' + entry.id + ')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg> NAPRAWA</button>');
@@ -10412,8 +10418,7 @@ function renderHistory(filterTel) {
       showKodOdbioru: false,
       inlineTelKod: false,
       showTelRight: true,
-      showSmsRight: false,
-      actionsNoSms: !smsBtn,
+      showSmsRight: true,
       actionsBottomHTML,
     });
 
@@ -10901,11 +10906,9 @@ function renderWydanie(filterTel) {
     item.className = 'history-item';
     item.dataset.orderId = String(entry.id ?? '');
 
-    const smsBtn = _actionBarSmsBtnHTML(entry, 'wydanie');
     const actionsBottomHTML =
       '<button class="btn-action ui-tile ui-tile--sm ui-tile--soft-warning history-action-btn history-action-btn--icon" onclick="cofnijDoAktualne(' + entry.id + ')" title="Cofnij do przyjętych"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg></button>'
       + '<button class="btn-action ui-tile ui-tile--sm ui-tile--soft-warning history-action-btn" onclick="openRaportEdycja(' + entry.id + ')" title="Edytuj"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> EDYTUJ</button>'
-      + smsBtn
       + '<button class="btn-action ui-tile ui-tile--sm ui-tile--wydanie btn-action--release history-action-btn" onclick="openPodsumowanieDoWydania(' + entry.id + ')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg> WYDAJ</button>';
 
     item.innerHTML = _buildHistoryOrderCardHTML(entry, {
@@ -10914,7 +10917,7 @@ function renderWydanie(filterTel) {
       showKodOdbioru: false,
       inlineTelKod: false,
       showTelRight: true,
-      showSmsRight: false,
+      showSmsRight: true,
       actionsBottomHTML,
     });
 
