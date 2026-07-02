@@ -1954,6 +1954,36 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
   padding-bottom:0;
   border-bottom:none;
 }
+#podglad-header .podglad-summary-card.history-order-card{
+  position:relative;
+}
+#podglad-header .history-order-card-head--centered{
+  justify-content:center;
+}
+#podglad-header .podglad-summary-bike--in-card{
+  flex:1;
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+  padding:12px 14px;
+  gap:8px;
+}
+#podglad-header .podglad-summary-bike--in-card .podglad-bike-name{
+  width:100%;
+  text-align:center;
+}
+#podglad-header .podglad-summary-bike--in-card .history-contact-row{
+  justify-content:center;
+  width:100%;
+}
+#podglad-header .history-order-card > .history-color-bar{
+  border-radius:12px 0 0 12px;
+}
+#podglad-header .history-order-card-head .history-order-head-side{
+  padding:12px 14px 12px 0;
+}
 #podglad-header .podglad-head-wrap{
   display:flex;
   align-items:stretch;
@@ -2042,14 +2072,45 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
   color:#86efac;
   white-space:nowrap;
 }
+.podglad-group-grand-total{
+  margin-top:16px;
+  padding:14px 12px;
+  background:var(--bg-panel);
+  border:1px solid var(--border-panel);
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+#podglad-table .podglad-group-grand-total .podsumowanie-tbl-total-label{
+  font-size:14px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.45px;
+  color:var(--text3);
+}
+#podglad-table .podglad-group-grand-total .podsumowanie-tbl-total-val{
+  font-size:26px;
+  font-weight:800;
+  text-align:right;
+  letter-spacing:-0.5px;
+  line-height:1.05;
+  white-space:nowrap;
+  color:#86efac;
+}
 #klient-historia-modal .klient-historia-body{
   padding:0 16px 40px;
 }
 .klient-historia-header-text{
   display:flex;
   flex-direction:column;
-  gap:4px;
+  gap:6px;
   min-width:0;
+}
+#klient-historia-modal #klient-historia-tel{
+  display:flex;
+  align-items:center;
 }
 .klient-historia-summary{
   margin-bottom:12px;
@@ -2855,6 +2916,60 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
   background:var(--bg-elevated);
   border-bottom:1px solid var(--border-panel);
 }
+.podsumowanie-tbl-total td{
+  padding:14px 12px;
+  border-top:2px solid var(--border-panel);
+  vertical-align:middle;
+}
+.podsumowanie-tbl-total-label{
+  font-size:16px;
+  font-weight:700;
+  letter-spacing:.2px;
+}
+.podsumowanie-tbl-total-val{
+  font-size:34px;
+  font-weight:800;
+  text-align:right;
+  letter-spacing:-0.5px;
+  line-height:1.05;
+  white-space:nowrap;
+}
+.podsumowanie-tbl-total--zlecone .podsumowanie-tbl-total-label{
+  color:var(--text3);
+}
+.podsumowanie-tbl-total--zlecone .podsumowanie-tbl-total-val{
+  color:#fff;
+}
+.podsumowanie-tbl-total--wykonane .podsumowanie-tbl-total-label,
+.podsumowanie-tbl-total--wykonane .podsumowanie-tbl-total-val{
+  color:var(--total-color, #22c55e);
+}
+#podglad-table tr.podsumowanie-tbl-total td{
+  padding:14px 12px;
+  border-top:2px solid var(--border-panel);
+  vertical-align:middle;
+  border-bottom:none;
+}
+#podglad-table tr.podsumowanie-tbl-total .podsumowanie-tbl-total-label{
+  font-size:12px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.45px;
+  color:var(--text3);
+}
+#podglad-table tr.podsumowanie-tbl-total .podsumowanie-tbl-total-val{
+  font-size:26px;
+  font-weight:800;
+  text-align:right;
+  letter-spacing:-0.5px;
+  line-height:1.05;
+  white-space:nowrap;
+  color:#fff;
+}
+#podglad-table tr.podsumowanie-tbl-total--wykonane .podsumowanie-tbl-total-label,
+#podglad-table tr.podsumowanie-tbl-total--wykonane .podsumowanie-tbl-total-val{
+  color:var(--total-color, #22c55e);
+}
 #podglad-overlay #podglad-table{
   display:flex;
   flex-direction:column;
@@ -2900,6 +3015,30 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
 }
 #podglad-overlay #podglad-action-bar{
   margin-top:14px;
+}
+#podglad-overlay #podglad-wydaj-btn{
+  width:100%;
+  min-height:56px;
+  font-size:var(--text-md);
+  font-weight:700;
+  letter-spacing:0.03em;
+  text-transform:uppercase;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+.zlecenie-grupa-footer .btn-action--release{
+  width:100%;
+  min-height:56px;
+  font-size:var(--text-md);
+  font-weight:700;
+  letter-spacing:0.03em;
+  text-transform:uppercase;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
 }
 .podglad-summary-card{
   background:var(--bg-panel);
@@ -3367,13 +3506,6 @@ body > .app{
   background:transparent !important;
   padding:0 !important;
 }
-.order-header-banner > #raport-summary-card .summary-info-with-kolor{
-  padding:12px 14px 12px calc(var(--color-bar-w) + 12px);
-}
-.order-header-banner > #raport-summary-card .summary-actions-split{
-  padding:0 12px 12px;
-  margin-top:0;
-}
 .order-header-banner .summary-info-with-kolor{
   display:flex;
   align-items:stretch;
@@ -3381,7 +3513,30 @@ body > .app{
   padding:0;
   margin:0;
 }
-.order-header-banner .summary-info-with-kolor > #summary-kolor-bar{
+.order-header-banner > #raport-summary-card .summary-info-with-kolor{
+  padding:0;
+}
+.order-header-banner > #raport-summary-card .summary-info-with-kolor--full{
+  display:flex;
+  align-items:stretch;
+  width:100%;
+  min-height:100%;
+}
+.order-header-banner > #raport-summary-card .summary-card-content{
+  flex:1;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+}
+.order-header-banner > #raport-summary-card .summary-info-with-kolor--full .summary-body{
+  padding:12px 14px;
+}
+.order-header-banner > #raport-summary-card .summary-actions-split{
+  padding:0 12px 12px;
+  margin-top:0;
+}
+.order-header-banner .summary-info-with-kolor > #summary-kolor-bar,
+.order-header-banner .summary-info-with-kolor > #raport-summary-kolor-bar{
   position:relative;
   flex:0 0 24px;
   width:24px;
@@ -3395,12 +3550,13 @@ body > .app{
   height:auto;
   border-radius:0;
   border-top-left-radius:11px !important;
-  border-bottom-left-radius:0 !important;
+  border-bottom-left-radius:11px !important;
   border:none;
   border-right:1px solid rgba(255,255,255,0.08);
   box-shadow:none;
 }
-.order-header-banner .summary-info-with-kolor > #summary-kolor-bar.summary-kolor-chip--empty{
+.order-header-banner .summary-info-with-kolor > #summary-kolor-bar.summary-kolor-chip--empty,
+.order-header-banner .summary-info-with-kolor > #raport-summary-kolor-bar.summary-kolor-chip--empty{
   background:var(--border) !important;
   opacity:0.35;
 }
@@ -4245,28 +4401,30 @@ body > .app .flat-list .item-card.qty-zero{
 
     <div class="order-header-banner">
     <div id="raport-summary-card" class="summary-card">
-      <div class="summary-info-with-kolor">
+      <div class="summary-info-with-kolor summary-info-with-kolor--full">
         <span id="raport-summary-kolor-bar" class="summary-kolor-bar"></span>
-        <div class="summary-body">
-          <div class="summary-body-left">
-            <span id="raport-title" class="text-primary" style="font-size:var(--text-md);font-weight:700;"></span>
-            <div id="raport-tel-kod-line" class="history-contact-row" style="display:none;margin-top:6px;"></div>
-            <div id="raport-wstepna" class="label-caps" style="display:none;margin-top:6px;line-height:1.35;">
-              Zlecenie - <span id="raport-wstepna-val" style="color:var(--text2);font-weight:800;font-size:var(--text-sm);letter-spacing:0;text-transform:none;"></span>
+        <div class="summary-card-content">
+          <div class="summary-body">
+            <div class="summary-body-left">
+              <span id="raport-title" class="text-primary" style="font-size:var(--text-md);font-weight:700;"></span>
+              <div id="raport-tel-kod-line" class="history-contact-row" style="display:none;margin-top:6px;"></div>
+              <div id="raport-wstepna" class="label-caps" style="display:none;margin-top:6px;line-height:1.35;">
+                Zlecenie - <span id="raport-wstepna-val" style="color:var(--text2);font-weight:800;font-size:var(--text-sm);letter-spacing:0;text-transform:none;"></span>
+              </div>
+            </div>
+            <div class="summary-body-right">
+              <div class="label-caps">Aktualna cena</div>
+              <div id="raport-total-display" class="summary-total"></div>
             </div>
           </div>
-          <div class="summary-body-right">
-            <div class="label-caps">Aktualna cena</div>
-            <div id="raport-total-display" class="summary-total"></div>
+          <div class="summary-actions-split">
+            <button type="button" onclick="closeRaport();" class="btn btn-close btn-cancel ui-tile ui-tile--sm ui-tile--danger">Anuluj</button>
+            <button type="button" id="btn-save-raport" onclick="saveRaportKoncowy()" class="btn ui-tile ui-tile--sm ui-tile--wydanie">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              ZAKOŃCZ
+            </button>
           </div>
         </div>
-      </div>
-      <div class="summary-actions-split">
-        <button type="button" onclick="closeRaport();" class="btn btn-close btn-cancel ui-tile ui-tile--sm ui-tile--danger">Anuluj</button>
-        <button type="button" id="btn-save-raport" onclick="saveRaportKoncowy()" class="btn ui-tile ui-tile--sm ui-tile--wydanie">
-          <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-          ZAKOŃCZ
-        </button>
       </div>
     </div>
     </div>
@@ -9313,9 +9471,7 @@ function openKlientHistoria(tel) {
   matched.sort((a, b) => _klientEntryDate(b) - _klientEntryDate(a));
 
   const telDisplay = tel ? String(tel) : digits;
-  const telClean = digits;
-  const phoneSvg = '<svg width="14" height="14" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>';
-  $('klient-historia-tel').innerHTML = '<a href="tel:' + telClean + '" class="podglad-bike-tel" onclick="event.stopPropagation()">' + phoneSvg + escHTML(telDisplay) + '</a>';
+  $('klient-historia-tel').innerHTML = _historyTelHeaderHTML({ tel: telDisplay }, { klientHistoria: false });
 
   const list = $('klient-historia-list');
   const summary = $('klient-historia-summary');
@@ -9718,8 +9874,7 @@ function _historyDetailsSmsBtnHTML(entry, opts) {
   if (opts.variant === 'wydane') return '';
   if (opts.variant === 'przyjete' && typeof isEntryCr === 'function' && isEntryCr(entry)) return '';
   const telClean = String(entry.tel).replace(/[^0-9+]/g, '');
-  const body = (opts.variant === 'przyjete') ? _smsPrzyjecieBody(entry) : _smsWydanieBody(entry);
-  return '<a href="sms:' + telClean + '?body=' + encodeURIComponent(body)
+  return '<a href="sms:' + telClean
     + '" class="btn-action ui-tile ui-tile--md btn-history-sms history-details-chip history-details-sms-btn history-details-sms-btn--icon'
     + (entry.smsSent ? ' btn-history-sms-sent' : '')
     + '" onclick="openOrderSms(' + entry.id + ', this, event)">'
@@ -9925,7 +10080,6 @@ function _buildHistoryMetaGrid(entry, variant) {
       _podsumowanieMetaDateItem('Przyjęto', entry.label),
       _podsumowanieMetaDateItem('Termin', entry.termin),
       _podsumowanieMetaDateItem('Gotowe', rk?.dataZakonczenia),
-      _podsumowanieMetaPriceItem('Cena', entry.total),
     ].join('');
   }
   return _buildOrderSummaryMetaGrid(entry);
@@ -10016,13 +10170,15 @@ function _buildHistoryOrderCardHTML(entry, opts) {
   const kodLine = opts.extraHeaderHTML || (inlineContacts ? '' : (opts.showKodOdbioru ? _buildHistoryKodOdbioruHTML(entry.kodOdbioru) : ''));
   const metaGridClass = variant === 'przyjete'
     ? 'podglad-meta-grid podglad-meta-grid--3 podglad-meta-grid--list'
-    : (variant === 'wydanie' ? 'podglad-meta-grid podglad-meta-grid--list' : 'podglad-meta-grid');
+    : (variant === 'wydanie' ? 'podglad-meta-grid podglad-meta-grid--3 podglad-meta-grid--list' : 'podglad-meta-grid');
   let actionsBlock = '';
   if (opts.priceInHeader) {
     const priceBlock = opts.headerPriceHTML || '';
-    actionsBlock = opts.actionsHTML
-      ? '<div class="history-order-head-side"><div class="history-item-actions history-item-actions--top">' + opts.actionsHTML + '</div>' + priceBlock + '</div>'
-      : priceBlock;
+    if (opts.actionsHTML) {
+      actionsBlock = '<div class="history-order-head-side"><div class="history-item-actions history-item-actions--top">' + opts.actionsHTML + '</div>' + priceBlock + '</div>';
+    } else if (priceBlock) {
+      actionsBlock = '<div class="history-order-head-side">' + priceBlock + '</div>';
+    }
   } else if (opts.actionsHTML) {
     actionsBlock = '<div class="history-item-actions history-item-actions--top">' + opts.actionsHTML + '</div>';
   }
@@ -10596,6 +10752,7 @@ function getDoWydaniaList(filterTel) {
 function renderWydanie(filterTel) {
   const list = $('wydanie-list');
   if (typeof updateTabCounts === 'function') updateTabCounts();
+  _ensureKodOdbioruForGotoweList();
   const doWydania = getDoWydaniaList(filterTel);
 
   if (!doWydania.length) {
@@ -10620,6 +10777,8 @@ function renderWydanie(filterTel) {
       showKodOdbioru: false,
       inlineTelKod: false,
       showTelRight: true,
+      priceInHeader: true,
+      headerPriceHTML: _historyHeaderPriceHTML(entry, false),
       actionsBottomHTML,
     });
 
@@ -10632,8 +10791,8 @@ function renderWydanie(filterTel) {
     if (g.list.length < 2) {
       list.appendChild(buildCard(g.list[0]));
     } else {
-      const wydajBtn = '<button type="button" class="btn-action ui-tile ui-tile--sm ui-tile--wydanie btn-action--release" onclick="openPodsumowanieGrupowe(\'' + g.tel + '\')">'
-        + '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg> WYDAJ WSZYSTKIE (' + g.list.length + ')</button>';
+      const wydajBtn = '<button type="button" class="btn-action ui-tile ui-tile--lg ui-tile--wydanie btn-action--release btn-block" onclick="openPodsumowanieGrupowe(\'' + g.tel + '\')">'
+        + _wydajReleaseBtnSvg() + ' WYDAJ WSZYSTKIE (' + g.list.length + ')</button>';
       list.appendChild(_buildGrupaBox(g.list.map(buildCard), {
         variant: 'wydanie',
         footerHTML: wydajBtn,
@@ -12449,6 +12608,7 @@ function prepareRaportHeader(entry, wstepnaTotalRaw, st) {
   if (sideBar) {
     const kolor = _resolveEntryKolor(entry, st);
     sideBar.style.background = kolor ? _kolorBackgroundStyle(kolor) : 'transparent';
+    sideBar.classList.toggle('summary-kolor-chip--empty', !kolor);
   }
 
   // Tel + Kod odbioru (chipy jak w kartach zleceń)
@@ -12679,6 +12839,7 @@ function markCrGotowe(id) {
   };
   entry.total = total;
   entry.smsSent = false;
+  _ensureKodOdbioruOnEntry(entry);
   const moved = hist.splice(idx, 1)[0];
   hist.unshift(moved);
   localStorage.setItem(HISTORY_KEY, JSON.stringify(hist));
@@ -12795,6 +12956,7 @@ function saveRaportKoncowy() {
       list[idx].total = fmt(raportTotal);
       // Reset statusu SMS przy przeniesieniu do Do Wydania
       list[idx].smsSent = false;
+      _ensureKodOdbioruOnEntry(list[idx]);
       // Przenieś na początek listy (najnowsza naprawa na górze)
       const movedEntry = list.splice(idx, 1)[0];
       list.unshift(movedEntry);
@@ -12955,16 +13117,48 @@ function closePodglad() {
 function closePodgladOutside(e) { if (e.target === $('podglad-overlay')) closePodglad(); }
 window.openPodglad = openPodglad;
 
-function _ensureKodOdbioruForEntryInArchive(id) {
-  const arch = getArchive();
-  const idx = arch.findIndex(e => e.id === id);
-  if (idx < 0) return null;
-  const entry = arch[idx];
-  if (!entry.kodOdbioru) {
-    entry.kodOdbioru = String(Math.floor(10000 + Math.random() * 90000));
-    localStorage.setItem(ARCHIVE_KEY, JSON.stringify(arch));
-  }
+function _generateKodOdbioru() {
+  return String(Math.floor(10000 + Math.random() * 90000));
+}
+
+function _ensureKodOdbioruOnEntry(entry) {
+  if (!entry) return entry;
+  if (!entry.kodOdbioru) entry.kodOdbioru = _generateKodOdbioru();
   return entry;
+}
+
+function _ensureKodOdbioruForEntry(id) {
+  const hist = getHistory();
+  const hIdx = hist.findIndex(e => e.id === id);
+  if (hIdx >= 0) {
+    _ensureKodOdbioruOnEntry(hist[hIdx]);
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(hist));
+    return hist[hIdx];
+  }
+  const arch = getArchive();
+  const aIdx = arch.findIndex(e => e.id === id);
+  if (aIdx >= 0) {
+    _ensureKodOdbioruOnEntry(arch[aIdx]);
+    localStorage.setItem(ARCHIVE_KEY, JSON.stringify(arch));
+    return arch[aIdx];
+  }
+  return null;
+}
+
+function _ensureKodOdbioruForGotoweList() {
+  const hist = getHistory();
+  let changed = false;
+  hist.forEach(e => {
+    if (e.raportKoncowy && !e.kodOdbioru) {
+      e.kodOdbioru = _generateKodOdbioru();
+      changed = true;
+    }
+  });
+  if (changed) localStorage.setItem(HISTORY_KEY, JSON.stringify(hist));
+}
+
+function _ensureKodOdbioruForEntryInArchive(id) {
+  return _ensureKodOdbioruForEntry(id);
 }
 
 function _withPodgladPngBusy(fn) {
@@ -13004,19 +13198,21 @@ function _buildPodsumowanieHeaderHTML(entry, opts) {
   const contactRow = _historyHeaderContactRowHTML(entry, {
     showTelInHeader: !!entry.tel,
     showKodOdbioru: !!entry.kodOdbioru,
-    klientHistoria: true,
+    klientHistoria: false,
   });
   const metaGridClass = variant === 'przyjete'
     ? 'podglad-meta-grid podglad-meta-grid--3 podglad-meta-grid--list'
-    : (variant === 'wydanie' ? 'podglad-meta-grid podglad-meta-grid--list' : 'podglad-meta-grid');
+    : (variant === 'wydanie' ? 'podglad-meta-grid podglad-meta-grid--3 podglad-meta-grid--list' : 'podglad-meta-grid');
   const metaHtml = (variant === 'wydanie' || variant === 'przyjete')
     ? _buildHistoryMetaGrid(entry, variant)
     : _buildOrderSummaryMetaGrid(entry);
-  return `<div class="podglad-summary-card">
-    <div class="podglad-summary-bike">
-      ${kolorBar}
-      ${nameParts.length ? `<div class="podglad-bike-name">${escHTML(nameParts.join(' '))}</div>` : ''}
-      ${contactRow}
+  return `<div class="podglad-summary-card history-order-card">
+    ${kolorBar}
+    <div class="history-order-card-head history-order-card-head--centered">
+      <div class="podglad-summary-bike podglad-summary-bike--in-card">
+        ${nameParts.length ? `<div class="podglad-bike-name">${escHTML(nameParts.join(' '))}</div>` : ''}
+        ${contactRow}
+      </div>
     </div>
     <div class="${metaGridClass}">${metaHtml}</div>
   </div>`;
@@ -13051,8 +13247,7 @@ function _resetPodgladExtras() {
 }
 
 function openPodsumowanieWydane(id) {
-  const arch = getArchive();
-  const entry = arch.find(e => e.id === id);
+  const entry = _ensureKodOdbioruForEntry(id);
   if (!entry) { alert('Brak danych'); return; }
 
   raportReturnTab = 'archiwum';
@@ -13077,9 +13272,22 @@ function openPodsumowanieWydane(id) {
 }
 window.openPodsumowanieWydane = openPodsumowanieWydane;
 
+function _wydajReleaseBtnSvg() {
+  return '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>';
+}
+
+function _showPodgladWydajBtn(label, onClick) {
+  const bar = $('podglad-action-bar');
+  const btn = $('podglad-wydaj-btn');
+  if (!bar || !btn) return;
+  bar.style.display = 'block';
+  btn.className = 'btn-action ui-tile ui-tile--lg ui-tile--wydanie btn-action--release btn-block';
+  btn.innerHTML = _wydajReleaseBtnSvg() + ' ' + escHTML(label);
+  btn.onclick = onClick;
+}
+
 function openPodsumowanieDoWydania(id) {
-  const hist = getHistory();
-  const entry = hist.find(e => e.id === id);
+  const entry = _ensureKodOdbioruForEntry(id);
   if (!entry) { alert('Brak danych'); return; }
   if (!entry.raportKoncowy) { alert('Brak raportu końcowego'); return; }
 
@@ -13104,13 +13312,7 @@ function openPodsumowanieDoWydania(id) {
     $('podglad-notatka').style.display = 'block';
   }
 
-  const bar = $('podglad-action-bar');
-  const btn = $('podglad-wydaj-btn');
-  if (bar && btn) {
-    bar.style.display = 'block';
-    btn.textContent = 'WYDAJ';
-    btn.onclick = () => wydajBezKwoty(id);
-  }
+  _showPodgladWydajBtn('WYDAJ', () => wydajBezKwoty(id));
 
   $('podglad-overlay').style.display = 'block';
 }
@@ -13155,7 +13357,7 @@ function _buildZleconeTableHTML(stItems, parts) {
     const name = itemLabelWithDetails(it, true);
     table += `<tr><td ${td}>${escHTML(name)}</td><td ${tdr}>${fmtPLN(price)}</td><td ${tdr}>${qty}</td><td ${tdr}>${fmtPLN(total)}</td></tr>`;
   });
-  table += `<tr><td colspan="3" style="padding:8px 10px;font-size:12px;font-weight:700;color:var(--text3);">Razem zlecenie</td><td style="padding:8px 10px;font-size:14px;font-weight:800;color:#fff;text-align:right;">${fmtPLN(zlecTotal)} zł</td></tr>`;
+  table += `<tr class="podsumowanie-tbl-total podsumowanie-tbl-total--zlecone"><td colspan="3" class="podsumowanie-tbl-total-label">Razem zlecenie</td><td class="podsumowanie-tbl-total-val">${fmtPLN(zlecTotal)} zł</td></tr>`;
   table += `</tbody></table>`;
   return { table, zlecTotal, count: stItems.length };
 }
@@ -13254,7 +13456,7 @@ function _buildPodsumowanieTablesHTML(entry, opts) {
       rapTable += `<tr><td ${td}>${escHTML(s.name)}</td><td ${tdr}>${fmtPLN(price)}</td><td ${tdr}>1</td><td ${tdr}>${fmtPLN(price)}</td></tr>`;
     });
     const rapColor = (zlecTotal > 0 && rapTotal > zlecTotal) ? '#ef4444' : '#22c55e';
-    rapTable += `<tr><td colspan="3" style="padding:8px 10px;font-size:12px;font-weight:700;color:${rapColor};">Razem naprawa</td><td style="padding:8px 10px;font-size:14px;font-weight:800;color:${rapColor};text-align:right;">${fmtPLN(rapTotal)} zł</td></tr>`;
+    rapTable += `<tr class="podsumowanie-tbl-total podsumowanie-tbl-total--wykonane" style="--total-color:${rapColor};"><td colspan="3" class="podsumowanie-tbl-total-label">Razem naprawa</td><td class="podsumowanie-tbl-total-val">${fmtPLN(rapTotal)} zł</td></tr>`;
     rapTable += `</tbody></table>`;
 
     if (opts.collapseWykonane) {
@@ -13273,8 +13475,13 @@ function openPodsumowanieGrupowe(telKey) {
   if (!doWyd.length) return;
   raportReturnTab = 'wydanie';
 
+  doWyd.forEach(e => _ensureKodOdbioruOnEntry(e));
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(getHistory()));
+
   const tel = doWyd[0].tel || '';
-  const grandTotal = doWyd.reduce((a, e) => a + (parseFloat(String(e.total || '0').replace(/\s/g, '').replace(',', '.')) || 0), 0);
+  const fmtPLN = v => Number(v || 0).toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const parseTotal = v => parseFloat(String(v || '0').replace(/\s/g, '').replace(',', '.')) || 0;
+  const grandTotal = doWyd.reduce((a, e) => a + parseTotal(e.total), 0);
 
   $('podglad-title').textContent = 'Wydanie grupowe';
   const headLeft = `
@@ -13299,21 +13506,18 @@ function openPodsumowanieGrupowe(telKey) {
       </div>`;
     html += _buildPodsumowanieTablesHTML(entry, { skipZlecone: true });
   });
+  html += `<div class="podglad-group-grand-total">
+    <span class="podsumowanie-tbl-total-label">Razem wszystkie zlecenia (${doWyd.length})</span>
+    <span class="podsumowanie-tbl-total-val">${fmtPLN(grandTotal)} zł</span>
+  </div>`;
   $('podglad-table').innerHTML = html;
-  $('podglad-total').textContent = fmt(grandTotal);
 
   const kodEl = $('podglad-kod-odbioru'); if (kodEl) kodEl.style.display = 'none';
   const kwotaEl = $('podglad-kwota-zaplacona'); if (kwotaEl) kwotaEl.style.display = 'none';
   const notatkaEl = $('podglad-notatka'); if (notatkaEl) notatkaEl.style.display = 'none';
   _setupPodgladRaportBar(null, false);
 
-  const bar = $('podglad-action-bar');
-  const btn = $('podglad-wydaj-btn');
-  if (bar && btn) {
-    bar.style.display = 'block';
-    btn.textContent = 'WYDAJ WSZYSTKIE (' + doWyd.length + ')';
-    btn.onclick = () => wydajGrupowoBezKwoty(telKey);
-  }
+  _showPodgladWydajBtn('WYDAJ WSZYSTKIE (' + doWyd.length + ')', () => wydajGrupowoBezKwoty(telKey));
 
   $('podglad-overlay').style.display = 'block';
 }
