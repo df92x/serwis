@@ -204,6 +204,50 @@
   transition: opacity 0.15s, transform 0.1s;
   line-height: 1;
 }
+
+/* Ujednolicenie: przyciski inline w Start/Rabaty → wygląd ui-tile */
+#start-overlay button[onclick="manualSync()"],
+#start-overlay button[onclick="kopiaZapasowa()"]{
+  background: var(--solid-warning-bg) !important;
+  border: 1px solid var(--solid-warning-border) !important;
+  color: #fbbf24 !important;
+}
+#start-overlay button[onclick="manualSync()"]{
+  background: #f59e0b !important;
+  border-color: #f59e0b !important;
+  color: #111827 !important;
+}
+
+#rab-wydane-overlay button,
+#rab-assign-overlay button{
+  background: var(--bg) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text) !important;
+  border-radius: 10px !important;
+}
+
+/* Panel synchronizacji (Google Drive) — spójny look */
+#main-sync-panel > div[style*="border-bottom:1px solid var(--border)"]{
+  border-bottom: 1px solid var(--border-panel) !important;
+}
+#main-sync-panel button[onclick="manualSync()"][data-sync-btn="1"]{
+  background: var(--solid-naprawa-bg) !important;
+  border: 1px solid var(--solid-naprawa-border) !important;
+  color: #93c5fd !important;
+  border-radius: 0 !important;
+}
+#main-sync-panel button[onclick="logoutGoogle()"]{
+  background: var(--solid-danger-bg) !important;
+  border: 1px solid var(--solid-danger-border) !important;
+  color: #f87171 !important;
+  border-radius: 0 !important;
+}
+#main-sync-panel button[onclick="loginGoogle()"]{
+  background: var(--bg-panel) !important;
+  border: 1px solid var(--border-panel) !important;
+  color: var(--text2) !important;
+  border-radius: 10px !important;
+}
 .btn-action:active { transform: scale(0.97); }
 /* btn-action → ui-tile v4 */
 
@@ -307,6 +351,180 @@
 
 .alert { border-radius: var(--radius-md); padding: var(--space-2) var(--space-3); }
 .alert--warning { background: var(--solid-warning-bg); border: 1px solid var(--solid-warning-border); }
+
+/* ═══ Unifikacja A+B+C: karty/panele jak zlecenia ═══ */
+.summary-card,
+.tool-card,
+.dialog,
+.parts-banner,
+#modal-overlay .modal-banner{
+  background: var(--bg-panel) !important;
+  border: 1px solid var(--border-panel) !important;
+  border-radius: 12px !important;
+}
+.tool-card{ padding:16px; }
+
+/* Jeden styl dla kontrolek formularzy */
+input[type="text"],
+input[type="tel"],
+input[type="number"],
+input[type="password"],
+input[type="date"],
+textarea,
+select,
+.modal-select,
+.preset-select,
+.csel-btn{
+  background: var(--bg) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text2) !important;
+  border-radius: 8px !important;
+}
+input::placeholder,
+textarea::placeholder{ color: var(--text3) !important; }
+input:focus,
+textarea:focus,
+select:focus,
+.modal-select:focus,
+.preset-select:focus,
+.csel-btn:focus{
+  outline: none;
+  border-color: var(--blue) !important;
+}
+
+/* Start / Rabaty / okna narzędzi — nadpisy inline-style */
+#main-sync-panel{
+  background: var(--bg-panel) !important;
+  border: 1px solid var(--border-panel) !important;
+  border-radius: 12px !important;
+}
+#backup-reminder{
+  background: var(--solid-warning-bg) !important;
+  border: 1px solid var(--solid-warning-border) !important;
+}
+#backup-reminder button{
+  border-radius: 10px !important;
+}
+
+#rab-wydane-overlay > div,
+#rab-assign-overlay > div{
+  background: var(--bg-panel) !important;
+  border: 1px solid var(--border-panel) !important;
+  border-radius: 14px !important;
+}
+#rab-wydane-overlay > div > div:first-child,
+#rab-assign-overlay > div > div:first-child{
+  border-bottom: 1px solid var(--border-panel) !important;
+}
+#rab-wydane-overlay > div > div:last-child{
+  border-top: 1px solid var(--border-panel) !important;
+}
+
+/* Kody rabatowe — ujednolicenie list i wyszukiwarki */
+#kody-rabatowe-overlay .tool-page-header{
+  padding: var(--space-2) var(--space-4) 0;
+}
+#kody-rabatowe-overlay .tool-page-body{
+  padding: 16px 16px 40px;
+  gap: 12px;
+}
+#kody-rabatowe-overlay #rab-search{
+  border-radius: 12px !important;
+  padding: 12px 12px !important;
+  font-weight: 800 !important;
+  color: var(--text) !important;
+}
+#rab-main-promo-card{
+  display:flex !important;
+  flex-direction:column !important;
+  gap:10px !important;
+}
+#rab-active-list,
+#rab-used-list{
+  display:flex !important;
+  flex-direction:column !important;
+  gap:10px !important;
+}
+
+.rab-card{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px 12px;
+  background:var(--bg-panel);
+  border:1px solid var(--border-panel);
+  border-radius:12px;
+}
+.rab-card--hl{
+  background:var(--solid-warning-bg);
+  border-color:var(--solid-warning-border);
+}
+.rab-card--used{ opacity:0.92; }
+.rab-card-left{
+  flex:1;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.rab-card-top{
+  font-size:15px;
+  font-weight:900;
+  color:var(--text);
+  letter-spacing:1.2px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.rab-card-name{
+  font-size:12px;
+  font-weight:900;
+  color:var(--color-warning);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.rab-card-bottom{
+  font-size:12px;
+  color:var(--text3);
+  line-height:1.3;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.rab-card-right{
+  display:flex;
+  flex-direction:row;
+  gap:8px;
+  align-items:center;
+  flex-shrink:0;
+}
+.rab-btn-used{
+  background:var(--solid-naprawa-bg) !important;
+  border:1px solid var(--solid-naprawa-border) !important;
+  color:#93c5fd !important;
+  font-weight:900 !important;
+  padding:10px 12px !important;
+}
+.rab-btn-del{
+  background:var(--solid-danger-bg) !important;
+  border:1px solid var(--solid-danger-border) !important;
+  color:#f87171 !important;
+  width:40px;
+  min-width:40px;
+  max-width:40px;
+  padding:0 !important;
+  justify-content:center;
+}
+
+/* Różne sheet/dialogi tworzone inline w JS */
+#rab-wydane-overlay > div,
+#rab-assign-overlay > div,
+div[style*="border-radius:14px"][style*="background:var(--bg2)"],
+div[style*="border-radius:14px"][style*="background:#141414"]{
+  background: var(--bg-panel) !important;
+  border-color: var(--border-panel) !important;
+}
 
 .admin-act-btn {
   width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 14px;
@@ -631,6 +849,48 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
 .flat-csel .csel-btn span { text-align:right; }
 .flat-csel .csel-btn svg { display:none; }
 
+/* Raport / Dodaj części — ujednolicenie do paneli zleceń */
+#raport-overlay .flat-csel .csel-btn,
+#add-parts-banner .flat-csel .csel-btn{
+  background: var(--bg) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 8px !important;
+  color: var(--text2) !important;
+}
+
+#raport-overlay .item-price-input,
+#add-parts-banner .item-price-input,
+#raport-overlay .item-price-total.editable-total,
+#add-parts-banner .item-price-total.editable-total{
+  border-radius: 8px !important;
+  border-color: var(--border) !important;
+  background: var(--bg) !important;
+  color: var(--text) !important;
+}
+
+#raport-overlay .qty-btn,
+#add-parts-banner .qty-btn{
+  border-radius: 8px !important;
+  border-color: var(--border) !important;
+  background: var(--bg) !important;
+}
+#raport-overlay .qty-btn.plus,
+#add-parts-banner .qty-btn.plus{
+  color: #86efac !important;
+  border-color: var(--solid-wydanie-border) !important;
+  background: var(--solid-wydanie-bg) !important;
+}
+#raport-overlay .qty-btn.minus,
+#add-parts-banner .qty-btn.minus{
+  color: #f87171 !important;
+  border-color: var(--solid-danger-border) !important;
+  background: var(--solid-danger-bg) !important;
+}
+#raport-overlay .qty-btn:hover,
+#add-parts-banner .qty-btn:hover{
+  filter: brightness(1.06);
+}
+
 /* Flat group (inne części w flat contexcie) */
 .flat-group .group-card { margin:0 !important; border:none !important; background:transparent !important; }
 .flat-group .group-header { border:none; background:transparent; padding:8px 0; }
@@ -638,11 +898,72 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
 .flat-group .sub-row {
   background:transparent; border:none; border-radius:0;
   padding:10px 0; margin:0; border-bottom:1px solid var(--border-panel);
+  gap:6px;
 }
 .flat-group .sub-row.is-checked { background:transparent; border-color:transparent; }
-.flat-group .sub-name-input { color:#fff; }
-.flat-group .sub-name-input::placeholder { color:var(--text2); }
-.flat-group .sub-price-input { color:#fff; }
+.flat-group .sub-row-label{
+  flex:0 0 auto;
+  font-size:18px;
+  font-weight:600;
+  color:var(--text);
+  white-space:nowrap;
+  letter-spacing:-0.1px;
+}
+.flat-group .sub-name-wrap{
+  flex:1;
+  min-width:0;
+  position:relative;
+  display:flex;
+  align-items:center;
+}
+.flat-group .sub-name-input {
+  flex:1;
+  width:100%;
+  min-width:0;
+  box-sizing:border-box;
+  border:1px solid var(--border) !important;
+  background:var(--bg) !important;
+  border-radius:8px !important;
+  padding:6px 32px 6px 10px !important;
+  min-height:32px;
+  font-size:14px;
+  font-weight:600;
+  color:var(--text);
+  text-align:left !important;
+  outline:none;
+}
+.flat-group .sub-name-input:focus { border-color:var(--blue) !important; }
+.flat-group .sub-name-input::placeholder { color:var(--text3); }
+.flat-group .sub-price-input {
+  box-sizing:border-box;
+  width:70px !important;
+  min-width:70px !important;
+  height:32px !important;
+  flex:0 0 70px !important;
+  border-radius:8px !important;
+  padding:6px 10px !important;
+  font-size:20px !important;
+  font-weight:700 !important;
+  text-align:right !important;
+  color:var(--text) !important;
+}
+.flat-group .sub-del{
+  position:absolute;
+  right:4px;
+  top:50%;
+  transform:translateY(-50%);
+  width:24px;
+  height:24px;
+  padding:0;
+  margin:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:16px;
+  line-height:1;
+  opacity:0.35;
+}
+.flat-group .sub-del:hover{ opacity:0.85; }
 
 .item-icon {
   flex-shrink: 0;
@@ -1604,6 +1925,94 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
   padding-bottom:0;
   border-bottom:none;
 }
+#podglad-header .podglad-head-wrap{
+  display:flex;
+  align-items:stretch;
+  gap:12px;
+}
+#podglad-header .podglad-head-left{
+  flex:1;
+  min-width:0;
+  position:relative;
+  overflow:hidden;
+  background:var(--bg-panel);
+  border:1px solid var(--border-panel);
+  border-radius:12px;
+  padding:10px 12px 10px calc(var(--color-bar-w) + 12px);
+}
+#podglad-header .podglad-head-left > .history-color-bar{
+  border-radius:12px 0 0 12px;
+}
+#podglad-header .podglad-head-title{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-size:var(--text-md);
+  font-weight:800;
+  color:var(--text);
+  margin-bottom:6px;
+  min-width:0;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+#podglad-header .podglad-head-contacts{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+#podglad-header .podglad-head-right{
+  text-align:right;
+  flex-shrink:0;
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+  justify-content:center;
+  align-self:stretch;
+}
+#podglad-header .podglad-head-tel-btn{
+  min-height:34px;
+  height:34px;
+  padding:0 10px !important;
+  font-weight:800;
+}
+#podglad-header .podglad-head-kod{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  height:34px;
+  padding:0 12px !important;
+  letter-spacing:2px;
+}
+
+.podglad-group-card{
+  padding:9px 12px;
+  background:var(--bg-panel);
+  border:1px solid var(--border-panel);
+  border-radius:12px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.podglad-group-title{
+  font-size:15px;
+  font-weight:800;
+  color:var(--text);
+}
+.podglad-group-right{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.podglad-group-total{
+  font-size:15px;
+  font-weight:800;
+  color:#86efac;
+  white-space:nowrap;
+}
 #klient-historia-modal .klient-historia-body{
   padding:0 16px 40px;
 }
@@ -2069,6 +2478,41 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
   flex-direction:column;
   gap:10px;
 }
+#podglad-table table{
+  width:100%;
+  border-collapse:collapse;
+}
+#podglad-table thead tr{
+  background:var(--bg);
+}
+#podglad-table th,
+#podglad-table td{
+  padding:8px 10px;
+  font-size:13px;
+  color:var(--text);
+  border-bottom:1px solid var(--border-panel);
+  vertical-align:top;
+}
+#podglad-table thead td,
+#podglad-table thead th{
+  padding:7px 10px;
+  font-size:10px;
+  font-weight:700;
+  color:var(--text3);
+  text-transform:uppercase;
+  letter-spacing:.5px;
+}
+#podglad-table .podglad-td-r{
+  text-align:right;
+  color:var(--text2);
+  white-space:nowrap;
+}
+#podglad-table .podglad-td-sum{
+  text-align:right;
+  font-weight:800;
+  color:#86efac;
+  white-space:nowrap;
+}
 #podglad-overlay #podglad-notatka.notatka-zlecenie-readonly{
   margin:14px 0 0;
 }
@@ -2485,6 +2929,7 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
 }
 @media (max-width:480px){
   .podglad-meta-grid{grid-template-columns:repeat(4,minmax(0,1fr));}
+  .podglad-meta-grid--3{grid-template-columns:repeat(3,minmax(0,1fr));}
   .podglad-meta-item{border-bottom:none;}
   .podglad-meta-item:nth-child(2){border-right:1px solid var(--border-panel);}
   .history-order-card .podglad-meta-item{min-height:52px;padding:10px 8px;}
@@ -2654,27 +3099,109 @@ body > .app #group-container .group-body{
   background:transparent;
   gap:0;
 }
+#raport-overlay #raport-group-container .sub-row,
+body > .app #group-container .sub-row{
+  padding:10px 0;
+  margin:0;
+  border:none;
+  border-radius:0;
+  background:transparent;
+  border-bottom:1px solid var(--border-panel);
+  gap:6px;
+}
+#raport-overlay #raport-group-container .sub-row.is-checked,
+body > .app #group-container .sub-row.is-checked{
+  background:transparent;
+  border-color:transparent;
+}
+#raport-overlay #raport-group-container .sub-price-input,
+body > .app #group-container .sub-price-input{
+  border-radius:8px;
+  border-color:var(--border);
+  background:var(--bg);
+  color:var(--text);
+  box-sizing:border-box;
+  width:70px !important;
+  min-width:70px !important;
+  height:32px !important;
+  flex:0 0 70px !important;
+  padding:6px 10px !important;
+  font-size:20px !important;
+  font-weight:700 !important;
+  text-align:right !important;
+}
+#raport-overlay #raport-group-container .sub-row-label,
+body > .app #group-container .sub-row-label{
+  flex:0 0 auto;
+  font-size:18px;
+  font-weight:600;
+  color:var(--text);
+  white-space:nowrap;
+  letter-spacing:-0.1px;
+}
+#raport-overlay #raport-group-container .sub-name-wrap,
+body > .app #group-container .sub-name-wrap{
+  flex:1;
+  min-width:0;
+  position:relative;
+  display:flex;
+  align-items:center;
+}
+#raport-overlay #raport-group-container .sub-name-input,
+body > .app #group-container .sub-name-input{
+  flex:1;
+  width:100%;
+  min-width:0;
+  box-sizing:border-box;
+  border:1px solid var(--border) !important;
+  background:var(--bg) !important;
+  border-radius:8px !important;
+  padding:6px 32px 6px 10px !important;
+  min-height:32px;
+  font-size:14px;
+  font-weight:600;
+  color:var(--text);
+  text-align:left !important;
+  outline:none;
+}
+#raport-overlay #raport-group-container .sub-name-input:focus,
+body > .app #group-container .sub-name-input:focus{
+  border-color:var(--blue) !important;
+}
+#raport-overlay #raport-group-container .sub-name-input::placeholder,
+body > .app #group-container .sub-name-input::placeholder{
+  color:var(--text3);
+}
+#raport-overlay #raport-group-container .sub-del,
+body > .app #group-container .sub-del{
+  position:absolute;
+  right:4px;
+  top:50%;
+  transform:translateY(-50%);
+  width:24px;
+  height:24px;
+  padding:0;
+  margin:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:16px;
+  line-height:1;
+  opacity:0.35;
+}
+#raport-overlay #raport-group-container .sub-del:hover,
+body > .app #group-container .sub-del:hover{
+  opacity:0.85;
+}
 #raport-overlay .card-row,
 body > .app .card-row{ gap:6px; }
 
-/* NAPRAWA: bez niebieskich akcentów tła i tekstu */
+/* Raport: spójne zaznaczenia jak w zleceniach */
 #raport-overlay .link-tel{ color:var(--text2) !important; }
-#raport-overlay .flat-check.checked{
-  border-color:#555 !important;
-  background:#444 !important;
-}
-#raport-overlay .flat-list .item-card:has(.item-check:checked){
-  background:transparent !important;
-  border:none !important;
-  border-bottom:1px solid var(--border-panel) !important;
-}
-#raport-overlay .flat-group .sub-row.is-checked{
-  background:transparent !important;
-  border-color:transparent !important;
-}
+#raport-overlay .flat-check.checked,
 #raport-overlay .flat-group .sub-check-circle.checked{
-  border-color:#555 !important;
-  background:#444 !important;
+  border-color: var(--solid-naprawa-border) !important;
+  background: var(--solid-naprawa-bg) !important;
 }
 
 /* Kalendarz zleceń — wspólny układ (menu główne + modal terminu) */
@@ -2931,8 +3458,8 @@ button.order-cal-day.order-cal-day--browse:active{
   gap:16px;
 }
 .tool-card{
-  background:var(--bg2);
-  border:1px solid var(--border);
+  background:var(--bg-panel);
+  border:1px solid var(--border-panel);
   border-radius:12px;
   padding:16px;
 }
@@ -3457,15 +3984,14 @@ body > .app .flat-list .item-card.qty-zero{
 
     <div class="tool-page-body">
       <div class="tool-card">
-        <input id="rab-search" type="text" placeholder="WYSZUKIWARKA"
-          style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:12px 12px;color:var(--text);font-size:14px;font-weight:800;outline:none;">
+        <input id="rab-search" type="text" placeholder="WYSZUKIWARKA">
       </div>
 
-      <div id="rab-main-promo-card" class="tool-card" style="display:flex;flex-direction:column;gap:10px;">
+      <div id="rab-main-promo-card" class="tool-card">
         <div class="tool-card-label">Promocja — wybierz</div>
-        <select id="rab-main-template-sel" class="modal-select" style="font-size:15px;padding:10px 12px;"></select>
+        <select id="rab-main-template-sel" class="modal-select"></select>
         <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap;align-items:center;">
-          <span style="font-size:12px;color:var(--text3);align-self:center;">Ważność:</span>
+          <span class="tool-card-label" style="text-transform:none;letter-spacing:0;">Ważność:</span>
           <button type="button" id="rab-main-valid-1" onclick="setRabValidity(1)" class="ui-tile ui-tile--sm ui-tile--neutral">1 mies.</button>
           <button type="button" id="rab-main-valid-3" onclick="setRabValidity(3)" class="ui-tile ui-tile--sm ui-tile--neutral">3 mies.</button>
           <button type="button" id="rab-main-valid-6" onclick="setRabValidity(6)" class="ui-tile ui-tile--sm ui-tile--neutral">6 mies.</button>
@@ -5541,12 +6067,19 @@ function buildSubRow(sub, subsArr, onAddRow, recalcFn) {
     recalcFn();
   });
 
+  const subIndex = subsArr.indexOf(sub);
+  const labelEl = document.createElement('span');
+  labelEl.className = 'sub-row-label item-name';
+  labelEl.textContent = getSubPlaceholder(subIndex >= 0 ? subIndex : subsArr.length);
+
+  const nameWrap = document.createElement('div');
+  nameWrap.className = 'sub-name-wrap kalk-csel-cell';
+
   const nameEl = document.createElement('input');
   nameEl.type = 'text';
-  nameEl.className = 'sub-name-input';
+  nameEl.className = 'sub-name-input csel-btn opis-inline-input';
   nameEl.value = sub.name;
-  const subIndex = subsArr.indexOf(sub);
-  nameEl.placeholder = getSubPlaceholder(subIndex >= 0 ? subIndex : subsArr.length);
+  nameEl.placeholder = 'Nazwa';
   nameEl.maxLength = 60;
   nameEl.addEventListener('input', () => {
     sub.name = nameEl.value;
@@ -5564,7 +6097,7 @@ function buildSubRow(sub, subsArr, onAddRow, recalcFn) {
 
   const priceEl = document.createElement('input');
   priceEl.type = 'text';
-  priceEl.className = 'sub-price-input';
+  priceEl.className = 'sub-price-input item-price-input';
   priceEl.value = sub.price || '';
   priceEl.placeholder = '0';
   priceEl.inputMode = 'numeric';
@@ -5632,9 +6165,14 @@ function buildSubRow(sub, subsArr, onAddRow, recalcFn) {
 
   row.appendChild(cb);
   row.appendChild(cbCircle);
-  row.appendChild(nameEl);
-  row.appendChild(priceEl);
-  row.appendChild(delBtn);
+  row.appendChild(labelEl);
+  nameWrap.appendChild(nameEl);
+  nameWrap.appendChild(delBtn);
+  row.appendChild(nameWrap);
+  const priceGroup = document.createElement('div');
+  priceGroup.className = 'item-price-opis-group';
+  priceGroup.appendChild(priceEl);
+  row.appendChild(priceGroup);
   return row;
 }
 
@@ -6273,33 +6811,33 @@ function renderRabatyActive() {
     );
   });
   if (!list.length) {
-    box.innerHTML = '<div style="padding:12px 12px;border:1px dashed var(--border);border-radius:10px;color:var(--text3);text-align:center;font-size:13px;">' + (qRaw ? 'Brak wyników' : 'Brak aktywnych kodów') + '</div>';
+    box.innerHTML = '<div class="tool-card-label" style="padding:12px 12px;border:1px dashed var(--border-panel);border-radius:12px;color:var(--text3);text-align:center;font-size:13px;">' + (qRaw ? 'Brak wyników' : 'Brak aktywnych kodów') + '</div>';
     return;
   }
   box.innerHTML = '';
   list.forEach((r, idx) => {
     const row = document.createElement('div');
     const highlight = _rabHighlightCode && (String(r.code||'') === String(_rabHighlightCode)) && Date.now() < (_rabHighlightUntil || 0);
-    row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:12px 12px;background:' + (highlight ? '#221c12' : 'var(--bg2)') + ';border:1px solid ' + (highlight ? '#5c4828' : 'var(--border)') + ';border-radius:12px;';
+    row.className = 'rab-card' + (highlight ? ' rab-card--hl' : '');
     row.dataset.code = String(r.code || '');
 
     const left = document.createElement('div');
-    left.style.cssText = 'flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;';
+    left.className = 'rab-card-left';
 
     // 1) KOD RABATOWY - NUMER TELEFONU
     const top = document.createElement('div');
-    top.style.cssText = 'font-size:15px;font-weight:900;color:#fff;letter-spacing:1.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+    top.className = 'rab-card-top';
     const tel = (r.tel || '').trim();
     top.textContent = (r.code || '') + (tel ? (' - ' + tel) : '');
 
     // 2) Nazwa kodu
     const name = document.createElement('div');
-    name.style.cssText = 'font-size:12px;font-weight:900;color:#f59e0b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+    name.className = 'rab-card-name';
     name.textContent = r.templateLabel || '';
 
     // 3) Marka / Model - data naprawy
     const bottom = document.createElement('div');
-    bottom.style.cssText = 'font-size:12px;color:var(--text3);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+    bottom.className = 'rab-card-bottom';
     const marka = (r.marka || '').trim();
     const modelName = (r.modelName || '').trim();
     const mm = (marka || modelName) ? ((marka ? marka : '') + (marka && modelName ? ' / ' : '') + (modelName ? modelName : '')) : ((r.model || '').trim());
@@ -6311,10 +6849,10 @@ function renderRabatyActive() {
     if (bottom.textContent) left.appendChild(bottom);
 
     const right = document.createElement('div');
-    right.style.cssText = 'display:flex;flex-direction:row;gap:8px;align-items:center;flex-shrink:0;';
+    right.className = 'rab-card-right';
 
     const usedBtn = document.createElement('button');
-    usedBtn.style.cssText = 'background:#60a5fa;border:none;border-radius:10px;color:#111827;font-size:13px;font-weight:900;padding:10px 12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;line-height:1;';
+    usedBtn.className = 'btn-action ui-tile ui-tile--sm rab-btn-used';
     usedBtn.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Zrealizuj</span>';
     usedBtn.onclick = () => moveRabToUsed(r);
 
@@ -6340,7 +6878,7 @@ function renderRabatyActive() {
     };
 
     const del = document.createElement('button');
-    del.style.cssText = 'background:none;border:1px solid #7f1d1d;border-radius:10px;color:#ef4444;font-size:16px;font-weight:900;padding:10px 12px;cursor:pointer;line-height:1;display:inline-flex;align-items:center;justify-content:center;';
+    del.className = 'btn-action ui-tile ui-tile--sm rab-btn-del';
     del.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
     del.title = 'Usuń';
     del.onclick = () => {
@@ -6378,30 +6916,30 @@ function renderRabatyUsed() {
     );
   });
   if (!list.length) {
-    box.innerHTML = '<div style="padding:12px 12px;border:1px dashed var(--border);border-radius:10px;color:var(--text3);text-align:center;font-size:13px;">' + (qRaw ? 'Brak wyników' : 'Brak wykorzystanych kodów') + '</div>';
+    box.innerHTML = '<div class="tool-card-label" style="padding:12px 12px;border:1px dashed var(--border-panel);border-radius:12px;color:var(--text3);text-align:center;font-size:13px;">' + (qRaw ? 'Brak wyników' : 'Brak wykorzystanych kodów') + '</div>';
     return;
   }
   box.innerHTML = '';
   list.forEach((r, idx) => {
     const row = document.createElement('div');
     const highlight = _rabHighlightCode && (String(r.code||'') === String(_rabHighlightCode)) && Date.now() < (_rabHighlightUntil || 0);
-    row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:12px 12px;background:' + (highlight ? '#221c12' : 'var(--bg2)') + ';border:1px solid ' + (highlight ? '#5c4828' : 'var(--border)') + ';border-radius:12px;opacity:0.92;';
+    row.className = 'rab-card rab-card--used' + (highlight ? ' rab-card--hl' : '');
     row.dataset.code = String(r.code || '');
 
     const left = document.createElement('div');
-    left.style.cssText = 'flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;';
+    left.className = 'rab-card-left';
 
     const top = document.createElement('div');
-    top.style.cssText = 'font-size:15px;font-weight:900;color:#fff;letter-spacing:1.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+    top.className = 'rab-card-top';
     const tel = (r.tel || '').trim();
     top.textContent = (r.code || '') + (tel ? (' - ' + tel) : '');
 
     const name = document.createElement('div');
-    name.style.cssText = 'font-size:12px;font-weight:900;color:#f59e0b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+    name.className = 'rab-card-name';
     name.textContent = r.templateLabel || '';
 
     const bottom = document.createElement('div');
-    bottom.style.cssText = 'font-size:12px;color:var(--text3);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
+    bottom.className = 'rab-card-bottom';
     const marka = (r.marka || '').trim();
     const modelName = (r.modelName || '').trim();
     const mm = (marka || modelName) ? ((marka ? marka : '') + (marka && modelName ? ' / ' : '') + (modelName ? modelName : '')) : ((r.model || '').trim());
@@ -6413,8 +6951,8 @@ function renderRabatyUsed() {
     if (bottom.textContent) left.appendChild(bottom);
 
     const del = document.createElement('button');
-    del.style.cssText = 'background:none;border:1px solid #7f1d1d;border-radius:10px;color:#ef4444;font-size:16px;font-weight:900;padding:10px 12px;cursor:pointer;line-height:1;';
-    del.textContent = 'X';
+    del.className = 'btn-action ui-tile ui-tile--sm rab-btn-del';
+    del.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
     del.title = 'Usuń';
     del.onclick = () => {
       showConfirm('Czy chcesz usunąć kod?', () => {
@@ -11566,33 +12104,29 @@ function openPodglad(entry) {
 
   const nameParts = [entry.marka, entry.model].filter(Boolean);
   const leftHTML = `
-    <div style="flex:1;min-width:0;position:relative;overflow:hidden;border:1px solid var(--border);border-radius:10px;background:var(--bg);padding:10px 12px 10px 18px;">
+    <div class="podglad-head-left">
       ${kolorBar}
-      ${nameParts.length ? `<div style="display:flex;align-items:center;gap:6px;font-size:var(--text-md);font-weight:700;color:var(--text);margin-bottom:4px;">${escHTML(nameParts.join(' '))}</div>` : ''}
-      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-        ${entry.tel ? `<a href="tel:${entry.tel.replace(/[^0-9+]/g,'')}" style="display:inline-flex;align-items:center;gap:5px;font-size:16px;font-weight:600;color:#3b7cf4;text-decoration:none;"><svg width="13" height="13" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>${escHTML(entry.tel)}</a>` : ''}
-        ${entry.kodOdbioru ? `<span style="display:inline-flex;align-items:center;gap:4px;font-size:13px;font-weight:800;color:#f59e0b;letter-spacing:2px;">🔑 ${escHTML(entry.kodOdbioru)}</span>` : ''}
+      ${nameParts.length ? `<div class="podglad-head-title">${escHTML(nameParts.join(' '))}</div>` : ''}
+      <div class="podglad-head-contacts">
+        ${entry.tel ? `<a href="tel:${entry.tel.replace(/[^0-9+]/g,'')}" class="btn-action ui-tile ui-tile--sm ui-tile--naprawa podglad-head-tel-btn" onclick="event.stopPropagation()">${_iconPhoneSVG(14,14)}<span>${escHTML(entry.tel)}</span></a>` : ''}
+        ${entry.kodOdbioru ? `<span class="btn-action ui-tile ui-tile--sm ui-tile--warning podglad-head-kod">${_iconLockSVG(14,14)}<span>${escHTML(entry.kodOdbioru)}</span></span>` : ''}
       </div>
     </div>`;
 
   const rightHTML = `
-    <div style="text-align:right;flex-shrink:0;display:flex;flex-direction:column;gap:3px;justify-content:center;align-self:stretch;">
+    <div class="podglad-head-right">
       ${entry.label ? `<div class="history-item-date history-item-date--sm">Przyjęto: ${escHTML(entry.label)}</div>` : ''}
       ${rk?.dataZakonczenia ? `<div class="history-item-date history-item-date--sm">GOTOWE: ${escHTML(rk.dataZakonczenia)}</div>` : ''}
     </div>`;
 
-  $('podglad-header').innerHTML = `<div style="display:flex;align-items:stretch;gap:12px;">${leftHTML}${rightHTML}</div>`;
+  $('podglad-header').innerHTML = `<div class="podglad-head-wrap">${leftHTML}${rightHTML}</div>`;
 
   const fmtPLN = v => Number(v||0).toLocaleString('pl-PL', {minimumFractionDigits:2,maximumFractionDigits:2});
-  const td  = 'style="padding:8px 10px;font-size:13px;color:var(--text);border-bottom:1px solid var(--border);"';
-  const tdr = 'style="padding:8px 10px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border);text-align:right;"';
-  const tdb = 'style="padding:8px 10px;font-size:13px;font-weight:700;color:#22c55e;border-bottom:1px solid var(--border);text-align:right;"';
-
-  let html = `<thead><tr style="background:var(--bg);">
-    <td style="padding:7px 10px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;">Usługa / część</td>
-    <td style="padding:7px 10px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;text-align:right;">Cena</td>
-    <td style="padding:7px 10px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;text-align:right;">Szt.</td>
-    <td style="padding:7px 10px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;text-align:right;">Razem</td>
+  let html = `<thead><tr>
+    <td>Usługa / część</td>
+    <td class="podglad-td-r">Cena</td>
+    <td class="podglad-td-r">Szt.</td>
+    <td class="podglad-td-r">Razem</td>
   </tr></thead><tbody>`;
 
   let total = 0;
@@ -11603,11 +12137,11 @@ function openPodglad(entry) {
     total += rowTotal;
     const qtyStr = it.qty !== undefined && qty > 0 ? qty : '–';
     const unitStr = it.qty !== undefined && qty > 0 ? fmtPLN(it.price) : '–';
-    html += `<tr><td ${td}>${escHTML(label)}</td><td ${tdr}>${unitStr}</td><td ${tdr}>${qtyStr}</td><td ${tdb}>${fmtPLN(rowTotal)}</td></tr>`;
+    html += `<tr><td>${escHTML(label)}</td><td class="podglad-td-r">${unitStr}</td><td class="podglad-td-r">${qtyStr}</td><td class="podglad-td-sum">${fmtPLN(rowTotal)}</td></tr>`;
   });
   (rk.subs || []).filter(s => s.checked && s.price > 0).forEach(s => {
     total += s.price;
-    html += `<tr><td ${td}>${escHTML(s.name || 'Część')}</td><td ${tdr}>–</td><td ${tdr}>–</td><td ${tdb}>${fmtPLN(s.price)}</td></tr>`;
+    html += `<tr><td>${escHTML(s.name || 'Część')}</td><td class="podglad-td-r">–</td><td class="podglad-td-r">–</td><td class="podglad-td-sum">${fmtPLN(s.price)}</td></tr>`;
   });
   html += '</tbody>';
 
@@ -12010,19 +12544,24 @@ function openPodsumowanieGrupowe(telKey) {
   const grandTotal = doWyd.reduce((a, e) => a + (parseFloat(String(e.total || '0').replace(/\s/g, '').replace(',', '.')) || 0), 0);
 
   $('podglad-title').textContent = 'Wydanie grupowe';
-  $('podglad-header').innerHTML = `<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:4px 2px;">
-      <span style="font-size:16px;font-weight:800;color:#fff;">👥 ${doWyd.length} zlecenia klienta</span>
-      ${tel ? `<a href="tel:${tel.replace(/[^0-9+]/g,'')}" style="display:inline-flex;align-items:center;gap:5px;font-size:16px;font-weight:600;color:#3b7cf4;text-decoration:none;"><svg width="13" height="13" viewBox="0 0 24 24" fill="#3b7cf4" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>${escHTML(tel)}</a>` : ''}
+  const headLeft = `
+    <div class="podglad-head-left">
+      ${makeKolorBarHTML('')}
+      <div class="podglad-head-title">👥 ${doWyd.length} zlecenia klienta</div>
+      <div class="podglad-head-contacts">
+        ${tel ? `<a href="tel:${tel.replace(/[^0-9+]/g,'')}" class="btn-action ui-tile ui-tile--sm ui-tile--naprawa podglad-head-tel-btn" onclick="event.stopPropagation()">${_iconPhoneSVG(14,14)}<span>${escHTML(tel)}</span></a>` : ''}
+      </div>
     </div>`;
+  $('podglad-header').innerHTML = `<div class="podglad-head-wrap">${headLeft}</div>`;
 
   let html = _buildAllZleconeCollapsibleHTML(doWyd);
   doWyd.forEach((entry, i) => {
     const nazwa = [entry.marka, entry.model].filter(Boolean).join(' ') || 'Zlecenie';
-    html += `<div style="margin-top:${i ? 14 : (html ? 14 : 4)}px;padding:9px 12px;background:#000;border-radius:8px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
-        <span style="font-size:15px;font-weight:700;color:#fff;">${escHTML(nazwa)}</span>
-        <span style="display:flex;align-items:center;gap:10px;">
-          ${entry.kodOdbioru ? `<span style="font-size:13px;font-weight:800;color:#f59e0b;letter-spacing:1px;">🔑 ${escHTML(String(entry.kodOdbioru))}</span>` : ''}
-          <span style="font-size:15px;font-weight:800;color:#22c55e;">${escHTML(String(entry.total || '0'))} zł</span>
+    html += `<div class="podglad-group-card" style="margin-top:${i ? 14 : (html ? 14 : 4)}px;">
+        <span class="podglad-group-title">${escHTML(nazwa)}</span>
+        <span class="podglad-group-right">
+          ${entry.kodOdbioru ? `<span class="btn-action ui-tile ui-tile--sm ui-tile--warning podglad-head-kod">${_iconLockSVG(14,14)}<span>${escHTML(String(entry.kodOdbioru))}</span></span>` : ''}
+          <span class="podglad-group-total">${escHTML(String(entry.total || '0'))} zł</span>
         </span>
       </div>`;
     html += _buildPodsumowanieTablesHTML(entry, { skipZlecone: true });
