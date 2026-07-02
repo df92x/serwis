@@ -1649,7 +1649,7 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
   gap:8px;
   padding-right:4px;
   position:relative;
-  overflow:hidden;
+  overflow:visible;
 }
 .history-order-card .history-order-card-head{
   align-items:stretch;
@@ -1660,11 +1660,25 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
   padding-right:8px;
   padding-left:14px;
 }
+.history-order-card .history-order-card-head{
+  align-items:stretch;
+  min-height:56px;
+}
 .history-order-card .history-order-card-head .podglad-summary-bike{
   display:flex;
   flex-direction:column;
   justify-content:center;
-  gap:8px;
+  align-items:stretch;
+  align-self:stretch;
+  padding-top:12px;
+  padding-bottom:12px;
+  min-height:56px;
+  box-sizing:border-box;
+}
+.history-order-card .podglad-summary-bike{
+  padding-top:12px;
+  padding-bottom:12px;
+  overflow:visible;
 }
 .podglad-meta-actions{
   grid-column:1 / -1;
@@ -1786,9 +1800,10 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
     text-overflow:ellipsis;
   }
 }
-.history-order-card .podglad-summary-bike .podglad-bike-name{
-  margin:0;
-  padding:0;
+.history-order-card .podglad-summary-bike{
+  padding-top:12px;
+  padding-bottom:12px;
+  overflow:visible;
 }
 .history-item-actions--top{
   flex-shrink:0;
@@ -1973,6 +1988,11 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
 #podglad-header .podglad-summary-bike--in-card .podglad-bike-name{
   width:100%;
   text-align:center;
+  white-space:normal;
+  overflow:visible;
+  text-overflow:unset;
+  word-break:break-word;
+  overflow-wrap:anywhere;
 }
 #podglad-header .podglad-summary-bike--in-card .history-contact-row{
   justify-content:center;
@@ -2060,6 +2080,11 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
   font-size:15px;
   font-weight:800;
   color:var(--text);
+  flex:1;
+  min-width:0;
+  white-space:normal;
+  word-break:break-word;
+  overflow-wrap:anywhere;
 }
 .podglad-group-right{
   display:flex;
@@ -2915,6 +2940,9 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
   color:var(--text2);
   background:var(--bg-elevated);
   border-bottom:1px solid var(--border-panel);
+  white-space:normal;
+  word-break:break-word;
+  overflow-wrap:anywhere;
 }
 .podsumowanie-tbl-total td{
   padding:14px 12px;
@@ -3049,7 +3077,7 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
 .podglad-summary-bike{
   position:relative;
   padding:12px 14px 12px 28px;
-  overflow:hidden;
+  overflow:visible;
 }
 .podglad-summary-bike .podglad-bike-name{
   font-size:var(--text-md);
@@ -3057,35 +3085,61 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
   color:var(--text);
   margin-bottom:8px;
   line-height:1.2;
-}
-.history-order-card .podglad-summary-bike{
-  padding-top:14px;
-  padding-bottom:14px;
+  white-space:normal;
+  overflow:visible;
+  text-overflow:unset;
+  word-break:break-word;
+  overflow-wrap:anywhere;
 }
 .history-order-card .podglad-summary-bike .podglad-bike-name{
   font-size:20px;
   font-weight:800;
   letter-spacing:-0.3px;
   margin-bottom:6px;
+  line-height:1.2;
+  white-space:normal;
+  overflow:visible;
+  text-overflow:unset;
+  word-break:break-word;
+  overflow-wrap:anywhere;
+}
+.history-order-card .history-head-name-row{
+  flex:1;
+  align-self:stretch;
+  min-height:36px;
+  height:100%;
+}
+.history-order-card .history-head-name-row .podglad-bike-name{
+  margin-bottom:0;
   line-height:1.15;
+}
+.history-order-card .history-order-card-head .history-order-head-side{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-self:stretch;
 }
 .history-head-name-row{
   position:relative;
   display:flex;
   align-items:center;
-  justify-content:center;
+  justify-content:flex-start;
   min-width:0;
-  padding-left:var(--hdr-pad-l, 0px);
+  width:100%;
+  padding-left:0;
   padding-right:var(--hdr-pad-r, 0px);
+  min-height:36px;
 }
 .history-head-name-row .podglad-bike-name{
   flex:1;
   min-width:0;
-  text-align:center;
+  text-align:left;
   margin-bottom:0;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
+  white-space:normal;
+  overflow:visible;
+  text-overflow:unset;
+  word-break:break-word;
+  overflow-wrap:anywhere;
 }
 .history-head-phone{
   position:absolute;
@@ -3094,7 +3148,10 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
   transform:translateY(-50%);
   display:flex;
   align-items:center;
+  justify-content:flex-end;
   gap:8px;
+  flex-shrink:0;
+  width:auto;
 }
 .history-head-phone .history-tel-btn{
   width:36px;
@@ -5509,13 +5566,28 @@ function _smsWydanieBody(entry) {
     + entry.total + ' zł\nPłatność gotówka/karta/BLIK\n\nKod odbioru: ' + (entry.kodOdbioru || '–');
 }
 
-// Pomocnicza: nazwa roweru do SMS
-function _smsRower(marka, model) {
+// Pomocnicza: nazwa roweru (bez generycznych marek ROWER/INNY)
+function _isGenericBikeMarka(marka) {
+  const m = String(marka || '').trim().toUpperCase();
+  return m === 'ROWER' || m === 'INNY' || m === 'INNE';
+}
+
+function _bikeDisplayName(marka, model) {
   const m = String(marka || '').trim();
   const mm = String(model || '').trim();
-  // Nie wypisuj "INNY/INNE" w SMS — to ma być tylko faktyczna marka/model.
-  const markaClean = (m.toUpperCase() === 'INNY' || m.toUpperCase() === 'INNE') ? '' : m;
+  const markaClean = _isGenericBikeMarka(m) ? '' : m;
   return [markaClean, mm].filter(Boolean).join(' ');
+}
+
+function _bikeDisplayNameParts(marka, model) {
+  const m = String(marka || '').trim();
+  const mm = String(model || '').trim();
+  if (_isGenericBikeMarka(m)) return mm ? [mm] : [];
+  return [m, mm].filter(Boolean);
+}
+
+function _smsRower(marka, model) {
+  return _bikeDisplayName(marka, model);
 }
 // Zwraca HTML kółeczka koloru; dla nieznanych kolorów — kółko przekreślone
 function makeKolorDot(kolor, size) {
@@ -6954,7 +7026,7 @@ function buildDocHTML() {
   const now  = new Date();
   const date = now.toLocaleDateString('pl-PL', {day:'2-digit',month:'2-digit',year:'numeric'});
   const time = now.toLocaleTimeString('pl-PL', {hour:'2-digit',minute:'2-digit'});
-  const bike = escHTML($('cf-marka').value.trim());
+  const bike = escHTML(_bikeDisplayName($('cf-marka').value.trim(), $('cf-model').value.trim()));
   const tel  = escHTML($('cf-tel').value.trim());
   const notatka = ($('notatka-serwisowa') ? $('notatka-serwisowa').value.trim() : '');
 
@@ -7074,7 +7146,7 @@ function generateImage(triggerEl) {
             const now = new Date();
             const hh = String(now.getHours()).padStart(2,'0');
             const mm = String(now.getMinutes()).padStart(2,'0');
-            const model = $('cf-marka').value.trim() || 'brak-modelu';
+            const model = _bikeDisplayName($('cf-marka').value.trim(), $('cf-model').value.trim()) || 'brak-modelu';
             const phone = $('cf-tel').value.trim()   || 'brak-tel';
             canvas.toBlob(blob => {
               const url = URL.createObjectURL(blob);
@@ -7609,7 +7681,7 @@ function renderRabatyActive() {
     bottom.className = 'rab-card-bottom';
     const marka = (r.marka || '').trim();
     const modelName = (r.modelName || '').trim();
-    const mm = (marka || modelName) ? ((marka ? marka : '') + (marka && modelName ? ' / ' : '') + (modelName ? modelName : '')) : ((r.model || '').trim());
+    const mm = _bikeDisplayName(r.marka, r.modelName) || (r.model || '').trim();
     const d = (r.dataNaprawy || r.dataWydania || '').trim();
     bottom.textContent = (mm || '') + (d ? (' - ' + d) : '');
 
@@ -7711,7 +7783,7 @@ function renderRabatyUsed() {
     bottom.className = 'rab-card-bottom';
     const marka = (r.marka || '').trim();
     const modelName = (r.modelName || '').trim();
-    const mm = (marka || modelName) ? ((marka ? marka : '') + (marka && modelName ? ' / ' : '') + (modelName ? modelName : '')) : ((r.model || '').trim());
+    const mm = _bikeDisplayName(r.marka, r.modelName) || (r.model || '').trim();
     const d = (r.dataNaprawy || r.dataWydania || '').trim();
     bottom.textContent = (mm || '') + (d ? (' - ' + d) : '');
 
@@ -7832,7 +7904,7 @@ function renderRabWydaneList() {
     const kwotaRaw = (entry.raportKoncowy ? entry.raportKoncowy.total : entry.total) || entry.total || '0';
     const kwotaNum = parseFloat(String(kwotaRaw).replace(/\s/g,'').replace(',','.')) || 0;
     const kwotaTxt = kwotaNum ? (fmt(kwotaNum) + ' zł') : '';
-    const mmTxt = [(entry.marka||null), entry.model].filter(Boolean).join(' ') || (entry.marka||'');
+    const mmTxt = _bikeDisplayName(entry.marka, entry.model) || (entry.model || entry.marka || '');
     model.textContent = mmTxt + (kwotaTxt ? (' • ' + kwotaTxt) : '');
     const meta = document.createElement('div');
     meta.style.cssText = 'font-size:12px;color:var(--text3);display:flex;flex-wrap:wrap;gap:10px;';
@@ -7887,7 +7959,7 @@ function generateRabCodeForEntry(entry) {
     kodOdbioru: entry.kodOdbioru || '',
     marka: entry.marka || '',
     modelName: entry.model || '',
-    model: [(entry.marka||null), entry.model].filter(Boolean).join(' ') || '',
+    model: _bikeDisplayName(entry.marka, entry.model) || '',
     dataWydania: entry.dataWydania || '',
     validMonths,
     validUntil,
@@ -8982,7 +9054,7 @@ function updateClientInfoBar() {
     const bar    = $('bike-info-bar');
     const nameEl = $('bike-name');
     if (bar && nameEl) {
-      const name = [(marka || null), model].filter(Boolean).join(' ');
+      const name = _bikeDisplayName(marka, model);
       if (name) {
         nameEl.textContent = name;
         bar.style.display = 'flex';
@@ -9277,7 +9349,7 @@ function pokazBannerZlecenia(entry) {
   if (!banner || !entry) return;
 
   const kolorBar = makeKolorBarHTML(entry.kolor || '');
-  const nameParts = [(entry.marka || null), entry.model].filter(Boolean).join(' ');
+  const nameParts = _bikeDisplayName(entry.marka, entry.model);
   const terminLine = entry.termin ? 'Data naprawy: ' + entry.termin + ' ' + dayOfWeek(entry.termin) : '';
   const przyjęcieLine = entry.label ? 'Przyjęto: ' + entry.label.split(' ')[0].split('.').slice(0,2).join('.') + ' ' + dayOfWeek(entry.label.split(' ')[0]) : '';
 
@@ -9643,7 +9715,7 @@ function runGlobalSearch() {
   let matched = pool.filter(e => {
     if (q && !_zlecenieMatch(e, q)) return false;
     if (markaF) {
-      const name = [e.marka, e.model, e.kolor].filter(Boolean).join(' ').toUpperCase();
+      const name = [_bikeDisplayName(e.marka, e.model), e.kolor].filter(Boolean).join(' ').toUpperCase();
       if (!name.includes(markaF)) return false;
     }
     if (!isNaN(minV) || !isNaN(maxV)) {
@@ -9803,7 +9875,7 @@ function _zlecenieMatch(e, filter) {
   if (digits.length >= 3 && e.tel && String(e.tel).replace(/\D/g, '').includes(digits)) return true;
   const up = f.toUpperCase();
   if (e.kodOdbioru && String(e.kodOdbioru).replace(/\s/g, '').toUpperCase().includes(up.replace(/\s/g, ''))) return true;
-  const name = [e.marka, e.model, e.kolor].filter(Boolean).join(' ').toUpperCase();
+  const name = [_bikeDisplayName(e.marka, e.model), e.kolor].filter(Boolean).join(' ').toUpperCase();
   if (name.includes(up)) return true;
   return false;
 }
@@ -10080,6 +10152,7 @@ function _buildHistoryMetaGrid(entry, variant) {
       _podsumowanieMetaDateItem('Przyjęto', entry.label),
       _podsumowanieMetaDateItem('Termin', entry.termin),
       _podsumowanieMetaDateItem('Gotowe', rk?.dataZakonczenia),
+      _podsumowanieMetaPriceItem('Cena', entry.total, entry.totalPrzedRaportem),
     ].join('');
   }
   return _buildOrderSummaryMetaGrid(entry);
@@ -10150,7 +10223,7 @@ function _entryKolor(entry) {
 function _buildHistoryOrderCardHTML(entry, opts) {
   opts = opts || {};
   const kolorBar = makeKolorBarHTML(_entryKolor(entry));
-  const nameParts = [entry.marka, entry.model].filter(Boolean);
+  const nameParts = _bikeDisplayNameParts(entry.marka, entry.model);
   const ebike = (entry.ebike || entry.marka === 'E-BIKE') ? '<span class="history-ebike-badge" title="e-Bike">⚡</span>' : '';
   const variant = opts.listVariant || 'wydane';
   const phoneRight = (opts.showTelRight && entry && entry.tel)
@@ -10170,7 +10243,7 @@ function _buildHistoryOrderCardHTML(entry, opts) {
   const kodLine = opts.extraHeaderHTML || (inlineContacts ? '' : (opts.showKodOdbioru ? _buildHistoryKodOdbioruHTML(entry.kodOdbioru) : ''));
   const metaGridClass = variant === 'przyjete'
     ? 'podglad-meta-grid podglad-meta-grid--3 podglad-meta-grid--list'
-    : (variant === 'wydanie' ? 'podglad-meta-grid podglad-meta-grid--3 podglad-meta-grid--list' : 'podglad-meta-grid');
+    : (variant === 'wydanie' ? 'podglad-meta-grid podglad-meta-grid--list' : 'podglad-meta-grid');
   let actionsBlock = '';
   if (opts.priceInHeader) {
     const priceBlock = opts.headerPriceHTML || '';
@@ -10206,21 +10279,11 @@ function _syncHistoryHeaderCenter(rootEl) {
   try {
     const row = rootEl && rootEl.querySelector ? rootEl.querySelector('.history-head-name-row') : null;
     if (!row) return;
-    const card = rootEl.querySelector ? (rootEl.querySelector('.history-order-card') || rootEl) : rootEl;
-    const cardRect = card && card.getBoundingClientRect ? card.getBoundingClientRect() : null;
-    const rowRect = row.getBoundingClientRect ? row.getBoundingClientRect() : null;
     const right = row.querySelector('.history-head-phone');
     const rightW = right ? (right.getBoundingClientRect().width || 0) : 0;
-    const leftReserved = (cardRect && rowRect) ? Math.max(0, rowRect.left - cardRect.left) : 0;
-    const rightOuter = (cardRect && rowRect) ? Math.max(0, cardRect.right - rowRect.right) : 0;
-    const rightReserved = rightOuter + rightW;
-
-    const padL = Math.ceil(leftReserved);
-    const padR = Math.ceil(rightReserved);
-    if (padL > 0) row.style.setProperty('--hdr-pad-l', padL + 'px');
-    else row.style.removeProperty('--hdr-pad-l');
-    if (padR > 0) row.style.setProperty('--hdr-pad-r', padR + 'px');
+    if (rightW > 0) row.style.setProperty('--hdr-pad-r', Math.ceil(rightW + 8) + 'px');
     else row.style.removeProperty('--hdr-pad-r');
+    row.style.removeProperty('--hdr-pad-l');
   } catch (e) {}
 }
 
@@ -10777,8 +10840,6 @@ function renderWydanie(filterTel) {
       showKodOdbioru: false,
       inlineTelKod: false,
       showTelRight: true,
-      priceInHeader: true,
-      headerPriceHTML: _historyHeaderPriceHTML(entry, false),
       actionsBottomHTML,
     });
 
@@ -10861,7 +10922,7 @@ function generujPotwierdzeniaDoWydania() {
 
   const cards = doWydania.map(entry => {
     const rk = entry.raportKoncowy;
-    const mmParts = [entry.marka, entry.model].filter(Boolean);
+    const mmParts = _bikeDisplayNameParts(entry.marka, entry.model);
     const mm = mmParts.length ? mmParts.join(' / ') : '—';
     const tel = entry.tel ? escHTML(entry.tel) : '—';
     const kod = entry.kodOdbioru ? escHTML(String(entry.kodOdbioru)) : '—';
@@ -10919,7 +10980,7 @@ function generujZleceniaPrzyjete() {
   const fmtPLN = v => Number(v || 0).toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   const cards = przyjete.map(entry => {
-    const mmParts = [entry.marka, entry.model].filter(Boolean);
+    const mmParts = _bikeDisplayNameParts(entry.marka, entry.model);
     const mm = mmParts.length ? mmParts.join(' / ') : '—';
     const tel = entry.tel ? escHTML(entry.tel) : '—';
     const kod = entry.kodOdbioru ? escHTML(String(entry.kodOdbioru)) : '—';
@@ -11168,7 +11229,7 @@ function renderKosz(filterTel) {
     item.style.borderColor = '#5c3030';
     item.style.backgroundColor = '#221515';
 
-    const nameParts = [(entry.marka || null), entry.model].filter(Boolean).join(' ');
+    const nameParts = _bikeDisplayName(entry.marka, entry.model);
     const from = entry.deletedFrom === 'archiwum' ? 'Wydane' : 'Przyjęte';
     const msLeft = entry.deletedAt ? (KOSZ_TTL_MS - (now - entry.deletedAt)) : 0;
     const hLeft  = Math.max(0, Math.ceil(msLeft / 3600000));
@@ -11231,8 +11292,7 @@ function openWydajModal(id) {
   if (!entry) return;
 
   // Banner — dane roweru
-  const markaClean = (entry.marka) ? entry.marka : '';
-  const rowerStr = [markaClean, entry.model].filter(Boolean).join(' ');
+  const rowerStr = _bikeDisplayName(entry.marka, entry.model);
   $('wydaj-banner-rower').innerHTML = (makeKolorDot(entry.kolor || '', 12) || '') + ' ' + escHTML(rowerStr || '');
 
   // Telefon
@@ -11314,7 +11374,7 @@ function wydajGrupowo(telKey) {
 
   const suma = doWyd.reduce((a, e) => a + (parseFloat(String(e.total || '0').replace(/\s/g, '').replace(',', '.')) || 0), 0);
   const lista = doWyd.map(e => {
-    const nazwa = [e.marka, e.model].filter(Boolean).join(' ') || 'Zlecenie';
+    const nazwa = _bikeDisplayName(e.marka, e.model) || 'Zlecenie';
     return '• ' + escHTML(nazwa) + ' — ' + escHTML(String(e.total || '0')) + ' zł'
       + (e.kodOdbioru ? ' <span style="color:#f59e0b;font-weight:800;">🔑 ' + escHTML(String(e.kodOdbioru)) + '</span>' : '');
   }).join('<br>');
@@ -11511,7 +11571,7 @@ function _buildRaportDobowyHTML(dataStr, dzisiaj) {
   let cards = '';
 
   dzisiaj.forEach((entry, idx) => {
-    const marka = [(entry.marka || null), entry.model].filter(Boolean).join(' ') || '';
+    const marka = _bikeDisplayName(entry.marka, entry.model) || '';
     const sourceItems = entry.raportKoncowy ? (entry.raportKoncowy.items || []).filter(it => it.checked && it.price > 0) : [];
     const sourceSubs  = entry.raportKoncowy ? (entry.raportKoncowy.subs  || []).filter(s  => s.checked && s.price > 0) : [];
     const total = parseFloat(String(entry.total || '0').replace(/\s/g,'').replace(',','.')) || 0;
@@ -11974,7 +12034,7 @@ function buildArchiveHTML(entry, mode) {
     }
   }
 
-  const bikeName = escHTML([marka, model].filter(Boolean).join(' ') || '—');
+  const bikeName = escHTML(_bikeDisplayName(marka, model) || '—');
   const displayTotal = entry.total != null && entry.total !== '' ? String(entry.total) : fmtPLN(mode === 'zlecenie' ? zlecTotal : wykonaneTotal);
 
   const datePrzyjeto = entry.label ? formatDateFullDMY(entry.label.split(' ')[0]) : '';
@@ -12097,7 +12157,7 @@ function _archivePngFilename(entry) {
   const date = now.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' });
   const hh = String(now.getHours()).padStart(2, '0');
   const min = String(now.getMinutes()).padStart(2, '0');
-  const bike = [entry.marka, entry.model].filter(Boolean).join(' ') || 'rower';
+  const bike = _bikeDisplayName(entry.marka, entry.model) || 'rower';
   const safe = bike.replace(/[<>:"/\\|?*\n\r]/g, '').replace(/\s+/g, ' ').trim();
   return `${date} ${hh}-${min} ${safe}.png`;
 }
@@ -12601,7 +12661,7 @@ function _resolveEntryKolor(entry, st) {
 }
 
 function prepareRaportHeader(entry, wstepnaTotalRaw, st) {
-  const nameParts = [(entry.marka || null), entry.model].filter(Boolean).join(' ');
+  const nameParts = _bikeDisplayName(entry.marka, entry.model);
   $('raport-title').textContent = nameParts || '';
 
   const sideBar = $('raport-summary-kolor-bar');
@@ -12990,7 +13050,7 @@ function openPodglad(entry) {
   // Nagłówek
   const kolorBar = makeKolorBarHTML(entry.kolor || '');
 
-  const nameParts = [entry.marka, entry.model].filter(Boolean);
+  const nameParts = _bikeDisplayNameParts(entry.marka, entry.model);
   const leftHTML = `
     <div class="podglad-head-left">
       ${kolorBar}
@@ -13194,7 +13254,7 @@ function _buildPodsumowanieHeaderHTML(entry, opts) {
   opts = opts || {};
   const variant = opts.listVariant || 'wydane';
   const kolorBar = makeKolorBarHTML(_entryKolor(entry));
-  const nameParts = [entry.marka, entry.model].filter(Boolean);
+  const nameParts = _bikeDisplayNameParts(entry.marka, entry.model);
   const contactRow = _historyHeaderContactRowHTML(entry, {
     showTelInHeader: !!entry.tel,
     showKodOdbioru: !!entry.kodOdbioru,
@@ -13202,7 +13262,7 @@ function _buildPodsumowanieHeaderHTML(entry, opts) {
   });
   const metaGridClass = variant === 'przyjete'
     ? 'podglad-meta-grid podglad-meta-grid--3 podglad-meta-grid--list'
-    : (variant === 'wydanie' ? 'podglad-meta-grid podglad-meta-grid--3 podglad-meta-grid--list' : 'podglad-meta-grid');
+    : (variant === 'wydanie' ? 'podglad-meta-grid podglad-meta-grid--list' : 'podglad-meta-grid');
   const metaHtml = (variant === 'wydanie' || variant === 'przyjete')
     ? _buildHistoryMetaGrid(entry, variant)
     : _buildOrderSummaryMetaGrid(entry);
@@ -13390,7 +13450,7 @@ function _buildAllZleconeCollapsibleHTML(entries) {
     totalCount += count;
     totalSum += zlecTotal;
     if (withItems.length > 1) {
-      const nazwa = [entry.marka, entry.model].filter(Boolean).join(' ') || ('Zlecenie ' + (i + 1));
+      const nazwa = _bikeDisplayName(entry.marka, entry.model) || ('Zlecenie ' + (i + 1));
       inner += `<div class="podsumowanie-zlecone-block"><div class="podsumowanie-zlecone-bike">${escHTML(nazwa)}</div>${notatkaZlec}${table}</div>`;
     } else {
       inner += notatkaZlec + table;
@@ -13496,7 +13556,7 @@ function openPodsumowanieGrupowe(telKey) {
 
   let html = _buildAllZleconeCollapsibleHTML(doWyd);
   doWyd.forEach((entry, i) => {
-    const nazwa = [entry.marka, entry.model].filter(Boolean).join(' ') || 'Zlecenie';
+    const nazwa = _bikeDisplayName(entry.marka, entry.model) || 'Zlecenie';
     html += `<div class="podglad-group-card" style="margin-top:${i ? 14 : (html ? 14 : 4)}px;">
         <span class="podglad-group-title">${escHTML(nazwa)}</span>
         <span class="podglad-group-right">
@@ -13698,7 +13758,7 @@ function openPodgladZlecenia(id) {
   // Nagłówek — styl spójny z innymi ekranami: pasek koloru po lewej
   const kolorBar = makeKolorBarHTML(entry.kolor || '');
 
-  const nameParts = [entry.marka, entry.model].filter(Boolean);
+  const nameParts = _bikeDisplayNameParts(entry.marka, entry.model);
   const leftHTML = `
     <div style="flex:1;min-width:0;position:relative;overflow:hidden;padding:10px 12px 10px 26px;">
       ${kolorBar}
