@@ -1332,7 +1332,7 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
   grid-template-columns:minmax(0, 1fr) minmax(0, 3fr);
 }
 .podglad-meta-actions--wydane{
-  grid-template-columns:44px 44px repeat(3, minmax(0, 1fr));
+  grid-template-columns:44px 44px 44px repeat(2, minmax(0, 1fr));
 }
 .podglad-meta-actions .history-action-btn--icon{
   width:44px !important;
@@ -1422,7 +1422,18 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
     grid-template-columns:minmax(0, 1fr) minmax(0, 3fr);
   }
   .podglad-meta-actions--wydane{
-    grid-template-columns:44px 44px minmax(0, 1fr);
+    grid-template-columns:44px 44px 44px minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .podglad-meta-actions--wydane .history-action-btn{
+    min-height:40px;
+  }
+  .podglad-meta-actions--wydane .history-action-btn:not(.history-action-btn--icon){
+    padding:0 6px !important;
+    font-size:12px;
+    letter-spacing:0.01em;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
   }
 }
 .history-order-card .podglad-summary-bike .podglad-bike-name{
@@ -2121,22 +2132,29 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
   gap:8px;
 }
 .history-head-phone .history-tel-btn{
-  width:auto;
-  padding:0 10px !important;
+  width:36px;
+  min-width:36px;
+  max-width:36px;
+  padding:0 !important;
   justify-content:center;
-  gap:8px;
+  gap:6px;
 }
-.history-head-phone .history-tel-btn svg{ display:none; }
-.history-head-phone .history-tel-btn span{ display:inline; }
+.history-head-phone .history-tel-btn svg{ display:inline; }
+.history-head-phone .history-tel-btn span{ display:none; }
 .history-head-phone .history-sms-btn{
   min-height:36px;
-  padding:0 10px !important;
+  width:36px;
+  min-width:36px;
+  max-width:36px;
+  padding:0 !important;
   border-radius: var(--radius-btn);
   display:inline-flex;
   align-items:center;
   gap:6px;
   line-height:1;
 }
+.history-head-phone .history-sms-btn .btn-history-sms-txt{ display:none; }
+.history-item-details .btn-history-sms-txt{ display:inline; }
 .history-order-card .podglad-summary-bike .podglad-bike-tel{
   font-size:17px;
 }
@@ -7520,8 +7538,8 @@ function renderArchiveModal(opts) {
 
     const actionsBottomHTML =
       '<button class="btn-action ui-tile ui-tile--sm ui-tile--danger btn-action--danger-ghost history-action-btn history-action-btn--icon" onclick="deleteArchive(' + entry.id + ')" title="Przenieś do kosza"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>'
+      + '<button class="btn-action ui-tile ui-tile--sm ui-tile--soft-warning history-action-btn history-action-btn--icon" onclick="unarchiveWycena(' + entry.id + ')" title="Cofnij"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg></button>'
       + (entry.tel ? '<button type="button" class="btn-action ui-tile ui-tile--sm ui-tile--naprawa history-action-btn history-action-btn--icon" onclick="event.stopPropagation();openKlientHistoria(&quot;' + String(entry.tel).replace(/[^0-9+]/g,'') + '&quot;)" title="Historia klienta"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z\"/></svg></button>' : '')
-      + '<button class="btn-action ui-tile ui-tile--sm ui-tile--soft-warning history-action-btn" onclick="unarchiveWycena(' + entry.id + ')" title="Cofnij"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg> COFNIJ</button>'
       + (entry.raportKoncowy ? '<button class="btn-action ui-tile ui-tile--sm ui-tile--accent btn-action--archive history-action-btn" onclick="event.stopPropagation();openPodsumowanieWydane(' + entry.id + ')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> RAPORT</button>' : '')
       + '<button class="btn-action ui-tile ui-tile--sm ui-tile--warning btn-action--warning history-action-btn" onclick="openRabAssignForArchive(' + entry.id + ')" title="Dodaj kod rabatowy" aria-label="Dodaj kod rabatowy"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v7a2 2 0 0 1-2 2H7l-4-4V5a2 2 0 0 1 2-2h7"/><path d="M16 2l6 6"/><path d="M14 8l8-8"/></svg> RABAT</button>';
 
@@ -8488,6 +8506,20 @@ function _buildHistoryItemTelHTML(entry) {
     + '" class="btn-action ui-tile ui-tile--md ui-tile--naprawa history-details-chip history-details-tel-btn" onclick="event.stopPropagation()">'
     + _iconPhoneSVG(16, 16) + '<span>' + escHTML(entry.tel) + '</span></a></div>';
 }
+
+function _buildHistoryItemSmsHTML(entry, opts) {
+  if (!entry || !entry.tel) return '';
+  opts = opts || {};
+  if (opts.variant === 'przyjete' && typeof isEntryCr === 'function' && isEntryCr(entry)) return '';
+  const telClean = String(entry.tel).replace(/[^0-9+]/g, '');
+  const body = (opts.variant === 'przyjete') ? _smsPrzyjecieBody(entry) : _smsWydanieBody(entry);
+  return '<div class="history-item-details-tel"><a href="sms:' + telClean + '?body=' + encodeURIComponent(body)
+    + '" class="btn-action ui-tile ui-tile--md btn-history-sms history-details-chip history-details-sms-btn'
+    + (entry.smsSent ? ' btn-history-sms-sent' : '')
+    + '" onclick="openOrderSms(' + entry.id + ', this, event)">'
+    + _smsBtnInnerHTML(!!entry.smsSent)
+    + '</a></div>';
+}
 function _buildHistoryItemKodHTML(entry) {
   if (!entry || !entry.kodOdbioru) return '';
   return '<div class="history-item-details-kod"><span class="btn-action ui-tile ui-tile--md ui-tile--warning history-details-chip history-details-kod-btn">'
@@ -8592,6 +8624,7 @@ function _buildZlecenieDetailsHTML(entry, opts) {
     ? '<table><tbody>' + rows + '</tbody></table>'
     : '<div class="history-item-details-empty">Brak wybranych pozycji</div>';
   const telBlock = opts.showTelInDetails === false ? '' : _buildHistoryItemTelHTML(entry);
+  const smsBlock = opts.showTelInDetails === false ? '' : _buildHistoryItemSmsHTML(entry, opts);
   const kodBlock = opts.showKodInDetails ? _buildHistoryItemKodHTML(entry) : '';
   const notatkaZlec = _getNotatkaZlecenia(entry);
   const notatkaNaprawy = _getNotatkaNaprawy(entry);
@@ -8601,12 +8634,12 @@ function _buildZlecenieDetailsHTML(entry, opts) {
   } else if (notatkaNaprawy) {
     notatkaBlock += _buildHistoryNotatkaHTML(notatkaNaprawy);
   }
-  return telBlock + kodBlock + notatkaBlock + tableHTML;
+  return telBlock + smsBlock + kodBlock + notatkaBlock + tableHTML;
 }
 
 function _smsBtnInnerHTML(sent) {
   const svg = '<svg class="btn-history-sms-ico" width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>';
-  return svg + ' ' + (sent ? 'SMS ✓' : 'SMS');
+  return svg + '<span class="btn-history-sms-txt">' + (sent ? ' SMS ✓' : ' SMS') + '</span>';
 }
 
 function _getEntryDataWydaniaDisplay(entry) {
@@ -8868,7 +8901,7 @@ function renderHistory(filterTel) {
       actionsBottomHTML,
     });
 
-    _attachHistoryItemDetails(item, entry, { showTelInDetails: false });
+    _attachHistoryItemDetails(item, entry, { showTelInDetails: true, variant: 'przyjete' });
     return item;
   };
 
@@ -9366,7 +9399,7 @@ function renderWydanie(filterTel) {
       actionsBottomHTML,
     });
 
-    _attachHistoryItemDetails(item, entry, { showKodInDetails: true, showTelInDetails: false });
+    _attachHistoryItemDetails(item, entry, { showKodInDetails: true, showTelInDetails: true, variant: 'wydanie' });
     return item;
   };
 
@@ -9596,8 +9629,8 @@ function renderArchive(filterStr) {
 
     const actionsBottomHTML =
       '<button class="btn-action ui-tile ui-tile--sm ui-tile--danger btn-action--danger-ghost history-action-btn history-action-btn--icon" onclick="deleteArchive(' + entry.id + ')" title="Przenieś do kosza"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>'
+      + '<button class="btn-action ui-tile ui-tile--sm ui-tile--soft-warning history-action-btn history-action-btn--icon" onclick="unarchiveWycena(' + entry.id + ')" title="Cofnij"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg></button>'
       + (entry.tel ? '<button type="button" class="btn-action ui-tile ui-tile--sm ui-tile--naprawa history-action-btn history-action-btn--icon" onclick="event.stopPropagation();openKlientHistoria(&quot;' + String(entry.tel).replace(/[^0-9+]/g,'') + '&quot;)" title="Historia klienta"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></button>' : '')
-      + '<button class="btn-action ui-tile ui-tile--sm ui-tile--soft-warning history-action-btn" onclick="unarchiveWycena(' + entry.id + ')" title="Cofnij"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg> COFNIJ</button>'
       + (entry.raportKoncowy ? '<button class="btn-action ui-tile ui-tile--sm ui-tile--accent btn-action--archive history-action-btn" onclick="event.stopPropagation();openPodsumowanieWydane(' + entry.id + ')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> RAPORT</button>' : '')
       + '<button class="btn-action ui-tile ui-tile--sm ui-tile--warning btn-action--warning history-action-btn" onclick="openRabAssignForArchive(' + entry.id + ')" title="Dodaj kod rabatowy" aria-label="Dodaj kod rabatowy"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v7a2 2 0 0 1-2 2H7l-4-4V5a2 2 0 0 1 2-2h7"/><path d="M16 2l6 6"/><path d="M14 8l8-8"/></svg> RABAT</button>';
 
@@ -9613,7 +9646,7 @@ function renderArchive(filterStr) {
       headerPriceHTML: _historyHeaderPriceHTML(entry, false),
     });
 
-    _attachHistoryItemDetails(item, entry, { showTelInDetails: false, showKodInDetails: true });
+    _attachHistoryItemDetails(item, entry, { showTelInDetails: true, showKodInDetails: true, variant: 'wydane' });
     list.appendChild(item);
   });
 }
