@@ -1413,7 +1413,16 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
 
 @media (max-width:480px){
   .podglad-meta-actions{
-    grid-template-columns:1fr;
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+  }
+  .podglad-meta-actions--gotowe{
+    grid-template-columns:minmax(0, 1fr) minmax(0, 1fr) minmax(0, 2fr);
+  }
+  .podglad-meta-actions--przyjete{
+    grid-template-columns:minmax(0, 1fr) minmax(0, 3fr);
+  }
+  .podglad-meta-actions--wydane{
+    grid-template-columns:44px 44px minmax(0, 1fr);
   }
 }
 .history-order-card .podglad-summary-bike .podglad-bike-name{
@@ -2090,14 +2099,17 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
   align-items:center;
   justify-content:center;
   min-width:0;
-  padding-left:var(--hdr-pad, 0px);
-  padding-right:var(--hdr-pad, 0px);
+  padding-left:var(--hdr-pad-l, 0px);
+  padding-right:var(--hdr-pad-r, 0px);
 }
 .history-head-name-row .podglad-bike-name{
   flex:1;
   min-width:0;
   text-align:center;
   margin-bottom:0;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 .history-head-phone{
   position:absolute;
@@ -8773,10 +8785,29 @@ function _syncHistoryHeaderCenter(rootEl) {
   try {
     const row = rootEl && rootEl.querySelector ? rootEl.querySelector('.history-head-name-row') : null;
     if (!row) return;
+    const card = rootEl.querySelector ? (rootEl.querySelector('.history-order-card') || rootEl) : rootEl;
+    const cardRect = card && card.getBoundingClientRect ? card.getBoundingClientRect() : null;
+    const rowRect = row.getBoundingClientRect ? row.getBoundingClientRect() : null;
     const right = row.querySelector('.history-head-phone');
-    if (!right) { row.style.removeProperty('--hdr-pad'); return; }
-    const w = right.getBoundingClientRect().width || 0;
-    row.style.setProperty('--hdr-pad', Math.ceil(w) + 'px');
+    const rightW = right ? (right.getBoundingClientRect().width || 0) : 0;
+    const leftReserved = (cardRect && rowRect) ? Math.max(0, rowRect.left - cardRect.left) : 0;
+    const rightOuter = (cardRect && rowRect) ? Math.max(0, cardRect.right - rowRect.right) : 0;
+    const rightReserved = rightOuter + rightW;
+
+    const padL = Math.ceil(leftReserved);
+    const padR = Math.ceil(rightReserved);
+    if (padL > 0) row.style.setProperty('--hdr-pad-l', padL + 'px');
+    else row.style.removeProperty('--hdr-pad-l');
+    if (padR > 0) row.style.setProperty('--hdr-pad-r', padR + 'px');
+    else row.style.removeProperty('--hdr-pad-r');
+  } catch (e) {}
+}
+
+function _syncHistoryHeadersIn(container) {
+  try {
+    if (!container || !container.querySelectorAll) return;
+    const run = () => container.querySelectorAll('.history-item').forEach(_syncHistoryHeaderCenter);
+    requestAnimationFrame(() => requestAnimationFrame(run));
   } catch (e) {}
 }
 
@@ -8830,7 +8861,6 @@ function renderHistory(filterTel) {
     });
 
     _attachHistoryItemDetails(item, entry, { showTelInDetails: false });
-    _syncHistoryHeaderCenter(item);
     return item;
   };
 
@@ -8844,6 +8874,7 @@ function renderHistory(filterTel) {
       }));
     }
   });
+  _syncHistoryHeadersIn(list);
 
   const suma = sorted.reduce((acc, e) => {
     return acc + (parseFloat(String(e.total || '').replace(/\s/g,'').replace(',','.')) || 0);
@@ -9328,7 +9359,6 @@ function renderWydanie(filterTel) {
     });
 
     _attachHistoryItemDetails(item, entry, { showKodInDetails: true, showTelInDetails: false });
-    _syncHistoryHeaderCenter(item);
     return item;
   };
 
@@ -9345,6 +9375,7 @@ function renderWydanie(filterTel) {
       }));
     }
   });
+  _syncHistoryHeadersIn(list);
 
   const suma = doWydania.reduce((acc, e) => {
     return acc + (parseFloat(String(e.total || '').replace(/\s/g,'').replace(',','.')) || 0);
