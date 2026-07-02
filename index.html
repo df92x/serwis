@@ -1326,7 +1326,7 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
   background:var(--bg-panel);
 }
 .podglad-meta-actions--gotowe{
-  grid-template-columns:minmax(0, 1fr) minmax(0, 1fr) minmax(0, 2fr);
+  grid-template-columns:44px minmax(0, 1fr) minmax(0, 2fr);
 }
 .podglad-meta-actions--przyjete{
   grid-template-columns:minmax(0, 1fr) minmax(0, 3fr);
@@ -1416,7 +1416,7 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
     grid-template-columns:repeat(2, minmax(0, 1fr));
   }
   .podglad-meta-actions--gotowe{
-    grid-template-columns:minmax(0, 1fr) minmax(0, 1fr) minmax(0, 2fr);
+    grid-template-columns:44px minmax(0, 1fr) minmax(0, 2fr);
   }
   .podglad-meta-actions--przyjete{
     grid-template-columns:minmax(0, 1fr) minmax(0, 3fr);
@@ -2154,7 +2154,34 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
   line-height:1;
 }
 .history-head-phone .history-sms-btn .btn-history-sms-txt{ display:none; }
-.history-item-details .btn-history-sms-txt{ display:inline; }
+.history-item-details .btn-history-sms-txt{ display:none; }
+
+.history-item-details-top-actions{
+  display:grid;
+  gap:10px;
+  margin:0 0 10px;
+}
+.history-item-details-top-actions--2{
+  grid-template-columns:minmax(0, 1fr) minmax(0, 4fr);
+}
+.history-item-details-top-actions--3{
+  grid-template-columns:minmax(0, 1fr) minmax(0, 4fr) minmax(0, 3fr);
+}
+.history-item-details-top-actions .history-details-chip.ui-tile--md{
+  width:100%;
+  min-width:0;
+}
+.history-item-details-top-actions .history-details-sms-btn{
+  padding:0 !important;
+  width:100%;
+  min-width:0;
+  justify-content:center;
+  gap:0;
+}
+.history-item-details-top-actions .history-details-sms-btn .btn-history-sms-ico{
+  width:14px;
+  height:14px;
+}
 .history-order-card .podglad-summary-bike .podglad-bike-tel{
   font-size:17px;
 }
@@ -2236,6 +2263,7 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
 .history-order-card .podglad-meta-w{
   font-size:13px;
   font-weight:600;
+  text-transform:lowercase;
 }
 .history-order-card .podglad-meta-v--price{
   font-size:24px;
@@ -8520,6 +8548,35 @@ function _buildHistoryItemSmsHTML(entry, opts) {
     + _smsBtnInnerHTML(!!entry.smsSent)
     + '</a></div>';
 }
+
+function _historyDetailsTelBtnHTML(entry) {
+  if (!entry || !entry.tel) return '';
+  const telClean = String(entry.tel).replace(/[^0-9+]/g, '');
+  return '<a href="tel:' + telClean
+    + '" class="btn-action ui-tile ui-tile--md ui-tile--naprawa history-details-chip history-details-tel-btn" onclick="event.stopPropagation()">'
+    + _iconPhoneSVG(16, 16) + '<span>' + escHTML(entry.tel) + '</span></a>';
+}
+
+function _historyDetailsSmsBtnHTML(entry, opts) {
+  if (!entry || !entry.tel) return '';
+  opts = opts || {};
+  if (opts.variant === 'wydane') return '';
+  if (opts.variant === 'przyjete' && typeof isEntryCr === 'function' && isEntryCr(entry)) return '';
+  const telClean = String(entry.tel).replace(/[^0-9+]/g, '');
+  const body = (opts.variant === 'przyjete') ? _smsPrzyjecieBody(entry) : _smsWydanieBody(entry);
+  return '<a href="sms:' + telClean + '?body=' + encodeURIComponent(body)
+    + '" class="btn-action ui-tile ui-tile--md btn-history-sms history-details-chip history-details-sms-btn history-details-sms-btn--icon'
+    + (entry.smsSent ? ' btn-history-sms-sent' : '')
+    + '" onclick="openOrderSms(' + entry.id + ', this, event)">'
+    + _smsBtnInnerHTML(!!entry.smsSent)
+    + '</a>';
+}
+
+function _historyDetailsKodChipHTML(entry) {
+  if (!entry || !entry.kodOdbioru) return '';
+  return '<span class="btn-action ui-tile ui-tile--md ui-tile--warning history-details-chip history-details-kod-btn">'
+    + _iconLockSVG(16, 16) + '<span>' + escHTML(entry.kodOdbioru) + '</span></span>';
+}
 function _buildHistoryItemKodHTML(entry) {
   if (!entry || !entry.kodOdbioru) return '';
   return '<div class="history-item-details-kod"><span class="btn-action ui-tile ui-tile--md ui-tile--warning history-details-chip history-details-kod-btn">'
@@ -8623,9 +8680,21 @@ function _buildZlecenieDetailsHTML(entry, opts) {
   const tableHTML = rows
     ? '<table><tbody>' + rows + '</tbody></table>'
     : '<div class="history-item-details-empty">Brak wybranych pozycji</div>';
-  const telBlock = opts.showTelInDetails === false ? '' : _buildHistoryItemTelHTML(entry);
-  const smsBlock = opts.showTelInDetails === false ? '' : _buildHistoryItemSmsHTML(entry, opts);
-  const kodBlock = opts.showKodInDetails ? _buildHistoryItemKodHTML(entry) : '';
+
+  let topActions = '';
+  if (opts.showTelInDetails !== false && entry && entry.tel) {
+    const smsBtn = _historyDetailsSmsBtnHTML(entry, opts);
+    const telBtn = _historyDetailsTelBtnHTML(entry);
+    const kodChip = (opts.showKodInDetails && entry.kodOdbioru) ? _historyDetailsKodChipHTML(entry) : '';
+    const hasKod = !!kodChip && (opts.variant === 'wydanie');
+    if (!smsBtn) {
+      topActions = '<div class="history-item-details-tel">' + telBtn + '</div>';
+    } else {
+      const cls = hasKod ? 'history-item-details-top-actions history-item-details-top-actions--3' : 'history-item-details-top-actions history-item-details-top-actions--2';
+      topActions = '<div class="' + cls + '">' + smsBtn + telBtn + (hasKod ? kodChip : '') + '</div>';
+    }
+  }
+  const kodBlock = (!topActions && opts.showKodInDetails) ? _buildHistoryItemKodHTML(entry) : '';
   const notatkaZlec = _getNotatkaZlecenia(entry);
   const notatkaNaprawy = _getNotatkaNaprawy(entry);
   let notatkaBlock = '';
@@ -8634,7 +8703,7 @@ function _buildZlecenieDetailsHTML(entry, opts) {
   } else if (notatkaNaprawy) {
     notatkaBlock += _buildHistoryNotatkaHTML(notatkaNaprawy);
   }
-  return telBlock + smsBlock + kodBlock + notatkaBlock + tableHTML;
+  return topActions + kodBlock + notatkaBlock + tableHTML;
 }
 
 function _smsBtnInnerHTML(sent) {
@@ -9386,7 +9455,7 @@ function renderWydanie(filterTel) {
     item.dataset.orderId = String(entry.id ?? '');
 
     const actionsBottomHTML =
-      '<button class="btn-action ui-tile ui-tile--sm ui-tile--soft-warning history-action-btn" onclick="cofnijDoAktualne(' + entry.id + ')" title="Cofnij do przyjętych"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg> COFNIJ</button>'
+      '<button class="btn-action ui-tile ui-tile--sm ui-tile--soft-warning history-action-btn history-action-btn--icon" onclick="cofnijDoAktualne(' + entry.id + ')" title="Cofnij do przyjętych"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg></button>'
       + '<button class="btn-action ui-tile ui-tile--sm ui-tile--soft-warning history-action-btn" onclick="openRaportEdycja(' + entry.id + ')" title="Edytuj"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> EDYTUJ</button>'
       + '<button class="btn-action ui-tile ui-tile--sm ui-tile--wydanie btn-action--release history-action-btn" onclick="openPodsumowanieDoWydania(' + entry.id + ')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg> WYDAJ</button>';
 
