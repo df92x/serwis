@@ -2,7 +2,7 @@
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
-<meta name="app-build" content="dev">
+<meta name="app-build" content="2026-07-02T16:06:53.631Z">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1183,6 +1183,33 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
 }
 .cr-row-radio.is-selected .cr-check-circle::after { opacity: 1; }
 
+@media (max-width: 480px) {
+  .cr-row {
+    align-items: flex-start;
+    gap: 8px;
+    padding: 8px 10px;
+  }
+  .cr-row-label {
+    font-size: 11px;
+    line-height: 1.25;
+    white-space: normal;
+    word-break: break-word;
+  }
+  .cr-row-price {
+    font-size: 12px;
+    min-width: 46px;
+    text-align: right;
+    padding-top: 1px;
+  }
+  .cr-check-circle {
+    margin-top: 1px;
+  }
+  .cr-table-head {
+    padding: 4px 10px 6px;
+    font-size: 10px;
+  }
+}
+
 /* ── Inne części group ── */
 .group-card {
   margin: 36px 8px 3px;
@@ -1691,9 +1718,12 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
   background:var(--bg-panel);
 }
 .podglad-meta-actions--gotowe{
-  grid-template-columns:44px minmax(0, 1fr) minmax(0, 2fr);
+  grid-template-columns:44px minmax(0, 1fr) 44px minmax(0, 2fr);
 }
 .podglad-meta-actions--przyjete{
+  grid-template-columns:44px minmax(0, 1fr) minmax(0, 3fr);
+}
+.podglad-meta-actions--przyjete-no-sms{
   grid-template-columns:minmax(0, 1fr) minmax(0, 3fr);
 }
 .podglad-meta-actions--wydane{
@@ -1757,9 +1787,13 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
 }
 .podglad-meta-actions a.btn-history-sms:not(.btn-history-sms-sent),
 .podglad-meta-actions button.btn-history-sms:not(.btn-history-sms-sent){
-  background:#192840 !important;
-  border:1px solid #3d78b8 !important;
-  color:#b8daff !important;
+  background:rgba(220, 38, 38, 0.14) !important;
+  border:1px solid #dc2626 !important;
+  color:#f87171 !important;
+}
+.podglad-meta-actions a.btn-history-sms:not(.btn-history-sms-sent) .btn-history-sms-ico,
+.podglad-meta-actions button.btn-history-sms:not(.btn-history-sms-sent) .btn-history-sms-ico{
+  color:#ef4444 !important;
 }
 .podglad-meta-actions a.btn-history-sms-sent,
 .podglad-meta-actions button.btn-history-sms-sent{
@@ -1777,14 +1811,19 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
 }
 
 @media (max-width:480px){
+  .history-head-phone .history-tel-btn{
+    font-size:11px;
+    padding:5px 8px !important;
+    gap:5px;
+  }
   .podglad-meta-actions{
     grid-template-columns:repeat(2, minmax(0, 1fr));
   }
   .podglad-meta-actions--gotowe{
-    grid-template-columns:44px minmax(0, 1fr) minmax(0, 2fr);
+    grid-template-columns:40px minmax(0, 1fr) 40px minmax(0, 2fr);
   }
   .podglad-meta-actions--przyjete{
-    grid-template-columns:minmax(0, 1fr) minmax(0, 3fr);
+    grid-template-columns:40px minmax(0, 1fr) minmax(0, 3fr);
   }
   .podglad-meta-actions--wydane{
     grid-template-columns:44px 44px 44px minmax(0, 1fr) minmax(0, 1fr);
@@ -2374,9 +2413,9 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
   font-weight:900;
 }
 .btn-history-sms:not(.btn-history-sms-sent) {
-  background: #192840 !important;
-  border: 1px solid #3d78b8 !important;
-  color: #b8daff !important;
+  background: rgba(220, 38, 38, 0.14) !important;
+  border: 1px solid #dc2626 !important;
+  color: #f87171 !important;
   border-radius: var(--radius-btn);
   padding: var(--btn-py) var(--btn-px);
   font-size: var(--btn-font);
@@ -2390,9 +2429,9 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
   min-height: 33px;
   line-height: 1;
 }
-.btn-history-sms:not(.btn-history-sms-sent):hover { filter: brightness(1.1); }
+.btn-history-sms:not(.btn-history-sms-sent):hover { filter: brightness(1.08); }
 .btn-history-sms:not(.btn-history-sms-sent) .btn-history-sms-ico{
-  color:#5098ff;
+  color:#ef4444;
 }
 .btn-history-sms-sent {
   background: var(--bg3) !important;
@@ -3158,15 +3197,23 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
   width:auto;
 }
 .history-head-phone .history-tel-btn{
-  width:36px;
-  min-width:36px;
-  max-width:36px;
-  padding:0 !important;
-  justify-content:center;
+  width:auto;
+  min-width:0;
+  max-width:none;
+  padding:6px 10px !important;
+  justify-content:flex-start;
   gap:6px;
+  font-weight:800;
+  font-size:13px;
+  white-space:nowrap;
 }
-.history-head-phone .history-tel-btn svg{ display:inline; }
-.history-head-phone .history-tel-btn span{ display:none; }
+.history-head-phone .history-tel-btn svg{
+  display:inline;
+  flex-shrink:0;
+}
+.history-head-phone .history-tel-btn span{
+  display:inline;
+}
 .history-head-phone .history-sms-btn{
   min-height:36px;
   width:36px;
@@ -4297,9 +4344,9 @@ select.native-sel { display: none !important; }
 .btn-action--ghost { background: var(--bg-panel) !important; border: 1px solid var(--border-panel) !important; color: var(--text2) !important; min-height: 33px; text-decoration: none; }
 a.btn-history-sms:not(.btn-history-sms-sent),
 button.btn-history-sms:not(.btn-history-sms-sent) {
-  background: #192840 !important;
-  border: 1px solid #3d78b8 !important;
-  color: #b8daff !important;
+  background: rgba(220, 38, 38, 0.14) !important;
+  border: 1px solid #dc2626 !important;
+  color: #f87171 !important;
   min-height: 33px;
   text-decoration: none;
   font-weight: 700;
@@ -4321,7 +4368,7 @@ button.btn-history-sms-sent .btn-history-sms-ico{
 }
 a.btn-history-sms:not(.btn-history-sms-sent) .btn-history-sms-ico,
 button.btn-history-sms:not(.btn-history-sms-sent) .btn-history-sms-ico{
-  color:#5098ff;
+  color:#ef4444;
 }
 .start-cta.start-cta--add { background: var(--solid-wydanie-bg) !important; border: 1px solid var(--solid-wydanie-border) !important; color: #86efac !important; }
 .start-cta.start-cta--browse { background: var(--solid-naprawa-bg) !important; border: 1px solid var(--solid-naprawa-border) !important; color: #93c5fd !important; }
@@ -7708,7 +7755,7 @@ function renderRabatyActive() {
     const smsSent = !!r.smsSent;
     smsBtn.className = 'btn-action ui-tile ui-tile--sm btn-history-sms' + (smsSent ? ' btn-history-sms-sent' : ' ui-tile--naprawa');
     smsBtn.style.cssText = 'font-weight:900;gap:6px;';
-    smsBtn.innerHTML = _smsBtnInnerHTML(smsSent);
+    smsBtn.innerHTML = _smsBtnInnerHTML();
     smsBtn.title = smsSent ? 'SMS wysłany' : 'Wyślij SMS z kodem';
     if (smsSent) smsBtn.disabled = true;
     smsBtn.onclick = (ev) => {
@@ -7719,7 +7766,6 @@ function renderRabatyActive() {
       markRabSmsSent(r.code);
       smsBtn.classList.remove('ui-tile--naprawa');
       smsBtn.classList.add('btn-history-sms-sent');
-      smsBtn.innerHTML = _smsBtnInnerHTML(true);
       smsBtn.disabled = true;
       const body = _smsRabatyBody(r);
       window.location.href = 'sms:' + tel.replace(/[^0-9+]/g,'') + '?body=' + encodeURIComponent(body);
@@ -9826,16 +9872,7 @@ function getPrzyjeteList(filterTel) {
   if (filterTel && filterTel.trim().length >= 2) {
     hist = hist.filter(e => _zlecenieMatch(e, filterTel));
   }
-  const currentYear = new Date().getFullYear();
-  const toDate = t => {
-    if (!t) return new Date(9999, 0, 1);
-    const parts = _parseTerminParts(t);
-    if (parts.length < 2) return new Date(9999, 0, 1);
-    const d = parseInt(parts[0]), m = parseInt(parts[1]) - 1;
-    const y = parts.length >= 3 ? parseInt(parts[2]) : currentYear;
-    return new Date(y, m, d);
-  };
-  return hist.slice().sort((a, b) => toDate(a.termin) - toDate(b.termin));
+  return hist.slice().sort((a, b) => (parseInt(b.id, 10) || 0) - (parseInt(a.id, 10) || 0));
 }
 
 // ── Grupowanie zleceń po numerze telefonu ──
@@ -9935,7 +9972,7 @@ function _buildHistoryItemSmsHTML(entry, opts) {
     + '" class="btn-action ui-tile ui-tile--md btn-history-sms history-details-chip history-details-sms-btn'
     + (entry.smsSent ? ' btn-history-sms-sent' : '')
     + '" onclick="openOrderSms(' + entry.id + ', this, event)">'
-    + _smsBtnInnerHTML(!!entry.smsSent)
+    + _smsBtnInnerHTML()
     + '</a></div>';
 }
 
@@ -9952,13 +9989,14 @@ function _historyDetailsSmsBtnHTML(entry, opts) {
   opts = opts || {};
   if (opts.variant === 'wydane') return '';
   if (opts.variant === 'wydanie') return '';
+  if (opts.variant === 'przyjete') return '';
   if (opts.variant === 'przyjete' && typeof isEntryCr === 'function' && isEntryCr(entry)) return '';
   const telClean = String(entry.tel).replace(/[^0-9+]/g, '');
   return '<a href="sms:' + telClean
     + '" class="btn-action ui-tile ui-tile--md btn-history-sms history-details-chip history-details-sms-btn history-details-sms-btn--icon'
     + (entry.smsSent ? ' btn-history-sms-sent' : '')
     + '" onclick="openOrderSms(' + entry.id + ', this, event)">'
-    + _smsBtnInnerHTML(!!entry.smsSent)
+    + _smsBtnInnerHTML()
     + '</a>';
 }
 
@@ -10100,9 +10138,8 @@ function _buildZlecenieDetailsHTML(entry, opts) {
   return topActions + kodBlock + notatkaBlock + tableHTML;
 }
 
-function _smsBtnInnerHTML(sent) {
-  const svg = '<svg class="btn-history-sms-ico" width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>';
-  return svg + '<span class="btn-history-sms-txt">' + (sent ? ' SMS ✓' : ' SMS') + '</span>';
+function _smsBtnInnerHTML() {
+  return '<svg class="btn-history-sms-ico" width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>';
 }
 
 function _getEntryDataWydaniaDisplay(entry) {
@@ -10200,6 +10237,18 @@ function _historyTelHeaderHTML(entry, opts) {
     + _iconPhoneSVG(14, 14) + '<span>' + escHTML(entry.tel) + '</span></a>';
 }
 
+function _actionBarSmsBtnHTML(entry, variant) {
+  if (!entry || !entry.tel) return '';
+  if (variant === 'przyjete' && typeof isEntryCr === 'function' && isEntryCr(entry)) return '';
+  const telClean = String(entry.tel).replace(/[^0-9+]/g, '');
+  const body = (variant === 'przyjete') ? _smsPrzyjecieBody(entry) : _smsWydanieBody(entry);
+  return '<a href="sms:' + telClean + '?body=' + encodeURIComponent(body)
+    + '" class="btn-action ui-tile ui-tile--sm btn-history-sms history-action-btn history-action-btn--icon'
+    + (entry.smsSent ? ' btn-history-sms-sent' : '')
+    + '" onclick="openOrderSms(' + entry.id + ', this, event)" title="Wyślij SMS">'
+    + '<svg class="btn-history-sms-ico" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></a>';
+}
+
 function _historySmsHeaderHTML(entry, variant) {
   if (!entry || !entry.tel) return '';
   if (variant === 'przyjete' && typeof isEntryCr === 'function' && isEntryCr(entry)) return '';
@@ -10209,7 +10258,7 @@ function _historySmsHeaderHTML(entry, variant) {
   return '<a class="btn-action ui-tile ui-tile--sm btn-history-sms history-sms-btn'
     + (entry.smsSent ? ' btn-history-sms-sent' : '')
     + '" onclick="openOrderSms(' + entry.id + ', this, event)" href="sms:' + telClean + '?body=' + encodeURIComponent(body) + '">'
-    + _smsBtnInnerHTML(!!entry.smsSent)
+    + _smsBtnInnerHTML()
     + '</a>';
 }
 
@@ -10277,7 +10326,7 @@ function _buildHistoryOrderCardHTML(entry, opts) {
   }
   const actionsBottom = opts.actionsBottomHTML
     ? '<div class="podglad-meta-actions'
-      + (variant === 'przyjete' ? ' podglad-meta-actions--przyjete' : (variant === 'wydanie' ? ' podglad-meta-actions--gotowe' : (variant === 'wydane' ? ' podglad-meta-actions--wydane' : '')))
+      + (variant === 'przyjete' ? ' podglad-meta-actions--przyjete' + (opts.actionsNoSms ? ' podglad-meta-actions--przyjete-no-sms' : '') : (variant === 'wydanie' ? ' podglad-meta-actions--gotowe' : (variant === 'wydane' ? ' podglad-meta-actions--wydane' : '')))
       + '">' + opts.actionsBottomHTML + '</div>'
     : '';
   const price = opts.priceHTML || '';
@@ -10350,8 +10399,9 @@ function renderHistory(filterTel) {
     if (isHL) item.classList.add('hl-red');
     if (_terminIsTodayOrTomorrow(entry.termin)) item.classList.add('history-item--termin-soon');
 
-    const actionsBottomHTML =
-      '<button class="btn-action ui-tile ui-tile--sm ui-tile--soft-warning history-action-btn" onclick="loadWycena(' + entry.id + ')" title="Edytuj"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> EDYTUJ</button>'
+    const smsBtn = _actionBarSmsBtnHTML(entry, 'przyjete');
+    const actionsBottomHTML = smsBtn
+      + '<button class="btn-action ui-tile ui-tile--sm ui-tile--soft-warning history-action-btn" onclick="loadWycena(' + entry.id + ')" title="Edytuj"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> EDYTUJ</button>'
       + (isEntryCr(entry)
         ? '<button class="btn-action ui-tile ui-tile--sm ui-tile--naprawa btn-action--repair history-action-btn" onclick="markCrGotowe(' + entry.id + ')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/></svg> GOTOWE</button>'
         : '<button class="btn-action ui-tile ui-tile--sm ui-tile--naprawa btn-action--repair history-action-btn" onclick="openRaport(' + entry.id + ')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg> NAPRAWA</button>');
@@ -10361,11 +10411,13 @@ function renderHistory(filterTel) {
       showTelInHeader: false,
       showKodOdbioru: false,
       inlineTelKod: false,
-      showTelRight: false,
+      showTelRight: true,
+      showSmsRight: false,
+      actionsNoSms: !smsBtn,
       actionsBottomHTML,
     });
 
-    _attachHistoryItemDetails(item, entry, { showTelInDetails: true, variant: 'przyjete' });
+    _attachHistoryItemDetails(item, entry, { showTelInDetails: false, variant: 'przyjete' });
     return item;
   };
 
@@ -10798,9 +10850,8 @@ function markSmsSent(id, el) {
   if (idx === -1) return;
   hist[idx].smsSent = true;
   localStorage.setItem(HISTORY_KEY, JSON.stringify(hist));
-  el.classList.add('btn-history-sms', 'btn-history-sms-sent');
+  el.classList.add('btn-history-sms-sent');
   el.classList.remove('ui-tile--naprawa');
-  el.innerHTML = _smsBtnInnerHTML(true);
 }
 
 function openOrderSms(id, el, ev) {
@@ -10850,9 +10901,11 @@ function renderWydanie(filterTel) {
     item.className = 'history-item';
     item.dataset.orderId = String(entry.id ?? '');
 
+    const smsBtn = _actionBarSmsBtnHTML(entry, 'wydanie');
     const actionsBottomHTML =
       '<button class="btn-action ui-tile ui-tile--sm ui-tile--soft-warning history-action-btn history-action-btn--icon" onclick="cofnijDoAktualne(' + entry.id + ')" title="Cofnij do przyjętych"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg></button>'
       + '<button class="btn-action ui-tile ui-tile--sm ui-tile--soft-warning history-action-btn" onclick="openRaportEdycja(' + entry.id + ')" title="Edytuj"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> EDYTUJ</button>'
+      + smsBtn
       + '<button class="btn-action ui-tile ui-tile--sm ui-tile--wydanie btn-action--release history-action-btn" onclick="openPodsumowanieDoWydania(' + entry.id + ')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg> WYDAJ</button>';
 
     item.innerHTML = _buildHistoryOrderCardHTML(entry, {
@@ -10860,11 +10913,12 @@ function renderWydanie(filterTel) {
       showTelInHeader: false,
       showKodOdbioru: false,
       inlineTelKod: false,
-      showTelRight: false,
+      showTelRight: true,
+      showSmsRight: false,
       actionsBottomHTML,
     });
 
-    _attachHistoryItemDetails(item, entry, { showKodInDetails: true, showTelInDetails: true, variant: 'wydanie' });
+    _attachHistoryItemDetails(item, entry, { showKodInDetails: true, showTelInDetails: false, variant: 'wydanie' });
     return item;
   };
 
