@@ -3189,6 +3189,9 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
 .history-item-details-top-actions--2{
   grid-template-columns:minmax(0, 1fr) minmax(0, 4fr);
 }
+.history-item-details-top-actions--wydanie{
+  grid-template-columns:minmax(0, 7fr) minmax(0, 3fr);
+}
 .history-item-details-top-actions--3{
   grid-template-columns:minmax(0, 1fr) minmax(0, 4fr) minmax(0, 3fr);
 }
@@ -9947,6 +9950,7 @@ function _historyDetailsSmsBtnHTML(entry, opts) {
   if (!entry || !entry.tel) return '';
   opts = opts || {};
   if (opts.variant === 'wydane') return '';
+  if (opts.variant === 'wydanie') return '';
   if (opts.variant === 'przyjete' && typeof isEntryCr === 'function' && isEntryCr(entry)) return '';
   const telClean = String(entry.tel).replace(/[^0-9+]/g, '');
   return '<a href="sms:' + telClean
@@ -10073,7 +10077,11 @@ function _buildZlecenieDetailsHTML(entry, opts) {
     const kodChip = (opts.showKodInDetails && entry.kodOdbioru) ? _historyDetailsKodChipHTML(entry) : '';
     const hasKod = !!kodChip && (opts.variant === 'wydanie');
     if (!smsBtn) {
-      topActions = '<div class="history-item-details-tel">' + telBtn + '</div>';
+      if (hasKod) {
+        topActions = '<div class="history-item-details-top-actions history-item-details-top-actions--wydanie">' + telBtn + kodChip + '</div>';
+      } else {
+        topActions = '<div class="history-item-details-tel">' + telBtn + '</div>';
+      }
     } else {
       const cls = hasKod ? 'history-item-details-top-actions history-item-details-top-actions--3' : 'history-item-details-top-actions history-item-details-top-actions--2';
       topActions = '<div class="' + cls + '">' + smsBtn + telBtn + (hasKod ? kodChip : '') + '</div>';
@@ -10229,12 +10237,20 @@ function _buildHistoryOrderCardHTML(entry, opts) {
   const nameParts = _bikeDisplayNameParts(entry.marka, entry.model);
   const ebike = (entry.ebike || entry.marka === 'E-BIKE') ? '<span class="history-ebike-badge" title="e-Bike">⚡</span>' : '';
   const variant = opts.listVariant || 'wydane';
-  const phoneRight = (opts.showTelRight && entry && entry.tel)
-    ? '<div class="history-head-phone">'
-      + _historyTelHeaderHTML(entry, { klientHistoria: (variant === 'wydane') })
-      + _historySmsHeaderHTML(entry, variant)
-      + '</div>'
-    : '';
+  let phoneRight = '';
+  if (entry && entry.tel) {
+    const headContacts = [];
+    if (opts.showTelRight) {
+      headContacts.push(_historyTelHeaderHTML(entry, { klientHistoria: (variant === 'wydane') }));
+    }
+    if (opts.showSmsRight !== false) {
+      const smsHead = _historySmsHeaderHTML(entry, variant);
+      if (smsHead) headContacts.push(smsHead);
+    }
+    if (headContacts.length) {
+      phoneRight = '<div class="history-head-phone">' + headContacts.join('') + '</div>';
+    }
+  }
   const nameRow = nameParts.length
     ? '<div class="history-head-name-row"><div class="podglad-bike-name">' + escHTML(nameParts.join(' ')) + ebike + '</div>' + phoneRight + '</div>'
     : (phoneRight ? '<div class="history-head-name-row">' + phoneRight + '</div>' : '');
@@ -10344,7 +10360,7 @@ function renderHistory(filterTel) {
       showTelInHeader: false,
       showKodOdbioru: false,
       inlineTelKod: false,
-      showTelRight: true,
+      showTelRight: false,
       actionsBottomHTML,
     });
 
@@ -10843,7 +10859,7 @@ function renderWydanie(filterTel) {
       showTelInHeader: false,
       showKodOdbioru: false,
       inlineTelKod: false,
-      showTelRight: true,
+      showTelRight: false,
       actionsBottomHTML,
     });
 
