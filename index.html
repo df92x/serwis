@@ -5,6 +5,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="app-build" content="">
 <title>Serwis ROW-POL</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <meta name="theme-color" content="#0a0a0f">
@@ -395,9 +396,21 @@ select:focus,
 
 /* Start / Rabaty / okna narzędzi — nadpisy inline-style */
 #main-sync-panel{
+  width:75%;
   background: var(--bg-panel) !important;
   border: 1px solid var(--border-panel) !important;
   border-radius: 12px !important;
+}
+#main-sync-panel .main-app-ver-row{
+  padding:6px 14px 10px;
+  border-top:1px solid var(--border);
+  text-align:center;
+  font-size:11px;
+  line-height:1.35;
+  color:var(--text3);
+}
+#main-sync-panel .main-app-ver-row--stale{
+  color:#fbbf24;
 }
 #backup-reminder{
   background: var(--solid-warning-bg) !important;
@@ -5224,15 +5237,103 @@ body > .app .flat-list .item-card.qty-zero{
 // ═══════════════════════════════════════
 'use strict';
 
-function _appVerLabel() {
-  var iso = localStorage.getItem('gh_last_update');
+function _formatAppVerDate(iso) {
   if (!iso) return '';
   var d = new Date(iso);
+  if (isNaN(d.getTime())) return '';
   var dd  = String(d.getDate()).padStart(2,'0');
   var mm  = String(d.getMonth()+1).padStart(2,'0');
   var hh  = String(d.getHours()).padStart(2,'0');
   var min = String(d.getMinutes()).padStart(2,'0');
-  return 'Update: ' + dd + '.' + mm + ' ' + hh + ':' + min;
+  return dd + '.' + mm + ' ' + hh + ':' + min;
+}
+
+function _getLoadedAppBuildIso() {
+  try {
+    var meta = document.querySelector('meta[name="app-build"]');
+    var v = meta && meta.getAttribute('content') ? String(meta.getAttribute('content')).trim() : '';
+    if (v) return v;
+  } catch (e) {}
+  return localStorage.getItem('gh_last_update') || '';
+}
+
+function _appRepoForVersion() {
+  try {
+    if (typeof _normalizeGhRepo === 'function') {
+      return _normalizeGhRepo(localStorage.getItem('gh_repo') || '') || 'df92x/serwis';
+    }
+  } catch (e) {}
+  var repo = String(localStorage.getItem('gh_repo') || '').trim();
+  return repo.indexOf('/') >= 0 ? repo : 'df92x/serwis';
+}
+
+var _serverAppBuildIso = null;
+var _serverAppBuildLoading = false;
+
+async function _fetchServerAppBuildIso() {
+  var repo = _appRepoForVersion();
+  if (!repo || repo.indexOf('/') < 0) return null;
+  try {
+    var ghUrl = 'https://api.github.com/repos/' + repo + '/commits?path=index.html&sha=main&per_page=1';
+    var ghRes = await fetch(ghUrl, {
+      headers: { 'Accept': 'application/vnd.github+json', 'User-Agent': 'serwis-app-ver' },
+      cache: 'no-store'
+    });
+    if (ghRes.ok) {
+      var commits = await ghRes.json();
+      var iso = commits && commits[0] && commits[0].commit && commits[0].commit.committer && commits[0].commit.committer.date;
+      if (iso) return iso;
+    }
+  } catch (e) {}
+  try {
+    var rawUrl = 'https://raw.githubusercontent.com/' + repo + '/main/index.html?_v=' + Date.now();
+    var headRes = await fetch(rawUrl, { method: 'HEAD', cache: 'no-store' });
+    var lm = headRes.headers.get('Last-Modified');
+    if (lm) return new Date(lm).toISOString();
+  } catch (e) {}
+  return null;
+}
+
+async function refreshServerAppVersion() {
+  if (_serverAppBuildLoading) return;
+  _serverAppBuildLoading = true;
+  try {
+    var iso = await _fetchServerAppBuildIso();
+    if (iso) {
+      _serverAppBuildIso = iso;
+      localStorage.setItem('server_app_build', iso);
+    }
+  } catch (e) {}
+  _serverAppBuildLoading = false;
+  if (typeof updateAdminSyncRow === 'function') updateAdminSyncRow();
+}
+
+function _appVerRowHTML() {
+  var serverIso = _serverAppBuildIso || localStorage.getItem('server_app_build') || '';
+  var loadedIso = _getLoadedAppBuildIso();
+  if (_serverAppBuildLoading && !serverIso) {
+    return '<div class="main-app-ver-row">Wersja serwera: pobieranie…</div>';
+  }
+  if (!serverIso) {
+    var localLbl = _formatAppVerDate(loadedIso);
+    return localLbl
+      ? '<div class="main-app-ver-row">Wersja: ' + escHTML(localLbl) + '</div>'
+      : '';
+  }
+  var stale = false;
+  if (loadedIso && serverIso) {
+    stale = new Date(serverIso).getTime() - new Date(loadedIso).getTime() > 60000;
+  }
+  var cls = 'main-app-ver-row' + (stale ? ' main-app-ver-row--stale' : '');
+  var line = 'Wersja serwera: ' + escHTML(_formatAppVerDate(serverIso));
+  if (stale) line += ' · odśwież stronę';
+  return '<div class="' + cls + '">' + line + '</div>';
+}
+
+function _appVerLabel() {
+  var iso = _serverAppBuildIso || localStorage.getItem('server_app_build') || localStorage.getItem('gh_last_update');
+  if (!iso) return '';
+  return 'Update: ' + _formatAppVerDate(iso);
 }
 
 function lockBody()   { document.body.classList.add('overlay-open'); }
@@ -9087,6 +9188,7 @@ function startCalNext() {
 function refreshStartMenu() {
   if (typeof renderStartMenuCalendar === 'function') renderStartMenuCalendar();
   if (typeof checkBackupReminder === 'function') checkBackupReminder();
+  if (typeof refreshServerAppVersion === 'function') refreshServerAppVersion();
 }
 window.renderStartMenuCalendar = renderStartMenuCalendar;
 window.startCalPrev = startCalPrev;
@@ -14033,7 +14135,7 @@ function updateAdminSyncRow() {
       
     '</div>';
 
-  const html = email ? loggedHTML : guestHTML;
+  const html = (email ? loggedHTML : guestHTML) + _appVerRowHTML();
   const mainPanel = $('main-sync-panel');
   if (mainPanel) mainPanel.innerHTML = html;
 }
@@ -14327,6 +14429,7 @@ window.manualSync   = manualSync;
 // Inicjalizacja przy starcie
 document.addEventListener('DOMContentLoaded', () => {
   updateAdminSyncRow();
+  refreshServerAppVersion();
 });
 
 // Auto-purge expired kosz items on startup
@@ -15112,6 +15215,13 @@ async function githubUpdate() {
       reader.readAsText(file, 'UTF-8');
     });
 
+    var buildIso = new Date().toISOString();
+    if (/<meta\s+name=["']app-build["']/i.test(html)) {
+      html = html.replace(/<meta\s+name=["']app-build["'][^>]*>/i, '<meta name="app-build" content="' + buildIso + '">');
+    } else {
+      html = html.replace(/<meta\s+name=["']viewport["'][^>]*>/i, function(m) { return m + '\n<meta name="app-build" content="' + buildIso + '">'; });
+    }
+
     ghStatus('⬆️ Wysyłanie index.html…', 'info');
     await _ghUpsertRepoFile(repo, 'index.html', html, headers, 'main');
 
@@ -15131,6 +15241,7 @@ async function githubUpdate() {
     }
 
     localStorage.setItem('gh_last_update', new Date().toISOString());
+    if (typeof refreshServerAppVersion === 'function') refreshServerAppVersion();
 
     ghStatus('✅ Wykonano' + (cfHook ? ' — build CF uruchomiony' : ' — sprawdź Deployments w Cloudflare'), 'ok');
     setTimeout(function() {
