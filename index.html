@@ -231,15 +231,16 @@
   border-bottom: 1px solid var(--border-panel) !important;
 }
 #main-sync-panel button[onclick="manualSync()"][data-sync-btn="1"]{
-  background: var(--solid-naprawa-bg) !important;
-  border: 1px solid var(--solid-naprawa-border) !important;
-  color: #93c5fd !important;
+  background: var(--bg-panel) !important;
+  border: none !important;
+  border-right: 1px solid var(--border-panel) !important;
+  color: var(--text2) !important;
   border-radius: 0 !important;
 }
 #main-sync-panel button[onclick="logoutGoogle()"]{
-  background: var(--solid-danger-bg) !important;
-  border: 1px solid var(--solid-danger-border) !important;
-  color: #f87171 !important;
+  background: var(--bg-panel) !important;
+  border: none !important;
+  color: var(--text3) !important;
   border-radius: 0 !important;
 }
 #main-sync-panel button[onclick="loginGoogle()"]{
@@ -829,7 +830,7 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
 .flat-list .item-card,
 .flat-item {
   margin: 0; border: none; background: transparent;
-  border-radius: 0; overflow: visible; padding: 10px 0;
+  border-radius: 0; overflow: visible; padding: 8px 0;
   border-bottom: 1px solid var(--border-panel);
 }
 .flat-list .item-card:has(.item-check:checked),
@@ -839,7 +840,33 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
   border-color: transparent !important;
   border-bottom: 1px solid var(--border-panel) !important;
 }
-.flat-list .card-row { gap: 6px; }
+.flat-list .card-row { gap: 4px; align-items: center; }
+.flat-list .card-body {
+  padding: 6px 0 6px 2px;
+  flex: 1;
+  min-width: 0;
+}
+.flat-list .item-check-col {
+  margin-left: 0;
+  margin-right: 0;
+  flex-shrink: 0;
+}
+.flat-list .item-name {
+  flex: 0 0 auto;
+}
+.flat-list .item-card:has(.qty-ctrl) .item-name {
+  flex: 1;
+  min-width: 0;
+}
+.flat-list .item-opis-wrap .opis-inline-input {
+  width: 100%;
+  min-height: 32px;
+  box-sizing: border-box;
+  text-align: left;
+}
+.flat-list .item-card:not(:has(.qty-ctrl)) .item-price-opis-group {
+  margin-left: auto;
+}
 .flat-csel .csel-wrap { flex:1; min-width:0; width:100%; }
 .flat-csel .csel-btn {
   width:100%; justify-content:flex-end; background:#000;
@@ -897,10 +924,12 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
 .flat-group .group-body { background:transparent; padding:0; gap:10px; }
 .flat-group .sub-row {
   background:transparent; border:none; border-radius:0;
-  padding:10px 0; margin:0; border-bottom:1px solid var(--border-panel);
-  gap:6px;
+  padding:8px 0; margin:0; border-bottom:1px solid var(--border-panel);
+  gap:4px;
 }
-.flat-group .sub-row.is-checked { background:transparent; border-color:transparent; }
+.flat-group .sub-check-circle.flat-check {
+  margin: 0 2px 0 0;
+}
 .flat-group .sub-row-label{
   flex:0 0 auto;
   font-size:18px;
@@ -1366,7 +1395,7 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
 }
 
 /* Raport: flat layout via .flat-list .flat-csel (dodane w HTML) */
-#raport-overlay .card-row{ gap: 6px; }
+#raport-overlay .card-row{ gap: 4px; }
 
 
 /* Stałe okienko ceny (raport + dodaj części) */
@@ -1380,7 +1409,7 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
   border: 1px solid var(--border-panel) !important;
   background: #000 !important;
   border-radius: 10px !important;
-  padding: 6px 10px !important;
+  padding: 6px 6px !important;
   font-size: 20px !important;
   font-weight: 700 !important;
   color: #fff !important;
@@ -1398,7 +1427,7 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
   border: 1px solid var(--border-panel) !important;
   background: #000 !important;
   border-radius: 10px !important;
-  padding: 6px 10px !important;
+  padding: 6px 6px !important;
   font-size: 20px !important;
   font-weight: 700 !important;
   color: #fff !important;
@@ -3408,12 +3437,12 @@ body > .app{
   border:1px solid var(--border-panel) !important;
   border-radius:12px !important;
   margin:16px 8px 0 !important;
-  padding:12px 10px 16px;
+  padding:12px 6px 16px;
   box-sizing:border-box;
 }
 #items-list,
 #raport-items-list{
-  padding:8px 4px 8px 6px !important;
+  padding:8px 0 8px 0 !important;
 }
 #group-container,
 #raport-group-container{
@@ -3454,13 +3483,13 @@ body > .app #group-container .group-body{
 }
 #raport-overlay #raport-group-container .sub-row,
 body > .app #group-container .sub-row{
-  padding:10px 0;
+  padding:8px 0;
   margin:0;
   border:none;
   border-radius:0;
   background:transparent;
   border-bottom:1px solid var(--border-panel);
-  gap:6px;
+  gap:4px;
 }
 #raport-overlay #raport-group-container .sub-row.is-checked,
 body > .app #group-container .sub-row.is-checked{
@@ -3478,7 +3507,7 @@ body > .app #group-container .sub-price-input{
   min-width:70px !important;
   height:32px !important;
   flex:0 0 70px !important;
-  padding:6px 10px !important;
+  padding:6px 6px !important;
   font-size:20px !important;
   font-weight:700 !important;
   text-align:right !important;
@@ -3547,7 +3576,7 @@ body > .app #group-container .sub-del:hover{
   opacity:0.85;
 }
 #raport-overlay .card-row,
-body > .app .card-row{ gap:6px; }
+body > .app .card-row{ gap:4px; }
 
 /* Raport: spójne zaznaczenia jak w zleceniach */
 #raport-overlay .link-tel{ color:var(--text2) !important; }
@@ -3848,12 +3877,122 @@ button.order-cal-day.order-cal-day--browse:active{
 .csel-btn svg { flex-shrink: 0; color: var(--text3); }
 .csel-btn.has-val { color: #fff; border-color: var(--border); }
 
-/* OPIS — mały kwadrat przy cenie (DODAJ) / pole inline (raport) */
+/* OPIS — drugie kółko przy check + rozwijany panel */
+.item-check-col {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+  align-self: center;
+  padding: 0;
+  margin: 0;
+}
+.item-check-col .flat-check {
+  margin: 0;
+}
+button.item-opis-circle {
+  box-sizing: border-box;
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  cursor: pointer;
+  padding: 0;
+  color: #86efac;
+  transition: border-color 0.15s, background 0.15s;
+}
+button.item-opis-circle svg {
+  width: 10px;
+  height: 10px;
+  display: block;
+}
+button.item-opis-circle.has-opis {
+  border-color: var(--solid-wydanie-border);
+  background: var(--solid-wydanie-bg);
+}
+button.item-opis-circle.open {
+  border-color: var(--blue);
+  background: rgba(59, 124, 244, 0.15);
+}
+.item-opis-wrap {
+  flex: 1;
+  min-width: 0;
+  display: none;
+}
+.item-opis-wrap.open {
+  display: block;
+}
+.naprawa-svc-picker {
+  display: none;
+  width: 100%;
+  margin-top: 2px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+.naprawa-svc-picker.open {
+  display: block;
+}
+.naprawa-svc-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border-panel);
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s;
+}
+.naprawa-svc-row:last-child {
+  border-bottom: none;
+}
+.naprawa-svc-row.is-selected {
+  background: var(--solid-naprawa-bg);
+}
+.naprawa-svc-row__label {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.3;
+}
+.naprawa-svc-row__price {
+  flex: 0 0 auto;
+  font-size: 14px;
+  font-weight: 700;
+  color: #86efac;
+  white-space: nowrap;
+}
+.naprawa-svc-check {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.naprawa-svc-row.is-selected .naprawa-svc-check {
+  border-color: var(--blue);
+  background: var(--blue);
+}
 .item-price-opis-group {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
   flex-shrink: 0;
+  margin-right: 0;
 }
 button.opis-click-btn {
   box-sizing: border-box;
@@ -4850,34 +4989,22 @@ document.addEventListener('DOMContentLoaded', () => {
 // ─────────────────────────────────────────
 // DATA
 // ─────────────────────────────────────────
+// ── Naprawa: predefiniowane usługi (wielokrotny wybór, suma cen) ──
+const NAPRAWA_SERVICES = [
+  { id: 'drobne', label: 'Drobne naprawy', price: 50 },
+  { id: 'przygotowanie', label: 'Przygotowanie', price: 100 },
+  { id: 'przeglad_podst', label: 'Przegląd podstawowy', price: 150 },
+  { id: 'przeglad_pelny', label: 'Przegląd pełny', price: 250 },
+  { id: 'diag_ebike', label: 'Diagnostyka e-Bike', price: 100 },
+  { id: 'zlozenie_100', label: 'Złożenie roweru 100', price: 100 },
+  { id: 'zlozenie_150', label: 'Złożenie roweru 150', price: 150 },
+  { id: 'zlozenie_200', label: 'Złożenie roweru 200', price: 200 },
+  { id: 'zlozenie_250', label: 'Złożenie roweru 250', price: 250 },
+];
+
 const DEFAULTS = [
   // Naprawa domyślnie zaznaczona przy nowym zleceniu; kwota pozostaje pusta
-  { name: 'Naprawa',    price: 0, checked: true,
-    options: [
-      {label:'Przygotowanie',price:100},
-      {label:'Przegląd podstawowy',price:150},
-      {label:'Przegląd pełny',price:250},
-      {label:'Diagnostyka e-Bike',price:0},
-      {label:'Regulacja przerzutek',price:0},
-      {label:'Regulacja hamulców',price:0},
-      {label:'Wymiana dętki przód',price:0},
-      {label:'Wymiana opony przód',price:0},
-      {label:'Wymiana dętki tył',price:0},
-      {label:'Wymiana opony tył',price:0},
-      {label:'Wymiana linek przerzutki',price:0},
-      {label:'Wymiana linek hamulca',price:0},
-      {label:'Serwis koła przód',price:0},
-      {label:'Serwis koła tył',price:0},
-      {label:'Serwis hydrauliki przód',price:0},
-      {label:'Serwis hydrauliki tył',price:0},
-      {label:'Wymiana łoży. kierownicy',price:0},
-      {label:'Wymiana supportu',price:0},
-      {label:'Wymiana przerzutki',price:0},
-      {label:'Montaż akcesoriów',price:0},
-      {label:'Serwis Tubeless',price:0},
-      {label:'Centrowanie',price:0},
-      {label:'Serwis amortyzatora',price:0},
-    ] },
+  { name: 'Naprawa', price: 0, checked: true, options: NAPRAWA_SERVICES.map(x => ({...x})) },
   { name: 'Mechanizm korbowy', price: 0, checked: false,
     presets: [{label:'Kwadrat',price:119},{label:'Octalink',price:189},{label:'Hollowtech',price:229}] },
   { name: 'Support',    price: 0,   checked: false,
@@ -5366,6 +5493,8 @@ function itemLabelWithDetails(it, withPresetFallback) {
   else if (withPresetFallback && it.selectedPreset > 0) {
     const p = (it.presets || findDefault(it.name)?.presets)?.[it.selectedPreset - 1];
     if (p && p.label) label += ' – ' + p.label;
+  } else if (withPresetFallback && it.selectedOptions?.length) {
+    label += ' – ' + it.selectedOptions.map(o => o.label).filter(Boolean).join(' + ');
   } else if (withPresetFallback && it.options) {
     const opt = (it.options || findDefault(it.name)?.options || []).find(o => Number(o.price) === Number(it.price));
     if (opt && opt.label) label += ' – ' + opt.label;
@@ -5377,7 +5506,7 @@ function itemLabelWithDetails(it, withPresetFallback) {
 // ── Migracja starych zleceń: wybory z list (presety / opcje "Naprawa")
 //    zamieniamy na tekstowy OPIS (customName), żeby nie kolidowały z nowym UI ──
 function migrateSelectionToOpis(it) {
-  if (!it) return it;
+  if (!it || it.name === 'Naprawa') return it;
   if (!it.customName || !String(it.customName).trim()) {
     let txt = '';
     if (it.customLabel && String(it.customLabel).trim()) {
@@ -6209,74 +6338,197 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx, uiCtx) {
     });
   }
 
-  function buildOpisControl() {
-    if (uiCtx === 'raport') {
-      const inp = document.createElement('input');
-      inp.type = 'text';
-      inp.className = 'csel-btn opis-inline-input';
-      inp.placeholder = 'Opis';
-      inp.maxLength = 80;
-      inp.autocomplete = 'off';
-      inp.value = it.customName || '';
-      inp.classList.toggle('has-val', !!(it.customName && it.customName.trim()));
-      inp.addEventListener('input', () => {
-        it.customName = inp.value;
-        if (!isLocal()) State.setItemCustomName(it.id, inp.value);
-        if (inp.value.trim() && !it.checked) { it.checked = true; bar.checked = true; syncBarCircle(); }
-        inp.classList.toggle('has-val', !!inp.value.trim());
-        save();
-      });
-      inp.addEventListener('blur', () => {
-        it.customName = inp.value.trim();
-        inp.value = it.customName;
-        if (!isLocal()) State.setItemCustomName(it.id, it.customName);
-        recalcCtx();
-        save();
-      });
-      inp.addEventListener('keydown', e => {
-        if (e.key === 'Enter') { e.preventDefault(); inp.blur(); }
-      });
-      return inp;
+  function applyNaprawaSelection(fromUser) {
+    if (it.name !== 'Naprawa') return;
+    if (!Array.isArray(it.selectedOptions)) it.selectedOptions = [];
+    const total = it.selectedOptions.reduce((s, o) => s + (Number(o.price) || 0), 0);
+    if (it.selectedOptions.length > 0) {
+      it.price = total;
+      it.customName = it.selectedOptions.map(o => o.label).filter(Boolean).join(' + ');
+      it.checked = true;
+    } else if (fromUser) {
+      it.price = 0;
+      it.customName = '';
+      it.checked = false;
+    }
+    if (!isLocal()) {
+      State.setItemPrice(it.id, it.price);
+      State.setItemCustomName(it.id, it.customName);
+      if (fromUser || it.selectedOptions.length > 0) State.setItemChecked(it.id, it.checked);
+    }
+    bar.checked = it.checked;
+    syncBarCircle();
+    updatePriceDisplay();
+    save();
+    recalcCtx();
+  }
+
+  function buildNaprawaServicePicker(nameElRef) {
+    const services = (it.options || findDefault('Naprawa')?.options || NAPRAWA_SERVICES).map(o => ({...o}));
+    if (!Array.isArray(it.selectedOptions)) it.selectedOptions = [];
+
+    const opisCircle = document.createElement('button');
+    opisCircle.type = 'button';
+    opisCircle.className = 'item-opis-circle';
+    opisCircle.title = 'Wybierz usługi naprawy';
+    opisCircle.setAttribute('aria-label', 'Wybierz usługi naprawy');
+    opisCircle.setAttribute('aria-expanded', 'false');
+
+    const panel = document.createElement('div');
+    panel.className = 'naprawa-svc-picker';
+
+    const checkSvgSmall = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
+
+    const isSvcSelected = id => it.selectedOptions.some(o => o.id === id);
+
+    const syncOpisCircle = () => {
+      const has = it.selectedOptions.length > 0 || !!(it.customName && String(it.customName).trim());
+      opisCircle.classList.toggle('has-opis', has);
+      opisCircle.innerHTML = has ? checkSvgSmall : '';
+    };
+
+    const renderRows = () => {
+      panel.innerHTML = '';
+      for (const svc of services) {
+        const selected = isSvcSelected(svc.id);
+        const row = document.createElement('div');
+        row.className = 'naprawa-svc-row' + (selected ? ' is-selected' : '');
+        row.dataset.id = svc.id;
+
+        const circle = document.createElement('div');
+        circle.className = 'naprawa-svc-check';
+        if (selected) circle.innerHTML = checkSvgSmall;
+
+        const label = document.createElement('div');
+        label.className = 'naprawa-svc-row__label';
+        label.textContent = svc.label;
+
+        const price = document.createElement('div');
+        price.className = 'naprawa-svc-row__price';
+        price.textContent = svc.price + ' zł';
+
+        row.appendChild(circle);
+        row.appendChild(label);
+        row.appendChild(price);
+        row.addEventListener('click', e => {
+          e.stopPropagation();
+          const idx = it.selectedOptions.findIndex(o => o.id === svc.id);
+          if (idx >= 0) it.selectedOptions.splice(idx, 1);
+          else it.selectedOptions.push({ id: svc.id, label: svc.label, price: svc.price });
+          renderRows();
+          syncOpisCircle();
+          applyNaprawaSelection(true);
+        });
+        panel.appendChild(row);
+      }
+    };
+
+    const setPickerOpen = open => {
+      panel.classList.toggle('open', open);
+      opisCircle.classList.toggle('open', open);
+      opisCircle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      nameElRef.style.display = open ? 'none' : '';
+      if (open) renderRows();
+    };
+
+    syncOpisCircle();
+    if (it.selectedOptions.length) applyNaprawaSelection(false);
+
+    opisCircle.addEventListener('click', e => {
+      e.stopPropagation();
+      setPickerOpen(!panel.classList.contains('open'));
+    });
+
+    return { opisCircle, inlineSlot: null, bodySlot: panel };
+  }
+
+  function buildOpisControls(nameElRef) {
+    if (it.name === 'Naprawa' && !isCrMode()) {
+      return buildNaprawaServicePicker(nameElRef);
     }
 
-    const OPIS_BTN_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>';
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'opis-click-btn';
-    btn.title = 'Opis pozycji';
-    btn.setAttribute('aria-label', 'Opis pozycji');
-    const syncOpisBtn = () => {
+    const opisCircle = document.createElement('button');
+    opisCircle.type = 'button';
+    opisCircle.className = 'item-opis-circle';
+    opisCircle.title = 'Opis pozycji';
+    opisCircle.setAttribute('aria-label', 'Opis pozycji');
+    opisCircle.setAttribute('aria-expanded', 'false');
+
+    const opisWrap = document.createElement('div');
+    opisWrap.className = 'item-opis-wrap kalk-csel-cell';
+
+    const opisInput = document.createElement('input');
+    opisInput.type = 'text';
+    opisInput.className = 'csel-btn opis-inline-input';
+    opisInput.placeholder = 'Opis';
+    opisInput.maxLength = 120;
+    opisInput.autocomplete = 'off';
+    opisWrap.appendChild(opisInput);
+
+    const syncOpisCircle = () => {
       const has = !!(it.customName && String(it.customName).trim());
-      btn.classList.toggle('opis-click-btn--filled', has);
-      btn.innerHTML = OPIS_BTN_ICON;
+      opisCircle.classList.toggle('has-opis', has);
+      opisCircle.innerHTML = has
+        ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>'
+        : '';
     };
-    syncOpisBtn();
-    btn.addEventListener('click', async () => {
-      const val = await openOpisBanner(it.customName || '');
-      if (val === null) return;
-      it.customName = val;
+
+    const setOpisOpen = open => {
+      opisWrap.classList.toggle('open', open);
+      opisCircle.classList.toggle('open', open);
+      opisCircle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      nameElRef.style.display = open ? 'none' : '';
+      if (open) {
+        opisInput.value = it.customName || '';
+        opisInput.classList.toggle('has-val', !!(it.customName && it.customName.trim()));
+        setTimeout(() => { opisInput.focus(); opisInput.select(); }, 0);
+      }
+    };
+
+    syncOpisCircle();
+    opisInput.value = it.customName || '';
+    opisInput.classList.toggle('has-val', !!(it.customName && it.customName.trim()));
+
+    opisCircle.addEventListener('click', e => {
+      e.stopPropagation();
+      setOpisOpen(!opisWrap.classList.contains('open'));
+    });
+
+    opisInput.addEventListener('input', () => {
+      it.customName = opisInput.value;
+      if (!isLocal()) State.setItemCustomName(it.id, opisInput.value);
+      if (opisInput.value.trim() && !it.checked) { it.checked = true; bar.checked = true; syncBarCircle(); }
+      opisInput.classList.toggle('has-val', !!opisInput.value.trim());
+      syncOpisCircle();
+      save();
+    });
+    opisInput.addEventListener('blur', () => {
+      it.customName = (opisInput.value || '').trim();
+      opisInput.value = it.customName;
       if (!isLocal()) State.setItemCustomName(it.id, it.customName);
-      if (val && !it.checked) { it.checked = true; bar.checked = true; syncBarCircle(); }
-      syncOpisBtn();
+      opisInput.classList.toggle('has-val', !!it.customName);
+      syncOpisCircle();
+      setOpisOpen(false);
       save();
       recalcCtx();
     });
-    return btn;
+    opisInput.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { e.preventDefault(); setOpisOpen(false); opisCircle.focus(); }
+      if (e.key === 'Enter') { e.preventDefault(); opisInput.blur(); }
+    });
+
+    return { opisCircle, inlineSlot: opisWrap, bodySlot: null };
   }
+
+  const { opisCircle, inlineSlot, bodySlot } = buildOpisControls(nameEl);
 
   // ── Row 1: name | qty | price (all item types) ──
   // priceEl is appended per-branch after qty ctrl
 
-  // ── Wszystkie pozycje: nazwa | [opis] | qty | [opis+cena] ──
+  // ── Wszystkie pozycje: nazwa | [opis] | qty | cena ──
   {
-    nameEl.style.flex = uiCtx === 'main' ? '1' : '0 0 auto';
-    if (uiCtx === 'raport') {
-      const opisWrap = document.createElement('div');
-      opisWrap.className = 'kalk-csel-cell';
-      opisWrap.style.cssText = 'flex:1;min-width:0;';
-      opisWrap.appendChild(buildOpisControl());
-      topRow.appendChild(opisWrap);
-    }
+    nameEl.style.flex = it.qty !== undefined ? '1' : '0 0 auto';
+    if (inlineSlot) topRow.appendChild(inlineSlot);
     if (it.qty !== undefined) {
       const { ctrl } = buildQty(null, it.name === 'Końcówki' ? 5 : 1);
       topRow.appendChild(ctrl);
@@ -6289,6 +6541,7 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx, uiCtx) {
     priceGroup.appendChild(priceEl);
     topRow.appendChild(priceGroup);
     body.appendChild(topRow);
+    if (bodySlot) body.appendChild(bodySlot);
   }
 
   if (noteEl) {
@@ -6296,8 +6549,13 @@ function buildCard(it, itemsCtx, renderCtx, recalcCtx, uiCtx) {
     syncNoteVisibility();
   }
 
+  const checkCol = document.createElement('div');
+  checkCol.className = 'item-check-col';
+  checkCol.appendChild(barCircle);
+  checkCol.appendChild(opisCircle);
+
   card.appendChild(bar);
-  card.appendChild(barCircle);
+  card.appendChild(checkCol);
   card.appendChild(body);
 
   // Ujednolić widok ceny po zbudowaniu karty:
@@ -13365,7 +13623,7 @@ function setSyncDot(state) {
         btn.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="animation:spin 1s linear infinite"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Synchronizacja\u2026';
       } else {
         btn.disabled = false;
-        btn.style.color = state === 'error' ? '#ef4444' : '#7ba8f5';
+        btn.style.color = state === 'error' ? '#ef4444' : (state === 'ok' ? '#22c55e' : 'var(--text2)');
         btn.style.opacity = '';
         if (btn.dataset.origText) { btn.innerHTML = btn.dataset.origText; delete btn.dataset.origText; }
       }
@@ -13418,11 +13676,11 @@ function updateAdminSyncRow() {
       
     '</div>' +
     '<div style="display:flex;">' +
-      '<button onclick="manualSync()" data-sync-btn="1" style="flex:1;background:none;border:none;border-right:1px solid var(--border);color:#7ba8f5;font-size:12px;font-weight:600;padding:10px 8px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;">' +
+      '<button onclick="manualSync()" data-sync-btn="1" style="flex:1;background:var(--bg-panel);border:none;border-right:1px solid var(--border-panel);color:var(--text2);font-size:12px;font-weight:600;padding:10px 8px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;">' +
         '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>' +
         ' Synchronizuj' +
       '</button>' +
-      '<button onclick="logoutGoogle()" style="background:none;border:none;color:#ef4444;font-size:12px;font-weight:600;padding:10px 12px;cursor:pointer;">Wyloguj</button>' +
+      '<button onclick="logoutGoogle()" style="background:var(--bg-panel);border:none;color:var(--text3);font-size:12px;font-weight:600;padding:10px 12px;cursor:pointer;">Wyloguj</button>' +
     '</div>';
 
   const guestHTML =
