@@ -14928,6 +14928,7 @@ function otworzGithubUpdate() {
 
   var token = localStorage.getItem('gh_token') || '';
   var repo  = localStorage.getItem('gh_repo') || _guessGhRepoFromLocation() || '';
+  var cfHook = localStorage.getItem('cf_deploy_hook') || '';
 
   var overlay = document.createElement('div');
   overlay.id = 'github-update-modal';
@@ -14965,6 +14966,13 @@ function otworzGithubUpdate() {
           style="width:100%;font-size:13px;padding:10px 12px;border:1px solid #30363d;border-radius:8px;background:#161b22;color:#e6edf3;outline:none;"
           autocomplete="off" spellcheck="false">
       </div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <label style="font-size:11px;font-weight:700;color:#8b949e;text-transform:uppercase;letter-spacing:.6px;">Cloudflare Deploy Hook <span style="font-weight:500;text-transform:none;letter-spacing:0;">(opcjonalnie)</span></label>
+        <input type="url" id="cf-hook-input" placeholder="https://api.cloudflare.com/client/v4/pages/webhooks/deploy_hooks/…"
+          style="width:100%;font-size:12px;padding:10px 12px;border:1px solid #30363d;border-radius:8px;background:#161b22;color:#e6edf3;outline:none;"
+          autocomplete="off" spellcheck="false">
+        <span style="font-size:11px;color:#6e7681;line-height:1.4;">Pages → projekt → Settings → Builds → Deploy hooks → Add hook. Wymusza nowy build po wysyłce na GitHub.</span>
+      </div>
       <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:#8b949e;">
         <input type="checkbox" id="gh-save" checked style="accent-color:#238636;">
         Zapamiętaj dane w przeglądarce
@@ -14983,6 +14991,8 @@ function otworzGithubUpdate() {
 
   document.getElementById('gh-token-input').value = token;
   document.getElementById('gh-repo-input').value  = repo;
+  var cfHookEl = document.getElementById('cf-hook-input');
+  if (cfHookEl) cfHookEl.value = cfHook;
 
   // Podgląd nazwy pliku po wyborze
   document.getElementById('gh-file-input').addEventListener('change', function() {
@@ -15022,6 +15032,32 @@ function ghStatus(msg, type) {
   else                     { s.style.background='#111827'; s.style.border='1px solid #238636'; s.style.color='#8b949e'; }
 }
 
+var _WRANGLER_TOML = 'name = "naprawy"\ncompatibility_date = "2024-07-02"\nassets = { directory = "." }\n';
+
+async function _ghUpsertRepoFile(repo, path, content, headers, branch) {
+  var url = 'https://api.github.com/repos/' + repo + '/contents/' + path;
+  var getRes = await fetch(url + '?ref=' + encodeURIComponent(branch || 'main'), { headers: headers });
+  var sha = null;
+  if (getRes.status === 200) sha = (await getRes.json()).sha;
+  else if (getRes.status !== 404) {
+    var msg = '';
+    try { msg = (await getRes.json()).message || ''; } catch {}
+    throw new Error(msg || ('GitHub GET ' + path + ': HTTP ' + getRes.status));
+  }
+  var body = {
+    message: 'Update App ' + new Date().toLocaleString('pl-PL'),
+    content: btoa(unescape(encodeURIComponent(content))),
+    branch: branch || 'main'
+  };
+  if (sha) body.sha = sha;
+  var putRes = await fetch(url, { method: 'PUT', headers: headers, body: JSON.stringify(body) });
+  if (!putRes.ok) {
+    var e = null;
+    try { e = await putRes.json(); } catch {}
+    throw new Error((e && e.message) ? e.message : ('GitHub PUT ' + path + ': HTTP ' + putRes.status));
+  }
+}
+
 // ── Auto-update GitHub ──
 async function githubUpdate() {
   var token = (document.getElementById('gh-token-input') || {value:''}).value.trim();
@@ -15044,18 +15080,22 @@ async function githubUpdate() {
   if (!/\.html$/i.test(file.name || '')) { ghStatus('⚠️ Plik musi mieć rozszerzenie .html', 'err'); return; }
 
   var saveEl = document.getElementById('gh-save');
+  var cfHookEl = document.getElementById('cf-hook-input');
+  var cfHook = cfHookEl ? String(cfHookEl.value || '').trim() : '';
   if (saveEl && saveEl.checked) {
     localStorage.setItem('gh_token', token);
     localStorage.setItem('gh_repo',  repo);
+    if (cfHook) localStorage.setItem('cf_deploy_hook', cfHook);
+    else localStorage.removeItem('cf_deploy_hook');
   } else {
     localStorage.removeItem('gh_token');
     localStorage.removeItem('gh_repo');
+    localStorage.removeItem('cf_deploy_hook');
   }
 
   var btn = document.getElementById('gh-upload-btn');
   if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; }
 
-  var apiUrl = 'https://api.github.com/repos/' + repo + '/contents/index.html';
   var headers = {
     'Authorization': 'Bearer ' + token,
     'Accept': 'application/vnd.github+json',
@@ -15064,25 +15104,6 @@ async function githubUpdate() {
   };
 
   try {
-    ghStatus('🔍 Pobieranie SHA…', 'info');
-    var getRes = await fetch(apiUrl, { headers: headers });
-    var sha = null;
-    if (getRes.status === 200) {
-      sha = (await getRes.json()).sha;
-    } else if (getRes.status === 404) {
-      // ok: plik nie istnieje — będziemy tworzyć
-    } else {
-      let msg = '';
-      try { msg = (await getRes.json()).message || ''; } catch {}
-      if (getRes.status === 401) {
-        throw new Error('Token odrzucony (401). Upewnij się, że token jest poprawny i aktywny.');
-      }
-      if (getRes.status === 403) {
-        throw new Error((msg || 'Brak uprawnień (403).') + ' Token musi mieć dostęp do repo i uprawnienia do zapisu plików (Contents: Read/Write).');
-      }
-      throw new Error((msg ? ('GitHub API: ' + msg) : ('GitHub API: HTTP ' + getRes.status)));
-    }
-
     ghStatus('📄 Wczytywanie pliku…', 'info');
     var html = await new Promise(function(resolve, reject) {
       var reader = new FileReader();
@@ -15091,26 +15112,27 @@ async function githubUpdate() {
       reader.readAsText(file, 'UTF-8');
     });
 
-    ghStatus('⬆️ Wysyłanie…', 'info');
-    var body = {
-      message: 'Update App ' + new Date().toLocaleString('pl-PL'),
-      content: btoa(unescape(encodeURIComponent(html))),
-      branch:  'main'
-    };
-    if (sha) body.sha = sha;
-    var putRes = await fetch(apiUrl, { method: 'PUT', headers: headers, body: JSON.stringify(body) });
-    if (!putRes.ok) {
-      var e = null;
-      try { e = await putRes.json(); } catch {}
-      var m = (e && e.message) ? e.message : ('HTTP ' + putRes.status);
-      if (putRes.status === 401) m = 'Token odrzucony (401) — sprawdź token.';
-      if (putRes.status === 403) m = m + ' (Brak uprawnień do zapisu. Token musi mieć Contents: Read/Write dla repo.)';
-      throw new Error(m);
+    ghStatus('⬆️ Wysyłanie index.html…', 'info');
+    await _ghUpsertRepoFile(repo, 'index.html', html, headers, 'main');
+
+    ghStatus('⚙️ Wysyłanie wrangler.toml…', 'info');
+    await _ghUpsertRepoFile(repo, 'wrangler.toml', _WRANGLER_TOML, headers, 'main');
+
+    if (cfHook) {
+      ghStatus('☁️ Uruchamianie builda Cloudflare…', 'info');
+      try {
+        var hookRes = await fetch(cfHook, { method: 'POST' });
+        if (!hookRes.ok) {
+          throw new Error('Deploy hook HTTP ' + hookRes.status);
+        }
+      } catch (hookErr) {
+        throw new Error('GitHub OK, ale Cloudflare hook nie zadziałał: ' + (hookErr.message || hookErr));
+      }
     }
 
     localStorage.setItem('gh_last_update', new Date().toISOString());
 
-    ghStatus('✅ Wykonano', 'ok');
+    ghStatus('✅ Wykonano' + (cfHook ? ' — build CF uruchomiony' : ' — sprawdź Deployments w Cloudflare'), 'ok');
     setTimeout(function() {
       ghModalClose();
       updateAdminSyncRow();
