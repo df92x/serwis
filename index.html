@@ -11133,16 +11133,19 @@ function buildArchiveHTML(entry, mode) {
   return `<!DOCTYPE html><html><head><meta charset="UTF-8">
   <style>
     *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:'Segoe UI',Arial,sans-serif;background:transparent;color:#111827;width:540px;padding:0;margin:0;-webkit-font-smoothing:antialiased;}
-    .doc{background:#fff;border-radius:20px;overflow:hidden;border:1px solid #e2e8f0;box-shadow:0 4px 24px rgba(15,23,42,.08);}
-    .doc-header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:22px 24px 18px;background:linear-gradient(135deg,#111827 0%,#1f2937 100%);color:#fff;}
+    body{font-family:'Segoe UI',Arial,sans-serif;background:#e8ebf0;color:#111827;width:568px;padding:14px;margin:0;-webkit-font-smoothing:antialiased;}
+    .doc{background:#f3f4f6;border-radius:20px;overflow:hidden;border:1px solid #d5dae3;box-shadow:0 4px 24px rgba(15,23,42,.06);}
+    .doc-header{padding:22px 24px 18px;background:linear-gradient(135deg,#111827 0%,#1f2937 100%);color:#fff;}
+    .header-main{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;}
     .header-left{display:flex;align-items:center;gap:14px;flex:1;min-width:0;}
     .header-titles{min-width:0;}
     .brand-name{font-size:11px;font-weight:800;letter-spacing:2.4px;text-transform:uppercase;color:#f87171;margin-bottom:6px;}
     .doc-type{font-size:20px;font-weight:800;line-height:1.15;letter-spacing:-.3px;}
     .doc-date{text-align:right;font-size:11px;font-weight:600;color:#94a3b8;line-height:1.5;white-space:nowrap;}
     .doc-date strong{display:block;font-size:13px;color:#e2e8f0;font-weight:700;margin-top:2px;}
-    .client{padding:20px 24px 16px;border-bottom:1px solid #eef1f6;}
+    .header-meta{margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.12);font-size:10px;font-weight:500;color:#94a3b8;line-height:1.55;letter-spacing:.2px;}
+    .header-meta div + div{margin-top:2px;}
+    .client{padding:20px 24px 16px;border-bottom:1px solid #dde1e8;background:#f3f4f6;}
     .bike-name{font-size:24px;font-weight:800;color:#0f172a;line-height:1.15;letter-spacing:-.4px;margin-bottom:8px;}
     .tel{font-size:14px;font-weight:600;color:#2563eb;margin-bottom:14px;}
     .meta-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px 10px;align-items:start;}
@@ -11150,48 +11153,54 @@ function buildArchiveHTML(entry, mode) {
     .meta-k{font-size:9px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.5px;}
     .meta-v{font-size:12px;font-weight:700;color:#1e293b;line-height:1.2;}
     .meta-w{font-size:10px;font-weight:500;color:#94a3b8;line-height:1.2;}
-    .services{padding:18px 24px 8px;}
+    .services{padding:18px 24px 8px;background:#f3f4f6;}
     .services + .services{padding-top:8px;}
     .section-title{font-size:11px;font-weight:800;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;}
-    table{width:100%;border-collapse:collapse;table-layout:fixed;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;}
+    table{width:100%;border-collapse:collapse;table-layout:fixed;border:1px solid #d5dae3;border-radius:10px;overflow:hidden;}
     col.c-name{width:50%;}
     col.c-unit{width:18%;}
     col.c-qty{width:12%;}
     col.c-total{width:20%;}
-    thead tr{background:#f8fafc;}
-    .th,.thr{padding:10px 12px;font-size:9px;font-weight:800;color:#475569;text-transform:uppercase;letter-spacing:.7px;border-bottom:1px solid #e2e8f0;white-space:nowrap;}
+    thead tr{background:#e9ecf1;}
+    .th,.thr{padding:10px 12px;font-size:9px;font-weight:800;color:#475569;text-transform:uppercase;letter-spacing:.7px;border-bottom:1px solid #d5dae3;white-space:nowrap;}
     .thr{text-align:right;}
-    .td{padding:11px 12px;font-size:13px;font-weight:500;color:#1e293b;border-bottom:1px solid #eef2f7;word-break:break-word;line-height:1.35;vertical-align:top;}
-    .tdr{padding:11px 12px;font-size:12px;font-weight:500;color:#64748b;border-bottom:1px solid #eef2f7;text-align:right;white-space:nowrap;vertical-align:top;}
-    .tdb{padding:11px 12px;font-size:13px;font-weight:700;color:#0f172a;border-bottom:1px solid #eef2f7;text-align:right;white-space:nowrap;vertical-align:top;}
-    tr.alt .td,tr.alt .tdr,tr.alt .tdb{background:#fafbfd;}
+    .td{padding:11px 12px;font-size:13px;font-weight:500;color:#1e293b;border-bottom:1px solid #e2e6ed;word-break:break-word;line-height:1.35;vertical-align:top;background:#f3f4f6;}
+    .tdr{padding:11px 12px;font-size:12px;font-weight:500;color:#64748b;border-bottom:1px solid #e2e6ed;text-align:right;white-space:nowrap;vertical-align:top;background:#f3f4f6;}
+    .tdb{padding:11px 12px;font-size:13px;font-weight:700;color:#0f172a;border-bottom:1px solid #e2e6ed;text-align:right;white-space:nowrap;vertical-align:top;background:#f3f4f6;}
+    tr.alt .td,tr.alt .tdr,tr.alt .tdb{background:#eceef2;}
     tr:last-child .td,tr:last-child .tdr,tr:last-child .tdb{border-bottom:none;}
-    .summary{padding:16px 24px 22px;background:#f8fafc;border-top:1px solid #e2e8f0;}
-    .total-box{background:#fff;border:2px solid #111827;border-radius:12px;padding:16px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px;}
+    .summary{padding:16px 24px 22px;background:#ebeef2;border-top:1px solid #d5dae3;}
+    .total-box{background:#f8f9fb;border:2px solid #111827;border-radius:12px;padding:16px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px;}
     .total-lbl{font-size:11px;font-weight:800;color:#475569;text-transform:uppercase;letter-spacing:.7px;}
     .total-amt{font-size:30px;font-weight:800;color:#111827;letter-spacing:-1px;white-space:nowrap;}
-    .kwota-box{margin-top:10px;background:#f5f3ff;border:1px solid #ddd6fe;border-radius:10px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px;}
+    .kwota-box{margin-top:10px;background:#ede9fe;border:1px solid #ddd6fe;border-radius:10px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px;}
     .kwota-lbl{font-size:10px;font-weight:800;color:#6d28d9;text-transform:uppercase;letter-spacing:.6px;}
     .kwota-amt{font-size:20px;font-weight:800;color:#5b21b6;white-space:nowrap;}
-    .notatka-box{margin-top:12px;background:#fff;border:1px solid #e2e8f0;border-left:4px solid #2563eb;border-radius:10px;padding:12px 14px;}
+    .notatka-box{margin-top:12px;background:#f8f9fb;border:1px solid #d5dae3;border-left:4px solid #2563eb;border-radius:10px;padding:12px 14px;}
     .notatka-lbl{font-size:9px;font-weight:800;color:#64748b;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;}
     .notatka-txt{font-size:13px;color:#334155;line-height:1.55;white-space:pre-wrap;}
-    .kod-box{margin-top:10px;background:#fffbeb;border:2px solid #f59e0b;border-radius:12px;padding:14px 16px;text-align:center;}
+    .kod-box{margin-top:10px;background:#fef9ec;border:2px solid #f59e0b;border-radius:12px;padding:14px 16px;text-align:center;}
     .kod-lbl{font-size:10px;font-weight:800;color:#b45309;text-transform:uppercase;letter-spacing:.7px;margin-bottom:6px;}
     .kod-amt{font-size:32px;font-weight:800;color:#d97706;letter-spacing:8px;}
-    .doc-footer{padding:16px 24px 20px;text-align:center;font-size:10px;font-weight:500;color:#64748b;line-height:1.55;letter-spacing:.2px;border-top:1px solid #eef1f6;background:#fff;}
-    .doc-footer a,.doc-footer .footer-url{color:#2563eb;font-weight:800;font-size:14px;text-decoration:none;letter-spacing:.2px;}
-    .doc-footer .footer-hours{margin-top:8px;font-weight:600;color:#94a3b8;}
   </style></head><body>
   <div class="doc">
     <header class="doc-header">
-      <div class="header-left">
-        <div class="header-titles">
-          <div class="brand-name">Serwis ROW-POL</div>
-          <div class="doc-type">${escHTML(titleLabel)}</div>
+      <div class="header-main">
+        <div class="header-left">
+          <div class="header-titles">
+            <div class="brand-name">Serwis ROW-POL</div>
+            <div class="doc-type">${escHTML(titleLabel)}</div>
+          </div>
         </div>
+        <div class="doc-date">Data dokumentu<strong>${escHTML(docDate)}</strong></div>
       </div>
-      <div class="doc-date">Data dokumentu<strong>${escHTML(docDate)}</strong></div>
+      <div class="header-meta">
+        <div>FHU ROW-POL Adam Flinta, NIP: 944-119-25-71</div>
+        <div>Ks. Popiełuszki 25, 30-898 Kraków</div>
+        <div>tel. +48 531-933-977, +48 889-706-651</div>
+        <div>www.rowpol.pl</div>
+        <div>Pn–Pt 10:00–18:00 · Sob 9:00–14:00</div>
+      </div>
     </header>
     <section class="client">
       <div class="bike-name">${bikeName}</div>
@@ -11207,13 +11216,6 @@ function buildArchiveHTML(entry, mode) {
       ${showKod ? `<div class="kod-box"><div class="kod-lbl">Kod odbioru</div><div class="kod-amt">${escHTML(String(entry.kodOdbioru))}</div></div>` : ''}
       ${showKwota ? `<div class="kwota-box"><div class="kwota-lbl">Kwota zapłacona</div><div class="kwota-amt">${fmtPLN(kwotaSprzedazy)}</div></div>` : ''}
       ${notatka ? `<div class="notatka-box"><div class="notatka-lbl">Notatka serwisowa</div><div class="notatka-txt">${escHTML(notatka)}</div></div>` : ''}
-    </div>
-    <div class="doc-footer">
-      <div class="footer-url">www.rowpol.pl</div>
-      <div>FHU ROW-POL Adam Flinta, NIP: 944-119-25-71</div>
-      <div>Ks. Popiełuszki 25, 30-898 Kraków</div>
-      <div>tel. +48 531-933-977, +48 889-706-651</div>
-      <div class="footer-hours">Pn–Pt 10:00–18:00 · Sob 9:00–14:00</div>
     </div>
   </div>
   </body></html>`;
@@ -11234,7 +11236,7 @@ function runArchiveImage(entry, mode) {
   const label = _archivePngFilename(entry);
 
   const iframe = document.createElement('iframe');
-  iframe.style.cssText = 'position:fixed;left:-9999px;top:0;width:540px;height:1200px;border:none;';
+  iframe.style.cssText = 'position:fixed;left:-9999px;top:0;width:568px;height:1200px;border:none;';
   document.body.appendChild(iframe);
   const doc = iframe.contentDocument || iframe.contentWindow.document;
   const win = iframe.contentWindow;
@@ -11245,7 +11247,7 @@ function runArchiveImage(entry, mode) {
   doc.close();
 
   const capture = () => {
-    const el = doc.querySelector('.doc');
+    const el = doc.body;
     if (!el) { alert('Błąd generowania obrazka'); cleanup(); return; }
     iframe.style.height = Math.max(doc.body.scrollHeight, 400) + 'px';
 
@@ -11255,7 +11257,7 @@ function runArchiveImage(entry, mode) {
         scale: 2,
         useCORS: false,
         allowTaint: true,
-        backgroundColor: '#ffffff',
+        backgroundColor: '#e8ebf0',
         logging: false,
       }).then(canvas => {
         canvas.toBlob(blob => {
