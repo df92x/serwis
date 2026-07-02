@@ -1316,6 +1316,106 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
   justify-content:center;
   gap:8px;
 }
+.podglad-meta-actions{
+  grid-column:1 / -1;
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));
+  gap:8px;
+  padding:10px 10px 12px;
+  border-top:1px solid var(--border-panel);
+  background:var(--bg-panel);
+}
+.podglad-meta-actions--gotowe{
+  grid-template-columns:minmax(0, 1fr) minmax(0, 1fr) minmax(0, 2fr);
+}
+.podglad-meta-actions--przyjete{
+  grid-template-columns:minmax(0, 1fr) minmax(0, 3fr);
+}
+.podglad-meta-actions--wydane{
+  grid-template-columns:44px 44px repeat(3, minmax(0, 1fr));
+}
+.podglad-meta-actions .history-action-btn--icon{
+  width:44px !important;
+  min-width:44px !important;
+  max-width:44px !important;
+  padding:0 !important;
+  justify-content:center !important;
+  text-align:center !important;
+  flex-shrink:0 !important;
+}
+.podglad-meta-actions .history-action-btn--icon svg{
+  margin:0 !important;
+}
+.podglad-meta-actions .history-action-btn{
+  width:100%;
+  justify-content:center;
+  text-align:center;
+  font-weight:800;
+  letter-spacing:0.02em;
+  min-height:44px;
+}
+.podglad-meta-actions .history-action-btn svg{ flex-shrink:0; }
+.podglad-meta-actions .history-action-btn.ui-tile--soft-warning{
+  color:#fbbf24 !important;
+  border-color:var(--solid-warning-border) !important;
+  background:rgba(245, 158, 11, 0.08) !important;
+}
+.podglad-meta-actions .history-action-btn.ui-tile--naprawa,
+.podglad-meta-actions .history-action-btn.btn-action--repair{
+  color:#93c5fd !important;
+  border-color:var(--solid-naprawa-border) !important;
+  background:var(--solid-naprawa-bg) !important;
+}
+.podglad-meta-actions .history-action-btn.ui-tile--wydanie,
+.podglad-meta-actions .history-action-btn.btn-action--release{
+  color:#86efac !important;
+  border-color:var(--solid-wydanie-border) !important;
+  background:var(--solid-wydanie-bg) !important;
+}
+.podglad-meta-actions .history-action-btn.ui-tile--accent,
+.podglad-meta-actions .history-action-btn.btn-action--archive{
+  color:#c4b5fd !important;
+  border-color:var(--solid-accent-border) !important;
+  background:var(--solid-accent-bg) !important;
+}
+.podglad-meta-actions .history-action-btn.ui-tile--warning,
+.podglad-meta-actions .history-action-btn.btn-action--warning{
+  color:#fbbf24 !important;
+  border-color:var(--solid-warning-border) !important;
+  background:var(--solid-warning-bg) !important;
+}
+.podglad-meta-actions .history-action-btn.ui-tile--danger,
+.podglad-meta-actions .history-action-btn.btn-action--danger-ghost{
+  color:#f87171 !important;
+  border-color:var(--solid-danger-border) !important;
+  background:var(--solid-danger-bg) !important;
+}
+.podglad-meta-actions a.btn-history-sms:not(.btn-history-sms-sent),
+.podglad-meta-actions button.btn-history-sms:not(.btn-history-sms-sent){
+  background:#192840 !important;
+  border:1px solid #3d78b8 !important;
+  color:#b8daff !important;
+}
+.podglad-meta-actions a.btn-history-sms-sent,
+.podglad-meta-actions button.btn-history-sms-sent{
+  background:var(--bg3) !important;
+  color:var(--text3) !important;
+  border-color:var(--border) !important;
+}
+.ui-tile--soft-warning{
+  color:#fbbf24;
+  border-color:var(--solid-warning-border);
+  background:rgba(245, 158, 11, 0.08);
+}
+.ui-tile--soft-warning:hover{
+  background:rgba(245, 158, 11, 0.12);
+}
+
+@media (max-width:480px){
+  .podglad-meta-actions{
+    grid-template-columns:1fr;
+  }
+}
 .history-order-card .podglad-summary-bike .podglad-bike-name{
   margin:0;
   padding:0;
@@ -1459,6 +1559,18 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
   padding:10px 12px;
   border-bottom:1px solid var(--border-panel);
   background:var(--bg-elevated);
+}
+#raport-overlay .summary-info-with-kolor .history-contact-row{
+  min-height:0;
+  margin-top:0;
+}
+#raport-overlay .summary-info-with-kolor .history-contact-chip,
+#raport-overlay .summary-info-with-kolor .history-tel-btn,
+#raport-overlay .summary-info-with-kolor .history-kod-chip{
+  height:34px;
+  min-height:34px;
+  max-height:34px;
+  font-size:14px;
 }
 .podsumowanie-notatka-zlecenie .notatka-zlecenie-readonly__lbl{
   margin-bottom:5px;
@@ -1868,22 +1980,31 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
   align-items:center;
   gap:10px;
   padding:10px 12px;
-  background:var(--bg2);
-  border:1px solid var(--border);
-  border-radius:10px;
+  background:var(--bg-panel);
+  border:1px solid var(--border-panel);
+  border-radius:12px;
   cursor:pointer;
   font-family:inherit;
   text-align:left;
   box-sizing:border-box;
+  transition:background 0.15s,border-color 0.15s;
+}
+.podsumowanie-section-toggle:active{
+  transform:scale(0.99);
 }
 .podsumowanie-section-title{
-  font-size:13px;
+  font-size:12px;
   font-weight:800;
-  color:#22c55e;
   text-transform:uppercase;
-  letter-spacing:.8px;
+  letter-spacing:.55px;
   flex:1;
   min-width:0;
+}
+.podsumowanie-section--zlecone .podsumowanie-section-title{
+  color:#93c5fd;
+}
+.podsumowanie-section--wykonane .podsumowanie-section-title{
+  color:#86efac;
 }
 .podsumowanie-section-meta{
   font-size:12px;
@@ -1904,24 +2025,35 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
 .podsumowanie-section-body{
   display:none;
   margin-top:6px;
-  border:1px solid var(--border);
-  border-radius:10px;
+  border:1px solid var(--border-panel);
+  border-radius:12px;
   overflow:hidden;
-  background:var(--bg);
+  background:var(--bg-panel);
 }
 .podsumowanie-section.is-open .podsumowanie-section-body{
   display:block;
 }
 .podsumowanie-zlecone-block + .podsumowanie-zlecone-block{
-  border-top:1px solid var(--border);
+  border-top:1px solid var(--border-panel);
 }
 .podsumowanie-zlecone-bike{
   padding:8px 12px;
   font-size:12px;
   font-weight:800;
   color:var(--text2);
-  background:var(--bg2);
-  border-bottom:1px solid var(--border);
+  background:var(--bg-elevated);
+  border-bottom:1px solid var(--border-panel);
+}
+#podglad-overlay #podglad-table{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+#podglad-overlay #podglad-notatka.notatka-zlecenie-readonly{
+  margin:14px 0 0;
+}
+#podglad-overlay #podglad-action-bar{
+  margin-top:14px;
 }
 .podglad-summary-card{
   background:var(--bg-panel);
@@ -1951,6 +2083,47 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
   letter-spacing:-0.3px;
   margin-bottom:6px;
   line-height:1.15;
+}
+.history-head-name-row{
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-width:0;
+  padding-left:var(--hdr-pad, 0px);
+  padding-right:var(--hdr-pad, 0px);
+}
+.history-head-name-row .podglad-bike-name{
+  flex:1;
+  min-width:0;
+  text-align:center;
+  margin-bottom:0;
+}
+.history-head-phone{
+  position:absolute;
+  right:0;
+  top:50%;
+  transform:translateY(-50%);
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.history-head-phone .history-tel-btn{
+  width:auto;
+  padding:0 10px !important;
+  justify-content:center;
+  gap:8px;
+}
+.history-head-phone .history-tel-btn svg{ display:none; }
+.history-head-phone .history-tel-btn span{ display:inline; }
+.history-head-phone .history-sms-btn{
+  min-height:36px;
+  padding:0 10px !important;
+  border-radius: var(--radius-btn);
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  line-height:1;
 }
 .history-order-card .podglad-summary-bike .podglad-bike-tel{
   font-size:17px;
@@ -2245,10 +2418,9 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
   text-transform:uppercase;
 }
 @media (max-width:480px){
-  .podglad-meta-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
-  .podglad-meta-item:nth-child(2){border-right:none;}
-  .podglad-meta-item:nth-child(1),
-  .podglad-meta-item:nth-child(2){border-bottom:1px solid var(--border-panel);}
+  .podglad-meta-grid{grid-template-columns:repeat(4,minmax(0,1fr));}
+  .podglad-meta-item{border-bottom:none;}
+  .podglad-meta-item:nth-child(2){border-right:1px solid var(--border-panel);}
   .history-order-card .podglad-meta-item{min-height:52px;padding:10px 8px;}
   .history-order-card .podglad-summary-bike .podglad-bike-name{font-size:18px;}
   .history-order-card .podglad-meta-v{font-size:14px;}
@@ -2261,8 +2433,7 @@ body > .app{
   padding:16px 0 32px;
   box-sizing:border-box;
 }
-#summary-card-main,
-#raport-summary-card{
+#summary-card-main{
   position:sticky !important;
   top:16px !important;
   z-index:10;
@@ -2277,6 +2448,11 @@ body > .app{
   box-shadow:none !important;
   overflow:hidden;
 }
+#raport-overlay .order-header-banner{
+  position:sticky !important;
+  top:16px !important;
+  z-index:10;
+}
 .order-header-banner{
   position:sticky;
   top:16px;
@@ -2288,7 +2464,8 @@ body > .app{
   overflow:hidden;
   box-sizing:border-box;
 }
-.order-header-banner > #summary-card-main{
+.order-header-banner > #summary-card-main,
+.order-header-banner > #raport-summary-card{
   position:static !important;
   top:auto !important;
   margin:0 !important;
@@ -2296,6 +2473,13 @@ body > .app{
   border-radius:0 !important;
   background:transparent !important;
   padding:0 !important;
+}
+.order-header-banner > #raport-summary-card .summary-info-with-kolor{
+  padding:12px 14px 12px calc(var(--color-bar-w) + 12px);
+}
+.order-header-banner > #raport-summary-card .summary-actions-split{
+  padding:0 12px 12px;
+  margin-top:0;
 }
 .order-header-banner .summary-info-with-kolor{
   display:flex;
@@ -2851,8 +3035,7 @@ button.btn-history-sms:not(.btn-history-sms-sent) .btn-history-sms-ico{
 .history-item.hl-green .history-order-card,
 .history-item.hl-purple .history-order-card { border-color: var(--border-panel) !important; background: var(--bg-panel) !important; box-shadow: 0 0 0 1px var(--text3) !important; }
 
-#summary-card-main,
-#raport-summary-card {
+#summary-card-main {
   background: var(--bg-panel) !important;
   border-color: var(--border-panel) !important;
   box-shadow: none !important;
@@ -2975,26 +3158,22 @@ body > .app .flat-list .item-card.qty-zero{
 <div id="raport-overlay" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:100;overflow-y:auto;">
   <div class="app">
 
-    <!-- Sticky header -->
+    <div class="order-header-banner">
     <div id="raport-summary-card" class="summary-card">
-      <span id="raport-summary-kolor-bar" class="summary-kolor-bar"></span>
-      <div class="summary-body">
-        <div class="summary-body-left">
-          <span id="raport-title" class="text-primary" style="font-size:var(--text-md);font-weight:700;"></span>
-          <div id="raport-tel-kod-line" style="display:none;align-items:center;gap:8px;flex-wrap:wrap;margin-top:2px;">
-            <div id="raport-tel-line" class="link-tel" style="display:flex;align-items:center;gap:4px;font-size:var(--text-sm);">
-              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-              <span id="raport-tel-val"></span>
+      <div class="summary-info-with-kolor">
+        <span id="raport-summary-kolor-bar" class="summary-kolor-bar"></span>
+        <div class="summary-body">
+          <div class="summary-body-left">
+            <span id="raport-title" class="text-primary" style="font-size:var(--text-md);font-weight:700;"></span>
+            <div id="raport-tel-kod-line" class="history-contact-row" style="display:none;margin-top:6px;"></div>
+            <div id="raport-wstepna" class="label-caps" style="display:none;margin-top:6px;line-height:1.35;">
+              Zlecenie - <span id="raport-wstepna-val" style="color:var(--text2);font-weight:800;font-size:var(--text-sm);letter-spacing:0;text-transform:none;"></span>
             </div>
-            <div id="raport-kod-line" class="text-termin" style="display:none;font-size:var(--text-sm);font-weight:800;letter-spacing:2px;">🔑 <span id="raport-kod-val"></span></div>
           </div>
-          <div id="raport-wstepna" class="label-caps" style="display:none;margin-top:6px;line-height:1.35;">
-            Zlecenie - <span id="raport-wstepna-val" style="color:var(--text2);font-weight:800;font-size:var(--text-sm);letter-spacing:0;text-transform:none;"></span>
+          <div class="summary-body-right">
+            <div class="label-caps">Aktualna cena</div>
+            <div id="raport-total-display" class="summary-total"></div>
           </div>
-        </div>
-        <div class="summary-body-right">
-          <div class="label-caps">Aktualna cena</div>
-          <div id="raport-total-display" class="summary-total"></div>
         </div>
       </div>
       <div class="summary-actions-split">
@@ -3004,6 +3183,7 @@ body > .app .flat-list .item-card.qty-zero{
           ZAKOŃCZ
         </button>
       </div>
+    </div>
     </div>
 
     <!-- Items list (układ jak przy przyjęciu zlecenia: notatka na górze, potem lista) -->
@@ -3050,9 +3230,9 @@ body > .app .flat-list .item-card.qty-zero{
         <span class="stat-box-label">🔑 Kod odbioru</span>
         <span id="podglad-kod-odbioru-val" class="stat-box-value"></span>
       </div>
-      <div id="podglad-notatka" style="display:none;margin-top:14px;border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:8px;padding:12px 14px;">
-        <div id="podglad-notatka-lbl" style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;">Notatka serwisowa</div>
-        <div id="podglad-notatka-txt" style="font-size:13px;color:var(--text);line-height:1.6;white-space:pre-wrap;"></div>
+      <div id="podglad-notatka" class="notatka-zlecenie-readonly" style="display:none;">
+        <div id="podglad-notatka-lbl" class="notatka-zlecenie-readonly__lbl">Notatka serwisowa</div>
+        <div id="podglad-notatka-txt" class="notatka-zlecenie-readonly__txt"></div>
       </div>
       <div id="podglad-pdf-bar" class="podglad-png-bar">
         <button type="button" id="podglad-raport-btn" class="btn-action btn-action--archive ui-tile ui-tile--accent podglad-png-btn" title="Pełny raport (zlecenie + naprawa + kod)">
@@ -3065,7 +3245,7 @@ body > .app .flat-list .item-card.qty-zero{
         </button>
       </div>
       <div id="podglad-action-bar" style="display:none;margin-top:14px;">
-        <button id="podglad-wydaj-btn" class="btn-action btn-action--release btn-block btn-lg" style="width:100%;min-height:66px;" onclick="">WYDAJ</button>
+        <button id="podglad-wydaj-btn" class="btn-action ui-tile ui-tile--lg ui-tile--wydanie btn-action--release btn-block" style="width:100%;min-height:56px;" onclick="">WYDAJ</button>
       </div>
     </div>
   </div>
@@ -7318,23 +7498,25 @@ function renderArchiveModal(opts) {
     item.className = 'history-item';
     item.dataset.orderId = String(entry.id ?? '');
 
-    const actionsHTML =
-      '<button class="btn-action ui-tile ui-tile--sm ui-tile--danger btn-action--danger-ghost btn-history-del" onclick="deleteArchive(' + entry.id + ')" title="Przenieś do kosza"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>'
-      + '<button class="btn-action ui-tile ui-tile--sm ui-tile--neutral btn-action--ghost" onclick="unarchiveWycena(' + entry.id + ')" title="Cofnij"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg></button>'
-      + (entry.raportKoncowy ? '<button class="btn-action ui-tile ui-tile--sm ui-tile--accent btn-action--archive" onclick="event.stopPropagation();openPodsumowanieWydane(' + entry.id + ')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> RAPORT</button>' : '')
-      + '<button class="btn-action ui-tile ui-tile--sm ui-tile--warning btn-action--warning" onclick="openRabAssignForArchive(' + entry.id + ')" title="Dodaj kod rabatowy" aria-label="Dodaj kod rabatowy"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v7a2 2 0 0 1-2 2H7l-4-4V5a2 2 0 0 1 2-2h7"/><path d="M16 2l6 6"/><path d="M14 8l8-8"/></svg></button>';
+    const actionsBottomHTML =
+      '<button class="btn-action ui-tile ui-tile--sm ui-tile--danger btn-action--danger-ghost history-action-btn history-action-btn--icon" onclick="deleteArchive(' + entry.id + ')" title="Przenieś do kosza"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>'
+      + (entry.tel ? '<button type="button" class="btn-action ui-tile ui-tile--sm ui-tile--naprawa history-action-btn history-action-btn--icon" onclick="event.stopPropagation();openKlientHistoria(&quot;' + String(entry.tel).replace(/[^0-9+]/g,'') + '&quot;)" title="Historia klienta"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z\"/></svg></button>' : '')
+      + '<button class="btn-action ui-tile ui-tile--sm ui-tile--soft-warning history-action-btn" onclick="unarchiveWycena(' + entry.id + ')" title="Cofnij"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg> COFNIJ</button>'
+      + (entry.raportKoncowy ? '<button class="btn-action ui-tile ui-tile--sm ui-tile--accent btn-action--archive history-action-btn" onclick="event.stopPropagation();openPodsumowanieWydane(' + entry.id + ')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> RAPORT</button>' : '')
+      + '<button class="btn-action ui-tile ui-tile--sm ui-tile--warning btn-action--warning history-action-btn" onclick="openRabAssignForArchive(' + entry.id + ')" title="Dodaj kod rabatowy" aria-label="Dodaj kod rabatowy"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v7a2 2 0 0 1-2 2H7l-4-4V5a2 2 0 0 1 2-2h7"/><path d="M16 2l6 6"/><path d="M14 8l8-8"/></svg> RABAT</button>';
 
     item.innerHTML = _buildHistoryOrderCardHTML(entry, {
       listVariant: 'wydane',
-      showTelInHeader: true,
+      showTelInHeader: false,
       klientHistoria: true,
-      showKodOdbioru: true,
-      inlineTelKod: true,
-      actionsHTML,
+      showKodOdbioru: false,
+      inlineTelKod: false,
+      showTelRight: false,
+      actionsBottomHTML,
       priceInHeader: true,
       headerPriceHTML: _historyHeaderPriceHTML(entry, false),
     });
-    _attachHistoryItemDetails(item, entry, { showTelInDetails: false });
+    _attachHistoryItemDetails(item, entry, { showTelInDetails: false, showKodInDetails: true });
     list.appendChild(item);
   });
 
@@ -8502,6 +8684,19 @@ function _historyTelHeaderHTML(entry, opts) {
     + _iconPhoneSVG(14, 14) + '<span>' + escHTML(entry.tel) + '</span></a>';
 }
 
+function _historySmsHeaderHTML(entry, variant) {
+  if (!entry || !entry.tel) return '';
+  if (variant === 'przyjete' && typeof isEntryCr === 'function' && isEntryCr(entry)) return '';
+  if (variant !== 'przyjete' && variant !== 'wydanie') return '';
+  const telClean = String(entry.tel).replace(/[^0-9+]/g, '');
+  const body = (variant === 'przyjete') ? _smsPrzyjecieBody(entry) : _smsWydanieBody(entry);
+  return '<a class="btn-action ui-tile ui-tile--sm btn-history-sms history-sms-btn'
+    + (entry.smsSent ? ' btn-history-sms-sent' : '')
+    + '" onclick="openOrderSms(' + entry.id + ', this, event)" href="sms:' + telClean + '?body=' + encodeURIComponent(body) + '">'
+    + _smsBtnInnerHTML(!!entry.smsSent)
+    + '</a>';
+}
+
 function _historyHeaderContactRowHTML(entry, opts) {
   opts = opts || {};
   const tel = opts.showTelInHeader ? _historyTelHeaderHTML(entry, opts) : '';
@@ -8526,16 +8721,22 @@ function _buildHistoryOrderCardHTML(entry, opts) {
   const kolorBar = makeKolorBarHTML(_entryKolor(entry));
   const nameParts = [entry.marka, entry.model].filter(Boolean);
   const ebike = (entry.ebike || entry.marka === 'E-BIKE') ? '<span class="history-ebike-badge" title="e-Bike">⚡</span>' : '';
-  const nameRow = nameParts.length
-    ? '<div class="podglad-bike-name">' + escHTML(nameParts.join(' ')) + ebike + '</div>'
+  const variant = opts.listVariant || 'wydane';
+  const phoneRight = (opts.showTelRight && entry && entry.tel)
+    ? '<div class="history-head-phone">'
+      + _historyTelHeaderHTML(entry, { klientHistoria: (variant === 'wydane') })
+      + _historySmsHeaderHTML(entry, variant)
+      + '</div>'
     : '';
+  const nameRow = nameParts.length
+    ? '<div class="history-head-name-row"><div class="podglad-bike-name">' + escHTML(nameParts.join(' ')) + ebike + '</div>' + phoneRight + '</div>'
+    : (phoneRight ? '<div class="history-head-name-row">' + phoneRight + '</div>' : '');
   const telHtml = opts.telHeaderHTML != null
     ? opts.telHeaderHTML
     : (opts.showTelInHeader ? _historyTelHeaderHTML(entry, opts) : '');
   const inlineContacts = !!opts.inlineTelKod;
   const contactRow = inlineContacts ? _historyHeaderContactRowHTML(entry, opts) : '';
   const kodLine = opts.extraHeaderHTML || (inlineContacts ? '' : (opts.showKodOdbioru ? _buildHistoryKodOdbioruHTML(entry.kodOdbioru) : ''));
-  const variant = opts.listVariant || 'wydane';
   const metaGridClass = variant === 'przyjete'
     ? 'podglad-meta-grid podglad-meta-grid--3 podglad-meta-grid--list'
     : (variant === 'wydanie' ? 'podglad-meta-grid podglad-meta-grid--list' : 'podglad-meta-grid');
@@ -8548,6 +8749,11 @@ function _buildHistoryOrderCardHTML(entry, opts) {
   } else if (opts.actionsHTML) {
     actionsBlock = '<div class="history-item-actions history-item-actions--top">' + opts.actionsHTML + '</div>';
   }
+  const actionsBottom = opts.actionsBottomHTML
+    ? '<div class="podglad-meta-actions'
+      + (variant === 'przyjete' ? ' podglad-meta-actions--przyjete' : (variant === 'wydanie' ? ' podglad-meta-actions--gotowe' : (variant === 'wydane' ? ' podglad-meta-actions--wydane' : '')))
+      + '">' + opts.actionsBottomHTML + '</div>'
+    : '';
   const price = opts.priceHTML || '';
   return '<div class="history-item-row">'
     + '<div class="podglad-summary-card history-order-card">'
@@ -8557,11 +8763,28 @@ function _buildHistoryOrderCardHTML(entry, opts) {
     + nameRow + (inlineContacts ? contactRow : (telHtml + kodLine))
     + '</div>' + actionsBlock
     + '</div>'
-    + '<div class="' + metaGridClass + '">' + _buildHistoryMetaGrid(entry, variant) + '</div>'
+    + '<div class="' + metaGridClass + '">' + _buildHistoryMetaGrid(entry, variant) + actionsBottom + '</div>'
     + '</div>'
     + price
     + '</div>';
 }
+
+function _syncHistoryHeaderCenter(rootEl) {
+  try {
+    const row = rootEl && rootEl.querySelector ? rootEl.querySelector('.history-head-name-row') : null;
+    if (!row) return;
+    const right = row.querySelector('.history-head-phone');
+    if (!right) { row.style.removeProperty('--hdr-pad'); return; }
+    const w = right.getBoundingClientRect().width || 0;
+    row.style.setProperty('--hdr-pad', Math.ceil(w) + 'px');
+  } catch (e) {}
+}
+
+window.addEventListener('resize', () => {
+  try {
+    document.querySelectorAll('.history-item').forEach(_syncHistoryHeaderCenter);
+  } catch (e) {}
+});
 
 function renderHistory(filterTel) {
   const list = $('history-list');
@@ -8591,20 +8814,23 @@ function renderHistory(filterTel) {
     if (isHL) item.classList.add('hl-red');
     if (_terminIsTodayOrTomorrow(entry.termin)) item.classList.add('history-item--termin-soon');
 
-    const actionsHTML =
-      (entry.tel && !isEntryCr(entry) ? '<a class="btn-action ui-tile ui-tile--sm btn-history-sms' + (entry.smsSent ? ' btn-history-sms-sent' : ' ui-tile--naprawa') + '" onclick="openOrderSms(' + entry.id + ', this, event)" href="sms:' + entry.tel.replace(/[^0-9+]/g,'') + '?body=' + encodeURIComponent(_smsPrzyjecieBody(entry)) + '">' + _smsBtnInnerHTML(!!entry.smsSent) + '</a>' : '')
-      + '<button class="btn-action ui-tile ui-tile--sm ui-tile--neutral btn-action--ghost" onclick="loadWycena(' + entry.id + ')" title="Edytuj"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg></button>'
+    const actionsBottomHTML =
+      '<button class="btn-action ui-tile ui-tile--sm ui-tile--soft-warning history-action-btn" onclick="loadWycena(' + entry.id + ')" title="Edytuj"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> EDYTUJ</button>'
       + (isEntryCr(entry)
-        ? '<button class="btn-action ui-tile ui-tile--sm ui-tile--naprawa btn-action--repair" onclick="markCrGotowe(' + entry.id + ')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/></svg> Gotowe</button>'
-        : '<button class="btn-action ui-tile ui-tile--sm ui-tile--naprawa btn-action--repair" onclick="openRaport(' + entry.id + ')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg> NAPRAWA</button>');
+        ? '<button class="btn-action ui-tile ui-tile--sm ui-tile--naprawa btn-action--repair history-action-btn" onclick="markCrGotowe(' + entry.id + ')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/></svg> GOTOWE</button>'
+        : '<button class="btn-action ui-tile ui-tile--sm ui-tile--naprawa btn-action--repair history-action-btn" onclick="openRaport(' + entry.id + ')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg> NAPRAWA</button>');
 
     item.innerHTML = _buildHistoryOrderCardHTML(entry, {
       listVariant: 'przyjete',
       showTelInHeader: false,
-      actionsHTML,
+      showKodOdbioru: false,
+      inlineTelKod: false,
+      showTelRight: true,
+      actionsBottomHTML,
     });
 
-    _attachHistoryItemDetails(item, entry);
+    _attachHistoryItemDetails(item, entry, { showTelInDetails: false });
+    _syncHistoryHeaderCenter(item);
     return item;
   };
 
@@ -9036,8 +9262,8 @@ function markSmsSent(id, el) {
   if (idx === -1) return;
   hist[idx].smsSent = true;
   localStorage.setItem(HISTORY_KEY, JSON.stringify(hist));
+  el.classList.add('btn-history-sms', 'btn-history-sms-sent');
   el.classList.remove('ui-tile--naprawa');
-  el.classList.add('btn-history-sms-sent');
   el.innerHTML = _smsBtnInnerHTML(true);
 }
 
@@ -9087,21 +9313,22 @@ function renderWydanie(filterTel) {
     item.className = 'history-item';
     item.dataset.orderId = String(entry.id ?? '');
 
-    const actionsHTML =
-      (entry.tel ? '<a class="btn-action ui-tile ui-tile--sm btn-history-sms' + (entry.smsSent ? ' btn-history-sms-sent' : ' ui-tile--naprawa') + '" href="sms:' + entry.tel.replace(/[^0-9+]/g,'') + '?body=' + encodeURIComponent(_smsWydanieBody(entry)) + '" onclick="openOrderSms(' + entry.id + ', this, event)">' + _smsBtnInnerHTML(!!entry.smsSent) + '</a>' : '')
-      + '<button class="btn-action ui-tile ui-tile--sm ui-tile--neutral btn-action--ghost" onclick="cofnijDoAktualne(' + entry.id + ')" title="Cofnij do przyjętych"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg></button>'
-      + '<button class="btn-action ui-tile ui-tile--sm ui-tile--neutral btn-action--ghost" onclick="openRaportEdycja(' + entry.id + ')" title="Edytuj"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg></button>'
-      + '<button class="btn-action ui-tile ui-tile--sm ui-tile--wydanie btn-action--release" onclick="openPodsumowanieDoWydania(' + entry.id + ')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg> WYDAJ</button>';
+    const actionsBottomHTML =
+      '<button class="btn-action ui-tile ui-tile--sm ui-tile--soft-warning history-action-btn" onclick="cofnijDoAktualne(' + entry.id + ')" title="Cofnij do przyjętych"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg> COFNIJ</button>'
+      + '<button class="btn-action ui-tile ui-tile--sm ui-tile--soft-warning history-action-btn" onclick="openRaportEdycja(' + entry.id + ')" title="Edytuj"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> EDYTUJ</button>'
+      + '<button class="btn-action ui-tile ui-tile--sm ui-tile--wydanie btn-action--release history-action-btn" onclick="openPodsumowanieDoWydania(' + entry.id + ')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg> WYDAJ</button>';
 
     item.innerHTML = _buildHistoryOrderCardHTML(entry, {
       listVariant: 'wydanie',
       showTelInHeader: false,
       showKodOdbioru: false,
       inlineTelKod: false,
-      actionsHTML,
+      showTelRight: true,
+      actionsBottomHTML,
     });
 
-    _attachHistoryItemDetails(item, entry, { showKodInDetails: true });
+    _attachHistoryItemDetails(item, entry, { showKodInDetails: true, showTelInDetails: false });
+    _syncHistoryHeaderCenter(item);
     return item;
   };
 
@@ -9328,24 +9555,26 @@ function renderArchive(filterStr) {
     item.className = 'history-item';
     item.dataset.orderId = String(entry.id ?? '');
 
-    const actionsHTML =
-      '<button class="btn-action ui-tile ui-tile--sm ui-tile--danger btn-action--danger-ghost btn-history-del" onclick="deleteArchive(' + entry.id + ')" title="Przenieś do kosza"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>'
-      + '<button class="btn-action ui-tile ui-tile--sm ui-tile--neutral btn-action--ghost" onclick="unarchiveWycena(' + entry.id + ')" title="Cofnij"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg></button>'
-      + (entry.raportKoncowy ? '<button class="btn-action ui-tile ui-tile--sm ui-tile--accent btn-action--archive" onclick="event.stopPropagation();openPodsumowanieWydane(' + entry.id + ')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> RAPORT</button>' : '')
-      + '<button class="btn-action ui-tile ui-tile--sm ui-tile--warning btn-action--warning" onclick="openRabAssignForArchive(' + entry.id + ')" title="Dodaj kod rabatowy" aria-label="Dodaj kod rabatowy"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v7a2 2 0 0 1-2 2H7l-4-4V5a2 2 0 0 1 2-2h7"/><path d="M16 2l6 6"/><path d="M14 8l8-8"/></svg></button>';
+    const actionsBottomHTML =
+      '<button class="btn-action ui-tile ui-tile--sm ui-tile--danger btn-action--danger-ghost history-action-btn history-action-btn--icon" onclick="deleteArchive(' + entry.id + ')" title="Przenieś do kosza"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>'
+      + (entry.tel ? '<button type="button" class="btn-action ui-tile ui-tile--sm ui-tile--naprawa history-action-btn history-action-btn--icon" onclick="event.stopPropagation();openKlientHistoria(&quot;' + String(entry.tel).replace(/[^0-9+]/g,'') + '&quot;)" title="Historia klienta"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.85a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></button>' : '')
+      + '<button class="btn-action ui-tile ui-tile--sm ui-tile--soft-warning history-action-btn" onclick="unarchiveWycena(' + entry.id + ')" title="Cofnij"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg> COFNIJ</button>'
+      + (entry.raportKoncowy ? '<button class="btn-action ui-tile ui-tile--sm ui-tile--accent btn-action--archive history-action-btn" onclick="event.stopPropagation();openPodsumowanieWydane(' + entry.id + ')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> RAPORT</button>' : '')
+      + '<button class="btn-action ui-tile ui-tile--sm ui-tile--warning btn-action--warning history-action-btn" onclick="openRabAssignForArchive(' + entry.id + ')" title="Dodaj kod rabatowy" aria-label="Dodaj kod rabatowy"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v7a2 2 0 0 1-2 2H7l-4-4V5a2 2 0 0 1 2-2h7"/><path d="M16 2l6 6"/><path d="M14 8l8-8"/></svg> RABAT</button>';
 
     item.innerHTML = _buildHistoryOrderCardHTML(entry, {
       listVariant: 'wydane',
-      showTelInHeader: true,
+      showTelInHeader: false,
       klientHistoria: true,
-      showKodOdbioru: true,
-      inlineTelKod: true,
-      actionsHTML,
+      showKodOdbioru: false,
+      inlineTelKod: false,
+      showTelRight: false,
+      actionsBottomHTML,
       priceInHeader: true,
       headerPriceHTML: _historyHeaderPriceHTML(entry, false),
     });
 
-    _attachHistoryItemDetails(item, entry, { showTelInDetails: false });
+    _attachHistoryItemDetails(item, entry, { showTelInDetails: false, showKodInDetails: true });
     list.appendChild(item);
   });
 }
@@ -10817,34 +11046,18 @@ function prepareRaportHeader(entry, wstepnaTotalRaw, st) {
     sideBar.style.background = kolor ? _kolorBackgroundStyle(kolor) : 'transparent';
   }
 
-  // Tel + Kod odbioru (inline)
+  // Tel + Kod odbioru (chipy jak w kartach zleceń)
   const telKodLine = $('raport-tel-kod-line');
-  const telLine = $('raport-tel-line');
-  const kodLine = $('raport-kod-line');
   const isWydaneEdycja = raportReturnTab === 'wydanie';
-  if (isWydaneEdycja) {
-    // WYDANE -> EDYTUJ: pokazuj telefon jak w liście zleceń, bez kodu odbioru.
-    if (entry.tel) {
-      $('raport-tel-val').textContent = entry.tel;
-      if (telLine) telLine.style.display = 'flex';
-      kodLine.style.display = 'none';
-      telKodLine.style.display = 'flex';
-    } else {
-      if (telLine) telLine.style.display = 'none';
-      kodLine.style.display = 'none';
-      telKodLine.style.display = 'none';
-    }
-  } else {
-    // Pozostałe widoki: bez telefonu, tylko kod (jeśli jest)
-    if (telLine) telLine.style.display = 'none';
-    if (entry.kodOdbioru) {
-      $('raport-kod-val').textContent = entry.kodOdbioru;
-      kodLine.style.display = 'inline';
-      telKodLine.style.display = 'flex';
-    } else {
-      kodLine.style.display = 'none';
-      telKodLine.style.display = 'none';
-    }
+  let contactHtml = '';
+  if (isWydaneEdycja && entry.tel) {
+    contactHtml += _historyTelHeaderHTML(entry, {});
+  } else if (!isWydaneEdycja && entry.kodOdbioru) {
+    contactHtml += _buildHistoryKodOdbioruHTML(entry.kodOdbioru, true);
+  }
+  if (telKodLine) {
+    telKodLine.innerHTML = contactHtml;
+    telKodLine.style.display = contactHtml ? 'flex' : 'none';
   }
 
   const wstepnaVal = parseFloat(String(wstepnaTotalRaw || '0').replace(/\s/g,'').replace(',','.')) || 0;
@@ -11375,7 +11588,9 @@ function _podsumowanieMetaDateItem(label, rawVal) {
   return `<div class="podglad-meta-item"><span class="podglad-meta-k">${escHTML(label)}</span><span class="podglad-meta-v">${escHTML(display)}</span><span class="podglad-meta-w">${escHTML(wday)}</span></div>`;
 }
 
-function _buildPodsumowanieHeaderHTML(entry) {
+function _buildPodsumowanieHeaderHTML(entry, opts) {
+  opts = opts || {};
+  const variant = opts.listVariant || 'wydane';
   const kolorBar = makeKolorBarHTML(_entryKolor(entry));
   const nameParts = [entry.marka, entry.model].filter(Boolean);
   const contactRow = _historyHeaderContactRowHTML(entry, {
@@ -11383,13 +11598,19 @@ function _buildPodsumowanieHeaderHTML(entry) {
     showKodOdbioru: !!entry.kodOdbioru,
     klientHistoria: true,
   });
+  const metaGridClass = variant === 'przyjete'
+    ? 'podglad-meta-grid podglad-meta-grid--3 podglad-meta-grid--list'
+    : (variant === 'wydanie' ? 'podglad-meta-grid podglad-meta-grid--list' : 'podglad-meta-grid');
+  const metaHtml = (variant === 'wydanie' || variant === 'przyjete')
+    ? _buildHistoryMetaGrid(entry, variant)
+    : _buildOrderSummaryMetaGrid(entry);
   return `<div class="podglad-summary-card">
     <div class="podglad-summary-bike">
       ${kolorBar}
       ${nameParts.length ? `<div class="podglad-bike-name">${escHTML(nameParts.join(' '))}</div>` : ''}
       ${contactRow}
     </div>
-    <div class="podglad-meta-grid">${_buildOrderSummaryMetaGrid(entry)}</div>
+    <div class="${metaGridClass}">${metaHtml}</div>
   </div>`;
 }
 
@@ -11458,7 +11679,7 @@ function openPodsumowanieDoWydania(id) {
   const rk = entry.raportKoncowy;
 
   $('podglad-title').textContent = 'Podsumowanie';
-  $('podglad-header').innerHTML = _buildPodsumowanieHeaderHTML(entry);
+  $('podglad-header').innerHTML = _buildPodsumowanieHeaderHTML(entry, { listVariant: 'wydanie' });
   $('podglad-table').innerHTML = _buildPodsumowanieTablesHTML(entry, {
     collapseZlecone: true,
     collapseWykonane: true,
@@ -11534,7 +11755,7 @@ function _buildZleconeTableHTML(stItems, parts) {
 function _wrapZleconeCollapsible(innerHtml, itemCount, zlecTotal, openByDefault) {
   const fmtPLN = v => Number(v || 0).toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const openCls = openByDefault ? ' is-open' : '';
-  return `<div class="podsumowanie-section${openCls}">
+  return `<div class="podsumowanie-section podsumowanie-section--zlecone${openCls}">
     <button type="button" class="podsumowanie-section-toggle" onclick="togglePodsumowanieSection(this)">
       <span class="podsumowanie-section-title">Zlecone naprawy</span>
       <span class="podsumowanie-section-meta">${itemCount} poz. · ${fmtPLN(zlecTotal)} zł</span>
@@ -11572,7 +11793,7 @@ function _buildAllZleconeCollapsibleHTML(entries) {
 function _wrapWykonaneCollapsible(innerHtml, itemCount, rapTotal, openByDefault) {
   const fmtPLN = v => Number(v || 0).toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const openCls = openByDefault ? ' is-open' : '';
-  return `<div class="podsumowanie-section${openCls}">
+  return `<div class="podsumowanie-section podsumowanie-section--wykonane${openCls}">
     <button type="button" class="podsumowanie-section-toggle" onclick="togglePodsumowanieSection(this)">
       <span class="podsumowanie-section-title">Wykonane naprawy</span>
       <span class="podsumowanie-section-meta">${itemCount} poz. · ${fmtPLN(rapTotal)} zł</span>
