@@ -5,7 +5,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="app-build" content="2026-07-03T03:34:53.467Z">
+<meta name="app-build" content="2026-07-03T03:37:34.253Z">
 <title>Serwis ROW-POL</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <meta name="theme-color" content="#0a0a0f">
@@ -405,9 +405,6 @@ select:focus,
   font-size:11px;
   line-height:1.35;
   color:var(--text3);
-}
-#main-sync-panel .main-app-ver-line--stale{
-  color:#fbbf24;
 }
 #backup-reminder{
   background: var(--solid-warning-bg) !important;
@@ -5317,14 +5314,7 @@ function _appVerLineHTML() {
       ? '<span class="main-app-ver-line">Wersja: ' + escHTML(localLbl) + '</span>'
       : '';
   }
-  var stale = false;
-  if (loadedIso && serverIso) {
-    stale = new Date(serverIso).getTime() - new Date(loadedIso).getTime() > 60000;
-  }
-  var cls = 'main-app-ver-line' + (stale ? ' main-app-ver-line--stale' : '');
-  var line = 'Wersja serwera: ' + escHTML(_formatAppVerDate(serverIso));
-  if (stale) line += ' · odśwież stronę';
-  return '<span class="' + cls + '">' + line + '</span>';
+  return '<span class="main-app-ver-line">Wersja serwera: ' + escHTML(_formatAppVerDate(serverIso)) + '</span>';
 }
 
 function _appVerLabel() {
@@ -14112,7 +14102,7 @@ function updateAdminSyncRow() {
       (ls ? '<span style="font-size:11px;color:var(--text3);">Ostatnia sync: ' +
         new Date(ls).toLocaleDateString('pl-PL',{day:'2-digit',month:'2-digit'}) + ' ' +
         new Date(ls).toLocaleTimeString('pl-PL',{hour:'2-digit',minute:'2-digit'}) + '</span>'
-           : '<span style="font-size:11px;color:#556;">Brak synchronizacji</span>') +
+           : '<span style="font-size:11px;color:var(--text3);">Brak synchronizacji</span>') +
       _appVerLineHTML() +
     '</div>' +
     '<div style="display:flex;">' +
