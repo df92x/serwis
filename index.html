@@ -5,7 +5,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="app-build" content="2026-07-08T13:36:47.686Z">
+<meta name="app-build" content="2026-07-08T13:39:07.001Z">
 <title>Serwis ROW-POL</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <meta name="theme-color" content="#0a0a0f">
@@ -4088,15 +4088,18 @@ button.order-cal-day.order-cal-day--browse:active{
 }
 .order-cal-day--outside{
   border-style:dashed;
+  filter:brightness(0.72);
+}
+.order-cal-day--past.order-cal-day--outside:not(.order-cal-day--sunday){
   filter:none;
   background:#12141a !important;
   border-color:#2b313d !important;
   color:#6b7280 !important;
 }
-.order-cal-day--outside .order-cal-day-num{
+.order-cal-day--past.order-cal-day--outside:not(.order-cal-day--sunday) .order-cal-day-num{
   color:#6b7280 !important;
 }
-.order-cal-day--outside .order-cal-count{
+.order-cal-day--past.order-cal-day--outside:not(.order-cal-day--sunday) .order-cal-count{
   background:#2b313d !important;
   color:#6b7280 !important;
 }
@@ -11666,8 +11669,6 @@ function _renderRaportCalendar() {
   if (!cont || !_raportCalMonth) return;
   const salesDays = new Set(_raportWszystkieDni().map(d => d.dataStr));
   const { y, m } = _raportCalMonth;
-  const now = new Date();
-  const todayMs = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
   const monthNames = ['Styczeń','Luty','Marzec','Kwiecień','Maj','Czerwiec','Lipiec','Sierpień','Wrzesień','Październik','Listopad','Grudzień'];
   const startDow = (new Date(y, m, 1).getDay() + 6) % 7;
   const daysInMonth = new Date(y, m + 1, 0).getDate();
@@ -11686,9 +11687,8 @@ function _renderRaportCalendar() {
   for (let d = 1; d <= daysInMonth; d++) {
     const dataStr = String(d).padStart(2, '0') + '.' + String(m + 1).padStart(2, '0') + '.' + y;
     const hasSales = salesDays.has(dataStr);
-    const isPast = _raportCzasDnia(dataStr) < todayMs;
     const selected = _raportCalSelected.has(dataStr);
-    if (!hasSales || isPast) {
+    if (!hasSales) {
       html += `<button type="button" disabled class="raport-cal-day raport-cal-day--disabled">${d}</button>`;
     } else {
       html += `<button type="button" onclick="raportCalToggle('${dataStr}')" class="raport-cal-day ${selected ? 'raport-cal-day--selected' : 'raport-cal-day--active'}">${d}</button>`;
