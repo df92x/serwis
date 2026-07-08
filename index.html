@@ -5,7 +5,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="app-build" content="2026-07-08T13:51:25.664Z">
+<meta name="app-build" content="2026-07-08T14:47:43.332Z">
 <title>Serwis ROW-POL</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <meta name="theme-color" content="#0a0a0f">
@@ -13200,11 +13200,19 @@ function _raportFromWycenaState(stateStr) {
     customLabel: it.customLabel || undefined,
     noteText: it.noteText || '',
   }));
-  const subs = (st.subs || []).map(s => ({
-    name: s.name || '',
-    price: parseFloat(s.price) || 0,
-    checked: s.checked,
-  }));
+  const subs = (st.subs || []).map((s, idx) => {
+    let name = (s.name || '').trim();
+    if (!name) {
+      if (idx === 0) name = 'Części koło';
+      else if (idx === 1) name = 'Łożyska';
+      else name = 'Nazwa części (do wprowadzenia)';
+    }
+    return {
+      name,
+      price: parseFloat(s.price) || 0,
+      checked: s.checked,
+    };
+  });
   let raportTotal = 0;
   items.forEach(it => { if (it.checked) raportTotal += it.price * (it.qty !== undefined ? (it.qty || 1) : 1); });
   subs.forEach(s => { if (s.checked && s.price > 0) raportTotal += s.price; });
