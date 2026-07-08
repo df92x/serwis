@@ -5,7 +5,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="app-build" content="2026-07-08T13:39:07.001Z">
+<meta name="app-build" content="2026-07-08T13:44:46.198Z">
 <title>Serwis ROW-POL</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <meta name="theme-color" content="#0a0a0f">
@@ -2787,14 +2787,35 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
   cursor:default;
 }
 .raport-cal-day--active{
-  background:var(--solid-accent-bg);
-  border:1px solid var(--solid-accent-border);
-  color:#c4b5fd;
+  background:rgba(34,197,94,0.10);
+  border:1px solid rgba(34,197,94,0.45);
+  color:#dcfce7;
 }
 .raport-cal-day--selected{
-  background:var(--solid-accent-bg);
-  border:1px solid #6366f1;
+  background:rgba(59,130,246,0.16);
+  border:1px solid #3b82f6;
   color:#fff;
+}
+.raport-date-manual{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px;
+}
+.raport-date-manual input{
+  width:100%;
+  min-width:0;
+  padding:10px 12px;
+  border:1px solid var(--border-panel);
+  border-radius:10px;
+  background:var(--bg-panel);
+  color:var(--text);
+  font-size:14px;
+  font-weight:700;
+  text-align:center;
+  outline:none;
+}
+.raport-date-manual input::placeholder{
+  color:var(--text3);
 }
 .raport-date-actions{
   display:flex;
@@ -11660,6 +11681,37 @@ function _raportDniZeSprzedaza() {
   return _raportWszystkieDni().slice(0, 5);
 }
 
+function _raportFormatDateObj(d) {
+  return String(d.getDate()).padStart(2, '0') + '.'
+    + String(d.getMonth() + 1).padStart(2, '0') + '.'
+    + d.getFullYear();
+}
+
+function _raportSetManualDate(dateStr) {
+  const p = String(dateStr || '').split('.');
+  const dd = $('raport-date-dd');
+  const mm = $('raport-date-mm');
+  const yy = $('raport-date-yyyy');
+  if (!dd || !mm || !yy) return;
+  dd.value = p[0] || '';
+  mm.value = p[1] || '';
+  yy.value = p[2] || '';
+}
+
+function _raportGetManualDate() {
+  const dd = (($('raport-date-dd') || {}).value || '').trim();
+  const mm = (($('raport-date-mm') || {}).value || '').trim();
+  const yy = (($('raport-date-yyyy') || {}).value || '').trim();
+  if (!dd && !mm && !yy) return '';
+  if (!/^\d{1,2}$/.test(dd) || !/^\d{1,2}$/.test(mm) || !/^\d{4}$/.test(yy)) return null;
+  const dateStr = String(dd).padStart(2, '0') + '.' + String(mm).padStart(2, '0') + '.' + yy;
+  const t = _raportCzasDnia(dateStr);
+  if (!t) return null;
+  const d = new Date(t);
+  if (_raportFormatDateObj(d) !== dateStr) return null;
+  return dateStr;
+}
+
 // ── Kalendarz do dodatkowego wyboru dni ──
 let _raportCalMonth = null;        // { y, m }
 let _raportCalSelected = new Set(); // 'DD.MM.RRRR'
@@ -11720,6 +11772,7 @@ function raportCalNext() {
 function raportCalToggle(dataStr) {
   if (_raportCalSelected.has(dataStr)) _raportCalSelected.delete(dataStr);
   else _raportCalSelected.add(dataStr);
+  _raportSetManualDate(dataStr);
   _renderRaportCalendar();
 }
 window.raportCalPrev = raportCalPrev;
@@ -11734,7 +11787,7 @@ function generujRaportDobowy() {
   } else {
     list.innerHTML = dni.map(d => `
       <label class="raport-date-day">
-        <input type="checkbox" class="raport-day-cb" value="${d.dataStr}">
+        <input type="checkbox" class="raport-day-cb" value="${d.dataStr}" onchange="_raportSetManualDate(this.value)">
         <span class="raport-date-day__main">
           <span class="raport-date-day__date">${d.dataStr}</span>
           <span class="raport-date-day__meta">${dayOfWeek(d.dataStr)} · ${d.entries.length} zleceń</span>
@@ -11742,6 +11795,9 @@ function generujRaportDobowy() {
         <span class="raport-date-day__sum">${d.suma.toFixed(2).replace('.', ',')} zł</span>
       </label>`).join('');
   }
+  const yday = new Date();
+  yday.setDate(yday.getDate() - 1);
+  _raportSetManualDate(_raportFormatDateObj(yday));
   const now = new Date();
   _raportCalMonth = { y: now.getFullYear(), m: now.getMonth() };
   _raportCalSelected = new Set();
@@ -12112,12 +12168,19 @@ function _addDayCanvasToPdf(pdf, canvas, blocks, firstPage) {
 
 function generujRaportZDaty() {
   const checked = Array.from(document.querySelectorAll('#raport-days-list .raport-day-cb:checked')).map(cb => cb.value);
-  const wybrane = new Set([...checked, ..._raportCalSelected]);
+  const manualDate = _raportGetManualDate();
+  if (manualDate === null) { alert('Wpisz poprawną datę w formacie DD MM RRRR.'); return; }
+  const wybrane = new Set([...checked, ..._raportCalSelected, ...(manualDate ? [manualDate] : [])]);
   if (!wybrane.size) { alert('Zaznacz przynajmniej jeden dzień.'); return; }
 
   const dni = _raportWszystkieDni()
     .filter(d => wybrane.has(d.dataStr))
     .sort((a, b) => a.time - b.time);
+  if (!dni.length) {
+    if (manualDate) alert('Brak wydanych napraw dla daty ' + manualDate + '.');
+    else alert('Brak wydanych napraw dla wybranych dni.');
+    return;
+  }
 
   const genBtn = document.querySelector('#raport-date-modal .raport-date-generate');
   if (genBtn) { genBtn.disabled = true; genBtn.textContent = 'Generuję PDF...'; }
@@ -15063,6 +15126,14 @@ window.cselSetValue = cselSetValue;
 <div id="raport-date-modal" class="raport-date-modal" style="display:none;">
   <div class="raport-date-dialog tool-card">
     <div class="raport-date-dialog__title">Raport napraw</div>
+    <div class="raport-date-dialog__section">
+      <div class="raport-date-dialog__label">Własna data</div>
+      <div class="raport-date-manual">
+        <input type="number" id="raport-date-dd" placeholder="DD" min="1" max="31">
+        <input type="number" id="raport-date-mm" placeholder="MM" min="1" max="12">
+        <input type="number" id="raport-date-yyyy" placeholder="RRRR" min="2020" max="2100">
+      </div>
+    </div>
     <div class="raport-date-dialog__section">
       <div class="raport-date-dialog__label">Ostatnie dni ze sprzedażą</div>
       <div id="raport-days-list" class="raport-date-days"></div>
