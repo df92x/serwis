@@ -5,7 +5,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="app-build" content="2026-07-08T14:47:43.332Z">
+<meta name="app-build" content="2026-07-08T14:56:06.269Z">
 <title>Serwis ROW-POL</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <meta name="theme-color" content="#0a0a0f">
@@ -11128,6 +11128,7 @@ function generujPotwierdzeniaDoWydania() {
 
   const cards = doWydania.map(entry => {
     const rk = entry.raportKoncowy;
+    const raportData = _getRaportKoncowyState(entry);
     const mmParts = _bikeDisplayNameParts(entry.marka, entry.model);
     const mm = mmParts.length ? mmParts.join(' / ') : '—';
     const tel = entry.tel ? escHTML(entry.tel) : '—';
@@ -11138,17 +11139,17 @@ function generujPotwierdzeniaDoWydania() {
     let rapTotal = 0;
     let rows = '';
     if (rk) {
-      (rk.items || []).filter(it => it.checked).forEach(it => {
+      raportData.items.filter(it => it.checked).forEach(it => {
         const qty = it.qty !== undefined ? (it.qty || 1) : 1;
         const price = parseFloat(it.price) || 0;
         const total = Math.round(price * qty * 100) / 100;
         rapTotal += total;
         rows += '<tr><td>' + escHTML(itemLabelWithDetails(it, true)) + '</td><td class="r">' + fmtPLN(price) + '</td><td class="r">' + qty + '</td><td class="r">' + fmtPLN(total) + '</td></tr>';
       });
-      (rk.subs || []).filter(s => s.checked && s.name).forEach(s => {
+      raportData.subs.filter(s => s.checked && s.price > 0).forEach(s => {
         const price = parseFloat(s.price) || 0;
         rapTotal += price;
-        rows += '<tr><td>' + escHTML(s.name) + '</td><td class="r">' + fmtPLN(price) + '</td><td class="r">1</td><td class="r">' + fmtPLN(price) + '</td></tr>';
+        rows += '<tr><td>' + escHTML(s.name || 'Część') + '</td><td class="r">' + fmtPLN(price) + '</td><td class="r">1</td><td class="r">' + fmtPLN(price) + '</td></tr>';
       });
     }
     const tbl = rows
@@ -11829,8 +11830,9 @@ function _prepareRaportDobowyData(dataStr, dzisiaj) {
   let suma = 0;
   const cards = dzisiaj.map((entry, idx) => {
     const marka = _bikeDisplayName(entry.marka, entry.model) || 'Bez nazwy';
-    const sourceItems = entry.raportKoncowy ? (entry.raportKoncowy.items || []).filter(it => it.checked && it.price > 0) : [];
-    const sourceSubs = entry.raportKoncowy ? (entry.raportKoncowy.subs || []).filter(s => s.checked && s.price > 0) : [];
+    const raportData = _getRaportKoncowyState(entry);
+    const sourceItems = raportData.items.filter(it => it.checked && it.price > 0);
+    const sourceSubs = raportData.subs.filter(s => s.checked && s.price > 0);
     const total = parseFloat(String(entry.total || '0').replace(/\s/g, '').replace(',', '.')) || 0;
     suma += total;
     const rows = [];
@@ -12277,6 +12279,52 @@ function _archiveItemsFromState(st) {
   };
 }
 
+function _raportSubSignature(sub) {
+  const name = String(sub?.name || '').trim().toLowerCase();
+  const price = Number(parseFloat(sub?.price) || 0).toFixed(2);
+  const checked = sub?.checked ? '1' : '0';
+  return checked + '|' + price + '|' + name;
+}
+
+function _getRaportKoncowyState(entry) {
+  const rk = entry && entry.raportKoncowy;
+  if (!rk) return { items: [], subs: [], total: 0, totalFmt: fmt(0) };
+
+  const items = Array.isArray(rk.items) ? rk.items.map(it => ({ ...it })) : [];
+  const subs = Array.isArray(rk.subs) ? rk.subs.map(s => ({ ...s })) : [];
+  const seenSubs = new Set(
+    subs
+      .filter(s => s && (s.checked || (s.name && String(s.name).trim()) || parseFloat(s.price) > 0))
+      .map(_raportSubSignature)
+  );
+
+  const st = entry && entry.state ? safeParseJSON(entry.state, null) : null;
+  (st?.subs || []).forEach(s => {
+    if (!s) return;
+    const meaningful = s.checked || (s.name && String(s.name).trim()) || parseFloat(s.price) > 0;
+    if (!meaningful) return;
+    const sig = _raportSubSignature(s);
+    if (seenSubs.has(sig)) return;
+    subs.push({
+      name: s.name || '',
+      price: parseFloat(s.price) || 0,
+      checked: !!s.checked,
+    });
+    seenSubs.add(sig);
+  });
+
+  let total = 0;
+  items.forEach(it => {
+    if (!it.checked) return;
+    total += (parseFloat(it.price) || 0) * (it.qty !== undefined ? (it.qty || 1) : 1);
+  });
+  subs.forEach(s => {
+    if (s.checked && parseFloat(s.price) > 0) total += parseFloat(s.price) || 0;
+  });
+
+  return { items, subs, total, totalFmt: fmt(total) };
+}
+
 function _archiveCalcTotal(items, subs) {
   let total = 0;
   items.forEach(it => {
@@ -12337,7 +12385,7 @@ function buildArchiveHTML(entry, mode) {
   const st = safeParseJSON(entry.state || '{}', {});
   const zlecone = _archiveItemsFromState(st);
   const wykonane = entry.raportKoncowy
-    ? _archiveItemsFromState({ items: entry.raportKoncowy.items, subs: entry.raportKoncowy.subs })
+    ? _archiveItemsFromState(_getRaportKoncowyState(entry))
     : { items: [], subs: [] };
 
   const wykonaneTotal = _archiveCalcTotal(wykonane.items, wykonane.subs);
@@ -13383,6 +13431,7 @@ window.markCrGotowe = markCrGotowe;
 
 function openPodglad(entry) {
   const rk = entry.raportKoncowy;
+  const raportData = _getRaportKoncowyState(entry);
   const actionBar = $('podglad-action-bar');
   if (actionBar) actionBar.style.display = 'none';
 
@@ -13417,7 +13466,7 @@ function openPodglad(entry) {
   </tr></thead><tbody>`;
 
   let total = 0;
-  (rk.items || []).filter(it => it.checked).forEach(it => {
+  raportData.items.filter(it => it.checked).forEach(it => {
     const qty = it.qty !== undefined ? (it.qty || 1) : 1;
     const label = itemLabelWithDetails(it, true);
     const rowTotal = (it.price || 0) * qty;
@@ -13426,7 +13475,7 @@ function openPodglad(entry) {
     const unitStr = it.qty !== undefined && qty > 0 ? fmtPLN(it.price) : '–';
     html += `<tr><td>${escHTML(label)}</td><td class="podglad-td-r">${unitStr}</td><td class="podglad-td-r">${qtyStr}</td><td class="podglad-td-sum">${fmtPLN(rowTotal)}</td></tr>`;
   });
-  (rk.subs || []).filter(s => s.checked && s.price > 0).forEach(s => {
+  raportData.subs.filter(s => s.checked && s.price > 0).forEach(s => {
     total += s.price;
     html += `<tr><td>${escHTML(s.name || 'Część')}</td><td class="podglad-td-r">–</td><td class="podglad-td-r">–</td><td class="podglad-td-sum">${fmtPLN(s.price)}</td></tr>`;
   });
@@ -13815,6 +13864,7 @@ function _wrapWykonaneCollapsible(innerHtml, itemCount, rapTotal, openByDefault)
 function _buildPodsumowanieTablesHTML(entry, opts) {
   opts = opts || {};
   const rk = entry.raportKoncowy;
+  const raportData = _getRaportKoncowyState(entry);
   const fmtPLN = v => Number(v||0).toLocaleString('pl-PL', {minimumFractionDigits:2,maximumFractionDigits:2});
   const { td, tdr, thead } = _podsumowanieTableParts();
 
@@ -13839,7 +13889,7 @@ function _buildPodsumowanieTablesHTML(entry, opts) {
     let rapTotal = 0;
     let itemCount = 0;
     let rapTable = `<table style="width:100%;border-collapse:collapse;">${thead}<tbody>`;
-    (rk.items || []).filter(it => it.checked).forEach(it => {
+    raportData.items.filter(it => it.checked).forEach(it => {
       const qty = it.qty !== undefined ? (it.qty || 1) : 1;
       const price = parseFloat(it.price) || 0;
       const total = Math.round(price * qty * 100) / 100;
@@ -13848,11 +13898,11 @@ function _buildPodsumowanieTablesHTML(entry, opts) {
       const name = itemLabelWithDetails(it, true);
       rapTable += `<tr><td ${td}>${escHTML(name)}</td><td ${tdr}>${fmtPLN(price)}</td><td ${tdr}>${qty}</td><td ${tdr}>${fmtPLN(total)}</td></tr>`;
     });
-    (rk.subs || []).filter(s => s.checked && s.name).forEach(s => {
+    raportData.subs.filter(s => s.checked && s.price > 0).forEach(s => {
       const price = parseFloat(s.price) || 0;
       rapTotal += price;
       itemCount += 1;
-      rapTable += `<tr><td ${td}>${escHTML(s.name)}</td><td ${tdr}>${fmtPLN(price)}</td><td ${tdr}>1</td><td ${tdr}>${fmtPLN(price)}</td></tr>`;
+      rapTable += `<tr><td ${td}>${escHTML(s.name || 'Część')}</td><td ${tdr}>${fmtPLN(price)}</td><td ${tdr}>1</td><td ${tdr}>${fmtPLN(price)}</td></tr>`;
     });
     const rapColor = (zlecTotal > 0 && rapTotal > zlecTotal) ? '#ef4444' : '#22c55e';
     rapTable += `<tr class="podsumowanie-tbl-total podsumowanie-tbl-total--wykonane" style="--total-color:${rapColor};"><td colspan="3" class="podsumowanie-tbl-total-label">Razem naprawa</td><td class="podsumowanie-tbl-total-val">${fmtPLN(rapTotal)} zł</td></tr>`;
@@ -14177,7 +14227,8 @@ function openRaportEdycja(id) {
   // Użyj danych z raportu końcowego (jeśli istnieje), inaczej z oryginalnego stanu
   let st;
   if (entry.raportKoncowy && entry.raportKoncowy.items) {
-    st = { items: entry.raportKoncowy.items, subs: entry.raportKoncowy.subs || [] };
+    const raportData = _getRaportKoncowyState(entry);
+    st = { items: raportData.items, subs: raportData.subs };
   } else {
     st = safeParseJSON(entry.state, null);
     if (!st) { alert('Błąd danych'); return; }
