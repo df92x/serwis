@@ -5,7 +5,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="app-build" content="2026-07-08T13:21:49.498Z">
+<meta name="app-build" content="2026-07-08T13:24:35.721Z">
 <title>Serwis ROW-POL</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <meta name="theme-color" content="#0a0a0f">
@@ -11901,21 +11901,29 @@ function _renderRaportDayCanvas(html) {
     document.body.appendChild(iframe);
     const cleanup = () => { if (iframe.parentNode) iframe.parentNode.removeChild(iframe); };
     const doc = iframe.contentDocument || iframe.contentWindow.document;
+    const win = iframe.contentWindow;
     doc.open(); doc.write(html); doc.close();
 
     const run = () => {
       const doH2c = () => {
         try {
-          iframe.style.height = (doc.body.scrollHeight || 1200) + 'px';
-          const target = doc.body;
-          window.html2canvas(target, {
+          const body = doc.body;
+          const docHeight = Math.max(body.scrollHeight || 0, doc.documentElement.scrollHeight || 0, 1200);
+          const docWidth  = Math.max(body.scrollWidth  || 0, doc.documentElement.scrollWidth  || 0, 680);
+          iframe.style.height = docHeight + 'px';
+          iframe.style.width  = docWidth + 'px';
+          if (!win.html2canvas) { cleanup(); reject(new Error('no h2c')); return; }
+          win.html2canvas(body, {
             scale: 2,
             useCORS: true,
             backgroundColor: '#fff',
             logging: false,
+            scrollX: 0,
+            scrollY: 0,
+            width: docWidth,
+            height: docHeight,
           }).then(canvas => {
-            const baseTop = target.getBoundingClientRect().top;
-            const docHeight = target.scrollHeight || 1;
+            const baseTop = body.getBoundingClientRect().top;
             const factor = canvas.height / docHeight;
             const blocks = Array.from(doc.querySelectorAll('.page-header, .card, .summary')).map(el => {
               const r = el.getBoundingClientRect();
@@ -11929,10 +11937,12 @@ function _renderRaportDayCanvas(html) {
           reject(e);
         }
       };
-      _loadH2c(() => setTimeout(doH2c, 150), () => {
-        cleanup();
-        reject(new Error('no h2c'));
-      });
+      if (win.html2canvas) { setTimeout(doH2c, 150); return; }
+      const s = doc.createElement('script');
+      s.src = _H2C_URL;
+      s.onload = () => setTimeout(doH2c, 150);
+      s.onerror = () => { cleanup(); reject(new Error('load failed')); };
+      doc.head.appendChild(s);
     };
     setTimeout(run, 150);
   });
