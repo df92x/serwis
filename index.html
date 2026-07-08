@@ -5,7 +5,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="app-build" content="2026-07-08T13:24:35.721Z">
+<meta name="app-build" content="2026-07-08T13:27:36.465Z">
 <title>Serwis ROW-POL</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <meta name="theme-color" content="#0a0a0f">
@@ -11731,220 +11731,274 @@ function generujRaportDobowy() {
   $('raport-date-modal').style.display = 'flex';
 }
 
-// Buduje HTML raportu dla jednego dnia (osobna strona w PDF)
-function _buildRaportDobowyHTML(dataStr, dzisiaj) {
-  let suma = 0;
-  let cards = '';
-
-  dzisiaj.forEach((entry, idx) => {
-    const marka = _bikeDisplayName(entry.marka, entry.model) || '';
-    const sourceItems = entry.raportKoncowy ? (entry.raportKoncowy.items || []).filter(it => it.checked && it.price > 0) : [];
-    const sourceSubs  = entry.raportKoncowy ? (entry.raportKoncowy.subs  || []).filter(s  => s.checked && s.price > 0) : [];
-    const total = parseFloat(String(entry.total || '0').replace(/\s/g,'').replace(',','.')) || 0;
-    suma += total;
-
-    let czesciRows = '';
-    sourceItems.forEach(it => {
-      const qty = (it.qty || 1);
-      const cenaRazem = (Math.round(it.price * qty * 100) / 100).toFixed(2).replace('.', ',');
-      const cenaJedn = it.price.toFixed(2).replace('.', ',');
-      const qtyTxt = qty > 1 ? `<td class="col-qty r">${qty}× ${cenaJedn}</td>` : '<td class="col-qty r">—</td>';
-      czesciRows += `<tr><td class="col-name">${escHTML(itemLabelWithDetails(it, true))}</td>${qtyTxt}<td class="col-sum r">${cenaRazem}</td></tr>`;
-    });
-    sourceSubs.forEach(s => {
-      const cena = parseFloat(String(s.price || 0)).toFixed(2).replace('.', ',');
-      czesciRows += `<tr><td class="col-name">${escHTML(s.name || 'Część')}</td><td class="col-qty r">—</td><td class="col-sum r">${cena}</td></tr>`;
-    });
-    if (!czesciRows) czesciRows = `<tr><td colspan="3" class="col-empty">Brak pozycji</td></tr>`;
-
-    const totalFmt = total.toFixed(2).replace('.', ',');
-    const notatka = entry.raportKoncowy?.notatka ? `<div class="notatka">📝 ${escHTML(entry.raportKoncowy.notatka)}</div>` : '';
-
-    cards += `
-      <div class="card">
-        <div class="card-header">
-          <span class="card-num">${idx + 1}</span>
-          <span class="card-title">${escHTML(marka)}</span>
-          <span class="card-total">${totalFmt} zł</span>
-        </div>
-        ${entry.tel ? `<div class="card-tel">📞 ${escHTML(entry.tel)}</div>` : ''}
-        <table>
-          <thead><tr><th class="col-name">Pozycja</th><th class="col-qty r">Ilość / cena</th><th class="col-sum r">Razem</th></tr></thead>
-          <tbody>${czesciRows}</tbody>
-        </table>
-        ${notatka}
-      </div>`;
-  });
-
-  const sumaFmt = suma.toFixed(2).replace('.', ',');
-
-  const html = `<!DOCTYPE html><html lang="pl"><head><meta charset="UTF-8">
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      font-size: 11px;
-      line-height: 1.45;
-      color: #111;
-      background: #fff;
-      padding: 16px 18px;
-      -webkit-font-smoothing: antialiased;
-    }
-    .page-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 8px 12px;
-      border-bottom: 2px solid #111;
-      padding-bottom: 10px;
-      margin-bottom: 12px;
-    }
-    .page-title { font-size: 16px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.2; }
-    .page-meta { font-size: 11px; color: #444; font-weight: 500; line-height: 1.3; text-align: right; }
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .card { border: 1px solid #c4c4c4; border-radius: 6px; padding: 10px 10px 8px; break-inside: avoid; }
-    .card-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 6px;
-      min-height: 1.5em;
-    }
-    .card-num {
-      font-size: 10px;
-      font-weight: 800;
-      color: #fff;
-      background: #333;
-      border-radius: 4px;
-      padding: 3px 7px;
-      flex-shrink: 0;
-      line-height: 1.2;
-    }
-    .card-title {
-      font-size: 12px;
-      font-weight: 700;
-      flex: 1;
-      min-width: 0;
-      line-height: 1.35;
-      word-break: break-word;
-    }
-    .card-total { font-size: 13px; font-weight: 800; white-space: nowrap; flex-shrink: 0; line-height: 1.2; }
-    .card-tel { font-size: 10px; color: #555; margin-bottom: 6px; font-weight: 500; }
-    table { width: 100%; border-collapse: collapse; table-layout: fixed; margin-top: 2px; }
-    th {
-      padding: 5px 4px 4px;
-      border-bottom: 1px solid #bbb;
-      font-size: 9px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: #555;
-      vertical-align: bottom;
-      line-height: 1.2;
-    }
-    td {
-      padding: 5px 4px;
-      border-bottom: 1px solid #eee;
-      font-size: 10px;
-      line-height: 1.4;
-      vertical-align: top;
-    }
-    .col-name { width: 52%; word-wrap: break-word; overflow-wrap: break-word; }
-    .col-qty { width: 26%; }
-    .col-sum { width: 22%; font-weight: 700; white-space: nowrap; }
-    .col-empty { color: #888; font-style: italic; font-size: 10px; text-align: center; padding: 8px 4px; }
-    .r { text-align: right; }
-    .notatka { font-size: 10px; color: #555; margin-top: 8px; padding-top: 6px; border-top: 1px dashed #ddd; line-height: 1.4; }
-    .summary {
-      border-top: 2px solid #111;
-      margin-top: 14px;
-      padding-top: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    .summary-lbl { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: #333; }
-    .summary-val { font-size: 20px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; }
-    .summary-count { font-size: 11px; color: #666; margin-top: 2px; font-weight: 500; }
-    @media print { body { padding: 12px 14px; } .card { break-inside: avoid; } }
-  </style>
-  </head><body>
-  <div class="page-header">
-    <div class="page-title">Raport dobowy</div>
-    <div class="page-meta">Data: ${dataStr}<br>Napraw: ${dzisiaj.length}</div>
-  </div>
-  <div class="grid">${cards}</div>
-  <div class="summary">
-    <div>
-      <div class="summary-lbl">Łącznie</div>
-      <div class="summary-count">${dzisiaj.length} zleceń</div>
-    </div>
-    <span class="summary-val">${sumaFmt} zł</span>
-  </div>
-  </body></html>`;
-
-  return html;
+function _raportFmtKwota(v) {
+  return Number(v || 0).toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' zł';
 }
 
-// Renderuje HTML jednego dnia do canvas (iframe → html2canvas)
-// Zwraca też pozycje "bloków" (karty zleceń, nagłówek, podsumowanie),
-// żeby przy dzieleniu na strony nie przecinać zlecenia w połowie
-function _renderRaportDayCanvas(html) {
-  return new Promise((resolve, reject) => {
-    const iframe = document.createElement('iframe');
-    iframe.setAttribute('tabindex', '-1');
-    iframe.setAttribute('aria-hidden', 'true');
-    iframe.style.cssText = 'position:fixed;left:-9999px;top:0;width:680px;height:1px;border:0;opacity:0;pointer-events:none;z-index:-9999;';
-    document.body.appendChild(iframe);
-    const cleanup = () => { if (iframe.parentNode) iframe.parentNode.removeChild(iframe); };
-    const doc = iframe.contentDocument || iframe.contentWindow.document;
-    const win = iframe.contentWindow;
-    doc.open(); doc.write(html); doc.close();
+function _wrapCanvasText(ctx, text, maxWidth) {
+  const src = String(text || '').replace(/\s+/g, ' ').trim();
+  if (!src) return [''];
+  const words = src.split(' ');
+  const lines = [];
+  let line = '';
+  words.forEach(word => {
+    const test = line ? (line + ' ' + word) : word;
+    if (ctx.measureText(test).width <= maxWidth || !line) line = test;
+    else { lines.push(line); line = word; }
+  });
+  if (line) lines.push(line);
+  return lines.length ? lines : [''];
+}
 
-    const run = () => {
-      const doH2c = () => {
-        try {
-          const body = doc.body;
-          const docHeight = Math.max(body.scrollHeight || 0, doc.documentElement.scrollHeight || 0, 1200);
-          const docWidth  = Math.max(body.scrollWidth  || 0, doc.documentElement.scrollWidth  || 0, 680);
-          iframe.style.height = docHeight + 'px';
-          iframe.style.width  = docWidth + 'px';
-          if (!win.html2canvas) { cleanup(); reject(new Error('no h2c')); return; }
-          win.html2canvas(body, {
-            scale: 2,
-            useCORS: true,
-            backgroundColor: '#fff',
-            logging: false,
-            scrollX: 0,
-            scrollY: 0,
-            width: docWidth,
-            height: docHeight,
-          }).then(canvas => {
-            const baseTop = body.getBoundingClientRect().top;
-            const factor = canvas.height / docHeight;
-            const blocks = Array.from(doc.querySelectorAll('.page-header, .card, .summary')).map(el => {
-              const r = el.getBoundingClientRect();
-              return { top: (r.top - baseTop) * factor, bottom: (r.bottom - baseTop) * factor };
-            });
-            cleanup();
-            resolve({ canvas, blocks });
-          }).catch(err => { cleanup(); reject(err); });
-        } catch (e) {
-          cleanup();
-          reject(e);
-        }
-      };
-      if (win.html2canvas) { setTimeout(doH2c, 150); return; }
-      const s = doc.createElement('script');
-      s.src = _H2C_URL;
-      s.onload = () => setTimeout(doH2c, 150);
-      s.onerror = () => { cleanup(); reject(new Error('load failed')); };
-      doc.head.appendChild(s);
+function _prepareRaportDobowyData(dataStr, dzisiaj) {
+  let suma = 0;
+  const cards = dzisiaj.map((entry, idx) => {
+    const marka = _bikeDisplayName(entry.marka, entry.model) || 'Bez nazwy';
+    const sourceItems = entry.raportKoncowy ? (entry.raportKoncowy.items || []).filter(it => it.checked && it.price > 0) : [];
+    const sourceSubs = entry.raportKoncowy ? (entry.raportKoncowy.subs || []).filter(s => s.checked && s.price > 0) : [];
+    const total = parseFloat(String(entry.total || '0').replace(/\s/g, '').replace(',', '.')) || 0;
+    suma += total;
+    const rows = [];
+    sourceItems.forEach(it => {
+      const qty = Math.max(1, Number(it.qty || 1));
+      const price = Number(it.price || 0);
+      rows.push({
+        name: itemLabelWithDetails(it, true),
+        qty: qty > 1 ? (qty + '× ' + Number(price || 0).toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })) : '—',
+        sum: Number(price * qty || 0).toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+      });
+    });
+    sourceSubs.forEach(s => {
+      const price = Number(s.price || 0);
+      rows.push({
+        name: s.name || 'Część',
+        qty: '—',
+        sum: price.toLocaleString('pl-PL', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+      });
+    });
+    if (!rows.length) rows.push({ name: 'Brak pozycji', qty: '', sum: '', empty: true });
+    return {
+      idx: idx + 1,
+      title: marka,
+      tel: entry.tel || '',
+      total,
+      totalFmt: _raportFmtKwota(total),
+      rows,
+      note: entry.raportKoncowy?.notatka || '',
     };
-    setTimeout(run, 150);
+  });
+  return {
+    dataStr,
+    count: dzisiaj.length,
+    suma,
+    sumaFmt: _raportFmtKwota(suma),
+    cards,
+  };
+}
+
+function _renderRaportDayCanvas(dayData) {
+  return new Promise((resolve, reject) => {
+    try {
+      const width = 1400;
+      const pad = 36;
+      const gap = 20;
+      const colGap = 18;
+      const colW = Math.floor((width - pad * 2 - colGap) / 2);
+      const rowNameW = 260;
+      const rowQtyW = 120;
+      const rowSumW = colW - 20 - rowNameW - rowQtyW;
+      const blocks = [];
+
+      const calcCardHeight = card => {
+        let h = 72;
+        if (card.tel) h += 24;
+        h += 34;
+        card.rows.forEach(row => {
+          const lines = row.empty ? 1 : _wrapCanvasText(measureCtx, row.name, rowNameW - 8).length;
+          h += Math.max(30, lines * 18 + 10);
+        });
+        if (card.note) {
+          const noteLines = _wrapCanvasText(measureCtxSmall, card.note, colW - 24).length;
+          h += 22 + noteLines * 16;
+        }
+        return h + 14;
+      };
+
+      const measureCanvas = document.createElement('canvas');
+      const measureCtx = measureCanvas.getContext('2d');
+      const measureCtxSmall = measureCanvas.getContext('2d');
+      measureCtx.font = '700 22px Inter, Arial, sans-serif';
+      measureCtxSmall.font = '500 18px Inter, Arial, sans-serif';
+
+      let totalHeight = 124;
+      let colHeights = [0, 0];
+      const layout = [];
+      dayData.cards.forEach(card => {
+        const h = calcCardHeight(card);
+        const col = colHeights[0] <= colHeights[1] ? 0 : 1;
+        const x = pad + (col * (colW + colGap));
+        const y = 124 + colHeights[col];
+        colHeights[col] += h + gap;
+        layout.push({ card, x, y, w: colW, h });
+      });
+      totalHeight += Math.max(colHeights[0], colHeights[1]);
+      totalHeight += 96;
+
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = Math.max(900, totalHeight);
+      const ctx = canvas.getContext('2d');
+      if (!ctx) throw new Error('canvas ctx');
+
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = '#111111';
+      ctx.font = '800 34px Inter, Arial, sans-serif';
+      ctx.fillText('Raport dobowy', pad, 54);
+      ctx.font = '500 20px Inter, Arial, sans-serif';
+      ctx.fillStyle = '#4b5563';
+      ctx.textAlign = 'right';
+      ctx.fillText('Data: ' + dayData.dataStr, canvas.width - pad, 48);
+      ctx.fillText('Napraw: ' + dayData.count, canvas.width - pad, 76);
+      ctx.textAlign = 'left';
+      ctx.strokeStyle = '#111111';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(pad, 96);
+      ctx.lineTo(canvas.width - pad, 96);
+      ctx.stroke();
+      blocks.push({ top: 18, bottom: 104 });
+
+      layout.forEach(item => {
+        const { card, x, y, w, h } = item;
+        const right = x + w;
+        let cy = y;
+        ctx.fillStyle = '#ffffff';
+        ctx.strokeStyle = '#cfcfcf';
+        ctx.lineWidth = 2;
+        if (ctx.roundRect) {
+          ctx.beginPath();
+          ctx.roundRect(x, y, w, h, 10);
+          ctx.fill();
+          ctx.stroke();
+        } else {
+          ctx.fillRect(x, y, w, h);
+          ctx.strokeRect(x, y, w, h);
+        }
+        blocks.push({ top: y, bottom: y + h });
+
+        ctx.fillStyle = '#2f2f2f';
+        if (ctx.roundRect) {
+          ctx.beginPath();
+          ctx.roundRect(x + 12, cy + 12, 46, 32, 6);
+          ctx.fill();
+        } else {
+          ctx.fillRect(x + 12, cy + 12, 46, 32);
+        }
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '800 18px Inter, Arial, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(String(card.idx), x + 35, cy + 34);
+        ctx.textAlign = 'left';
+
+        ctx.fillStyle = '#111111';
+        ctx.font = '700 24px Inter, Arial, sans-serif';
+        const titleLines = _wrapCanvasText(ctx, card.title, w - 220);
+        titleLines.forEach((line, i) => ctx.fillText(line, x + 74, cy + 24 + i * 26));
+
+        ctx.font = '800 24px Inter, Arial, sans-serif';
+        ctx.textAlign = 'right';
+        ctx.fillText(card.totalFmt, right - 14, cy + 28);
+        ctx.textAlign = 'left';
+        cy += Math.max(56, 22 + titleLines.length * 26);
+
+        if (card.tel) {
+          ctx.fillStyle = '#6b7280';
+          ctx.font = '500 18px Inter, Arial, sans-serif';
+          ctx.fillText('Tel: ' + card.tel, x + 14, cy);
+          cy += 28;
+        }
+
+        ctx.strokeStyle = '#d6d6d6';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(x + 12, cy);
+        ctx.lineTo(right - 12, cy);
+        ctx.stroke();
+        cy += 24;
+
+        ctx.fillStyle = '#6b7280';
+        ctx.font = '700 14px Inter, Arial, sans-serif';
+        ctx.fillText('Pozycja', x + 14, cy);
+        ctx.textAlign = 'right';
+        ctx.fillText('Ilość / cena', x + 14 + rowNameW + rowQtyW - 10, cy);
+        ctx.fillText('Razem', right - 14, cy);
+        ctx.textAlign = 'left';
+        cy += 12;
+
+        card.rows.forEach(row => {
+          ctx.strokeStyle = '#eeeeee';
+          ctx.beginPath();
+          ctx.moveTo(x + 12, cy);
+          ctx.lineTo(right - 12, cy);
+          ctx.stroke();
+          const nameLines = row.empty ? ['Brak pozycji'] : _wrapCanvasText(measureCtxSmall, row.name, rowNameW - 8);
+          const rowHeight = Math.max(30, nameLines.length * 18 + 10);
+          ctx.fillStyle = row.empty ? '#9ca3af' : '#111111';
+          ctx.font = row.empty ? 'italic 500 16px Inter, Arial, sans-serif' : '500 18px Inter, Arial, sans-serif';
+          nameLines.forEach((line, i) => ctx.fillText(line, x + 14, cy + 20 + i * 18));
+          if (!row.empty) {
+            ctx.fillStyle = '#4b5563';
+            ctx.textAlign = 'right';
+            ctx.fillText(row.qty, x + 14 + rowNameW + rowQtyW - 10, cy + 22);
+            ctx.fillStyle = '#111111';
+            ctx.font = '700 18px Inter, Arial, sans-serif';
+            ctx.fillText(row.sum, right - 14, cy + 22);
+            ctx.textAlign = 'left';
+          }
+          cy += rowHeight;
+        });
+
+        if (card.note) {
+          ctx.strokeStyle = '#d1d5db';
+          ctx.beginPath();
+          ctx.moveTo(x + 12, cy + 4);
+          ctx.lineTo(right - 12, cy + 4);
+          ctx.stroke();
+          cy += 26;
+          ctx.fillStyle = '#4b5563';
+          ctx.font = '500 17px Inter, Arial, sans-serif';
+          const noteLines = _wrapCanvasText(ctx, 'Notatka: ' + card.note, w - 24);
+          noteLines.forEach((line, i) => ctx.fillText(line, x + 14, cy + i * 18));
+        }
+      });
+
+      const summaryTop = canvas.height - 78;
+      ctx.strokeStyle = '#111111';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(pad, summaryTop - 18);
+      ctx.lineTo(canvas.width - pad, summaryTop - 18);
+      ctx.stroke();
+      blocks.push({ top: summaryTop - 22, bottom: canvas.height - 16 });
+
+      ctx.fillStyle = '#2f2f2f';
+      ctx.font = '800 18px Inter, Arial, sans-serif';
+      ctx.fillText('ŁĄCZNIE', pad, summaryTop + 6);
+      ctx.fillStyle = '#6b7280';
+      ctx.font = '500 18px Inter, Arial, sans-serif';
+      ctx.fillText(dayData.count + ' zleceń', pad, summaryTop + 34);
+      ctx.fillStyle = '#111111';
+      ctx.font = '800 38px Inter, Arial, sans-serif';
+      ctx.textAlign = 'right';
+      ctx.fillText(dayData.sumaFmt, canvas.width - pad, summaryTop + 20);
+      ctx.textAlign = 'left';
+
+      resolve({ canvas, blocks });
+    } catch (err) {
+      reject(err);
+    }
   });
 }
 
@@ -12032,15 +12086,18 @@ function generujRaportZDaty() {
 
   const finish = () => {
     if (genBtn) { genBtn.disabled = false; genBtn.textContent = 'Generuj'; }
-    closeRaportDateModal();
+    const modal = $('raport-date-modal');
+    if (modal) modal.style.display = 'none';
+    if ($('admin-modal')) $('admin-modal').style.display = 'block';
+    if ($('start-overlay')) $('start-overlay').style.display = 'none';
   };
 
   const run = async () => {
     try {
       const canvases = [];
       for (const day of dni) {
-        const html = _buildRaportDobowyHTML(day.dataStr, day.entries);
-        const { canvas } = await _renderRaportDayCanvas(html);
+        const prepared = _prepareRaportDobowyData(day.dataStr, day.entries);
+        const { canvas } = await _renderRaportDayCanvas(prepared);
         canvases.push(canvas);
       }
       const merged = _mergeCanvasesVertically(canvases);
