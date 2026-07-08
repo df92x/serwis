@@ -5,7 +5,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="app-build" content="2026-07-08T13:34:56.425Z">
+<meta name="app-build" content="2026-07-08T13:36:47.686Z">
 <title>Serwis ROW-POL</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <meta name="theme-color" content="#0a0a0f">
@@ -4088,7 +4088,17 @@ button.order-cal-day.order-cal-day--browse:active{
 }
 .order-cal-day--outside{
   border-style:dashed;
-  filter:brightness(0.72);
+  filter:none;
+  background:#12141a !important;
+  border-color:#2b313d !important;
+  color:#6b7280 !important;
+}
+.order-cal-day--outside .order-cal-day-num{
+  color:#6b7280 !important;
+}
+.order-cal-day--outside .order-cal-count{
+  background:#2b313d !important;
+  color:#6b7280 !important;
 }
 .order-cal-day--load-low .order-cal-count{ background:var(--cal-load-low-badge); color:#fff; }
 .order-cal-day--load-mid .order-cal-count{ background:var(--cal-load-mid-badge); color:#111827; }
