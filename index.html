@@ -5,7 +5,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="app-build" content="2026-07-03T03:37:34.253Z">
+<meta name="app-build" content="2026-07-08T13:19:11.289Z">
 <title>Serwis ROW-POL</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <meta name="theme-color" content="#0a0a0f">
@@ -11894,15 +11894,12 @@ function _buildRaportDobowyHTML(dataStr, dzisiaj) {
 // żeby przy dzieleniu na strony nie przecinać zlecenia w połowie
 function _renderRaportDayCanvas(html) {
   return new Promise((resolve, reject) => {
-    const wrap = document.createElement('div');
-    wrap.setAttribute('aria-hidden', 'true');
-    wrap.style.cssText = 'position:fixed;left:0;top:0;width:0;height:0;overflow:hidden;opacity:0;pointer-events:none;z-index:-9999;';
     const iframe = document.createElement('iframe');
     iframe.setAttribute('tabindex', '-1');
-    iframe.style.cssText = 'position:absolute;left:0;top:0;width:680px;height:1200px;border:0;';
-    wrap.appendChild(iframe);
-    document.body.appendChild(wrap);
-    const cleanup = () => { if (wrap.parentNode) wrap.parentNode.removeChild(wrap); };
+    iframe.setAttribute('aria-hidden', 'true');
+    iframe.style.cssText = 'position:fixed;left:-9999px;top:0;width:680px;height:1px;border:0;opacity:0;pointer-events:none;z-index:-9999;';
+    document.body.appendChild(iframe);
+    const cleanup = () => { if (iframe.parentNode) iframe.parentNode.removeChild(iframe); };
     const doc = iframe.contentDocument || iframe.contentWindow.document;
     const win = iframe.contentWindow;
     doc.open(); doc.write(html); doc.close();
@@ -11910,6 +11907,7 @@ function _renderRaportDayCanvas(html) {
     const run = () => {
       const doH2c = () => {
         if (!win.html2canvas) { cleanup(); reject(new Error('no h2c')); return; }
+        iframe.style.height = Math.max(doc.body.scrollHeight || 0, doc.documentElement.scrollHeight || 0, 1200) + 'px';
         win.html2canvas(doc.body, {
           scale: 2,
           useCORS: true,
@@ -11917,11 +11915,12 @@ function _renderRaportDayCanvas(html) {
           logging: false,
           scrollX: 0,
           scrollY: 0,
-          width: doc.body.scrollWidth,
-          height: doc.body.scrollHeight,
+          width: Math.max(doc.body.scrollWidth || 0, doc.documentElement.scrollWidth || 0, 680),
+          height: Math.max(doc.body.scrollHeight || 0, doc.documentElement.scrollHeight || 0, 1200),
         }).then(canvas => {
           const baseTop = doc.body.getBoundingClientRect().top;
-          const factor = canvas.height / doc.body.scrollHeight;
+          const docHeight = Math.max(doc.body.scrollHeight || 0, doc.documentElement.scrollHeight || 0, 1);
+          const factor = canvas.height / docHeight;
           const blocks = Array.from(doc.querySelectorAll('.page-header, .card, .summary')).map(el => {
             const r = el.getBoundingClientRect();
             return { top: (r.top - baseTop) * factor, bottom: (r.bottom - baseTop) * factor };
@@ -11930,14 +11929,14 @@ function _renderRaportDayCanvas(html) {
           resolve({ canvas, blocks });
         }).catch(err => { cleanup(); reject(err); });
       };
-      if (win.html2canvas) { setTimeout(doH2c, 120); return; }
+      if (win.html2canvas) { setTimeout(doH2c, 180); return; }
       const s = doc.createElement('script');
       s.src = _H2C_URL;
-      s.onload = () => setTimeout(doH2c, 120);
+      s.onload = () => setTimeout(doH2c, 180);
       s.onerror = () => { cleanup(); reject(new Error('load failed')); };
       doc.head.appendChild(s);
     };
-    setTimeout(run, 100);
+    setTimeout(run, 120);
   });
 }
 
