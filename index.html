@@ -5,7 +5,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="app-build" content="2026-07-08T14:56:06.269Z">
+<meta name="app-build" content="2026-07-09T06:40:38.190Z">
 <title>Serwis ROW-POL</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <meta name="theme-color" content="#0a0a0f">
@@ -14522,6 +14522,41 @@ async function _fetchFromDrive() {
 }
 
 // ── Scal lokalne z Drive (wyższy status wygrywa) ──
+function _isUnarchivedState(e) {
+  return !!(e && e.unarchivedAt && !e.dataWydania && !e.archivedAt);
+}
+
+function _archivedAtMs(e) {
+  if (!e) return 0;
+  if (e.archivedAt) return Date.parse(e.archivedAt) || 0;
+  if (e.dataWydania) return _parseDateDMY(e.dataWydania) || 0;
+  return 0;
+}
+
+function _pickMergeWinner(ex, entry) {
+  // Cofnięcie (unarchivedAt) vs ponowne WYDAJ (archivedAt): wygrywa nowsza akcja.
+  // Bez tego zdalny wpis z unarchivedAt (priorytet 5.5) nadpisuje lokalne WYDANE (5)
+  // po sekwencji: WYDAJ → Cofnij → sync → WYDAJ → sync.
+  const exUn = _isUnarchivedState(ex);
+  const enUn = _isUnarchivedState(entry);
+  const exAr = !!(ex && (ex.dataWydania || ex.archivedAt));
+  const enAr = !!(entry && (entry.dataWydania || entry.archivedAt));
+  if (exUn && enAr) {
+    return _archivedAtMs(entry) >= (Date.parse(ex.unarchivedAt) || 0) ? entry : ex;
+  }
+  if (enUn && exAr) {
+    return _archivedAtMs(ex) >= (Date.parse(entry.unarchivedAt) || 0) ? ex : entry;
+  }
+
+  const se = _entryStatus(entry);
+  const sx = _entryStatus(ex);
+  if (se > sx) return entry;
+  if (sx > se) return ex;
+  const merged = Object.assign({}, ex, entry);
+  if (ex.smsSent || entry.smsSent) merged.smsSent = true;
+  return merged;
+}
+
 function _mergeData(remote) {
   const localH = getHistory();
   const localA = getArchive();
@@ -14535,13 +14570,7 @@ function _mergeData(remote) {
     const id  = String(entry.id);
     const ex  = map.get(id);
     if (!ex) { map.set(id, entry); return; }
-    if (_entryStatus(entry) > _entryStatus(ex)) { map.set(id, entry); return; }
-    // Przy równym statusie: scal pola — zachowaj smsSent jeśli którakolwiek wersja ma true
-    if (_entryStatus(entry) === _entryStatus(ex)) {
-      const merged = Object.assign({}, ex, entry);
-      if (ex.smsSent || entry.smsSent) merged.smsSent = true;
-      map.set(id, merged);
-    }
+    map.set(id, _pickMergeWinner(ex, entry));
   };
   // Lokalne mają priorytet przy równym statusie
   [...remoteH, ...remoteA, ...remoteK].forEach(add);
