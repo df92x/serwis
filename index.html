@@ -5,7 +5,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="app-build" content="2026-07-09T06:40:38.190Z">
+<meta name="app-build" content="2026-07-09T06:50:54.024Z">
 <title>Serwis ROW-POL</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <meta name="theme-color" content="#0a0a0f">
@@ -9370,7 +9370,38 @@ window.generateCurrentPNG = generateCurrentPNG;
 // ─────────────────────────────────────────
 const HISTORY_KEY = 'wycena-history';
 const KOSZ_KEY = 'wycena-kosz';
+const PURGED_KEY = 'wycena-purged';
 const KOSZ_TTL_MS = 24 * 60 * 60 * 1000; // 24h
+
+function getPurgedMap() {
+  try { return JSON.parse(localStorage.getItem(PURGED_KEY) || '{}'); } catch { return {}; }
+}
+
+function _recordPurgedIds(ids) {
+  const map = getPurgedMap();
+  const now = Date.now();
+  (Array.isArray(ids) ? ids : [ids]).forEach(id => { map[String(id)] = now; });
+  localStorage.setItem(PURGED_KEY, JSON.stringify(map));
+}
+
+function _isPurgedId(id, purgedMap) {
+  return !!(purgedMap || getPurgedMap())[String(id)];
+}
+
+function _purgeEntryEverywhere(id) {
+  const sid = String(id);
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(getHistory().filter(e => String(e.id) !== sid)));
+  localStorage.setItem(ARCHIVE_KEY, JSON.stringify(getArchive().filter(e => String(e.id) !== sid)));
+  localStorage.setItem(KOSZ_KEY, JSON.stringify(getKosz().filter(e => String(e.id) !== sid)));
+}
+
+function _mergePurgedMaps(local, remote) {
+  const out = Object.assign({}, remote || {});
+  for (const [id, ts] of Object.entries(local || {})) {
+    if (!out[id] || ts > out[id]) out[id] = ts;
+  }
+  return out;
+}
 function getHistory() {
   try { return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); } catch { return []; }
 }
@@ -10679,6 +10710,7 @@ function _buildBackupPayload() {
     historia: _slimEntriesForBackup(JSON.parse(localStorage.getItem('wycena-history') || '[]')),
     wydane:   _slimEntriesForBackup(JSON.parse(localStorage.getItem('wycena-archive') || '[]')),
     kosz:     _slimEntriesForBackup(JSON.parse(localStorage.getItem('wycena-kosz')    || '[]')),
+    purged:   getPurgedMap(),
     aktywne:  _slimAktywneForBackup(localStorage.getItem('wycena-v2')),
   };
 }
@@ -10716,6 +10748,7 @@ function _restoreBackupData(backup) {
   localStorage.setItem('wycena-history', JSON.stringify(backup.historia));
   if (backup.wydane !== undefined) localStorage.setItem('wycena-archive', JSON.stringify(backup.wydane));
   if (backup.kosz !== undefined) localStorage.setItem('wycena-kosz', JSON.stringify(backup.kosz));
+  if (backup.purged !== undefined) localStorage.setItem(PURGED_KEY, JSON.stringify(backup.purged));
   if (backup.aktywne != null) localStorage.setItem('wycena-v2', backup.aktywne);
 }
 
@@ -11387,9 +11420,10 @@ function restoreFromKosz(id) {
 
 function deletePermanently(id) {
   showConfirm('Usunąć na stałe? Tego nie można cofnąć.', () => {
-    const kosz = getKosz().filter(e => e.id !== id);
-    localStorage.setItem(KOSZ_KEY, JSON.stringify(kosz));
-    renderKosz();
+    _purgeEntryEverywhere(id);
+    _recordPurgedIds(id);
+    updateKoszBadge();
+    renderKosz($('kosz-search-tel')?.value || '');
   });
 }
 
@@ -11407,6 +11441,8 @@ function wyczyscKosz() {
   const kosz = getKosz();
   if (!kosz.length) return;
   showConfirm('Wyczyścić cały kosz? Spowoduje to trwałe usunięcie ' + kosz.length + ' zleceń — także z kopii danych.', () => {
+    _recordPurgedIds(kosz.map(e => e.id));
+    kosz.forEach(e => _purgeEntryEverywhere(e.id));
     localStorage.setItem(KOSZ_KEY, JSON.stringify([]));
     updateKoszBadge();
     renderKosz();
@@ -14564,10 +14600,12 @@ function _mergeData(remote) {
   const remoteH = Array.isArray(remote.history) ? remote.history : [];
   const remoteA = Array.isArray(remote.archive) ? remote.archive : [];
   const remoteK = Array.isArray(remote.kosz)    ? remote.kosz    : [];
+  const mergedPurged = _mergePurgedMaps(getPurgedMap(), remote.purged || {});
 
   const map = new Map();
   const add = (entry) => {
     const id  = String(entry.id);
+    if (_isPurgedId(id, mergedPurged)) return;
     const ex  = map.get(id);
     if (!ex) { map.set(id, entry); return; }
     map.set(id, _pickMergeWinner(ex, entry));
@@ -14578,6 +14616,7 @@ function _mergeData(remote) {
 
   const mergedH = [], mergedA = [], mergedK = [];
   for (const e of map.values()) {
+    if (_isPurgedId(e.id, mergedPurged)) continue;
     // Docelowa lista wg realnego stanu wpisu (nie wg numeru priorytetu)
     if (e.deletedAt) mergedK.push(e);
     else if (e.dataWydania || e.archivedAt) mergedA.push(e);
@@ -14587,6 +14626,7 @@ function _mergeData(remote) {
   localStorage.setItem(HISTORY_KEY, JSON.stringify(mergedH));
   localStorage.setItem(ARCHIVE_KEY, JSON.stringify(mergedA));
   localStorage.setItem(KOSZ_KEY,    JSON.stringify(mergedK));
+  localStorage.setItem(PURGED_KEY,  JSON.stringify(mergedPurged));
 
   // Wykryj zmiany: nowe wpisy LUB zmienione pola (np. smsSent)
   const localAll  = [...localH, ...localA, ...localK];
@@ -14632,6 +14672,7 @@ async function syncToDrive() {
       history:  getHistory(),
       archive:  getArchive(),
       kosz:     getKosz(),
+      purged:   getPurgedMap(),
       state:    localStorage.getItem('wycena-v2') || ''
     });
     // Plik bieżący + dzienny snapshot
