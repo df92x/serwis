@@ -2,6 +2,9 @@
 
 Natywna aplikacja na **iPadOS** do odtwarzania transmisji na żywo z plików i adresów **HLS (.m3u8)**.
 
+> **Nie masz Maca?** Użyj wersji PWA, która działa na iPadzie bez Xcode:
+> **[../live/README.md](../live/README.md)** — instalacja przez Safari → Dodaj do ekranu początkowego.
+
 ## Funkcje
 
 - Odtwarzanie strumieni HLS (.m3u8) przez natywny `AVPlayer`
