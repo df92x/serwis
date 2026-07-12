@@ -1,0 +1,34 @@
+{
+  "metadata" : {
+    "format" : "1.0"
+  },
+  "schemes" : [
+    {
+      "buildAction" : {
+        "targets" : [
+          {
+            "containerPath" : "container:LiveStreamPlayer.xcodeproj",
+            "identifier" : "A10000060000000000000001",
+            "name" : "LiveStreamPlayer"
+          }
+        ]
+      },
+      "runAction" : {
+        "arguments" : {
+          "launchArguments" : [
+
+          ],
+          "launchEnvironmentVariables" : [
+
+          ]
+        },
+        "buildConfiguration" : "Debug",
+        "target" : {
+          "containerPath" : "container:LiveStreamPlayer.xcodeproj",
+          "identifier" : "A10000060000000000000001",
+          "name" : "LiveStreamPlayer"
+        }
+      }
+    }
+  ]
+}
