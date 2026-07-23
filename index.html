@@ -5,7 +5,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="app-build" content="2026-07-22T08:43:43.397Z">
+<meta name="app-build" content="2026-07-23T04:52:36.732Z">
 <title>Serwis ROW-POL</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <meta name="theme-color" content="#0a0a0f">
@@ -2076,6 +2076,16 @@ header h1 { font-size: var(--text-md); font-weight: 700; color: var(--text); let
 }
 .history-order-card .history-item-details-inner{
   padding:12px 14px 14px;
+}
+.history-item-details-kolejny{
+  margin:0 0 12px;
+}
+.history-kolejny-rower-btn{
+  width:100%;
+  min-height:44px;
+  font-weight:800;
+  letter-spacing:.04em;
+  text-transform:uppercase;
 }
 .history-order-card .history-item-details table{
   width:100%;
@@ -7716,7 +7726,6 @@ let _rabHighlightUntil = 0;
 let _zlecHighlightId = '';
 let _zlecHighlightUntil = 0;
 let _zlecHighlightSticky = false; // true = po nowym zapisie, bez TTL (do zamknięcia historii / menu)
-let _kolejnyRowerOffer = null; // { id, tel, termin } — po nowym zapisie: „DODAJ KOLEJNY ROWER”
 let _historyTerminFilter = '';
 let _archiveWydaneFilter = '';
 let _archiveWydaneFilterYear = null;
@@ -8478,7 +8487,6 @@ window.otworzKopiaZGlownego = otworzKopiaZGlownego;
 function startNowe() {
   // Jeśli użytkownik uruchomił "Nowe" z poziomu Przyjęte/Historia,
   // zamknij overlay historii, żeby po zamknięciu modala nie wracać na listę.
-  try { hideDodajKolejnyRower(); } catch(e) {}
   try { closeHistory(); } catch(e) { try { $('history-overlay').style.display = 'none'; } catch(_) {} }
   // Wyczyść wszystkie dane klienta i resetuj pozycje
   $('cf-marka').value  = ''; if ($('cf-ebike')) $('cf-ebike').value = '0';
@@ -9670,7 +9678,6 @@ function saveWycena() {
       try {
         localStorage.setItem(HISTORY_KEY, JSON.stringify(hist));
       } catch {}
-      hideDodajKolejnyRower();
       highlightZlecenie(hist[origIdx].id);
       openHistory();
       // banner po zapisie wyłączony — zostaje podświetlenie na liście
@@ -9711,7 +9718,6 @@ function saveWycena() {
     } else {
       // Identyczne — blokuj
     }
-    hideDodajKolejnyRower();
     openHistory();
     // banner po zapisie wyłączony — zostaje podświetlenie na liście
     highlightZlecenie(hist[dupIdx].id);
@@ -9769,46 +9775,45 @@ function saveWycena() {
     }
   }
   highlightZlecenie(entry.id, true); // sticky do zamknięcia historii / powrotu do menu
-  showDodajKolejnyRower(entry);
   openHistory();
   setTimeout(() => scrollToHighlightedZlecenie('history-list'), 80);
 }
 
-function hideDodajKolejnyRower() {
-  _kolejnyRowerOffer = null;
-  const el = $('dodaj-kolejny-rower-wrap');
-  if (el) el.remove();
-  const banner = $('nowe-zlecenie-banner');
-  if (banner) { banner.style.display = 'none'; banner.innerHTML = ''; }
+/** Timestamp przyjęcia zlecenia — preferuj entry.id (Date.now() przy utworzeniu), fallback: entry.label. */
+function _entryAcceptedAt(entry) {
+  if (!entry) return 0;
+  const idNum = Number(entry.id);
+  // Plausible epoch ms (~2001-01-01 … ~2100-01-01)
+  if (Number.isFinite(idNum) && idNum > 978307200000 && idNum < 4102444800000) return idNum;
+  const label = String(entry.label || '').trim();
+  if (!label) return 0;
+  const m = label.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})\s*,?\s*(\d{1,2}):(\d{2})/);
+  if (m) return new Date(+m[3], +m[2] - 1, +m[1], +m[4], +m[5]).getTime() || 0;
+  return _parseDateDMY(label.split(/\s+/)[0]) || 0;
 }
 
-function showDodajKolejnyRower(entry) {
-  if (!entry) return;
-  _kolejnyRowerOffer = {
-    id: entry.id,
-    tel: entry.tel || '',
-    termin: entry.termin || '',
-  };
+function _canShowDodajKolejnyRower(entry) {
+  const acceptedAt = _entryAcceptedAt(entry);
+  return !!(acceptedAt && (Date.now() - acceptedAt) < 3600000);
 }
 
-function _buildDodajKolejnyRowerEl() {
-  const wrap = document.createElement('div');
-  wrap.id = 'dodaj-kolejny-rower-wrap';
-  wrap.style.cssText = 'margin:2px 0 12px;';
-  wrap.innerHTML =
-    '<div style="display:flex;gap:8px;align-items:stretch;">'
-    + '<button type="button" onclick="startKolejnyRower()" class="ui-tile ui-tile--md ui-tile--wydanie ui-tile--block" style="flex:1;font-weight:800;letter-spacing:.04em;text-transform:uppercase;min-height:44px;">DODAJ KOLEJNY ROWER</button>'
-    + '<button type="button" onclick="hideDodajKolejnyRower()" class="ui-tile ui-tile--md ui-tile--neutral" title="Ukryj" aria-label="Ukryj" style="flex-shrink:0;min-width:44px;padding:0 12px;font-weight:800;">✕</button>'
-    + '</div>';
-  return wrap;
+function _dodajKolejnyRowerBtnHTML(entry) {
+  if (!entry || !_canShowDodajKolejnyRower(entry)) return '';
+  // Single-quoted onclick so JSON.stringify's "…" does not break the HTML attribute
+  const idJs = JSON.stringify(String(entry.id ?? ''));
+  return '<div class="history-item-details-kolejny">'
+    + '<button type="button" class="ui-tile ui-tile--md ui-tile--wydanie ui-tile--block history-kolejny-rower-btn"'
+    + " onclick='event.stopPropagation();startKolejnyRower(" + idJs + ")'>"
+    + 'DODAJ KOLEJNY ROWER</button></div>';
 }
 
-function startKolejnyRower() {
-  const src = _kolejnyRowerOffer || {};
-  const tel = src.tel || '';
-  const termin = src.termin || _defaultTerminNextDay();
+function startKolejnyRower(orderId) {
+  const entry = (orderId != null && orderId !== '')
+    ? getHistory().find(e => String(e.id) === String(orderId))
+    : null;
+  const tel = (entry && entry.tel) || '';
+  const termin = (entry && entry.termin) || _defaultTerminNextDay();
   try { closeHistory(); } catch(e) {
-    hideDodajKolejnyRower();
     try { $('history-overlay').style.display = 'none'; } catch(_) {}
   }
 
@@ -9871,8 +9876,6 @@ function pokazBannerZlecenia(entry) {
   `;
 }
 window.pokazBannerZlecenia = pokazBannerZlecenia;
-window.hideDodajKolejnyRower = hideDodajKolejnyRower;
-window.showDodajKolejnyRower = showDodajKolejnyRower;
 window.startKolejnyRower = startKolejnyRower;
 
 // ── Otwieranie/zamykanie historii ──
@@ -10255,7 +10258,6 @@ function runGlobalSearch() {
 }
 window.runGlobalSearch = runGlobalSearch;
 function closeHistory() {
-  hideDodajKolejnyRower();
   if (_zlecHighlightSticky) clearZlecHighlight();
   $('history-overlay').style.display = 'none';
 }
@@ -10582,7 +10584,8 @@ function _buildZlecenieDetailsHTML(entry, opts) {
   } else if (notatkaNaprawy) {
     notatkaBlock += _buildHistoryNotatkaHTML(notatkaNaprawy);
   }
-  return topActions + kodBlock + notatkaBlock + tableHTML;
+  const kolejnyBtn = (opts.variant === 'przyjete') ? _dodajKolejnyRowerBtnHTML(entry) : '';
+  return kolejnyBtn + topActions + kodBlock + notatkaBlock + tableHTML;
 }
 
 function _smsBtnInnerHTML() {
@@ -10867,20 +10870,13 @@ function renderHistory(filterTel) {
   };
 
   // Grupuj zlecenia tego samego klienta (ten sam numer telefonu)
-  const offerId = _kolejnyRowerOffer ? String(_kolejnyRowerOffer.id ?? '') : '';
   _grupujPoTelefonie(sorted).forEach(g => {
     if (g.list.length < 2) {
       list.appendChild(buildCard(g.list[0]));
-      if (offerId && String(g.list[0].id ?? '') === offerId) {
-        list.appendChild(_buildDodajKolejnyRowerEl());
-      }
     } else {
       list.appendChild(_buildGrupaBox(g.list.map(buildCard), {
         variant: 'przyjete',
       }));
-      if (offerId && g.list.some(e => String(e.id ?? '') === offerId)) {
-        list.appendChild(_buildDodajKolejnyRowerEl());
-      }
     }
   });
   _syncHistoryHeadersIn(list);
@@ -11240,9 +11236,6 @@ function switchTab(tab, opts) {
   const tabArch     = $('tab-archiwum');
   const tabKosz     = $('tab-kosz');
   const tabArchiveFull = $('tab-archive-full');
-
-  // Przycisk „kolejny rower” tylko na liście Przyjęte po świeżym zapisie
-  if (tab !== 'historia') hideDodajKolejnyRower();
 
   // Reset all
   [histList, wydList, archList, koszList].forEach(el => el.style.display = 'none');
