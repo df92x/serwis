@@ -5,7 +5,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="app-build" content="2026-07-23T04:52:36.732Z">
+<meta name="app-build" content="2026-08-03T16:02:59.433Z">
 <title>Serwis ROW-POL</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <meta name="theme-color" content="#0a0a0f">
@@ -12599,39 +12599,14 @@ function _archiveItemsFromState(st) {
   };
 }
 
-function _raportSubSignature(sub) {
-  const name = String(sub?.name || '').trim().toLowerCase();
-  const price = Number(parseFloat(sub?.price) || 0).toFixed(2);
-  const checked = sub?.checked ? '1' : '0';
-  return checked + '|' + price + '|' + name;
-}
-
 function _getRaportKoncowyState(entry) {
   const rk = entry && entry.raportKoncowy;
   if (!rk) return { items: [], subs: [], total: 0, totalFmt: fmt(0) };
 
+  // Source of truth after NAPRAWA is raportKoncowy — do NOT re-merge entry.state.subs
+  // (that resurrected deleted "Inne części" after EDYTUJ + save).
   const items = Array.isArray(rk.items) ? rk.items.map(it => ({ ...it })) : [];
   const subs = Array.isArray(rk.subs) ? rk.subs.map(s => ({ ...s })) : [];
-  const seenSubs = new Set(
-    subs
-      .filter(s => s && (s.checked || (s.name && String(s.name).trim()) || parseFloat(s.price) > 0))
-      .map(_raportSubSignature)
-  );
-
-  const st = entry && entry.state ? safeParseJSON(entry.state, null) : null;
-  (st?.subs || []).forEach(s => {
-    if (!s) return;
-    const meaningful = s.checked || (s.name && String(s.name).trim()) || parseFloat(s.price) > 0;
-    if (!meaningful) return;
-    const sig = _raportSubSignature(s);
-    if (seenSubs.has(sig)) return;
-    subs.push({
-      name: s.name || '',
-      price: parseFloat(s.price) || 0,
-      checked: !!s.checked,
-    });
-    seenSubs.add(sig);
-  });
 
   let total = 0;
   items.forEach(it => {
@@ -13713,6 +13688,17 @@ function saveRaportKoncowy() {
         savedAt: new Date().toISOString(),
         dataZakonczenia: new Date().toLocaleDateString('pl-PL', {day:'2-digit', month:'2-digit', year:'numeric'}),
       };
+      // Keep entry.state.subs in sync with raport — otherwise old "Inne części"
+      // from przyjęcie resurrect after EDYTUJ + remove + save.
+      try {
+        const stSync = safeParseJSON(list[idx].state, null) || {};
+        stSync.subs = raportSubs.map(s => ({
+          name: s.name || '',
+          price: parseFloat(s.price) || 0,
+          checked: !!s.checked,
+        }));
+        list[idx].state = JSON.stringify(stSync);
+      } catch (e) {}
       if (!list[idx].totalPrzedRaportem) {
         list[idx].totalPrzedRaportem = list[idx].total;
       }
