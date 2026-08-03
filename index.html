@@ -5,7 +5,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="app-build" content="2026-08-03T16:02:59.433Z">
+<meta name="app-build" content="2026-08-03T16:11:59.114Z">
 <title>Serwis ROW-POL</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <meta name="theme-color" content="#0a0a0f">
@@ -6188,6 +6188,7 @@ function _buildStateObject() {
     kolor:   $('cf-kolor')  ? $('cf-kolor').value  : '',
     termin:  $('cf-termin') ? $('cf-termin').value : '',
     notatka: $('notatka-serwisowa') ? $('notatka-serwisowa').value : '',
+    photos: Array.isArray(photos) ? photos : [],
   };
 }
 
@@ -6232,6 +6233,7 @@ function _slimStateObject(state) {
     kolor: state.kolor,
     termin: state.termin,
     notatka: state.notatka,
+    photos: Array.isArray(state.photos) ? state.photos : [],
   };
 }
 
@@ -6262,10 +6264,9 @@ function _doSave() {
     }
   }
 
-  // Próba 2: zapis bez zdjęć w aktywnym stanie (zdjęcia są w historii, nie w wycena-v2,
-  //          ale state może być duży przez inne dane — próbujemy bez noteText/customLabel)
+  // Próba 2: zapis bez zdjęć w aktywnym stanie
   try {
-    const stateSlim = { ...state, items: state.items.map(it => ({
+    const stateSlim = { ...state, photos: [], items: state.items.map(it => ({
       name: it.name, price: it.price, checked: it.checked,
       qty: it.qty, selectedPreset: it.selectedPreset, customName: it.customName,
     })) };
@@ -6276,7 +6277,7 @@ function _doSave() {
 
   // Próba 3: minimalny zapis — tylko pozycje zaznaczone
   try {
-    const stateMin = { ...state, items: state.items.filter(it => it.checked).map(it => ({
+    const stateMin = { ...state, photos: [], items: state.items.filter(it => it.checked).map(it => ({
       name: it.name, price: it.price, checked: true, qty: it.qty,
     })), subs: state.subs.filter(s => s.checked && s.price > 0) };
     localStorage.setItem(KEY, JSON.stringify(stateMin));
@@ -6307,6 +6308,21 @@ function flushSave() {
   }
 }
 
+function _stateHasDraftProgress(st) {
+  if (!st || typeof st !== 'object') return false;
+  if (String(st.tel || '').trim()) return true;
+  if (String(st.marka || '').trim()) return true;
+  if (String(st.model || '').trim()) return true;
+  if (String(st.kolor || '').trim()) return true;
+  if (String(st.notatka || '').trim()) return true;
+  if (st.ebike === '1' || st.ebike === true) return true;
+  if (st.cr) return true;
+  if (Array.isArray(st.photos) && st.photos.length) return true;
+  if ((st.items || []).some(_itemWorthSaving)) return true;
+  if ((st.subs || []).some(_subWorthSaving)) return true;
+  return false;
+}
+
 // ── Odczyt z localStorage ──
 function load() {
   try {
@@ -6316,20 +6332,22 @@ function load() {
     if (!st.items?.length) return false;
 
     const fromHist = !!sessionStorage.getItem('from-history');
+    const resumeDraft = !fromHist && _stateHasDraftProgress(st);
+    const keepValues = fromHist || resumeDraft;
     idSeq = 0;
     items = st.items.map(it => ({
       id: newId(),
       name: canonicalName(it.name), price: it.price,
-      checked: fromHist ? it.checked : false,
-      qty: it.qty !== undefined ? (fromHist ? it.qty : 0) : undefined,
-      selectedPreset: fromHist ? (it.selectedPreset ?? -1) : -1,
-      customName: fromHist ? (it.customName ?? '') : '',
-      customLabel: fromHist ? (it.customLabel ?? '') : '',
-      selectedOptions: fromHist ? (it.selectedOptions ?? []) : [],
+      checked: keepValues ? !!it.checked : false,
+      qty: it.qty !== undefined ? (keepValues ? (it.qty || 0) : 0) : undefined,
+      selectedPreset: keepValues ? (it.selectedPreset ?? -1) : -1,
+      customName: keepValues ? (it.customName ?? '') : '',
+      customLabel: keepValues ? (it.customLabel ?? '') : '',
+      selectedOptions: keepValues ? (it.selectedOptions ?? []) : [],
       options:  findDefault(it.name)?.options?.map(x => ({...x})),
       presets:  findDefault(it.name)?.presets?.map(x => ({...x})),
       note:     findDefault(it.name)?.note || undefined,
-      noteText: fromHist ? (it.noteText ?? '') : '',
+      noteText: keepValues ? (it.noteText ?? '') : '',
     }));
 
     // Remove deprecated items
@@ -6360,15 +6378,14 @@ function load() {
       return ai - bi;
     });
 
-    // Reset inne części unless loading from history
-    if (!fromHist) {
-      subs = createDefaultSubs();
-      groupOpen = true;
-    } else {
+    if (keepValues) {
       subs = (st.subs || []).map(s => ({ id: newSubId(), name: s.name, price: s.price, checked: s.checked }));
       if (!subs.length) subs = createDefaultSubs();
       while (subs.length < 3) subs.push({ id: newSubId(), name: '', price: 0, checked: false });
       groupOpen = st.groupOpen !== false;
+    } else {
+      subs = createDefaultSubs();
+      groupOpen = true;
     }
     if (st.marka)  $('cf-marka').value  = st.marka;
     if (st.ebike !== undefined) $('cf-ebike').value = st.ebike;
@@ -6385,6 +6402,11 @@ function load() {
     if (st.kolor)  $('cf-kolor').value  = st.kolor;
     if (st.termin) $('cf-termin').value = st.termin;
     if ($('notatka-serwisowa')) $('notatka-serwisowa').value = st.notatka || '';
+    if (keepValues && Array.isArray(st.photos)) {
+      try { photos = st.photos.slice(); } catch (_) { photos = []; }
+    }
+    if (fromHist) return 'history';
+    if (resumeDraft) return 'draft';
     return true;
   } catch { return false; }
 }
@@ -7351,9 +7373,22 @@ function buildSubRow(sub, subsArr, onAddRow, recalcFn) {
   delBtn.className = 'sub-del';
   delBtn.innerHTML = '&times;';
   delBtn.addEventListener('click', () => {
-    if (isGlobal()) State.removeSub(sub.id);
-    else { const idx = subsArr.findIndex(x => x.id === sub.id); if (idx !== -1) subsArr.splice(idx, 1); if (!subsArr.length) subsArr.push({ id: 'rs' + Date.now(), name: '', price: 0, checked: false }); }
-    onAddRow();
+    if (isGlobal()) {
+      State.removeSub(sub.id);
+      onAddRow(); // renderGroup — pełny re-render
+    } else {
+      // Raport / lokalna lista: usuń z modelu I z DOM.
+      // Nie wołaj onAddRow() (to tylko dokłada wiersz) — inaczej stary
+      // wiersz zostaje w DOM i przy zapisie przywraca usuniętą część.
+      const idx = subsArr.findIndex(x => x.id === sub.id);
+      if (idx !== -1) subsArr.splice(idx, 1);
+      const parent = row.parentNode;
+      row.remove();
+      if (!subsArr.length) {
+        subsArr.push({ id: 'rs' + Date.now(), name: '', price: 0, checked: false });
+        if (parent) onAddRow();
+      }
+    }
     recalcFn();
   });
 
@@ -7603,7 +7638,8 @@ window.removePhoto = removePhoto;
 // ─────────────────────────────────────────
 // BOOT
 // ─────────────────────────────────────────
-if (!load()) {
+const _bootLoadResult = load();
+if (!_bootLoadResult) {
   items = cloneDefaults();
   subs  = createDefaultSubs();
 }
@@ -7611,9 +7647,12 @@ if (!load()) {
 renderItems();
 renderGroup();
 recalc();
+if (photos && photos.length) {
+  try { renderPhotos(); } catch (_) {}
+}
 
-// Clear client data on normal page load (not from history)
-if (!sessionStorage.getItem('from-history')) {
+// Clear client data only when there is no in-progress draft to resume
+if (!sessionStorage.getItem('from-history') && _bootLoadResult !== 'draft') {
   $('cf-marka').value  = ''; if ($('cf-ebike')) $('cf-ebike').value = '0';
   if ($('cf-cr')) $('cf-cr').value = '0';
   resetCrState();
@@ -7621,6 +7660,13 @@ if (!sessionStorage.getItem('from-history')) {
   $('cf-model').value  = '';
   $('cf-kolor').value  = '';
   $('cf-termin').value = '';
+} else if (_bootLoadResult === 'draft') {
+  // Resume unfinished order after phone minimized / PWA restart
+  $('start-overlay').style.display = 'none';
+  const btnListaCofnij = $('btn-lista-cofnij');
+  if (btnListaCofnij && !sessionStorage.getItem('from-history-id')) {
+    btnListaCofnij.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Anuluj';
+  }
 } else {
   // Wczytano z historii — ukryj ekran startowy, zmień Lista na Cofnij
   $('start-overlay').style.display = 'none';
@@ -7652,7 +7698,49 @@ if (savedPhotos) {
   sessionStorage.removeItem('from-history-photos');
 }
 
+function _snapshotOpenModalToCf() {
+  try {
+    const modal = $('modal-overlay');
+    if (!modal || getComputedStyle(modal).display === 'none') return;
+    const markaSel = ($('modal-marka-sel') && $('modal-marka-sel').value) || '';
+    const model = ($('modal-marka') && $('modal-marka').value.trim()) || '';
+    const marka = (markaSel === 'INNY' || markaSel === 'ROWER') ? model : (markaSel || model);
+    const telRaw = ($('modal-tel') && $('modal-tel').value.replace(/\D/g, '')) || '';
+    let tel = telRaw.slice(0, 9);
+    if (tel.length > 6) tel = tel.slice(0, 3) + '-' + tel.slice(3, 6) + '-' + tel.slice(6);
+    else if (tel.length > 3) tel = tel.slice(0, 3) + '-' + tel.slice(3);
+    if (marka && $('cf-marka')) $('cf-marka').value = marka;
+    if ($('cf-model')) $('cf-model').value = model;
+    if ($('cf-tel') && tel) $('cf-tel').value = tel;
+    if ($('modal-kolor') && $('cf-kolor')) $('cf-kolor').value = $('modal-kolor').value || '';
+    if ($('modal-termin') && $('cf-termin')) {
+      const t = typeof _normalizeTerminStr === 'function'
+        ? _normalizeTerminStr($('modal-termin').value)
+        : ($('modal-termin').value || '');
+      if (t) $('cf-termin').value = t;
+    }
+    if ($('cf-ebike') && $('modal-ebike-btn')) {
+      $('cf-ebike').value = ($('modal-ebike-btn').dataset.active === '1') ? '1' : '0';
+    }
+    if ($('cf-cr') && $('modal-cr-btn')) {
+      $('cf-cr').value = ($('modal-cr-btn').dataset.active === '1') ? '1' : '0';
+    }
+  } catch (_) {}
+}
+
+function _persistAppDraftsNow() {
+  try { _snapshotOpenModalToCf(); } catch (_) {}
+  try { flushSave(); } catch (_) {}
+  try { if (typeof _flushRaportDraft === 'function') _flushRaportDraft(); } catch (_) {}
+}
+
+window.addEventListener('pagehide', _persistAppDraftsNow);
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') _persistAppDraftsNow();
+});
+
 window.addEventListener('beforeunload', e => {
+  _persistAppDraftsNow();
   if (sessionStorage.getItem('allow-reload')) return;
   e.preventDefault();
   e.returnValue = '';
@@ -13083,6 +13171,7 @@ function cancelModal() {
   $('cf-kolor').value  = '';
   $('cf-tel').value    = '';
   $('cf-termin').value = '';
+  try { localStorage.removeItem(KEY); } catch (_) {}
   $('modal-overlay').style.display = 'none';
   // Wróć do menu głównego
   $('start-overlay').style.display = 'flex';
@@ -13323,6 +13412,94 @@ let raportRItems = [];
 let raportRSubs = [];
 let raportReturnTab = null;
 
+const RAPORT_DRAFT_KEY = 'wycena-raport-draft-v1';
+
+function _collectRaportDraftPayload() {
+  if (!raportEntryId) return null;
+  const items = (raportRItems || []).map(it => ({
+    name: it.name,
+    customName: it.customName || '',
+    checked: it.checked,
+    price: parseFloat(it.price) || 0,
+    qty: it.qty,
+    selectedPreset: it.selectedPreset ?? -1,
+    customLabel: it.customLabel || undefined,
+    noteText: it.noteText || '',
+    selectedOptions: it.selectedOptions || undefined,
+  }));
+  const subs = (raportRSubs || []).map(s => ({
+    name: s.name || '',
+    price: parseFloat(s.price) || 0,
+    checked: !!s.checked,
+  }));
+  try {
+    const rSubEls = $('raport-group-container') && $('raport-group-container').querySelectorAll('.sub-row');
+    if (rSubEls) {
+      const syncCount = Math.min(subs.length, rSubEls.length);
+      for (let i = 0; i < syncCount; i++) {
+        const row = rSubEls[i];
+        const cb = row.querySelector('.sub-check');
+        const nameEl = row.querySelector('.sub-name-input');
+        const priceEl = row.querySelector('.sub-price-input');
+        if (nameEl) subs[i].name = nameEl.value;
+        if (priceEl) subs[i].price = Math.round(parseFloat(String(priceEl.value).replace(',', '.')) || 0);
+        if (cb) subs[i].checked = cb.checked;
+      }
+    }
+  } catch (_) {}
+  return {
+    entryId: raportEntryId,
+    returnTab: raportReturnTab || 'historia',
+    items,
+    subs,
+    notatka: ($('raport-notatka') && $('raport-notatka').value) || '',
+    savedAt: Date.now(),
+  };
+}
+
+function _flushRaportDraft() {
+  try {
+    const overlay = $('raport-overlay');
+    const open = overlay && getComputedStyle(overlay).display !== 'none';
+    if (!open || !raportEntryId) return;
+    const payload = _collectRaportDraftPayload();
+    if (!payload) return;
+    localStorage.setItem(RAPORT_DRAFT_KEY, JSON.stringify(payload));
+  } catch (_) {}
+}
+
+function _clearRaportDraft() {
+  try { localStorage.removeItem(RAPORT_DRAFT_KEY); } catch (_) {}
+}
+
+function _restoreRaportDraftIfAny() {
+  try {
+    const raw = localStorage.getItem(RAPORT_DRAFT_KEY);
+    if (!raw) return false;
+    const draft = safeParseJSON(raw, null);
+    if (!draft || draft.entryId == null) { _clearRaportDraft(); return false; }
+    // Don't steal focus from an unfinished new-order draft
+    if (_bootLoadResult === 'draft') return false;
+    const hist = getHistory();
+    const entry = hist.find(e => String(e.id) === String(draft.entryId));
+    if (!entry) { _clearRaportDraft(); return false; }
+    raportReturnTab = draft.returnTab || (entry.raportKoncowy ? 'wydanie' : 'historia');
+    raportEntryId = entry.id;
+    const st = {
+      items: Array.isArray(draft.items) ? draft.items : [],
+      subs: Array.isArray(draft.subs) ? draft.subs : [],
+    };
+    renderRaportEditor(entry, st, {
+      noteValue: draft.notatka || '',
+      filterEbikeItems: false,
+      wstepnaTotalRaw: entry.total,
+    });
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
+
 function _resolveEntryKolor(entry, st) {
   let k = String((entry && entry.kolor) || (st && st.kolor) || '').trim();
   if (k) return k;
@@ -13468,6 +13645,7 @@ function renderRaportEditor(entry, st, cfg) {
     } else {
       totalEl.style.color = '#fff';
     }
+    try { _flushRaportDraft(); } catch (_) {}
   }
 
   // Render items
@@ -13526,8 +13704,14 @@ function renderRaportEditor(entry, st, cfg) {
   recalcRaport();
   closeHistory();
   $('raport-notatka').value = cfg.noteValue || '';
+  const noteEl = $('raport-notatka');
+  if (noteEl && !noteEl.dataset.draftBound) {
+    noteEl.dataset.draftBound = '1';
+    noteEl.addEventListener('input', () => { try { _flushRaportDraft(); } catch (_) {} });
+  }
   _setRaportNotatkaZlecenia(entry, st);
   $('raport-overlay').style.display = 'block';
+  try { _flushRaportDraft(); } catch (_) {}
 }
 
 function _raportFromWycenaState(stateStr) {
@@ -13618,6 +13802,7 @@ function closeRaport() {
   const zlecTxt = $('raport-notatka-zlecenie-txt');
   if (zlecWrap) zlecWrap.style.display = 'none';
   if (zlecTxt) zlecTxt.textContent = '';
+  _clearRaportDraft();
   if (raportReturnTab) {
     openHistory();
     switchTab(raportReturnTab);
@@ -13653,18 +13838,22 @@ function saveRaportKoncowy() {
     checked: s.checked,
   }));
 
-  // Uzupełnij z DOM dla sub-rows (mają osobne inputy)
-  const rSubEls = $('raport-group-container').querySelectorAll('.sub-row');
-  rSubEls.forEach((row, i) => {
+  // Dociągnij wartości z DOM tylko dla wierszy 1:1 z modelem.
+  // Nadmiarowe .sub-row (po starym bugującym delete) są ignorowane —
+  // źródłem prawdy jest raportRSubs (aktualizowane na żywo w inputach).
+  const rSubEls = $('raport-group-container')
+    ? $('raport-group-container').querySelectorAll('.sub-row')
+    : [];
+  const syncCount = Math.min(raportSubs.length, rSubEls.length);
+  for (let i = 0; i < syncCount; i++) {
+    const row = rSubEls[i];
     const cb = row.querySelector('.sub-check');
     const nameEl = row.querySelector('.sub-name-input');
     const priceEl = row.querySelector('.sub-price-input');
-    if (raportSubs[i]) {
-      if (nameEl) raportSubs[i].name = nameEl.value;
-      if (priceEl) raportSubs[i].price = Math.round(parseFloat(priceEl.value.replace(',','.')) || 0);
-      if (cb) raportSubs[i].checked = cb.checked;
-    }
-  });
+    if (nameEl) raportSubs[i].name = nameEl.value;
+    if (priceEl) raportSubs[i].price = Math.round(parseFloat(String(priceEl.value).replace(',', '.')) || 0);
+    if (cb) raportSubs[i].checked = cb.checked;
+  }
 
   // Oblicz sumę raportu
   let raportTotal = 0;
@@ -13688,17 +13877,6 @@ function saveRaportKoncowy() {
         savedAt: new Date().toISOString(),
         dataZakonczenia: new Date().toLocaleDateString('pl-PL', {day:'2-digit', month:'2-digit', year:'numeric'}),
       };
-      // Keep entry.state.subs in sync with raport — otherwise old "Inne części"
-      // from przyjęcie resurrect after EDYTUJ + remove + save.
-      try {
-        const stSync = safeParseJSON(list[idx].state, null) || {};
-        stSync.subs = raportSubs.map(s => ({
-          name: s.name || '',
-          price: parseFloat(s.price) || 0,
-          checked: !!s.checked,
-        }));
-        list[idx].state = JSON.stringify(stSync);
-      } catch (e) {}
       if (!list[idx].totalPrzedRaportem) {
         list[idx].totalPrzedRaportem = list[idx].total;
       }
@@ -14550,6 +14728,7 @@ window.openRaport = openRaport;
 window.closeRaport = closeRaport;
 window.closeRaportOutside = closeRaportOutside;
 
+try { _restoreRaportDraftIfAny(); } catch (_) {}
 
 // ─────────────────────────────────────────
 // SYNCHRONIZACJA GOOGLE DRIVE
