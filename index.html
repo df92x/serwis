@@ -5,7 +5,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="app-build" content="2026-08-04T04:40:40.658Z">
+<meta name="app-build" content="2026-08-04T04:42:25.379Z">
 <title>Serwis ROW-POL</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <meta name="theme-color" content="#0a0a0f">
@@ -6205,16 +6205,19 @@ function _itemWorthSaving(it) {
   return false;
 }
 
-/** Czy użytkownik realnie coś wprowadził (nie domyślna cena z cennika). */
+/** Czy użytkownik realnie coś wprowadził (nie domyślny stan cennika). */
 function _itemHasUserProgress(it) {
   if (!it) return false;
-  if (it.checked) return true;
   if (it.customName && String(it.customName).trim()) return true;
   if (it.noteText && String(it.noteText).trim()) return true;
   if (it.selectedPreset != null && it.selectedPreset >= 0) return true;
   if (Array.isArray(it.selectedOptions) && it.selectedOptions.length) return true;
   if (it.customLabel && String(it.customLabel).trim()) return true;
-  return false;
+  if (!it.checked) return false;
+  // "Naprawa" startuje zaznaczona z ceną 0 — sama w sobie to nie szkic
+  const name = canonicalName(it.name || '');
+  if (name === 'Naprawa' && !(parseFloat(it.price) > 0) && !((it.qty || 0) > 0)) return false;
+  return true;
 }
 
 function _subWorthSaving(s) {
