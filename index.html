@@ -5,7 +5,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="app-build" content="2026-08-04T04:55:22.771Z">
+<meta name="app-build" content="2026-08-04T13:12:24.526Z">
 <title>Serwis ROW-POL</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <meta name="theme-color" content="#0a0a0f">
@@ -4858,11 +4858,6 @@ body > .app .flat-list .item-card.qty-zero{
       <span class="start-cta-label">DODAJ</span>
       <span class="start-cta-slot"></span>
     </button>
-    <button type="button" id="btn-kontynuuj-draft" onclick="resumeDraftZlecenie()" class="start-cta start-cta--browse ui-tile ui-tile--lg ui-tile--warning ui-tile--block" style="display:none;">
-      <span class="start-cta-slot"><svg class="icon-xl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9"/><polyline points="3 3 3 12 12 12"/></svg></span>
-      <span class="start-cta-label">KONTYNUUJ ZLECENIE</span>
-      <span class="start-cta-slot"></span>
-    </button>
     <button type="button" onclick="startAktualne()" class="start-cta start-cta--browse ui-tile ui-tile--lg ui-tile--naprawa ui-tile--block">
       <span class="start-cta-slot"><svg class="icon-xl" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>
       <span class="start-cta-label">PRZEGLĄDAJ</span>
@@ -7690,7 +7685,7 @@ if (photos && photos.length) {
   try { renderPhotos(); } catch (_) {}
 }
 
-// Clear client data only when there is no in-progress draft to resume
+// Clear client / show menu — albo ciche wznowienie szkicu po minimalizacji
 if (!sessionStorage.getItem('from-history') && _bootLoadResult !== 'draft' && _bootLoadResult !== 'history') {
   $('cf-marka').value  = ''; if ($('cf-ebike')) $('cf-ebike').value = '0';
   if ($('cf-cr')) $('cf-cr').value = '0';
@@ -7699,17 +7694,15 @@ if (!sessionStorage.getItem('from-history') && _bootLoadResult !== 'draft' && _b
   $('cf-model').value  = '';
   $('cf-kolor').value  = '';
   $('cf-termin').value = '';
-  // Zawsze menu główne — nie skacz automatycznie do formularza
   if ($('start-overlay')) $('start-overlay').style.display = 'flex';
 } else if (_bootLoadResult === 'draft') {
-  // Szkic w pamięci — zostań na menu, pokaż „Kontynuuj”
-  if ($('start-overlay')) $('start-overlay').style.display = 'flex';
+  // Po minimalizacji: wróć od razu do niedokończonego formularza (bez przycisku w menu)
+  if ($('start-overlay')) $('start-overlay').style.display = 'none';
   const btnListaCofnij = $('btn-lista-cofnij');
   if (btnListaCofnij && !sessionStorage.getItem('from-history-id')) {
     btnListaCofnij.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Anuluj';
   }
 } else if (_bootLoadResult === 'history' || sessionStorage.getItem('from-history')) {
-  // Wczytano z historii — ukryj ekran startowy, zmień Lista na Cofnij
   $('start-overlay').style.display = 'none';
   const btnListaCofnij = $('btn-lista-cofnij');
   if (btnListaCofnij) {
@@ -7723,7 +7716,6 @@ if (!sessionStorage.getItem('from-history') && _bootLoadResult !== 'draft' && _b
       });
     };
   }
-  // Pokaż przycisk Usuń w nagłówku gdy edytujemy zlecenie
   const editId = sessionStorage.getItem('from-history-id');
   const btnUsun = $('btn-usun-zlecenie');
   if (btnUsun && editId) {
@@ -7733,33 +7725,6 @@ if (!sessionStorage.getItem('from-history') && _bootLoadResult !== 'draft' && _b
   if ($('start-overlay')) $('start-overlay').style.display = 'flex';
 }
 
-function _updateKontynuujDraftBtn() {
-  const btn = $('btn-kontynuuj-draft');
-  if (!btn) return;
-  let show = false;
-  try {
-    if (_bootLoadResult === 'draft') show = true;
-    else {
-      const raw = localStorage.getItem(KEY);
-      if (raw) {
-        const st = JSON.parse(raw);
-        show = _stateHasDraftProgress(st);
-      }
-    }
-  } catch (_) { show = false; }
-  btn.style.display = show ? 'flex' : 'none';
-}
-
-function resumeDraftZlecenie() {
-  $('start-overlay').style.display = 'none';
-  const btnListaCofnij = $('btn-lista-cofnij');
-  if (btnListaCofnij && !sessionStorage.getItem('from-history-id')) {
-    btnListaCofnij.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Anuluj';
-  }
-  try { updateClientInfoBar(); } catch (_) {}
-}
-window.resumeDraftZlecenie = resumeDraftZlecenie;
-_updateKontynuujDraftBtn();
 updateClientInfoBar();
 sessionStorage.removeItem('from-history');
 sessionStorage.removeItem('_from_edit_reload');
@@ -8668,7 +8633,6 @@ function startNowe() {
   localStorage.removeItem(KEY);
   sessionStorage.removeItem('from-history-id');
   updateClientInfoBar();
-  try { if (typeof _updateKontynuujDraftBtn === 'function') _updateKontynuujDraftBtn(); } catch (_) {}
   $('start-overlay').style.display = 'none';
   // Otwórz modal danych od razu
   openModal();
@@ -9592,7 +9556,6 @@ function refreshStartMenu() {
   if (typeof renderStartMenuCalendar === 'function') renderStartMenuCalendar();
   if (typeof checkBackupReminder === 'function') checkBackupReminder();
   if (typeof refreshServerAppVersion === 'function') refreshServerAppVersion();
-  try { if (typeof _updateKontynuujDraftBtn === 'function') _updateKontynuujDraftBtn(); } catch (_) {}
 }
 window.renderStartMenuCalendar = renderStartMenuCalendar;
 window.startCalPrev = startCalPrev;
@@ -13218,7 +13181,6 @@ function anulujWycene() {
   if ($('notatka-serwisowa')) $('notatka-serwisowa').value = '';
   localStorage.removeItem(KEY);
   sessionStorage.removeItem('from-history-id');
-  try { if (typeof _updateKontynuujDraftBtn === 'function') _updateKontynuujDraftBtn(); } catch (_) {}
   // Wyczyść dane klienta
   cancelModal();
 }
@@ -15357,7 +15319,7 @@ window.euroConvert    = euroConvert;
   if (ml) ml.href = URL.createObjectURL(new Blob([JSON.stringify(manifest)], {type:'application/manifest+json'}));
   if ('serviceWorker' in navigator) {
     const sw = `"use strict";
-var C="wycena-v4";
+var C="wycena-v5";
 var CORE=["."];
 function isCacheable(req){
   try{
