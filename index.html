@@ -5,7 +5,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="app-build" content="2026-08-04T04:42:25.379Z">
+<meta name="app-build" content="2026-08-04T04:55:22.771Z">
 <title>Serwis ROW-POL</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <meta name="theme-color" content="#0a0a0f">
@@ -4858,6 +4858,11 @@ body > .app .flat-list .item-card.qty-zero{
       <span class="start-cta-label">DODAJ</span>
       <span class="start-cta-slot"></span>
     </button>
+    <button type="button" id="btn-kontynuuj-draft" onclick="resumeDraftZlecenie()" class="start-cta start-cta--browse ui-tile ui-tile--lg ui-tile--warning ui-tile--block" style="display:none;">
+      <span class="start-cta-slot"><svg class="icon-xl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9"/><polyline points="3 3 3 12 12 12"/></svg></span>
+      <span class="start-cta-label">KONTYNUUJ ZLECENIE</span>
+      <span class="start-cta-slot"></span>
+    </button>
     <button type="button" onclick="startAktualne()" class="start-cta start-cta--browse ui-tile ui-tile--lg ui-tile--naprawa ui-tile--block">
       <span class="start-cta-slot"><svg class="icon-xl" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>
       <span class="start-cta-label">PRZEGLĄDAJ</span>
@@ -6227,8 +6232,10 @@ function _subWorthSaving(s) {
 function _stateHasDraftProgress(st) {
   if (!st || typeof st !== 'object') return false;
   if (String(st.tel || '').trim()) return true;
-  if (String(st.marka || '').trim()) return true;
   if (String(st.model || '').trim()) return true;
+  // Samo "ROWER"/"INNY" z selecta to nie dane klienta
+  const marka = String(st.marka || '').trim();
+  if (marka && marka !== 'ROWER' && marka !== 'INNY') return true;
   if (String(st.kolor || '').trim()) return true;
   if (String(st.notatka || '').trim()) return true;
   if (st.ebike === '1' || st.ebike === true) return true;
@@ -7684,7 +7691,7 @@ if (photos && photos.length) {
 }
 
 // Clear client data only when there is no in-progress draft to resume
-if (!sessionStorage.getItem('from-history') && _bootLoadResult !== 'draft') {
+if (!sessionStorage.getItem('from-history') && _bootLoadResult !== 'draft' && _bootLoadResult !== 'history') {
   $('cf-marka').value  = ''; if ($('cf-ebike')) $('cf-ebike').value = '0';
   if ($('cf-cr')) $('cf-cr').value = '0';
   resetCrState();
@@ -7692,14 +7699,16 @@ if (!sessionStorage.getItem('from-history') && _bootLoadResult !== 'draft') {
   $('cf-model').value  = '';
   $('cf-kolor').value  = '';
   $('cf-termin').value = '';
+  // Zawsze menu główne — nie skacz automatycznie do formularza
+  if ($('start-overlay')) $('start-overlay').style.display = 'flex';
 } else if (_bootLoadResult === 'draft') {
-  // Resume unfinished order after phone minimized / PWA restart
-  $('start-overlay').style.display = 'none';
+  // Szkic w pamięci — zostań na menu, pokaż „Kontynuuj”
+  if ($('start-overlay')) $('start-overlay').style.display = 'flex';
   const btnListaCofnij = $('btn-lista-cofnij');
   if (btnListaCofnij && !sessionStorage.getItem('from-history-id')) {
     btnListaCofnij.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Anuluj';
   }
-} else {
+} else if (_bootLoadResult === 'history' || sessionStorage.getItem('from-history')) {
   // Wczytano z historii — ukryj ekran startowy, zmień Lista na Cofnij
   $('start-overlay').style.display = 'none';
   const btnListaCofnij = $('btn-lista-cofnij');
@@ -7720,7 +7729,37 @@ if (!sessionStorage.getItem('from-history') && _bootLoadResult !== 'draft') {
   if (btnUsun && editId) {
     btnUsun.style.display = 'inline-flex';
   }
+} else {
+  if ($('start-overlay')) $('start-overlay').style.display = 'flex';
 }
+
+function _updateKontynuujDraftBtn() {
+  const btn = $('btn-kontynuuj-draft');
+  if (!btn) return;
+  let show = false;
+  try {
+    if (_bootLoadResult === 'draft') show = true;
+    else {
+      const raw = localStorage.getItem(KEY);
+      if (raw) {
+        const st = JSON.parse(raw);
+        show = _stateHasDraftProgress(st);
+      }
+    }
+  } catch (_) { show = false; }
+  btn.style.display = show ? 'flex' : 'none';
+}
+
+function resumeDraftZlecenie() {
+  $('start-overlay').style.display = 'none';
+  const btnListaCofnij = $('btn-lista-cofnij');
+  if (btnListaCofnij && !sessionStorage.getItem('from-history-id')) {
+    btnListaCofnij.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Anuluj';
+  }
+  try { updateClientInfoBar(); } catch (_) {}
+}
+window.resumeDraftZlecenie = resumeDraftZlecenie;
+_updateKontynuujDraftBtn();
 updateClientInfoBar();
 sessionStorage.removeItem('from-history');
 sessionStorage.removeItem('_from_edit_reload');
@@ -8629,6 +8668,7 @@ function startNowe() {
   localStorage.removeItem(KEY);
   sessionStorage.removeItem('from-history-id');
   updateClientInfoBar();
+  try { if (typeof _updateKontynuujDraftBtn === 'function') _updateKontynuujDraftBtn(); } catch (_) {}
   $('start-overlay').style.display = 'none';
   // Otwórz modal danych od razu
   openModal();
@@ -9552,6 +9592,7 @@ function refreshStartMenu() {
   if (typeof renderStartMenuCalendar === 'function') renderStartMenuCalendar();
   if (typeof checkBackupReminder === 'function') checkBackupReminder();
   if (typeof refreshServerAppVersion === 'function') refreshServerAppVersion();
+  try { if (typeof _updateKontynuujDraftBtn === 'function') _updateKontynuujDraftBtn(); } catch (_) {}
 }
 window.renderStartMenuCalendar = renderStartMenuCalendar;
 window.startCalPrev = startCalPrev;
@@ -13177,6 +13218,7 @@ function anulujWycene() {
   if ($('notatka-serwisowa')) $('notatka-serwisowa').value = '';
   localStorage.removeItem(KEY);
   sessionStorage.removeItem('from-history-id');
+  try { if (typeof _updateKontynuujDraftBtn === 'function') _updateKontynuujDraftBtn(); } catch (_) {}
   // Wyczyść dane klienta
   cancelModal();
 }
@@ -15315,7 +15357,7 @@ window.euroConvert    = euroConvert;
   if (ml) ml.href = URL.createObjectURL(new Blob([JSON.stringify(manifest)], {type:'application/manifest+json'}));
   if ('serviceWorker' in navigator) {
     const sw = `"use strict";
-var C="wycena-v3";
+var C="wycena-v4";
 var CORE=["."];
 function isCacheable(req){
   try{
@@ -15324,6 +15366,13 @@ function isCacheable(req){
     if(u.origin!==self.location.origin) return false;
     if(u.protocol!=="http:" && u.protocol!=="https:") return false;
     return true;
+  }catch(e){ return false; }
+}
+function isHtmlReq(req){
+  try{
+    if(req.mode==="navigate") return true;
+    var a=(req.headers&&req.headers.get("accept"))||"";
+    return a.indexOf("text/html")>=0;
   }catch(e){ return false; }
 }
 self.addEventListener("install",function(e){
@@ -15339,6 +15388,22 @@ self.addEventListener("activate",function(e){
 self.addEventListener("fetch",function(e){
   var req=e.request;
   if(!isCacheable(req)) return;
+  // HTML: network-first — żeby Update App dochodził do telefonu
+  if(isHtmlReq(req)){
+    e.respondWith(
+      fetch(req).then(function(res){
+        try{
+          if(res && res.ok && res.type==="basic"){
+            caches.open(C).then(function(c){ c.put(req,res.clone()); });
+          }
+        }catch(_){}
+        return res;
+      }).catch(function(){
+        return caches.match(req).then(function(r){ return r||caches.match("."); });
+      })
+    );
+    return;
+  }
   e.respondWith(
     caches.match(req).then(function(r){
       if(r) return r;
@@ -16013,12 +16078,21 @@ async function githubUpdate() {
     localStorage.setItem('gh_last_update', new Date().toISOString());
     if (typeof refreshServerAppVersion === 'function') refreshServerAppVersion();
 
-    ghStatus('✅ Wykonano' + (cfHook ? ' — build CF uruchomiony' : ' — sprawdź Deployments w Cloudflare'), 'ok');
+    ghStatus('✅ Wykonano — odświeżam aplikację…', 'ok');
+    try {
+      if ('caches' in window) {
+        var keys = await caches.keys();
+        await Promise.all(keys.map(function(k) { return caches.delete(k); }));
+      }
+      if ('serviceWorker' in navigator) {
+        var regs = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(regs.map(function(r) { return r.unregister(); }));
+      }
+    } catch (_) {}
     setTimeout(function() {
-      ghModalClose();
-      updateAdminSyncRow();
-      $('start-overlay').style.display = 'flex';
-    }, 1000);
+      sessionStorage.setItem('allow-reload', '1');
+      location.reload();
+    }, 800);
   } catch(e) {
     ghStatus('❌ ' + (e.message || String(e)), 'err');
     if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
