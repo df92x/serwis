@@ -5,7 +5,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="app-build" content="2026-08-03T16:11:59.114Z">
+<meta name="app-build" content="2026-08-04T04:40:40.658Z">
 <title>Serwis ROW-POL</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <meta name="theme-color" content="#0a0a0f">
@@ -6205,8 +6205,39 @@ function _itemWorthSaving(it) {
   return false;
 }
 
+/** Czy użytkownik realnie coś wprowadził (nie domyślna cena z cennika). */
+function _itemHasUserProgress(it) {
+  if (!it) return false;
+  if (it.checked) return true;
+  if (it.customName && String(it.customName).trim()) return true;
+  if (it.noteText && String(it.noteText).trim()) return true;
+  if (it.selectedPreset != null && it.selectedPreset >= 0) return true;
+  if (Array.isArray(it.selectedOptions) && it.selectedOptions.length) return true;
+  if (it.customLabel && String(it.customLabel).trim()) return true;
+  return false;
+}
+
 function _subWorthSaving(s) {
   return s.checked && ((parseFloat(s.price) || 0) > 0 || String(s.name || '').trim());
+}
+
+function _stateHasDraftProgress(st) {
+  if (!st || typeof st !== 'object') return false;
+  if (String(st.tel || '').trim()) return true;
+  if (String(st.marka || '').trim()) return true;
+  if (String(st.model || '').trim()) return true;
+  if (String(st.kolor || '').trim()) return true;
+  if (String(st.notatka || '').trim()) return true;
+  if (st.ebike === '1' || st.ebike === true) return true;
+  if (st.cr) return true;
+  if (Array.isArray(st.photos) && st.photos.length) return true;
+  if ((st.items || []).some(_itemHasUserProgress)) return true;
+  if ((st.subs || []).some(_subWorthSaving)) return true;
+  return false;
+}
+
+function _isEditingSavedOrder() {
+  return !!sessionStorage.getItem('from-history-id');
 }
 
 function _slimStateObject(state) {
@@ -6249,6 +6280,14 @@ function _stateSubsKey(state) {
 function _doSave() {
   _setSaveStatus('saving');
   const state = _slimStateObject(_buildStateObject());
+
+  // Pusty formularz (same domyślne ceny z cennika) — nie trzymaj "fałszywego" szkicu
+  if (!_stateHasDraftProgress(state) && !_isEditingSavedOrder()) {
+    try { localStorage.removeItem(KEY); } catch (_) {}
+    _setSaveStatus('ok');
+    return;
+  }
+
   const json  = JSON.stringify(state);
 
   // Próba 1: pełny zapis
@@ -6308,21 +6347,6 @@ function flushSave() {
   }
 }
 
-function _stateHasDraftProgress(st) {
-  if (!st || typeof st !== 'object') return false;
-  if (String(st.tel || '').trim()) return true;
-  if (String(st.marka || '').trim()) return true;
-  if (String(st.model || '').trim()) return true;
-  if (String(st.kolor || '').trim()) return true;
-  if (String(st.notatka || '').trim()) return true;
-  if (st.ebike === '1' || st.ebike === true) return true;
-  if (st.cr) return true;
-  if (Array.isArray(st.photos) && st.photos.length) return true;
-  if ((st.items || []).some(_itemWorthSaving)) return true;
-  if ((st.subs || []).some(_subWorthSaving)) return true;
-  return false;
-}
-
 // ── Odczyt z localStorage ──
 function load() {
   try {
@@ -6333,6 +6357,11 @@ function load() {
 
     const fromHist = !!sessionStorage.getItem('from-history');
     const resumeDraft = !fromHist && _stateHasDraftProgress(st);
+    if (!fromHist && !resumeDraft) {
+      // Stary zapis bez realnych danych (np. sama cena Ochraniacza z cennika)
+      try { localStorage.removeItem(KEY); } catch (_) {}
+      return false;
+    }
     const keepValues = fromHist || resumeDraft;
     idSeq = 0;
     items = st.items.map(it => ({
