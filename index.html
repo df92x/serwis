@@ -5,7 +5,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="app-build" content="2026-08-04T13:12:24.526Z">
+<meta name="app-build" content="2026-08-05T10:31:31.354Z">
 <title>Serwis ROW-POL</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <meta name="theme-color" content="#0a0a0f">
@@ -6144,7 +6144,37 @@ function recalc() {
 // PERSISTENCE
 // ─────────────────────────────────────────
 const KEY = 'wycena-v2';
+const DRAFT_INTERRUPT_KEY = 'wycena-draft-interrupted';
 let _lastSavedStateHash = null;
+
+function _clearOrderDraftStorage() {
+  try { localStorage.removeItem(KEY); } catch (_) {}
+  try { localStorage.removeItem(DRAFT_INTERRUPT_KEY); } catch (_) {}
+}
+
+function _isOverlayVisible(id) {
+  const el = $(id);
+  if (!el) return false;
+  try { return getComputedStyle(el).display !== 'none'; } catch (_) {
+    return !!(el.style && el.style.display && el.style.display !== 'none');
+  }
+}
+
+/** Formularz nowego/edytowanego zlecenia — nie menu, nie historia, nie raport. */
+function _isOrderFormActive() {
+  if (_isOverlayVisible('start-overlay')) return false;
+  if (_isOverlayVisible('history-overlay')) return false;
+  if (_isOverlayVisible('raport-overlay')) return false;
+  if (_isOverlayVisible('archive-overlay')) return false;
+  if (_isOverlayVisible('admin-modal')) return false;
+  if (_isOverlayVisible('kalkulator-prosty-overlay')) return false;
+  if (_isOverlayVisible('kody-rabatowe-overlay')) return false;
+  if (_isOverlayVisible('lancuch-overlay')) return false;
+  if (_isOverlayVisible('podglad-overlay')) return false;
+  if (_isOverlayVisible('klient-historia-modal')) return false;
+  if (_isOverlayVisible('global-search-modal')) return false;
+  return true;
+}
 
 // ── Status zapisu ──
 let _saveStatusTimer = null;
@@ -6286,6 +6316,14 @@ function _doSave() {
   _setSaveStatus('saving');
   const state = _slimStateObject(_buildStateObject());
 
+  // Poza formularzem zlecenia (menu / historia) — nie trzymaj aktywnego szkicu
+  if (!_isOrderFormActive()) {
+    try { localStorage.removeItem(KEY); } catch (_) {}
+    try { localStorage.removeItem(DRAFT_INTERRUPT_KEY); } catch (_) {}
+    _setSaveStatus('ok');
+    return;
+  }
+
   // Pusty formularz (same domyślne ceny z cennika) — nie trzymaj "fałszywego" szkicu
   if (!_stateHasDraftProgress(state) && !_isEditingSavedOrder()) {
     try { localStorage.removeItem(KEY); } catch (_) {}
@@ -6361,10 +6399,11 @@ function load() {
     if (!st.items?.length) return false;
 
     const fromHist = !!sessionStorage.getItem('from-history');
-    const resumeDraft = !fromHist && _stateHasDraftProgress(st);
+    const interrupted = localStorage.getItem(DRAFT_INTERRUPT_KEY) === '1';
+    // Wznów TYLKO po minimalizacji w trakcie edycji (flaga interrupt)
+    const resumeDraft = !fromHist && interrupted && _stateHasDraftProgress(st);
     if (!fromHist && !resumeDraft) {
-      // Stary zapis bez realnych danych (np. sama cena Ochraniacza z cennika)
-      try { localStorage.removeItem(KEY); } catch (_) {}
+      _clearOrderDraftStorage();
       return false;
     }
     const keepValues = fromHist || resumeDraft;
@@ -7765,9 +7804,18 @@ function _snapshotOpenModalToCf() {
 }
 
 function _persistAppDraftsNow() {
+  // Raport naprawy — osobny szkic
+  try { if (typeof _flushRaportDraft === 'function') _flushRaportDraft(); } catch (_) {}
+  // Szkic zlecenia tylko gdy faktycznie edytujemy formularz (nie menu / lista)
+  if (!_isOrderFormActive()) return;
   try { _snapshotOpenModalToCf(); } catch (_) {}
   try { flushSave(); } catch (_) {}
-  try { if (typeof _flushRaportDraft === 'function') _flushRaportDraft(); } catch (_) {}
+  try {
+    const st = _slimStateObject(_buildStateObject());
+    if (_stateHasDraftProgress(st) || _isEditingSavedOrder()) {
+      localStorage.setItem(DRAFT_INTERRUPT_KEY, '1');
+    }
+  } catch (_) {}
 }
 
 window.addEventListener('pagehide', _persistAppDraftsNow);
@@ -8631,6 +8679,7 @@ function startNowe() {
   renderGroup();
   recalc();
   localStorage.removeItem(KEY);
+  try { localStorage.removeItem(DRAFT_INTERRUPT_KEY); } catch (_) {}
   sessionStorage.removeItem('from-history-id');
   updateClientInfoBar();
   $('start-overlay').style.display = 'none';
@@ -9802,6 +9851,8 @@ function saveWycena() {
       try {
         localStorage.setItem(HISTORY_KEY, JSON.stringify(hist));
       } catch {}
+      _clearOrderDraftStorage();
+      sessionStorage.removeItem('from-history-id');
       highlightZlecenie(hist[origIdx].id);
       openHistory();
       // banner po zapisie wyłączony — zostaje podświetlenie na liście
@@ -9899,6 +9950,8 @@ function saveWycena() {
     }
   }
   highlightZlecenie(entry.id, true); // sticky do zamknięcia historii / powrotu do menu
+  _clearOrderDraftStorage();
+  sessionStorage.removeItem('from-history-id');
   openHistory();
   setTimeout(() => scrollToHighlightedZlecenie('history-list'), 80);
 }
@@ -9960,6 +10013,7 @@ function startKolejnyRower(orderId) {
   renderGroup();
   recalc();
   localStorage.removeItem(KEY);
+  try { localStorage.removeItem(DRAFT_INTERRUPT_KEY); } catch (_) {}
   sessionStorage.removeItem('from-history-id');
   updateClientInfoBar();
   $('start-overlay').style.display = 'none';
@@ -13179,7 +13233,7 @@ function anulujWycene() {
   renderGroup();
   recalc();
   if ($('notatka-serwisowa')) $('notatka-serwisowa').value = '';
-  localStorage.removeItem(KEY);
+  _clearOrderDraftStorage();
   sessionStorage.removeItem('from-history-id');
   // Wyczyść dane klienta
   cancelModal();
@@ -13207,7 +13261,7 @@ function cancelModal() {
   $('cf-kolor').value  = '';
   $('cf-tel').value    = '';
   $('cf-termin').value = '';
-  try { localStorage.removeItem(KEY); } catch (_) {}
+  _clearOrderDraftStorage();
   $('modal-overlay').style.display = 'none';
   // Wróć do menu głównego
   $('start-overlay').style.display = 'flex';
@@ -15319,7 +15373,7 @@ window.euroConvert    = euroConvert;
   if (ml) ml.href = URL.createObjectURL(new Blob([JSON.stringify(manifest)], {type:'application/manifest+json'}));
   if ('serviceWorker' in navigator) {
     const sw = `"use strict";
-var C="wycena-v5";
+var C="wycena-v6";
 var CORE=["."];
 function isCacheable(req){
   try{
