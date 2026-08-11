@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Live Stream">
+  <meta name="theme-color" content="#0a0a0f">
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>Live Stream</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="icon" href="icons/icon-192.png" type="image/png">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --bg2: #14141c;
+      --bg3: #1a1a24;
+      --border: #2a2a38;
+      --blue: #3b7cf4;
+      --red: #ef4444;
+      --green: #22c55e;
+      --text: #e8ecf7;
+      --text2: #a8b0c8;
+      --text3: #6b7280;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --safe-left: env(safe-area-inset-left, 0px);
+      --safe-right: env(safe-area-inset-right, 0px);
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      height: 100dvh;
+      padding-top: var(--safe-top);
+      padding-bottom: var(--safe-bottom);
+      padding-left: var(--safe-left);
+      padding-right: var(--safe-right);
+    }
+
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--border);
+      background: var(--bg2);
+      min-width: 0;
+    }
+
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 20px 16px 12px;
+    }
+
+    .sidebar-header h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .btn {
+      appearance: none;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn:active { transform: scale(0.97); }
+    .btn-primary { background: var(--blue); color: #fff; }
+    .btn-secondary { background: var(--bg3); color: var(--text); border: 1px solid var(--border); }
+    .btn-danger { background: rgba(239,68,68,0.15); color: var(--red); }
+    .btn-icon {
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 1.25rem;
+      line-height: 1;
+    }
+
+    .stream-list {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 8px;
+    }
+
+    .stream-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      padding: 12px;
+      border: 1px solid transparent;
+      border-radius: 12px;
+      background: transparent;
+      color: inherit;
+      text-align: left;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .stream-item:hover { background: rgba(255,255,255,0.03); }
+    .stream-item.active {
+      background: rgba(59,124,244,0.12);
+      border-color: rgba(59,124,244,0.3);
+    }
+
+    .stream-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(239,68,68,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 1rem;
+    }
+
+    .stream-meta { min-width: 0; flex: 1; }
+    .stream-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .stream-url {
+      font-size: 0.75rem;
+      color: var(--text3);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 2px;
+    }
+
+    .badge-live {
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      color: var(--red);
+      background: rgba(239,68,68,0.15);
+      padding: 4px 8px;
+      border-radius: 999px;
+      flex-shrink: 0;
+    }
+
+    .empty-state {
+      padding: 32px 20px;
+      text-align: center;
+      color: var(--text2);
+    }
+    .empty-state .icon { font-size: 2.5rem; margin-bottom: 12px; opacity: 0.5; }
+    .empty-state p { font-size: 0.9rem; line-height: 1.5; }
+
+    .main {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      background: #000;
+    }
+
+    .player-wrap {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+      position: relative;
+      min-height: 0;
+    }
+
+    video {
+      width: 100%;
+      height: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      background: #000;
+    }
+
+    .player-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 12px;
+      background: rgba(0,0,0,0.55);
+      color: var(--text2);
+      text-align: center;
+      padding: 24px;
+      pointer-events: none;
+    }
+
+    .player-overlay.hidden { display: none; }
+
+    .spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid rgba(255,255,255,0.15);
+      border-top-color: var(--blue);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .player-bar {
+      padding: 16px 20px;
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .player-bar h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      flex: 1;
+      min-width: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .install-banner {
+      display: none;
+      padding: 12px 16px;
+      background: rgba(59,124,244,0.12);
+      border-bottom: 1px solid rgba(59,124,244,0.25);
+      font-size: 0.85rem;
+      color: var(--text2);
+      line-height: 1.45;
+    }
+
+    .install-banner.visible { display: block; }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.65);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 20px;
+      padding-top: calc(20px + var(--safe-top));
+      padding-bottom: calc(20px + var(--safe-bottom));
+    }
+
+    .modal-backdrop.open { display: flex; }
+
+    .modal {
+      width: min(480px, 100%);
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+    }
+
+    .modal h3 {
+      font-size: 1.2rem;
+      margin-bottom: 16px;
+    }
+
+    .field { margin-bottom: 14px; }
+    .field label {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--text2);
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    .field input[type="text"],
+    .field input[type="url"] {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--bg3);
+      color: var(--text);
+      font: inherit;
+      font-size: 1rem;
+    }
+
+    .field input:focus {
+      outline: none;
+      border-color: var(--blue);
+    }
+
+    .file-drop {
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+      color: var(--text2);
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+
+    .file-drop:hover, .file-drop.dragover {
+      border-color: var(--blue);
+      color: var(--text);
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+
+    .error-text {
+      color: var(--red);
+      font-size: 0.85rem;
+      margin-top: 8px;
+      min-height: 1.2em;
+    }
+
+    .help-link {
+      display: block;
+      margin: 12px 16px 16px;
+      padding: 12px;
+      border-radius: 10px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      color: var(--text2);
+      font-size: 0.8rem;
+      line-height: 1.45;
+      text-decoration: none;
+    }
+
+    .help-link strong { color: var(--text); }
+
+    @media (max-width: 820px) {
+      .app {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+      }
+
+      .sidebar {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        max-height: 38dvh;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="install-banner" id="installBanner">
+    <strong>Instalacja na iPadzie:</strong> w Safari naciśnij ikonę <strong>Udostępnij</strong> (↑) → <strong>Dodaj do ekranu początkowego</strong>. Aplikacja będzie działać jak natywna — bez Maca.
+  </div>
+
+  <div class="app">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h1>Live Stream</h1>
+        <button class="btn-icon" id="btnAdd" title="Dodaj strumień" aria-label="Dodaj strumień">+</button>
+      </div>
+      <div class="stream-list" id="streamList"></div>
+      <a class="help-link" href="#" id="helpLink">
+        <strong>Bez Maca?</strong> Ta wersja działa w Safari na iPadzie. Dodaj ją do ekranu początkowego, aby uruchamiać jak aplikację.
+      </a>
+    </aside>
+
+    <main class="main">
+      <div class="player-wrap">
+        <video id="player" playsinline webkit-playsinline controls></video>
+        <div class="player-overlay" id="playerOverlay">
+          <div class="spinner" id="spinner"></div>
+          <p id="overlayText">Wybierz strumień z listy lub dodaj nowy</p>
+        </div>
+      </div>
+      <div class="player-bar">
+        <h2 id="nowPlaying">Brak odtwarzania</h2>
+        <span class="badge-live" id="liveBadge" hidden>LIVE</span>
+        <button class="btn btn-secondary" id="btnPlayPause" hidden>Odtwórz</button>
+        <button class="btn btn-danger" id="btnDelete" hidden>Usuń</button>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="modal">
+    <div class="modal" role="dialog" aria-labelledby="modalTitle">
+      <h3 id="modalTitle">Dodaj strumień</h3>
+
+      <div class="field">
+        <label for="urlInput">Adres URL (.m3u8)</label>
+        <input type="url" id="urlInput" placeholder="https://example.com/live/stream.m3u8" autocapitalize="off" autocorrect="off" spellcheck="false">
+      </div>
+
+      <div class="field">
+        <label for="titleInput">Nazwa (opcjonalnie)</label>
+        <input type="text" id="titleInput" placeholder="Moja transmisja">
+      </div>
+
+      <div class="field">
+        <label>Lub zaimportuj plik .m3u8</label>
+        <div class="file-drop" id="fileDrop">
+          <input type="file" id="fileInput" accept=".m3u8,.m3u,text/plain" hidden>
+          <p>Dotknij, aby wybrać plik<br><small>lub przeciągnij plik tutaj</small></p>
+        </div>
+      </div>
+
+      <p class="error-text" id="modalError"></p>
+
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="btnCancel">Anuluj</button>
+        <button class="btn btn-primary" id="btnSave">Dodaj i odtwórz</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'live_streams_v1';
+
+    const $ = (sel) => document.querySelector(sel);
+    const streamList = $('#streamList');
+    const player = $('#player');
+    const playerOverlay = $('#playerOverlay');
+    const overlayText = $('#overlayText');
+    const spinner = $('#spinner');
+    const nowPlaying = $('#nowPlaying');
+    const liveBadge = $('#liveBadge');
+    const btnPlayPause = $('#btnPlayPause');
+    const btnDelete = $('#btnDelete');
+    const modal = $('#modal');
+    const urlInput = $('#urlInput');
+    const titleInput = $('#titleInput');
+    const modalError = $('#modalError');
+    const installBanner = $('#installBanner');
+
+    let streams = loadStreams();
+    let selectedId = streams[0]?.id ?? null;
+
+    function loadStreams() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      } catch {
+        return [];
+      }
+    }
+
+    function saveStreams() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(streams));
+    }
+
+    function uid() {
+      return crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2);
+    }
+
+    function parseM3U(content, baseURL = '') {
+      const lines = content.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+      if (!lines.length) throw new Error('Plik playlisty jest pusty.');
+
+      const results = [];
+      let pendingTitle = null;
+
+      for (const line of lines) {
+        if (line.startsWith('#')) {
+          if (line.startsWith('#EXTINF:')) {
+            const comma = line.lastIndexOf(',');
+            pendingTitle = comma >= 0 ? line.slice(comma + 1).trim() : 'Strumień';
+          }
+          continue;
+        }
+
+        let url;
+        try {
+          url = new URL(line, baseURL || undefined).href;
+        } catch {
+          throw new Error('Nieprawidłowy adres: ' + line);
+        }
+
+        const title = pendingTitle || line.split('/').pop().replace(/\.m3u8?$/i, '') || ('Strumień ' + (results.length + 1));
+        results.push({
+          id: uid(),
+          title,
+          url,
+          isLive: /\.m3u8?$/i.test(url) || /live/i.test(url)
+        });
+        pendingTitle = null;
+      }
+
+      if (!results.length) throw new Error('Nie znaleziono strumieni w pliku.');
+      return results;
+    }
+
+    function addStream(item) {
+      const existing = streams.find(s => s.url === item.url);
+      if (existing) {
+        selectedId = existing.id;
+        render();
+        playStream(existing);
+        return;
+      }
+      streams.unshift(item);
+      selectedId = item.id;
+      saveStreams();
+      render();
+      playStream(item);
+    }
+
+    function removeStream(id) {
+      streams = streams.filter(s => s.id !== id);
+      if (selectedId === id) {
+        selectedId = streams[0]?.id ?? null;
+        if (selectedId) playStream(streams[0]);
+        else stopPlayer();
+      }
+      saveStreams();
+      render();
+    }
+
+    function render() {
+      if (!streams.length) {
+        streamList.innerHTML = `
+          <div class="empty-state">
+            <div class="icon">📺</div>
+            <p>Brak strumieni.<br>Naciśnij <strong>+</strong>, aby dodać adres .m3u8 lub zaimportować plik.</p>
+          </div>`;
+        btnDelete.hidden = true;
+        btnPlayPause.hidden = true;
+        return;
+      }
+
+      streamList.innerHTML = streams.map(s => `
+        <button class="stream-item ${s.id === selectedId ? 'active' : ''}" data-id="${s.id}" type="button">
+          <div class="stream-icon">📡</div>
+          <div class="stream-meta">
+            <div class="stream-title">${escapeHtml(s.title)}</div>
+            <div class="stream-url">${escapeHtml(s.url)}</div>
+          </div>
+          ${s.isLive ? '<span class="badge-live">LIVE</span>' : ''}
+        </button>
+      `).join('');
+
+      streamList.querySelectorAll('.stream-item').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const s = streams.find(x => x.id === btn.dataset.id);
+          if (!s) return;
+          selectedId = s.id;
+          render();
+          playStream(s);
+        });
+      });
+
+      const current = streams.find(s => s.id === selectedId);
+      btnDelete.hidden = !current;
+      btnPlayPause.hidden = !current;
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function showOverlay(text, loading = true) {
+      playerOverlay.classList.remove('hidden');
+      overlayText.textContent = text;
+      spinner.style.display = loading ? 'block' : 'none';
+    }
+
+    function hideOverlay() {
+      playerOverlay.classList.add('hidden');
+    }
+
+    function stopPlayer() {
+      player.pause();
+      player.removeAttribute('src');
+      player.load();
+      nowPlaying.textContent = 'Brak odtwarzania';
+      liveBadge.hidden = true;
+      showOverlay('Wybierz strumień z listy lub dodaj nowy', false);
+      btnPlayPause.textContent = 'Odtwórz';
+    }
+
+    function playStream(stream) {
+      showOverlay('Łączenie z transmisją…');
+      nowPlaying.textContent = stream.title;
+      liveBadge.hidden = !stream.isLive;
+      btnPlayPause.textContent = 'Pauza';
+
+      player.src = stream.url;
+      player.load();
+      player.play().catch(() => {
+        showOverlay('Naciśnij Odtwórz, aby rozpocząć', false);
+      });
+    }
+
+    player.addEventListener('playing', hideOverlay);
+    player.addEventListener('waiting', () => showOverlay('Buforowanie…'));
+    player.addEventListener('error', () => {
+      const msg = player.error?.message || 'Nie udało się odtworzyć strumienia.';
+      showOverlay(msg, false);
+    });
+    player.addEventListener('play', () => { btnPlayPause.textContent = 'Pauza'; });
+    player.addEventListener('pause', () => { btnPlayPause.textContent = 'Odtwórz'; });
+
+    function openModal() {
+      modalError.textContent = '';
+      urlInput.value = '';
+      titleInput.value = '';
+      modal.classList.add('open');
+      urlInput.focus();
+    }
+
+    function closeModal() {
+      modal.classList.remove('open');
+    }
+
+    async function handleAdd() {
+      modalError.textContent = '';
+      const url = urlInput.value.trim();
+      const title = titleInput.value.trim();
+
+      if (!url) {
+        modalError.textContent = 'Wprowadź adres URL lub wybierz plik.';
+        return;
+      }
+
+      try {
+        new URL(url);
+      } catch {
+        modalError.textContent = 'Nieprawidłowy adres URL.';
+        return;
+      }
+
+      const isPlaylist = /\.m3u8?$/i.test(url);
+
+      if (isPlaylist) {
+        try {
+          const res = await fetch(url);
+          const text = await res.text();
+          if (text.includes('#EXTINF')) {
+            const parsed = parseM3U(text, url);
+            parsed.forEach(addStream);
+            closeModal();
+            return;
+          }
+        } catch {
+          // fetch może się nie udać (CORS) — spróbuj odtworzyć URL bezpośrednio
+        }
+      }
+
+      addStream({
+        id: uid(),
+        title: title || url.split('/').pop() || 'Strumień',
+        url,
+        isLive: isPlaylist || /live/i.test(url)
+      });
+      closeModal();
+    }
+
+    async function handleFile(file) {
+      modalError.textContent = '';
+      try {
+        const text = await file.text();
+        const base = file.name ? 'file:///' + file.name : '';
+        const parsed = parseM3U(text, base);
+        parsed.forEach(addStream);
+        closeModal();
+      } catch (err) {
+        modalError.textContent = err.message || 'Błąd importu pliku.';
+      }
+    }
+
+    $('#btnAdd').addEventListener('click', openModal);
+    $('#btnCancel').addEventListener('click', closeModal);
+    $('#btnSave').addEventListener('click', handleAdd);
+    btnPlayPause.addEventListener('click', () => {
+      if (player.paused) player.play();
+      else player.pause();
+    });
+    btnDelete.addEventListener('click', () => {
+      if (selectedId && confirm('Usunąć ten strumień z listy?')) removeStream(selectedId);
+    });
+
+    const fileDrop = $('#fileDrop');
+    const fileInput = $('#fileInput');
+    fileDrop.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files[0]) handleFile(fileInput.files[0]);
+    });
+    fileDrop.addEventListener('dragover', (e) => { e.preventDefault(); fileDrop.classList.add('dragover'); });
+    fileDrop.addEventListener('dragleave', () => fileDrop.classList.remove('dragover'));
+    fileDrop.addEventListener('drop', (e) => {
+      e.preventDefault();
+      fileDrop.classList.remove('dragover');
+      if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+    });
+
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+    $('#helpLink').addEventListener('click', (e) => {
+      e.preventDefault();
+      installBanner.classList.add('visible');
+    });
+
+    if (!window.matchMedia('(display-mode: standalone)').matches) {
+      installBanner.classList.add('visible');
+    }
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    }
+
+    render();
+    if (selectedId) {
+      const s = streams.find(x => x.id === selectedId);
+      if (s) playStream(s);
+    } else {
+      stopPlayer();
+    }
+  </script>
+</body>
+</html>
