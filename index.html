@@ -5,7 +5,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="app-build" content="2026-08-05T10:31:31.354Z">
+<meta name="app-build" content="2026-09-01T13:51:02.912Z">
 <title>Serwis ROW-POL</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <meta name="theme-color" content="#0a0a0f">
@@ -6478,7 +6478,10 @@ function load() {
     if (keepValues && Array.isArray(st.photos)) {
       try { photos = st.photos.slice(); } catch (_) { photos = []; }
     }
-    if (fromHist) return 'history';
+    if (fromHist) {
+      try { localStorage.removeItem(DRAFT_INTERRUPT_KEY); } catch (_) {}
+      return 'history';
+    }
     if (resumeDraft) return 'draft';
     return true;
   } catch { return false; }
@@ -7804,6 +7807,8 @@ function _snapshotOpenModalToCf() {
 }
 
 function _persistAppDraftsNow() {
+  // loadWycena / reload po edycji — nie nadpisuj świeżo zapisanych danych z historii
+  if (sessionStorage.getItem('allow-reload') === '1') return;
   // Raport naprawy — osobny szkic
   try { if (typeof _flushRaportDraft === 'function') _flushRaportDraft(); } catch (_) {}
   // Szkic zlecenia tylko gdy faktycznie edytujemy formularz (nie menu / lista)
@@ -11076,22 +11081,27 @@ function renderHistory(filterTel) {
 
 function loadWycena(id) {
   const hist = getHistory();
-  const entry = hist.find(e => e.id === id);
+  const entry = hist.find(e => String(e.id) === String(id));
   if (!entry || !entry.state) return;
 
-  // Wstrzyknij nowe pola do state jeśli ich tam nie ma
+  // Wstrzyknij pola z wpisu historii (state bywa slim / bez danych klienta)
   const st = safeParseJSON(entry.state, null);
   if (st && typeof st === 'object') {
+    if (entry.marka  !== undefined) st.marka  = entry.marka;
     if (entry.model  !== undefined) st.model  = entry.model;
     if (entry.kolor  !== undefined) st.kolor  = entry.kolor;
     if (entry.termin !== undefined) st.termin = entry.termin;
+    if (entry.tel    !== undefined) st.tel    = entry.tel;
+    if (entry.ebike  !== undefined) st.ebike  = entry.ebike ? '1' : '0';
+    if (entry.cr     !== undefined) st.cr     = !!entry.cr;
+    sessionStorage.setItem('allow-reload', '1');
     localStorage.setItem('wycena-v2', JSON.stringify(st));
   } else {
+    sessionStorage.setItem('allow-reload', '1');
     localStorage.setItem('wycena-v2', entry.state);
   }
 
   sessionStorage.setItem('from-history', '1');
-  sessionStorage.setItem('allow-reload', '1');
   sessionStorage.setItem('from-history-id', String(id));
   sessionStorage.setItem('_from_edit_reload', '1');
   if (entry.photos) sessionStorage.setItem('from-history-photos', JSON.stringify(entry.photos));
@@ -15373,7 +15383,7 @@ window.euroConvert    = euroConvert;
   if (ml) ml.href = URL.createObjectURL(new Blob([JSON.stringify(manifest)], {type:'application/manifest+json'}));
   if ('serviceWorker' in navigator) {
     const sw = `"use strict";
-var C="wycena-v6";
+var C="wycena-v7";
 var CORE=["."];
 function isCacheable(req){
   try{
