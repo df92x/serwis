@@ -5,7 +5,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="app-build" content="2026-09-01T13:51:02.912Z">
+<meta name="app-build" content="2026-09-01T13:56:10.960Z">
 <title>Serwis ROW-POL</title>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <meta name="theme-color" content="#0a0a0f">
@@ -6391,93 +6391,160 @@ function flushSave() {
 }
 
 // ── Odczyt z localStorage ──
+function _stateFromHistoryEntry(entry) {
+  const st = safeParseJSON(entry.state, null);
+  if (!st || typeof st !== 'object') return null;
+  if (entry.marka  !== undefined) st.marka  = entry.marka;
+  if (entry.model  !== undefined) st.model  = entry.model;
+  if (entry.kolor  !== undefined) st.kolor  = entry.kolor;
+  if (entry.termin !== undefined) st.termin = entry.termin;
+  if (entry.tel    !== undefined) st.tel    = entry.tel;
+  if (entry.ebike  !== undefined) st.ebike  = entry.ebike ? '1' : '0';
+  if (entry.cr     !== undefined) st.cr     = !!entry.cr;
+  return st;
+}
+
+/** Slim state ma tylko wybrane pozycje — przy edycji odtwórz pełną listę DEFAULTS. */
+function _hydrateStateItems(st) {
+  if (!st || typeof st !== 'object') return st;
+  const saved = Array.isArray(st.items) ? st.items : [];
+  const byName = new Map();
+  saved.forEach(it => { if (it && it.name) byName.set(canonicalName(it.name), it); });
+  st.items = DEFAULTS.map(def => {
+    const s = byName.get(def.name);
+    if (!s) {
+      return {
+        name: def.name, price: def.price, checked: !!def.checked,
+        qty: def.qty, selectedPreset: -1, customName: '', noteText: '',
+      };
+    }
+    return {
+      name: def.name,
+      price: s.price !== undefined ? s.price : def.price,
+      checked: !!s.checked,
+      qty: s.qty !== undefined ? s.qty : def.qty,
+      selectedPreset: s.selectedPreset ?? -1,
+      customName: s.customName || '',
+      customLabel: s.customLabel,
+      selectedOptions: s.selectedOptions,
+      noteText: s.noteText || '',
+    };
+  });
+  return st;
+}
+
+function _applyParsedState(st, keepValues) {
+  if (!st || !Array.isArray(st.items) || !st.items.length) return false;
+
+  idSeq = 0;
+  items = st.items.map(it => ({
+    id: newId(),
+    name: canonicalName(it.name), price: it.price,
+    checked: keepValues ? !!it.checked : false,
+    qty: it.qty !== undefined ? (keepValues ? (it.qty || 0) : 0) : undefined,
+    selectedPreset: keepValues ? (it.selectedPreset ?? -1) : -1,
+    customName: keepValues ? (it.customName ?? '') : '',
+    customLabel: keepValues ? (it.customLabel ?? '') : '',
+    selectedOptions: keepValues ? (it.selectedOptions ?? []) : [],
+    options:  findDefault(it.name)?.options?.map(x => ({...x})),
+    presets:  findDefault(it.name)?.presets?.map(x => ({...x})),
+    note:     findDefault(it.name)?.note || undefined,
+    noteText: keepValues ? (it.noteText ?? '') : '',
+  }));
+
+  items = items.filter(it => it.name !== 'Diagnostyka eBike' && it.name !== 'Diagnostyka e-Bike');
+  items.forEach(migrateSelectionToOpis);
+
+  for (const def of DEFAULTS) {
+    if (!items.find(it => it.name === def.name)) {
+      items.push({ id: newId(), name: def.name, price: def.price,
+        checked: def.checked, qty: def.qty,
+        options:  def.options?.map(x => ({...x})),
+        presets:  def.presets?.map(x => ({...x})),
+        selectedPreset: -1, customName: '' });
+    }
+  }
+
+  const defOrder = DEFAULTS.map(d => d.name);
+  items.sort((a, b) => {
+    const ai = defOrder.indexOf(a.name);
+    const bi = defOrder.indexOf(b.name);
+    if (ai === -1 && bi === -1) return 0;
+    if (ai === -1) return 1;
+    if (bi === -1) return -1;
+    return ai - bi;
+  });
+
+  if (keepValues) {
+    subs = (st.subs || []).map(s => ({ id: newSubId(), name: s.name, price: s.price, checked: s.checked }));
+    if (!subs.length) subs = createDefaultSubs();
+    while (subs.length < 3) subs.push({ id: newSubId(), name: '', price: 0, checked: false });
+    groupOpen = st.groupOpen !== false;
+  } else {
+    subs = createDefaultSubs();
+    groupOpen = true;
+  }
+
+  if (st.marka)  $('cf-marka').value  = st.marka;
+  if (st.ebike !== undefined) $('cf-ebike').value = st.ebike;
+  if (st.cr) {
+    $('cf-cr').value = '1';
+    crState.assemblyId = st.crState?.assemblyId || '';
+    crState.extras = Array.isArray(st.crState?.extras) ? st.crState.extras.slice() : [];
+  } else {
+    $('cf-cr').value = '0';
+    resetCrState();
+  }
+  if (st.tel)    $('cf-tel').value    = st.tel;
+  if (st.model)  $('cf-model').value  = st.model;
+  if (st.kolor)  $('cf-kolor').value  = st.kolor;
+  if (st.termin) $('cf-termin').value = st.termin;
+  if ($('notatka-serwisowa')) $('notatka-serwisowa').value = st.notatka || '';
+  if (keepValues && Array.isArray(st.photos)) {
+    try { photos = st.photos.slice(); } catch (_) { photos = []; }
+  }
+  return true;
+}
+
+function _setupHistoryEditUi() {
+  if ($('start-overlay')) $('start-overlay').style.display = 'none';
+  const btnListaCofnij = $('btn-lista-cofnij');
+  if (btnListaCofnij) {
+    btnListaCofnij.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Anuluj';
+    btnListaCofnij.style.background = '#c0392b';
+    btnListaCofnij.style.borderColor = '#c0392b';
+    btnListaCofnij.onclick = () => {
+      showConfirm('Cofnąć bez zapisywania zmian?', () => {
+        sessionStorage.removeItem('from-history-id');
+        _clearOrderDraftStorage();
+        anulujWycene();
+      });
+    };
+  }
+  const editId = sessionStorage.getItem('from-history-id');
+  const btnUsun = $('btn-usun-zlecenie');
+  if (btnUsun) btnUsun.style.display = editId ? 'inline-flex' : 'none';
+}
+
 function load() {
   try {
     const raw = localStorage.getItem(KEY);
     if (!raw) return false;
     const st = JSON.parse(raw);
-    if (!st.items?.length) return false;
 
-    const fromHist = !!sessionStorage.getItem('from-history');
+    const fromHist = !!(sessionStorage.getItem('from-history') || sessionStorage.getItem('from-history-id'));
     const interrupted = localStorage.getItem(DRAFT_INTERRUPT_KEY) === '1';
-    // Wznów TYLKO po minimalizacji w trakcie edycji (flaga interrupt)
     const resumeDraft = !fromHist && interrupted && _stateHasDraftProgress(st);
     if (!fromHist && !resumeDraft) {
       _clearOrderDraftStorage();
       return false;
     }
+
     const keepValues = fromHist || resumeDraft;
-    idSeq = 0;
-    items = st.items.map(it => ({
-      id: newId(),
-      name: canonicalName(it.name), price: it.price,
-      checked: keepValues ? !!it.checked : false,
-      qty: it.qty !== undefined ? (keepValues ? (it.qty || 0) : 0) : undefined,
-      selectedPreset: keepValues ? (it.selectedPreset ?? -1) : -1,
-      customName: keepValues ? (it.customName ?? '') : '',
-      customLabel: keepValues ? (it.customLabel ?? '') : '',
-      selectedOptions: keepValues ? (it.selectedOptions ?? []) : [],
-      options:  findDefault(it.name)?.options?.map(x => ({...x})),
-      presets:  findDefault(it.name)?.presets?.map(x => ({...x})),
-      note:     findDefault(it.name)?.note || undefined,
-      noteText: keepValues ? (it.noteText ?? '') : '',
-    }));
+    if (fromHist) _hydrateStateItems(st);
+    if (!st.items?.length) return false;
+    if (!_applyParsedState(st, keepValues)) return false;
 
-    // Remove deprecated items
-    items = items.filter(it => it.name !== 'Diagnostyka eBike' && it.name !== 'Diagnostyka e-Bike');
-
-    // Stare zlecenia: zamień dawne wybory z list na tekstowy opis
-    items.forEach(migrateSelectionToOpis);
-
-    // Merge any missing defaults
-    for (const def of DEFAULTS) {
-      if (!items.find(it => it.name === def.name)) {
-        items.push({ id: newId(), name: def.name, price: def.price,
-          checked: def.checked, qty: def.qty,
-          options:  def.options?.map(x => ({...x})),
-          presets:  def.presets?.map(x => ({...x})),
-          selectedPreset: -1, customName: '' });
-      }
-    }
-
-    // Sortuj według kolejności DEFAULTS
-    const defOrder = DEFAULTS.map(d => d.name);
-    items.sort((a, b) => {
-      const ai = defOrder.indexOf(a.name);
-      const bi = defOrder.indexOf(b.name);
-      if (ai === -1 && bi === -1) return 0;
-      if (ai === -1) return 1;
-      if (bi === -1) return -1;
-      return ai - bi;
-    });
-
-    if (keepValues) {
-      subs = (st.subs || []).map(s => ({ id: newSubId(), name: s.name, price: s.price, checked: s.checked }));
-      if (!subs.length) subs = createDefaultSubs();
-      while (subs.length < 3) subs.push({ id: newSubId(), name: '', price: 0, checked: false });
-      groupOpen = st.groupOpen !== false;
-    } else {
-      subs = createDefaultSubs();
-      groupOpen = true;
-    }
-    if (st.marka)  $('cf-marka').value  = st.marka;
-    if (st.ebike !== undefined) $('cf-ebike').value = st.ebike;
-    if (st.cr) {
-      $('cf-cr').value = '1';
-      crState.assemblyId = st.crState?.assemblyId || '';
-      crState.extras = Array.isArray(st.crState?.extras) ? st.crState.extras.slice() : [];
-    } else {
-      $('cf-cr').value = '0';
-      resetCrState();
-    }
-    if (st.tel)    $('cf-tel').value    = st.tel;
-    if (st.model)  $('cf-model').value  = st.model;
-    if (st.kolor)  $('cf-kolor').value  = st.kolor;
-    if (st.termin) $('cf-termin').value = st.termin;
-    if ($('notatka-serwisowa')) $('notatka-serwisowa').value = st.notatka || '';
-    if (keepValues && Array.isArray(st.photos)) {
-      try { photos = st.photos.slice(); } catch (_) { photos = []; }
-    }
     if (fromHist) {
       try { localStorage.removeItem(DRAFT_INTERRUPT_KEY); } catch (_) {}
       return 'history';
@@ -7745,24 +7812,7 @@ if (!sessionStorage.getItem('from-history') && _bootLoadResult !== 'draft' && _b
     btnListaCofnij.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Anuluj';
   }
 } else if (_bootLoadResult === 'history' || sessionStorage.getItem('from-history')) {
-  $('start-overlay').style.display = 'none';
-  const btnListaCofnij = $('btn-lista-cofnij');
-  if (btnListaCofnij) {
-    btnListaCofnij.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Anuluj';
-    btnListaCofnij.style.background = '#c0392b';
-    btnListaCofnij.style.borderColor = '#c0392b';
-    btnListaCofnij.onclick = () => {
-      showConfirm('Cofnąć bez zapisywania zmian?', () => {
-        sessionStorage.setItem('allow-reload', '1');
-        location.reload();
-      });
-    };
-  }
-  const editId = sessionStorage.getItem('from-history-id');
-  const btnUsun = $('btn-usun-zlecenie');
-  if (btnUsun && editId) {
-    btnUsun.style.display = 'inline-flex';
-  }
+  _setupHistoryEditUi();
 } else {
   if ($('start-overlay')) $('start-overlay').style.display = 'flex';
 }
@@ -11082,31 +11132,45 @@ function renderHistory(filterTel) {
 function loadWycena(id) {
   const hist = getHistory();
   const entry = hist.find(e => String(e.id) === String(id));
-  if (!entry || !entry.state) return;
-
-  // Wstrzyknij pola z wpisu historii (state bywa slim / bez danych klienta)
-  const st = safeParseJSON(entry.state, null);
-  if (st && typeof st === 'object') {
-    if (entry.marka  !== undefined) st.marka  = entry.marka;
-    if (entry.model  !== undefined) st.model  = entry.model;
-    if (entry.kolor  !== undefined) st.kolor  = entry.kolor;
-    if (entry.termin !== undefined) st.termin = entry.termin;
-    if (entry.tel    !== undefined) st.tel    = entry.tel;
-    if (entry.ebike  !== undefined) st.ebike  = entry.ebike ? '1' : '0';
-    if (entry.cr     !== undefined) st.cr     = !!entry.cr;
-    sessionStorage.setItem('allow-reload', '1');
-    localStorage.setItem('wycena-v2', JSON.stringify(st));
-  } else {
-    sessionStorage.setItem('allow-reload', '1');
-    localStorage.setItem('wycena-v2', entry.state);
+  if (!entry || !entry.state) {
+    alert('Brak danych zlecenia');
+    return;
   }
 
-  sessionStorage.setItem('from-history', '1');
+  let st = _stateFromHistoryEntry(entry);
+  if (!st) {
+    alert('Błąd danych zlecenia');
+    return;
+  }
+  st = _hydrateStateItems(st);
+
   sessionStorage.setItem('from-history-id', String(id));
-  sessionStorage.setItem('_from_edit_reload', '1');
-  if (entry.photos) sessionStorage.setItem('from-history-photos', JSON.stringify(entry.photos));
+  try { localStorage.removeItem(DRAFT_INTERRUPT_KEY); } catch (_) {}
+  try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (_) {}
+
+  if (!_applyParsedState(st, true)) {
+    alert('Błąd wczytywania zlecenia');
+    return;
+  }
+
+  if (Array.isArray(entry.photos) && entry.photos.length) {
+    photos = entry.photos.map(p => ({ dataUrl: p.dataUrl, name: p.name }));
+  } else {
+    photos = [];
+  }
+
   closeHistory();
-  location.reload();
+  _setupHistoryEditUi();
+  renderItems();
+  renderGroup();
+  recalc();
+  try { renderPhotos(); } catch (_) {}
+  updateClientInfoBar();
+  requestAnimationFrame(() => {
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  });
 }
 
 function openPrzywrocModal() {
@@ -15383,7 +15447,7 @@ window.euroConvert    = euroConvert;
   if (ml) ml.href = URL.createObjectURL(new Blob([JSON.stringify(manifest)], {type:'application/manifest+json'}));
   if ('serviceWorker' in navigator) {
     const sw = `"use strict";
-var C="wycena-v7";
+var C="wycena-v8";
 var CORE=["."];
 function isCacheable(req){
   try{
