@@ -22,6 +22,6 @@
   if (ml) ml.href = URL.createObjectURL(new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' }));
 
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('service-worker.js?v=serwis-v16').catch(function () {});
+    navigator.serviceWorker.register('service-worker.js?v=serwis-v17').catch(function () {});
   }
 })();
