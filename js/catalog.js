@@ -125,3 +125,53 @@ var ITEM_ICONS = {
 function getItemIcon(name) {
   return ITEM_ICONS[name] || `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3b7cf4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/></svg>`;
 }
+
+function _catalogClone(v) {
+  return JSON.parse(JSON.stringify(v));
+}
+
+var FACTORY_CATALOG = {
+  DEFAULTS: _catalogClone(DEFAULTS),
+  NAPRAWA_SERVICES: _catalogClone(NAPRAWA_SERVICES),
+  CR_ASSEMBLY_CLASSIC: _catalogClone(CR_ASSEMBLY_CLASSIC),
+  CR_ASSEMBLY_EBIKE: _catalogClone(CR_ASSEMBLY_EBIKE),
+  CR_EXTRAS: _catalogClone(CR_EXTRAS)
+};
+
+function currentCatalog() {
+  return {
+    DEFAULTS: DEFAULTS,
+    NAPRAWA_SERVICES: NAPRAWA_SERVICES,
+    CR_ASSEMBLY_CLASSIC: CR_ASSEMBLY_CLASSIC,
+    CR_ASSEMBLY_EBIKE: CR_ASSEMBLY_EBIKE,
+    CR_EXTRAS: CR_EXTRAS
+  };
+}
+
+function loadStoredCennik() {
+  var key = (typeof CENNIK_STORAGE_KEY === 'string' && CENNIK_STORAGE_KEY) || 'serwis-cennik';
+  var raw = null;
+  try { raw = localStorage.getItem(key); } catch (e) { raw = null; }
+  return typeof parseCennik === 'function' ? parseCennik(raw) : { updatedAt: 0 };
+}
+
+function saveStoredCennik(overlay) {
+  var key = (typeof CENNIK_STORAGE_KEY === 'string' && CENNIK_STORAGE_KEY) || 'serwis-cennik';
+  var parsed = typeof parseCennik === 'function' ? parseCennik(overlay) : overlay;
+  try {
+    localStorage.setItem(key, typeof serializeCennik === 'function' ? serializeCennik(parsed) : JSON.stringify(parsed));
+  } catch (e) {}
+  return parsed;
+}
+
+function applyStoredCennik(overlay) {
+  if (typeof applyCennikToCatalog !== 'function') return;
+  var next = applyCennikToCatalog(FACTORY_CATALOG, overlay || loadStoredCennik());
+  DEFAULTS = next.DEFAULTS;
+  NAPRAWA_SERVICES = next.NAPRAWA_SERVICES;
+  CR_ASSEMBLY_CLASSIC = next.CR_ASSEMBLY_CLASSIC;
+  CR_ASSEMBLY_EBIKE = next.CR_ASSEMBLY_EBIKE;
+  CR_EXTRAS = next.CR_EXTRAS;
+}
+
+try { applyStoredCennik(); } catch (e) {}
