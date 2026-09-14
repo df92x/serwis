@@ -1,6 +1,6 @@
 'use strict';
 
-var CACHE_NAME = 'serwis-v14';
+var CACHE_NAME = 'serwis-v16';
 var CORE = [
   '.',
   'index.html',
@@ -8,7 +8,6 @@ var CORE = [
   'js/catalog.js',
   'js/photos.js',
   'js/sync.js',
-  'js/github-update.js',
   'js/pwa.js'
 ];
 
