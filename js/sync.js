@@ -215,6 +215,98 @@ async function _getFolderId() {
   return id;
 }
 
+async function _getChildFolderId(parentId, name) {
+  const cacheKey = 'gdrive-folder-' + name;
+  let id = localStorage.getItem(cacheKey);
+  if (id) return id;
+  const q = encodeURIComponent(
+    "name='" + name + "' and '" + parentId + "' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false"
+  );
+  const res = await _driveReq('GET',
+    'https://www.googleapis.com/drive/v3/files?q=' + q + '&fields=files(id)');
+  if (res.files && res.files[0]) {
+    id = res.files[0].id;
+  } else {
+    const created = await _driveReq('POST',
+      'https://www.googleapis.com/drive/v3/files',
+      JSON.stringify({
+        name: name,
+        mimeType: 'application/vnd.google-apps.folder',
+        parents: [parentId]
+      }));
+    id = created.id;
+  }
+  localStorage.setItem(cacheKey, id);
+  return id;
+}
+
+async function _listFolderFiles(folderId) {
+  let files = [];
+  let pageToken = '';
+  do {
+    const url = 'https://www.googleapis.com/drive/v3/files?q=' +
+      encodeURIComponent("'" + folderId + "' in parents and trashed=false") +
+      '&fields=nextPageToken,files(id,name)&pageSize=1000' +
+      (pageToken ? '&pageToken=' + encodeURIComponent(pageToken) : '');
+    const res = await _driveReq('GET', url);
+    files = files.concat(res.files || []);
+    pageToken = res.nextPageToken || '';
+  } while (pageToken);
+  return files;
+}
+
+function _collectSyncPhotoIds() {
+  const chunks = [];
+  try { chunks.push.apply(chunks, getHistory()); } catch (_) {}
+  try { chunks.push.apply(chunks, getArchive()); } catch (_) {}
+  try { chunks.push.apply(chunks, getKosz()); } catch (_) {}
+  try {
+    const st = JSON.parse(localStorage.getItem('wycena-v2') || '{}');
+    if (st && Array.isArray(st.photos)) chunks.push(st);
+  } catch (_) {}
+  return typeof collectPhotoIds === 'function' ? collectPhotoIds(chunks) : [];
+}
+
+async function syncPhotosWithDrive(rootFolderId) {
+  if (!gdriveToken) return;
+  const folderName = (typeof PHOTO_DRIVE_FOLDER === 'string' && PHOTO_DRIVE_FOLDER) || 'zdjecia';
+  const photosFolderId = await _getChildFolderId(rootFolderId, folderName);
+  const remoteFiles = await _listFolderFiles(photosFolderId);
+  const remoteByName = {};
+  for (let i = 0; i < remoteFiles.length; i++) {
+    const f = remoteFiles[i];
+    if (f && f.name) remoteByName[f.name] = f.id;
+  }
+  const ids = _collectSyncPhotoIds();
+  for (let i = 0; i < ids.length; i++) {
+    const id = ids[i];
+    const fname = typeof photoDriveFileName === 'function' ? photoDriveFileName(id) : '';
+    if (!fname) continue;
+    try {
+      const local = typeof getStoredPhoto === 'function' ? await getStoredPhoto(id) : null;
+      const remoteId = remoteByName[fname];
+      if (local && !remoteId) {
+        const blob = typeof dataUrlToBlob === 'function' ? dataUrlToBlob(local) : null;
+        if (blob) {
+          await _saveFile(photosFolderId, fname, blob, blob.type || 'image/jpeg');
+          remoteByName[fname] = 'uploaded';
+        }
+      } else if (!local && remoteId) {
+        const r = await fetch(
+          'https://www.googleapis.com/drive/v3/files/' + remoteId + '?alt=media',
+          { headers: { Authorization: 'Bearer ' + gdriveToken } }
+        );
+        if (r.ok && typeof persistPhoto === 'function' && typeof blobToDataUrl === 'function') {
+          const dataUrl = await blobToDataUrl(await r.blob());
+          if (dataUrl) await persistPhoto(id, dataUrl);
+        }
+      }
+    } catch (e) {
+      console.warn('[sync] photo', id, e);
+    }
+  }
+}
+
 async function _saveFile(folderId, filename, body, contentType = 'application/json') {
   const fileBody = body instanceof Blob ? body : new Blob([body], { type: contentType });
   const q = encodeURIComponent("name='" + filename + "' and '" + folderId + "' in parents and trashed=false");
@@ -445,6 +537,20 @@ async function _mergeData(remote) {
     }
   }
 
+  if (typeof mergeCennik === 'function') {
+    const localC = typeof loadStoredCennik === 'function'
+      ? loadStoredCennik()
+      : (typeof parseCennik === 'function' ? parseCennik(localStorage.getItem('serwis-cennik')) : null);
+    const mergedC = mergeCennik(localC, remote.cennik);
+    if (typeof saveStoredCennik === 'function') saveStoredCennik(mergedC);
+    else {
+      try {
+        localStorage.setItem('serwis-cennik', typeof serializeCennik === 'function' ? serializeCennik(mergedC) : JSON.stringify(mergedC));
+      } catch (_) {}
+    }
+    if (typeof applyStoredCennik === 'function') applyStoredCennik(mergedC);
+  }
+
   const _storeEntries = (key, list) => {
     const payload = typeof entryPhotosForStorage === 'function'
       ? list.map(entryPhotosForStorage)
@@ -494,21 +600,20 @@ async function syncToDrive() {
   setSyncDot('busy');
   try {
     const folderId = await _getFolderId();
+    try { await syncPhotosWithDrive(folderId); } catch (pe) { console.warn('[sync] photos', pe); }
     const now      = new Date();
-    let history = getHistory();
-    let archive = getArchive();
-    let kosz = getKosz();
-    if (typeof hydrateEntriesPhotos === 'function') {
-      history = await hydrateEntriesPhotos(history);
-      archive = await hydrateEntriesPhotos(archive);
-      kosz = await hydrateEntriesPhotos(kosz);
-    }
+    const slim = (list) => typeof entryPhotosForStorage === 'function'
+      ? (Array.isArray(list) ? list.map(entryPhotosForStorage) : [])
+      : list;
+    let history = slim(typeof getHistory === 'function' ? getHistory() : []);
+    let archive = slim(typeof getArchive === 'function' ? getArchive() : []);
+    let kosz = slim(typeof getKosz === 'function' ? getKosz() : []);
     let stateRaw = localStorage.getItem('wycena-v2') || '';
-    if (stateRaw && typeof hydratePhotoList === 'function') {
+    if (stateRaw && typeof stripPhotosForStorage === 'function') {
       try {
         const st = JSON.parse(stateRaw);
         if (Array.isArray(st.photos) && st.photos.length) {
-          st.photos = await hydratePhotoList(st.photos);
+          st.photos = stripPhotosForStorage(st.photos);
           stateRaw = JSON.stringify(st);
         }
       } catch (_) {}
@@ -522,7 +627,8 @@ async function syncToDrive() {
       purged:   getPurgedMap(),
       state:    stateRaw,
       rabatyActive: typeof getRabatyActive === 'function' ? getRabatyActive() : [],
-      rabatyUsed: typeof getRabatyUsed === 'function' ? getRabatyUsed() : []
+      rabatyUsed: typeof getRabatyUsed === 'function' ? getRabatyUsed() : [],
+      cennik: typeof loadStoredCennik === 'function' ? loadStoredCennik() : null
     });
     // Plik bieżący + dzienny snapshot
     await _saveFile(folderId, 'serwis-current.json', payload);
