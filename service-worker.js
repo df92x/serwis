@@ -1,6 +1,6 @@
 'use strict';
 
-var CACHE_NAME = 'serwis-v16';
+var CACHE_NAME = 'serwis-v17';
 var CORE = [
   '.',
   'index.html',
