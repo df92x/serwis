@@ -55,7 +55,6 @@
     'js/catalog.js',
     'js/photos.js',
     'js/sync.js',
-    'js/github-update.js',
     'js/pwa.js',
     'service-worker.js'
   ];
