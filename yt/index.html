@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#12100e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Siatka">
+<meta name="description" content="Nakładka z czytelniejszą siatką miniaturek YouTube na tablecie.">
+<title>Siatka — czytelny YouTube</title>
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icons/icon-192.png">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #12100e;
+  --bg-elev: #1c1814;
+  --ink: #f3ebe0;
+  --muted: #b7a894;
+  --line: #3a3229;
+  --accent: #e8a84a;
+  --accent-ink: #1a1208;
+  --danger: #d45b4a;
+  --radius: 14px;
+  --gap: 14px;
+  --cols: 3;
+  --thumb-max: 200px;
+  --font: "Manrope", system-ui, sans-serif;
+  --display: "Fraunces", Georgia, serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+}
+
+body {
+  background:
+    radial-gradient(1200px 600px at 12% -10%, rgba(232, 168, 74, 0.16), transparent 55%),
+    radial-gradient(900px 500px at 100% 0%, rgba(120, 84, 48, 0.22), transparent 50%),
+    linear-gradient(180deg, #16130f 0%, #0e0c0a 100%);
+  background-attachment: fixed;
+}
+
+a { color: inherit; text-decoration: none; }
+button, input { font: inherit; color: inherit; }
+img { display: block; max-width: 100%; }
+
+.app {
+  width: min(1440px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 20px 0 96px;
+}
+
+.hero {
+  min-height: min(72vh, 640px);
+  display: grid;
+  align-content: end;
+  gap: 18px;
+  padding: 28px 0 36px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 8% -4% auto auto;
+  width: min(58vw, 620px);
+  aspect-ratio: 16 / 10;
+  border-radius: 28px;
+  background:
+    linear-gradient(145deg, rgba(232, 168, 74, 0.18), transparent 45%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='100' viewBox='0 0 160 100'%3E%3Crect width='160' height='100' fill='%231c1814'/%3E%3Crect x='8' y='8' width='70' height='40' rx='6' fill='none' stroke='%23e8a84a' stroke-opacity='.45'/%3E%3Crect x='86' y='8' width='66' height='40' rx='6' fill='none' stroke='%23e8a84a' stroke-opacity='.35'/%3E%3Crect x='8' y='56' width='70' height='36' rx='6' fill='none' stroke='%23e8a84a' stroke-opacity='.3'/%3E%3Crect x='86' y='56' width='66' height='36' rx='6' fill='none' stroke='%23e8a84a' stroke-opacity='.25'/%3E%3C/svg%3E") center / cover;
+  border: 1px solid rgba(232, 168, 74, 0.22);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+  transform: rotate(-2deg);
+  animation: floatIn 900ms cubic-bezier(.2,.8,.2,1) both;
+  pointer-events: none;
+}
+
+@keyframes floatIn {
+  from { opacity: 0; transform: translateY(18px) rotate(-2deg); }
+  to { opacity: 1; transform: translateY(0) rotate(-2deg); }
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.brand {
+  font-family: var(--display);
+  font-size: clamp(3.2rem, 8vw, 5.6rem);
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  max-width: 11ch;
+  animation: rise 700ms cubic-bezier(.2,.8,.2,1) both;
+}
+
+.lede {
+  max-width: 34ch;
+  color: var(--muted);
+  font-size: clamp(1.02rem, 2.1vw, 1.2rem);
+  line-height: 1.45;
+  animation: rise 800ms 80ms cubic-bezier(.2,.8,.2,1) both;
+}
+
+.cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  animation: rise 850ms 140ms cubic-bezier(.2,.8,.2,1) both;
+}
+
+.btn {
+  appearance: none;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 12px 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s, background 0.15s, border-color 0.15s;
+}
+.btn:active { transform: scale(0.98); }
+.btn-primary {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+.btn-primary:hover { filter: brightness(1.05); }
+.btn-ghost {
+  background: transparent;
+  border-color: var(--line);
+  color: var(--ink);
+}
+.btn-ghost:hover { border-color: var(--accent); }
+
+.toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: grid;
+  gap: 10px;
+  padding: 12px 0;
+  backdrop-filter: blur(14px);
+  background: rgba(18, 16, 14, 0.78);
+  border-bottom: 1px solid rgba(58, 50, 41, 0.7);
+}
+
+.tabs {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar { display: none; }
+
+.tab {
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  border-radius: 999px;
+  padding: 8px 14px;
+  white-space: nowrap;
+  cursor: pointer;
+  font-weight: 600;
+}
+.tab[aria-selected="true"] {
+  background: rgba(232, 168, 74, 0.14);
+  border-color: rgba(232, 168, 74, 0.55);
+  color: var(--ink);
+}
+
+.search-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+
+.search-row input {
+  width: 100%;
+  border: 1px solid var(--line);
+  background: var(--bg-elev);
+  border-radius: 12px;
+  padding: 12px 14px;
+  outline: none;
+}
+.search-row input:focus {
+  border-color: rgba(232, 168, 74, 0.65);
+}
+
+.density {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+.density select {
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 8px 10px;
+  color: var(--ink);
+}
+
+.section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 22px 0 12px;
+}
+.section-head h2 {
+  font-family: var(--display);
+  font-size: 1.55rem;
+  font-weight: 600;
+}
+.section-head p { color: var(--muted); font-size: 0.95rem; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  gap: var(--gap);
+}
+
+.video {
+  display: grid;
+  gap: 8px;
+  cursor: pointer;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  animation: rise 500ms both;
+}
+.video:nth-child(2) { animation-delay: 40ms; }
+.video:nth-child(3) { animation-delay: 80ms; }
+.video:nth-child(4) { animation-delay: 120ms; }
+
+.thumb-wrap {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #2a241d;
+  aspect-ratio: 16 / 9;
+  max-height: var(--thumb-max);
+}
+.thumb-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.35s ease;
+}
+.video:hover .thumb-wrap img { transform: scale(1.04); }
+
+.duration {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  background: rgba(0, 0, 0, 0.78);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+.meta { display: grid; gap: 2px; }
+.title {
+  font-size: 0.98rem;
+  font-weight: 700;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.sub {
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.35;
+}
+
+.status {
+  margin-top: 18px;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+.status.error { color: var(--danger); }
+
+.panel {
+  margin-top: 28px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(28, 24, 20, 0.72);
+  display: grid;
+  gap: 12px;
+}
+.panel h3 {
+  font-family: var(--display);
+  font-size: 1.25rem;
+}
+.panel ol, .panel ul {
+  padding-left: 1.2rem;
+  color: var(--muted);
+  display: grid;
+  gap: 6px;
+}
+.panel code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.86em;
+  color: var(--accent);
+}
+
+.player-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 6, 5, 0.82);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 50;
+}
+.player-backdrop.open { display: flex; }
+.player-sheet {
+  width: min(960px, 100%);
+  background: #171410;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  overflow: hidden;
+  display: grid;
+}
+.player-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 14px;
+}
+.player-top h3 {
+  font-size: 1rem;
+  line-height: 1.3;
+}
+.player-frame {
+  aspect-ratio: 16 / 9;
+  background: #000;
+}
+.player-frame iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.player-actions {
+  display: flex;
+  gap: 8px;
+  padding: 12px 14px 14px;
+}
+
+.bottom-nav {
+  position: fixed;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  width: min(520px, calc(100% - 24px));
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  padding: 8px;
+  border-radius: 18px;
+  background: rgba(24, 20, 16, 0.92);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(12px);
+  z-index: 30;
+}
+.bottom-nav button {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  border-radius: 12px;
+  padding: 10px 8px;
+  font-weight: 700;
+  font-size: 0.86rem;
+  cursor: pointer;
+}
+.bottom-nav button[aria-current="page"] {
+  color: var(--accent-ink);
+  background: var(--accent);
+}
+
+body[data-density="compact"] {
+  --cols: 4;
+  --thumb-max: 160px;
+  --gap: 12px;
+}
+body[data-density="cozy"] {
+  --cols: 2;
+  --thumb-max: 240px;
+  --gap: 16px;
+}
+
+@media (max-width: 900px) {
+  body[data-density="comfortable"] { --cols: 2; }
+  body[data-density="compact"] { --cols: 3; }
+  .hero::before { opacity: 0.55; width: min(70vw, 420px); }
+}
+@media (max-width: 560px) {
+  body[data-density="comfortable"],
+  body[data-density="compact"],
+  body[data-density="cozy"] { --cols: 1; --thumb-max: none; }
+  .brand { max-width: none; }
+  .hero { min-height: auto; padding-top: 18px; }
+  .hero::before { display: none; }
+}
+</style>
+</head>
+<body data-density="comfortable">
+  <div class="app">
+    <header class="hero" id="hero">
+      <div class="brand">Siatka</div>
+      <p class="lede">Czytelne miniatury na tablecie — siatka zamiast jednej, rozdmuchanej kolumny z aplikacji YouTube.</p>
+      <div class="cta-row">
+        <button class="btn btn-primary" type="button" id="btn-start">Przeglądaj w siatce</button>
+        <a class="btn btn-ghost" href="./youtube-tablet-grid.user.js" download>Pobierz userscript</a>
+      </div>
+    </header>
+
+    <div class="toolbar" id="toolbar" hidden>
+      <div class="tabs" role="tablist" aria-label="Sekcje">
+        <button class="tab" type="button" role="tab" data-tab="trending" aria-selected="true">Popularne</button>
+        <button class="tab" type="button" role="tab" data-tab="search" aria-selected="false">Szukaj</button>
+        <button class="tab" type="button" role="tab" data-tab="help" aria-selected="false">Jak używać</button>
+      </div>
+      <div class="search-row" id="search-row" hidden>
+        <input id="q" type="search" placeholder="Szukaj na YouTube…" autocomplete="off" enterkeyhint="search">
+        <button class="btn btn-primary" type="button" id="btn-search">Szukaj</button>
+      </div>
+      <label class="density">Gęstość
+        <select id="density">
+          <option value="compact">Kompaktowa (więcej kolumn)</option>
+          <option value="comfortable" selected>Wygodna</option>
+          <option value="cozy">Duże kafelki</option>
+        </select>
+      </label>
+    </div>
+
+    <section id="feed-section" hidden>
+      <div class="section-head">
+        <h2 id="feed-title">Popularne</h2>
+        <p id="feed-note">Wielokolumnowa siatka</p>
+      </div>
+      <div class="grid" id="grid" aria-live="polite"></div>
+      <p class="status" id="status">Ładowanie…</p>
+    </section>
+
+    <section class="panel" id="help-section" hidden>
+      <h3>Dlaczego miniatury są ogromne?</h3>
+      <p style="color:var(--muted)">Oficjalna aplikacja YouTube na wielu tabletach używa układu telefonu i skaluje go na cały ekran. Stąd jedna wielka miniatura zamiast siatki.</p>
+      <h3>Opcja A — ta nakładka (Siatka)</h3>
+      <ol>
+        <li>Otwórz tę stronę w Chrome / Edge / Safari na tablecie.</li>
+        <li>Dodaj do ekranu głównego (PWA).</li>
+        <li>Przeglądaj w siatce; odtwarzanie idzie przez oficjalny player YouTube (działa z kontem Premium w przeglądarce).</li>
+      </ol>
+      <h3>Opcja B — userscript na youtube.com</h3>
+      <ol>
+        <li>Zainstaluj Violentmonkey / Tampermonkey w przeglądarce.</li>
+        <li>Zainstaluj <a href="./youtube-tablet-grid.user.js"><code>youtube-tablet-grid.user.js</code></a>.</li>
+        <li>Otwórz <code>youtube.com</code> w trybie pulpitu — miniatury zejdą do kilku kolumn.</li>
+      </ol>
+      <h3>Opcja C — natywna aplikacja</h3>
+      <p style="color:var(--muted)">Samej aplikacji YouTube Premium nie da się tu „przeprogramować”. Do zmiany układu w APK służą zewnętrzne nakładki typu ReVanced (na własną odpowiedzialność). Ta Siatka jest bezpieczną, webową alternatywą bez patchowania APK.</p>
+    </section>
+  </div>
+
+  <nav class="bottom-nav" aria-label="Nawigacja">
+    <button type="button" data-nav="home" aria-current="page">Start</button>
+    <button type="button" data-nav="feed">Siatka</button>
+    <button type="button" data-nav="help">Pomoc</button>
+  </nav>
+
+  <div class="player-backdrop" id="player" role="dialog" aria-modal="true" aria-labelledby="player-title">
+    <div class="player-sheet">
+      <div class="player-top">
+        <h3 id="player-title">Odtwarzanie</h3>
+        <button class="btn btn-ghost" type="button" id="player-close">Zamknij</button>
+      </div>
+      <div class="player-frame" id="player-frame"></div>
+      <div class="player-actions">
+        <a class="btn btn-primary" id="open-yt" href="#" target="_blank" rel="noopener">Otwórz w YouTube</a>
+      </div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const PIPED = [
+    "https://api.piped.private.coffee",
+    "https://pipedapi.in.projectsegfau.lt",
+    "https://pipedapi.adminforge.de",
+  ];
+
+  const els = {
+    hero: document.getElementById("hero"),
+    toolbar: document.getElementById("toolbar"),
+    feedSection: document.getElementById("feed-section"),
+    helpSection: document.getElementById("help-section"),
+    searchRow: document.getElementById("search-row"),
+    grid: document.getElementById("grid"),
+    status: document.getElementById("status"),
+    feedTitle: document.getElementById("feed-title"),
+    feedNote: document.getElementById("feed-note"),
+    q: document.getElementById("q"),
+    density: document.getElementById("density"),
+    player: document.getElementById("player"),
+    playerFrame: document.getElementById("player-frame"),
+    playerTitle: document.getElementById("player-title"),
+    openYt: document.getElementById("open-yt"),
+  };
+
+  let activeTab = "trending";
+  let lastQuery = "";
+
+  function setDensity(value) {
+    document.body.dataset.density = value;
+    localStorage.setItem("siatka-density", value);
+  }
+
+  function showView(view) {
+    const isHome = view === "home";
+    const isHelp = view === "help";
+    const isFeed = view === "feed" || view === "search" || view === "trending";
+
+    els.hero.hidden = !isHome;
+    els.toolbar.hidden = !(isFeed || view === "help");
+    els.feedSection.hidden = !isFeed || isHelp;
+    els.helpSection.hidden = !isHelp;
+
+    document.querySelectorAll(".bottom-nav button").forEach((btn) => {
+      const nav = btn.dataset.nav;
+      const current =
+        (nav === "home" && isHome) ||
+        (nav === "help" && isHelp) ||
+        (nav === "feed" && isFeed && !isHelp);
+      btn.setAttribute("aria-current", current ? "page" : "false");
+    });
+
+    if (view === "help") {
+      els.toolbar.hidden = false;
+      els.searchRow.hidden = true;
+      setTabUI("help");
+    }
+  }
+
+  function setTabUI(tab) {
+    activeTab = tab;
+    document.querySelectorAll(".tab").forEach((t) => {
+      t.setAttribute("aria-selected", String(t.dataset.tab === tab));
+    });
+    els.searchRow.hidden = tab !== "search";
+  }
+
+  function formatDuration(seconds) {
+    const s = Number(seconds) || 0;
+    const h = Math.floor(s / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    const sec = s % 60;
+    if (h > 0) return `${h}:${String(m).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
+    return `${m}:${String(sec).padStart(2, "0")}`;
+  }
+
+  function formatViews(n) {
+    const v = Number(n) || 0;
+    if (v >= 1_000_000) return `${(v / 1_000_000).toFixed(1).replace(".0", "")} mln`;
+    if (v >= 1000) return `${(v / 1000).toFixed(1).replace(".0", "")} tys.`;
+    return String(v);
+  }
+
+  async function pipedGet(path) {
+    let lastErr;
+    for (const base of PIPED) {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 8000);
+      try {
+        const res = await fetch(`${base}${path}`, { signal: ctrl.signal });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return await res.json();
+      } catch (err) {
+        lastErr = err;
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+    throw lastErr || new Error("Brak odpowiedzi z API");
+  }
+
+  function normalizeItem(item) {
+    const id = item.url?.replace("/watch?v=", "") || item.id || "";
+    return {
+      id,
+      title: item.title || "Bez tytułu",
+      author: item.uploaderName || item.author || "",
+      views: item.views ?? item.viewCount ?? 0,
+      duration: item.duration ?? 0,
+      thumb:
+        item.thumbnail ||
+        (Array.isArray(item.thumbnails) && item.thumbnails[0]?.url) ||
+        `https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
+    };
+  }
+
+  function renderDemoGrid() {
+    renderVideos([
+      { url: "/watch?v=dQw4w9WgXcQ", title: "Przykład 1 — siatka zamiast jednej kolumny", uploaderName: "Siatka demo", views: 12000, duration: 212 },
+      { url: "/watch?v=jNQXAC9IVRw", title: "Przykład 2 — czytelniejsze miniatury na tablecie", uploaderName: "Siatka demo", views: 8600, duration: 19 },
+      { url: "/watch?v=9bZkp7q19f0", title: "Przykład 3 — gęstość: kompakt / wygodna / duże", uploaderName: "Siatka demo", views: 4500000, duration: 253 },
+      { url: "/watch?v=kJQP7kiw5Fk", title: "Przykład 4 — odtwarzanie przez oficjalny YouTube", uploaderName: "Siatka demo", views: 99000, duration: 281 },
+    ]);
+    els.status.textContent = "Tryb demo (API niedostępne) — zainstaluj userscript albo spróbuj później.";
+  }
+
+  function renderVideos(items) {
+    els.grid.innerHTML = "";
+    if (!items.length) {
+      els.status.textContent = "Brak wyników.";
+      els.status.classList.remove("error");
+      return;
+    }
+    const frag = document.createDocumentFragment();
+    items.forEach((raw) => {
+      const item = normalizeItem(raw);
+      if (!item.id) return;
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "video";
+      btn.innerHTML = `
+        <div class="thumb-wrap">
+          <img src="${item.thumb}" alt="" loading="lazy" referrerpolicy="no-referrer">
+          ${item.duration ? `<span class="duration">${formatDuration(item.duration)}</span>` : ""}
+        </div>
+        <div class="meta">
+          <div class="title"></div>
+          <div class="sub"></div>
+        </div>`;
+      btn.querySelector(".title").textContent = item.title;
+      btn.querySelector(".sub").textContent = `${item.author}${item.views ? " · " + formatViews(item.views) + " wyśw." : ""}`;
+      btn.addEventListener("click", () => openPlayer(item));
+      frag.appendChild(btn);
+    });
+    els.grid.appendChild(frag);
+    els.status.textContent = `${els.grid.children.length} filmów w siatce`;
+    els.status.classList.remove("error");
+  }
+
+  function openPlayer(item) {
+    els.playerTitle.textContent = item.title;
+    els.openYt.href = `https://www.youtube.com/watch?v=${item.id}`;
+    els.playerFrame.innerHTML = `<iframe src="https://www.youtube.com/embed/${item.id}?autoplay=1&rel=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen title="${item.title.replace(/"/g, "")}"></iframe>`;
+    els.player.classList.add("open");
+  }
+
+  function closePlayer() {
+    els.player.classList.remove("open");
+    els.playerFrame.innerHTML = "";
+  }
+
+  async function loadTrending() {
+    showView("feed");
+    setTabUI("trending");
+    els.feedTitle.textContent = "Popularne";
+    els.feedNote.textContent = "Wielokolumnowa siatka";
+    els.status.textContent = "Ładowanie…";
+    els.status.classList.remove("error");
+    els.grid.innerHTML = "";
+    try {
+      const data = await pipedGet("/trending?region=PL");
+      const list = Array.isArray(data) ? data : data?.items || [];
+      renderVideos(list.slice(0, 48));
+    } catch (err) {
+      els.status.textContent = "Nie udało się pobrać listy (API). Możesz użyć userscriptu na youtube.com — patrz Pomoc.";
+      els.status.classList.add("error");
+      renderDemoGrid();
+    }
+  }
+
+  async function loadSearch(query) {
+    const q = query.trim();
+    if (!q) return;
+    lastQuery = q;
+    showView("feed");
+    setTabUI("search");
+    els.feedTitle.textContent = "Wyniki";
+    els.feedNote.textContent = `„${q}”`;
+    els.status.textContent = "Szukam…";
+    els.status.classList.remove("error");
+    els.grid.innerHTML = "";
+    try {
+      const data = await pipedGet(`/search?q=${encodeURIComponent(q)}&filter=all`);
+      const list = (Array.isArray(data) ? data : data?.items || []).filter(
+        (x) => (x.type || "stream") === "stream" || x.url?.includes("watch?v=")
+      );
+      renderVideos(list.slice(0, 48));
+    } catch (err) {
+      els.status.textContent = "Wyszukiwanie niedostępne. Spróbuj ponownie.";
+      els.status.classList.add("error");
+    }
+  }
+
+  document.getElementById("btn-start").addEventListener("click", loadTrending);
+  document.getElementById("btn-search").addEventListener("click", () => loadSearch(els.q.value));
+  els.q.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") loadSearch(els.q.value);
+  });
+  document.getElementById("player-close").addEventListener("click", closePlayer);
+  els.player.addEventListener("click", (e) => {
+    if (e.target === els.player) closePlayer();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closePlayer();
+  });
+
+  document.querySelectorAll(".tab").forEach((tab) => {
+    tab.addEventListener("click", () => {
+      const name = tab.dataset.tab;
+      if (name === "help") {
+        showView("help");
+        return;
+      }
+      if (name === "search") {
+        showView("feed");
+        setTabUI("search");
+        els.feedSection.hidden = false;
+        els.helpSection.hidden = true;
+        els.feedTitle.textContent = "Szukaj";
+        els.feedNote.textContent = "Wpisz hasło powyżej";
+        if (lastQuery) loadSearch(lastQuery);
+        return;
+      }
+      loadTrending();
+    });
+  });
+
+  document.querySelectorAll(".bottom-nav button").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const nav = btn.dataset.nav;
+      if (nav === "home") {
+        closePlayer();
+        showView("home");
+        els.toolbar.hidden = true;
+      } else if (nav === "help") {
+        showView("help");
+      } else {
+        loadTrending();
+      }
+    });
+  });
+
+  const savedDensity = localStorage.getItem("siatka-density") || "comfortable";
+  els.density.value = savedDensity;
+  setDensity(savedDensity);
+  els.density.addEventListener("change", () => setDensity(els.density.value));
+
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("./sw.js").catch(() => {});
+  }
+})();
+</script>
+</body>
+</html>
