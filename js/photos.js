@@ -132,8 +132,48 @@ function migrateLocalPhotosToIdb() {
   return Promise.all(jobs);
 }
 
+function dataUrlToBlob(dataUrl) {
+  var raw = String(dataUrl || '');
+  var m = raw.match(/^data:([^;]+);base64,(.+)$/);
+  if (!m) return null;
+  try {
+    var bin = atob(m[2]);
+    var arr = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+    return new Blob([arr], { type: m[1] || 'image/jpeg' });
+  } catch (e) {
+    return null;
+  }
+}
+
+function blobToDataUrl(blob) {
+  return new Promise(function (resolve, reject) {
+    if (!blob) { resolve(null); return; }
+    var r = new FileReader();
+    r.onload = function () { resolve(r.result || null); };
+    r.onerror = function () { reject(r.error); };
+    r.readAsDataURL(blob);
+  });
+}
+
+function listStoredPhotoIds() {
+  return _openPhotoDb().then(function (db) {
+    if (!db) return [];
+    return new Promise(function (resolve, reject) {
+      var tx = db.transaction(PHOTO_STORE, 'readonly');
+      var req = tx.objectStore(PHOTO_STORE).getAllKeys();
+      req.onsuccess = function () { resolve(req.result || []); };
+      req.onerror = function () { reject(req.error); };
+    });
+  }).catch(function () { return []; });
+}
+
 window.newPhotoId = newPhotoId;
 window.persistPhoto = persistPhoto;
+window.getStoredPhoto = getStoredPhoto;
+window.listStoredPhotoIds = listStoredPhotoIds;
+window.dataUrlToBlob = dataUrlToBlob;
+window.blobToDataUrl = blobToDataUrl;
 window.persistPhotoList = persistPhotoList;
 window.hydratePhotoList = hydratePhotoList;
 window.persistAndStripEntryPhotos = persistAndStripEntryPhotos;
